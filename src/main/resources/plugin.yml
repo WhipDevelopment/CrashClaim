@@ -1,0 +1,5 @@
+name: WhipClaim
+version: 1.0
+description: A modern advanced user oriented claiming system
+author: Chasewhip
+main: net.crashcraft.whipclaim.WhipClaim

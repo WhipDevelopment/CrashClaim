@@ -5,37 +5,30 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public abstract class Visual {
-    private HashMap<Integer, UUID> fakeEntities; // id - uuid
-    private HashMap<Integer, Location> entityLocations;
     private VisualType type;
 
-    public Visual(VisualType type) {
+    private VisualGroup parent;
+
+    public Visual(VisualType type, VisualGroup parent) {
         this.type = type;
+        this.parent = parent;
     }
 
     abstract void spawn();
 
     public void remove(){
-
+        parent.signalRemoval(this);
     }
 
-    public void despawnAfter(int seconds){
+    protected void spawnEntity(Location location, TeamColor color){
 
-    }
-
-    protected void spawnEntity(Location location, ){
-
-    }
-
-    public HashMap<Integer, UUID> getFakeEntities() {
-        return fakeEntities;
-    }
-
-    public HashMap<Integer, Location> getEntityLocations() {
-        return entityLocations;
     }
 
     public VisualType getType() {
         return type;
+    }
+
+    public VisualGroup getParent() {
+        return parent;
     }
 }

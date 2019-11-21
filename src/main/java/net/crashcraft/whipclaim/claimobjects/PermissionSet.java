@@ -14,7 +14,9 @@ public class PermissionSet implements Serializable {
     private int pistons;
     private int fluids;
     private int allowSlimes;
-    private int admin;
+
+    private int modifyPermissions;
+    private int modifyClaim;
 
     private HashMap<Material, Integer> containers;
 
@@ -22,7 +24,7 @@ public class PermissionSet implements Serializable {
 
     }
 
-    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int pistons, int fluids, int allowSlimes, int admin, HashMap<Material, Integer> containers) {
+    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int pistons, int fluids, int allowSlimes, int modifyPermissions, int modifyClaim, HashMap<Material, Integer> containers) {
         this.build = build;
         this.interactions = interactions;
         this.entities = entities;
@@ -31,7 +33,8 @@ public class PermissionSet implements Serializable {
         this.pistons = pistons;
         this.fluids = fluids;
         this.allowSlimes = allowSlimes;
-        this.admin = admin;
+        this.modifyPermissions = modifyPermissions;
+        this.modifyClaim = modifyClaim;
         this.containers = containers;
     }
 
@@ -67,8 +70,12 @@ public class PermissionSet implements Serializable {
         return allowSlimes;
     }
 
-    public int getAdmin() {
-        return admin;
+    public int getModifyPermissions() {
+        return modifyPermissions;
+    }
+
+    public int getModifyClaim() {
+        return modifyClaim;
     }
 
     public HashMap<Material, Integer> getContainers() {

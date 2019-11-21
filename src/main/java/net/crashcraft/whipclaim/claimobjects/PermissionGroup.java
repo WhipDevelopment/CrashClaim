@@ -2,6 +2,7 @@ package net.crashcraft.whipclaim.claimobjects;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class PermissionGroup implements Serializable {
     /**
@@ -10,17 +11,17 @@ public class PermissionGroup implements Serializable {
      */
 
     private PermissionSet globalPermissionSet;
-    private HashMap<Integer, PermissionSet> playerPermissions;
+    private HashMap<UUID, PermissionSet> playerPermissions;
 
     public PermissionGroup(){
 
     }
 
-    public PermissionGroup(PermissionSet globalPermissionSet, HashMap<Integer, PermissionSet> playerPermissions) {
+    public PermissionGroup(PermissionSet globalPermissionSet, HashMap<UUID, PermissionSet> playerPermissions) {
         this.globalPermissionSet = globalPermissionSet == null ?
                 new PermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
                         PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
-                        PermState.DISABLE, PermState.DISABLE, new HashMap<>()) : globalPermissionSet;
+                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, new HashMap<>()) : globalPermissionSet;
         this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions ;
     }
 
@@ -36,7 +37,11 @@ public class PermissionGroup implements Serializable {
         this.globalPermissionSet = permissionSet;
     }
 
-    public void setPlayerPermissions(HashMap<Integer, PermissionSet> playerPermissions) {
+    public void setPlayerPermissions(HashMap<UUID, PermissionSet> playerPermissions) {
         this.playerPermissions = playerPermissions;
+    }
+
+    public HashMap<UUID, PermissionSet> getPlayerPermissions(){
+        return playerPermissions;
     }
 }

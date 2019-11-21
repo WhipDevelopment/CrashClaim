@@ -12,6 +12,17 @@ public class MarkerVisual extends Visual{
 
     @Override
     void spawn() {
+        getParent().getManager().spawnEntity(getParent().getPlayer(),
+                location.getBlockX(),
+                location.getBlockZ(),
+                location.getBlockY(),
+                getParent().generateUiniqueID(),
+                getParent().generateUiniqueUUID(),
+                this);
+    }
 
+    @Override
+    void color(TeamColor color) {
+        getParent().getManager().colorEntities(getParent().getPlayer(), color, getEntityUUIDs());
     }
 }

@@ -6,6 +6,7 @@ import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.PermissionSet;
+import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -39,7 +40,7 @@ public class ClaimDataManager implements Listener {
     private final Path dataPath;
     private final Logger logger;
 
-    private HashMap<UUID, ArrayList<Integer>> playerData;
+    private HashMap<UUID, ArrayList<Integer>> playerData;   // ids of claims that the user has permission to modify - used for menu lookups
 
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
     private HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
@@ -88,6 +89,16 @@ public class ClaimDataManager implements Listener {
                         loadChunksForClaim(claim);
 
                         logger.info("Loaded chunks for claim id: " + claim.getId());
+
+                        PermissionGroup permissionSet = claim.getPerms();
+
+                        for (Map.Entry<UUID, PermissionSet> entry : permissionSet.getPlayerPermissions().entrySet()){
+                            if (){
+
+                            }
+                        }
+
+                        logger.info("Loaded claims into admin and owner map for claim id: " + claim.getId());
 
                         logger.info(chunkLookup.toString());
                     } catch (NumberFormatException e){

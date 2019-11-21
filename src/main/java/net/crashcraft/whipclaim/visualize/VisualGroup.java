@@ -6,30 +6,50 @@ import javax.xml.stream.Location;
 import java.util.*;
 
 public class VisualGroup {
-    /**
-     * Fix this because we catn identiy the entities andn where they came from. Makes depsawning them uselsess
-     * Maybe use this class as a holder and keep the maps seperate in the visual objects
-     * This can be the controller for the sub visual objecs
-     */
-
-    private HashMap<Integer, UUID> fakeEntities; // id - uuid
-    private HashMap<Integer, Location> entityLocations;
-
     private ArrayList<Visual> activeVisuals;
     private Player player;
+    private VisualizationManager manager;
 
-    public VisualGroup(Player player) {
+    public VisualGroup(Player player, VisualizationManager manager) {
         this.player = player;
+        this.manager = manager;
         activeVisuals = new ArrayList<>();
     }
 
-    public void signalRemoval(Visual visual){
+    public void removeVisual(Visual visual){
+        visual.remove();
         activeVisuals.remove(visual);
+    }
 
-        for(Iterator<Map.Entry<Integer, UUID>> it = fakeEntities.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<Integer, UUID> entry = it.next();
-
+    public void removeAllVisuals(){
+        for (Visual visual : activeVisuals){
+            visual.remove();
         }
+    }
+
+    public void removeAllVisualsOfType(VisualType type){
+        for (Visual visual : activeVisuals){
+            if (visual.getType().equals(type))
+                visual.remove();
+        }
+    }
+
+    public int generateUiniqueID(){
+        int id = (int) (Math.random() * 1000000);
+        for (Visual visual : activeVisuals){
+            if (visual.containsID(id))
+                return generateUiniqueID();
+        }
+        return id;
+    }
+
+    public UUID generateUiniqueUUID(){
+        UUID uuid = UUID.randomUUID();
+        for (Visual visual : activeVisuals){
+            if (visual.containsUUID(uuid.toString()))
+                return generateUiniqueUUID();
+        }
+        return uuid;
     }
 
     public ArrayList<Visual> getActiveVisuals() {
@@ -40,5 +60,7 @@ public class VisualGroup {
         return player;
     }
 
-
+    public VisualizationManager getManager() {
+        return manager;
+    }
 }

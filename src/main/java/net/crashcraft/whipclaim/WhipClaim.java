@@ -4,6 +4,7 @@ import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.ClaimResponse;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
+import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,16 +13,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Map;
 
 public class WhipClaim extends JavaPlugin {
-    private WhipClaim plugin;
+    private static WhipClaim plugin;
+
+    private ClaimDataManager manager;
+    private VisualizationManager visualizationManager;
 
     @Override
     public void onLoad() {
         plugin = this;
+
+        visualizationManager = new VisualizationManager(this);
     }
 
     @Override
     public void onEnable() {
-        ClaimDataManager manager = new ClaimDataManager(this);
+        manager = new ClaimDataManager(this);
 
         World world = Bukkit.getWorlds().get(0);
 
@@ -52,7 +58,15 @@ public class WhipClaim extends JavaPlugin {
 
     }
 
-    public WhipClaim getPlugin() {
+    public static WhipClaim getPlugin() {
         return plugin;
+    }
+
+    public ClaimDataManager getManager() {
+        return manager;
+    }
+
+    public VisualizationManager getVisualizationManager() {
+        return visualizationManager;
     }
 }

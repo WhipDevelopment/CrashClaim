@@ -22,6 +22,21 @@ public class PermissionRouter {
         return sub == 2 ? (main == 2 ? global : main) : sub;
     }
 
+    public static int getLayeredPermission(PermissionSet global, PermissionSet main, PermissionSet sub, PermissionRoute route){
+        return processPerm(route.getPerm(global), route.getPerm(main), route.getPerm(sub));
+    }
+
+    public static int getLayeredContainer(PermissionSet global, PermissionSet main, PermissionSet sub, PermissionRoute route, Material material){
+        int subPerm = route.getListPerms(sub).get(material);
+        int mainPerm = route.getListPerms(main).get(material);
+        int globalPerm = route.getListPerms(global).get(material);
+
+        return subPerm == 2 ?
+                (mainPerm == 2 ?
+                        globalPerm : mainPerm) : subPerm;
+    }
+
+    /*
     public static int getLayeredBuild(PermissionSet global, PermissionSet main, PermissionSet sub) {
         return processPerm(global.getBuild(), main.getBuild(), sub.getBuild());
     }
@@ -54,8 +69,12 @@ public class PermissionRouter {
         return processPerm(global.getAllowSlimes(), main.getAllowSlimes(), sub.getAllowSlimes());
     }
 
-    public static int getLayeredAdmin(PermissionSet global, PermissionSet main, PermissionSet sub) {
-        return processPerm(global.getAdmin(), main.getAdmin(), sub.getAdmin());
+    public static int getLayeredModifyClaim(PermissionSet global, PermissionSet main, PermissionSet sub) {
+        return processPerm(global.getModifyClaim(), main.getModifyClaim(), sub.getModifyClaim());
+    }
+
+    public static int getLayeredModifyPermissions(PermissionSet global, PermissionSet main, PermissionSet sub) {
+        return processPerm(global.getModifyPermissions(), main.getModifyPermissions(), sub.getModifyPermissions());
     }
 
     public static HashMap<Material, Integer> getLayeredContainers(Material container, PermissionSet global, PermissionSet main, PermissionSet sub) {
@@ -63,4 +82,6 @@ public class PermissionRouter {
                 (main.getContainers().get(container) == 2 ?
                         global.getContainers() : main.getContainers()) : sub.getContainers();
     }
+
+     */
 }

@@ -29,4 +29,6 @@ public class Claim extends BaseClaim implements Serializable {
     public void removeSubClaim(int id){
 
     }
+
+    public void getLayered
 }

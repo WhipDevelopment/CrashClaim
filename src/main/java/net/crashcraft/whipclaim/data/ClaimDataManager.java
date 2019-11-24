@@ -2,10 +2,8 @@ package net.crashcraft.whipclaim.data;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
-import net.crashcraft.whipclaim.claimobjects.Claim;
-import net.crashcraft.whipclaim.claimobjects.BaseClaim;
-import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
-import net.crashcraft.whipclaim.claimobjects.PermissionSet;
+import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -40,7 +38,8 @@ public class ClaimDataManager implements Listener {
     private final Path dataPath;
     private final Logger logger;
 
-    private HashMap<UUID, ArrayList<Integer>> playerData;   // ids of claims that the user has permission to modify - used for menu lookups
+    private HashMap<UUID, ArrayList<Integer>> ownedClaims;   // ids of claims that the user has permission to modify - used for menu lookups
+    private HashMap<UUID, ArrayList<Integer>> ownedSubClaims;
 
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
     private HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
@@ -54,8 +53,9 @@ public class ClaimDataManager implements Listener {
         serializeConf.registerClass(Claim.class, BaseClaim.class, PermissionGroup.class, PermissionSet.class);
         dataPath = Paths.get(plugin.getDataFolder().getAbsolutePath(), "ClaimData");
 
-        chunkLookup = new HashMap<>();   // create faster map
-        playerData = new HashMap<>();
+        chunkLookup = new HashMap<>();
+        ownedClaims = new HashMap<>();
+        ownedSubClaims = new HashMap<>();
 
         for (World world : Bukkit.getWorlds()){
             chunkLookup.put(world.getUID(), new Long2ObjectOpenHashMap<>());
@@ -90,11 +90,36 @@ public class ClaimDataManager implements Listener {
 
                         logger.info("Loaded chunks for claim id: " + claim.getId());
 
-                        PermissionGroup permissionSet = claim.getPerms();
+                        PermissionGroup permissionGroup = claim.getPerms();
+                        ArrayList<SubClaim> subClaims = claim.getSubClaims();
 
-                        for (Map.Entry<UUID, PermissionSet> entry : permissionSet.getPlayerPermissions().entrySet()){
-                            if (){
 
+
+                        for (Map.Entry<UUID, PermissionSet> entry : permissionGroup.getPlayerPermissions().entrySet()) {
+                            UUID uuid = entry.getKey();
+
+                            if (PermissionRouter.getLayeredPermission(claim,
+                                    null, uuid, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED ||
+                                    PermissionRouter.getLayeredPermission(claim,
+                                            null, uuid, PermissionRoute.MODIFY_PERMISSIONS) == PermState.ENABLED) {
+                                ownedClaims.computeIfAbsent(uuid, u -> new ArrayList<>());
+                                ArrayList<Integer> ids = ownedClaims.get(uuid);
+                                ids.add(claim.getId());
+                                continue;
+                            }
+
+                            if (subClaims != null){
+                                for (SubClaim subClaim : subClaims){
+                                    PermissionGroup subPerms = subClaim.getPerms();
+                                    if (PermissionRouter.getLayeredPermission(subPerms.getPermissionSet(),
+                                            subPerms.getPlayerPermissionSet(uuid), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED ||
+                                            PermissionRouter.getLayeredPermission(subPerms.getPermissionSet(),
+                                                    subPerms.getPlayerPermissionSet(uuid), PermissionRoute.MODIFY_PERMISSIONS) == PermState.ENABLED) {
+                                        ownedSubClaims.computeIfAbsent(uuid, u -> new ArrayList<>());
+                                        ArrayList<Integer> ids = ownedSubClaims.get(uuid);
+                                        ids.add(subClaim.getId());
+                                    }
+                                }
                             }
                         }
 
@@ -144,22 +169,10 @@ public class ClaimDataManager implements Listener {
         return idCounter+=1;
     }
 
-    public ClaimResponse createClaim(Location upperCorner, Location lowerCorner){
+    public ClaimResponse createClaim(Location upperCorner, Location lowerCorner, UUID owner){
         if (upperCorner == null || lowerCorner == null || upperCorner.getWorld() == null){
             return new ClaimResponse(false, "Claim locations were null.");
         }
-
-        /*
-        int x1 = upperCorner.getBlockX();
-        int x2 = lowerCorner.getBlockX();
-        int y1 = upperCorner.getBlockZ();
-        int y2 = lowerCorner.getBlockZ();
-
-                (x1 > x2) ? x2 : x1,
-                (y1 > y2) ? y2 : y1,
-                (x1 > x2) ? x1 : x2,
-                (y1 > y2) ? y1 : y2,
-         */
 
         Claim claim = new Claim(requestUniqueID(),
                 upperCorner.getBlockX(),
@@ -167,7 +180,8 @@ public class ClaimDataManager implements Listener {
                 lowerCorner.getBlockX(),
                 lowerCorner.getBlockZ(),
                 upperCorner.getWorld().getUID(),
-                new PermissionGroup(null, null));
+                new PermissionGroup(null, null),
+                owner);
 
         return addClaim(claim) ? new ClaimResponse(true, claim) : new ClaimResponse(false, "Error adding claim to memory and filesystem");
     }
@@ -298,5 +312,22 @@ public class ClaimDataManager implements Listener {
 
     public ConcurrentMap<Integer, Claim> temporaryTestGetClaimMap(){
         return claimLookup.asMap();
+    }
+
+    public ArrayList<Integer> getOwnedClaims(UUID uuid) {
+        return ownedClaims.get(uuid);
+    }
+
+    public ArrayList<Integer> getOwnedSubClaims(UUID uuid) {
+        return ownedSubClaims.get(uuid);
+    }
+
+
+    public HashMap<UUID, ArrayList<Integer>> getOwnedClaims() {
+        return ownedClaims;
+    }
+
+    public HashMap<UUID, ArrayList<Integer>> getOwnedSubClaims() {
+        return ownedSubClaims;
     }
 }

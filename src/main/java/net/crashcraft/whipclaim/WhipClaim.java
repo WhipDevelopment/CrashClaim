@@ -34,7 +34,7 @@ public class WhipClaim extends JavaPlugin {
         Location loc1 = new Location(world, 50, 100, 40);
         Location loc2 = new Location(world, 20, 100, 30);
 
-        ClaimResponse claimResponse = manager.createClaim(StaticClaimLogic.calculateUpperCorner(loc1, loc2), StaticClaimLogic.calculateLowerCorner(loc1, loc2));
+        ClaimResponse claimResponse = manager.createClaim(StaticClaimLogic.calculateUpperCorner(loc1, loc2), StaticClaimLogic.calculateLowerCorner(loc1, loc2), null);
         Claim claim = claimResponse.getClaim();
 
         System.out.println(claim.getUpperCornerX());

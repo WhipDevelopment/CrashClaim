@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class PermissionGroup implements Serializable {
+    private static final long serialVersionUID = 30L;
+
     /**
      * Base Claim will have all perms
      * Sub Claim will have all perms except for admin as that gets inherited
@@ -25,11 +27,18 @@ public class PermissionGroup implements Serializable {
         this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions ;
     }
 
+/*
+    public int getActivePermission(UUID uuid, PermissionRoute route){
+        return PermissionRouter.getLayeredPermission(globalPermissionSet, playerPermissions.get(uuid), route);
+    }
+
+ */
+
     public PermissionSet getPermissionSet() {
         return globalPermissionSet;
     }
 
-    public PermissionSet getPlayerPermissionSet(int id) {
+    public PermissionSet getPlayerPermissionSet(UUID id) {
         return playerPermissions.get(id);
     }
 

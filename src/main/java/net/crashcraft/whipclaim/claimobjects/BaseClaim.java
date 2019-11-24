@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.UUID;
 
 public class BaseClaim implements Serializable {
+    private static final long serialVersionUID = 10L;
+
     private int id;
 
     private int upperCornerX;

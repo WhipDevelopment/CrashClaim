@@ -1,9 +1,8 @@
 package net.crashcraft.whipclaim.permissions;
 
-import javafx.scene.paint.Material;
 import net.crashcraft.whipclaim.claimobjects.PermissionSet;
+import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public enum  PermissionRoute {

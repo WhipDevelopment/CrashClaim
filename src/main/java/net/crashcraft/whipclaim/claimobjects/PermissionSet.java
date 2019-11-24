@@ -1,11 +1,13 @@
 package net.crashcraft.whipclaim.claimobjects;
 
-import javafx.scene.paint.Material;
+import org.bukkit.Material;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
 public class PermissionSet implements Serializable {
+    private static final long serialVersionUID = 40L;
+
     private int build;
     private int interactions;
     private int entities;

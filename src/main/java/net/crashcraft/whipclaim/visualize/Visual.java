@@ -25,6 +25,16 @@ public abstract class Visual {
 
     abstract void spawn();
 
+    protected void spawnEntity(int x, int z, int y){
+        parent.getManager().spawnEntity(parent.getPlayer(),
+                x,
+                z,
+                y,
+                parent.generateUiniqueID(),
+                parent.generateUiniqueUUID(),
+                this);
+    }
+
     protected void addSpawnData( int id, String uuid, Location location){
         fakeEntities.put(id, uuid);
         entityLocations.put(id, location);

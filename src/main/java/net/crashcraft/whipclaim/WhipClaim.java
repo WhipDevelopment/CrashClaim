@@ -62,7 +62,7 @@ public class WhipClaim extends JavaPlugin {
         return plugin;
     }
 
-    public ClaimDataManager getManager() {
+    public ClaimDataManager getDataManager() {
         return manager;
     }
 

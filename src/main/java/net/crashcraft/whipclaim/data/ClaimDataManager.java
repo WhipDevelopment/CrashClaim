@@ -197,7 +197,12 @@ public class ClaimDataManager implements Listener {
 
         for (long zs = NWChunkZ; zs <= SEChunkZ; zs++) {
             for (long xs = NWChunkX; xs <= SEChunkX; xs++) {
-                for (int id : chunkLookup.get(world).get(getChunkHash(xs, zs))){
+                ArrayList<Integer> integers = chunkLookup.get(world).get(getChunkHash(xs, zs));
+
+                if (integers == null)
+                    continue;
+
+                for (int id : integers){
                     claims.add(getClaim(id));
                 }
             }
@@ -337,7 +342,12 @@ public class ClaimDataManager implements Listener {
     }
 
     public Claim getClaim(int x, int z, UUID world){
-        for (Integer id : chunkLookup.get(world).get(getChunkHashFromLocation(x, z))){
+        ArrayList<Integer> integers = chunkLookup.get(world).get(getChunkHashFromLocation(x, z));
+
+        if (integers == null)
+            return null;
+
+        for (Integer id : integers){
             Claim claim = getClaim(id);
 
             if (x >= claim.getUpperCornerX() && x <= claim.getLowerCornerX()

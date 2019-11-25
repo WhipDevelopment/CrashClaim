@@ -1,6 +1,8 @@
 package net.crashcraft.whipclaim;
 
+import co.aikar.commands.PaperCommandManager;
 import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.commands.ClaimModeCommand;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.ClaimResponse;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
@@ -28,7 +30,13 @@ public class WhipClaim extends JavaPlugin {
     @Override
     public void onEnable() {
         manager = new ClaimDataManager(this);
+        PaperCommandManager commandManager = new PaperCommandManager(this);
 
+        ClaimModeCommand claimModeCommand = new ClaimModeCommand(this);
+        commandManager.registerCommand(claimModeCommand);
+        Bukkit.getPluginManager().registerEvents(claimModeCommand, this);
+
+        //  Testing
         World world = Bukkit.getWorlds().get(0);
 
         Location loc1 = new Location(world, 50, 100, 40);

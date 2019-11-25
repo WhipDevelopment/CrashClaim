@@ -76,6 +76,8 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
         //TODO check for disabled worlds and disabled locations - bypass mode should bypass this
 
         UUID uuid = player.getUniqueId();
+        UUID world = player.getWorld().getUID();
+
         if (!clickMap.containsKey(uuid)){
             clickMap.put(uuid, location);
             player.sendMessage(ChatColor.GREEN + "Click the an opposite corner to form a new claim.");
@@ -92,12 +94,14 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
             return;
         }
 
-        if (manager.checkOverLapSurroudningClaims(upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ(), uuid)){
+        if (manager.checkOverLapSurroudningClaims(upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ(), world)){
             player.sendMessage(ChatColor.RED + "You cannot claim over an existing claim.");
             return;
         }
 
+        manager.createClaim(upperCorner, lowerCorner, uuid);
 
+        player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
     }
 
     public void clickedExistingClaim(Player player, Location location){

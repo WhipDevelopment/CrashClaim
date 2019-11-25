@@ -45,12 +45,7 @@ public class WhipClaim extends JavaPlugin {
         System.out.println(claim.getWorld());
         System.out.println(claim.getPerms());
 
-        manager.getClaim(1);
-        manager.getClaim(2);
-
-        for (Map.Entry<Integer, Claim> claimEntry : manager.temporaryTestGetClaimMap().entrySet()){
-            System.out.println("id: " + claimEntry.getKey());
-        }
+        System.out.println(manager.getClaim(34, 33, world.getUID()) != null ? "Found claim" : "didnt find claim");
     }
 
     @Override

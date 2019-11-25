@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 
 import static net.crashcraft.whipclaim.data.StaticClaimLogic.getChunkHash;
+import static net.crashcraft.whipclaim.data.StaticClaimLogic.getChunkHashFromLocation;
 
 public class ClaimDataManager implements Listener {
     private static FSTConfiguration serializeConf = FSTConfiguration.createDefaultConfiguration();
@@ -186,6 +187,31 @@ public class ClaimDataManager implements Listener {
         return addClaim(claim) ? new ClaimResponse(true, claim) : new ClaimResponse(false, "Error adding claim to memory and filesystem");
     }
 
+    public boolean checkOverLapSurroudningClaims(int upperX, int upperZ, int lowerX, int lowerZ, UUID world){
+        long NWChunkX = upperX >> 4;
+        long NWChunkZ = upperZ >> 4;
+        long SEChunkX = lowerX >> 4;
+        long SEChunkZ = lowerZ >> 4;
+
+        ArrayList<Claim> claims = new ArrayList<>();
+
+        for (long zs = NWChunkZ; zs <= SEChunkZ; zs++) {
+            for (long xs = NWChunkX; xs <= SEChunkX; xs++) {
+                for (int id : chunkLookup.get(world).get(getChunkHash(xs, zs))){
+                    claims.add(getClaim(id));
+                }
+            }
+        }
+
+        for (Claim claim : claims){
+            if (MathUtils.doOverlap(upperX, upperZ, lowerX, lowerZ,
+                    claim.getUpperCornerX(), claim.getUpperCornerZ(), claim.getLowerCornerX(), claim.getLowerCornerZ())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean addClaim(Claim claim){ //Should not be called from anywhere else
         File file = new File(Paths.get(dataPath.toString(), Integer.toString(claim.getId())).toUri());
 
@@ -310,6 +336,28 @@ public class ClaimDataManager implements Listener {
         saveClaims();
     }
 
+    public Claim getClaim(int x, int z, UUID world){
+        for (Integer id : chunkLookup.get(world).get(getChunkHashFromLocation(x, z))){
+            Claim claim = getClaim(id);
+
+            if (x >= claim.getUpperCornerX() && x <= claim.getLowerCornerX()
+                    && z >= claim.getUpperCornerZ() && z <= claim.getLowerCornerZ()){
+                return claim;
+            }
+        }
+        return null;
+    }
+
+/*
+getClaimAtLocation(int x, int z, String world){
+        final ArrayList<ClaimObject> claimObjects = chunks.get(world).get(ClaimManager.getChunkHashFromLocation(x,z));
+
+        if (claimObjects == null)
+            return null;
+
+
+        return null;
+ */
     public ConcurrentMap<Integer, Claim> temporaryTestGetClaimMap(){
         return claimLookup.asMap();
     }
@@ -321,7 +369,6 @@ public class ClaimDataManager implements Listener {
     public ArrayList<Integer> getOwnedSubClaims(UUID uuid) {
         return ownedSubClaims.get(uuid);
     }
-
 
     public HashMap<UUID, ArrayList<Integer>> getOwnedClaims() {
         return ownedClaims;

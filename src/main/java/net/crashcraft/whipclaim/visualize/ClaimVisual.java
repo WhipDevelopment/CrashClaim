@@ -9,14 +9,14 @@ public class ClaimVisual extends Visual{
     private BaseClaim claim;
     private int y;
 
-    public ClaimVisual(VisualGroup parent, BaseClaim claim, int y) {
-        super(VisualType.CLAIM, parent);
+    public ClaimVisual(BaseClaim claim, int y) {
+        super(VisualType.CLAIM);
         this.claim = claim;
         this.y = y;
     }
 
     @Override
-    void spawn() {
+    public void spawn() {
         int NWCordX = claim.getUpperCornerX();
         int NWCordZ = claim.getUpperCornerZ();
         int SECordX = claim.getLowerCornerX();
@@ -40,8 +40,8 @@ public class ClaimVisual extends Visual{
     }
 
     @Override
-    void color(TeamColor color) {
-
+    public void color(TeamColor color) {
+        getParent().getManager().colorEntities(getParent().getPlayer(), color, getEntityUUIDs());
     }
 
 /*

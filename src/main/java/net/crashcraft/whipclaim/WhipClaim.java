@@ -23,20 +23,24 @@ public class WhipClaim extends JavaPlugin {
     @Override
     public void onLoad() {
         plugin = this;
-
-        visualizationManager = new VisualizationManager(this);
     }
 
     @Override
     public void onEnable() {
+        visualizationManager = new VisualizationManager(this);
         manager = new ClaimDataManager(this);
-        PaperCommandManager commandManager = new PaperCommandManager(this);
 
+        PaperCommandManager commandManager = new PaperCommandManager(this);
         ClaimModeCommand claimModeCommand = new ClaimModeCommand(this);
+
+
         commandManager.registerCommand(claimModeCommand);
+
         Bukkit.getPluginManager().registerEvents(claimModeCommand, this);
 
+
         //  Testing
+        /*
         World world = Bukkit.getWorlds().get(0);
 
         Location loc1 = new Location(world, 50, 100, 40);
@@ -54,6 +58,7 @@ public class WhipClaim extends JavaPlugin {
         System.out.println(claim.getPerms());
 
         System.out.println(manager.getClaim(34, 33, world.getUID()) != null ? "Found claim" : "didnt find claim");
+        */
     }
 
     @Override

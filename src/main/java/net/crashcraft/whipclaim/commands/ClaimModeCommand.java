@@ -4,10 +4,13 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Subcommand;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
+import net.crashcraft.whipclaim.data.ClaimResponse;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
+import net.crashcraft.whipclaim.visualize.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,15 +28,35 @@ import java.util.UUID;
 @CommandPermission("whipclaim.user.claim")
 public class ClaimModeCommand extends BaseCommand implements Listener {
     private ClaimDataManager manager;
+    private VisualizationManager visualizationManager;
 
     private ArrayList<UUID> enabledMode;
     private HashMap<UUID, Location> clickMap;
 
     public ClaimModeCommand(WhipClaim whipClaim){
         manager = whipClaim.getDataManager();
+        visualizationManager = whipClaim.getVisualizationManager();
 
         enabledMode = new ArrayList<>();
         clickMap = new HashMap<>();
+    }
+
+    @Subcommand("debug")
+    public void debug(Player player){
+        Location location = player.getLocation();
+        ArrayList<Integer> claims = manager.temporaryTestGetChunkMap().get(player.getWorld().getUID()).get(StaticClaimLogic.getChunkHashFromLocation(location.getBlockX(), location.getBlockZ()));
+        ArrayList<Claim> claimList = new ArrayList<>();
+        for (Integer integer : claims){
+            claimList.add(manager.temporaryTestGetClaimMap().get(integer));
+        }
+
+        for (Claim claim : claimList){
+            System.out.println(claim.getId());
+            System.out.println("|--Ux  " + claim.getUpperCornerX());
+            System.out.println("|--Uz  " + claim.getUpperCornerZ());
+            System.out.println("|--Lx  " + claim.getLowerCornerX());
+            System.out.println("|--Lz  " + claim.getLowerCornerZ());
+        }
     }
 
     @Default
@@ -45,6 +68,7 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
             clickMap.remove(uuid);
         } else {
             enabledMode.add(uuid);
+
             player.sendMessage(ChatColor.GREEN + "Claim mode enabled, click 2 corners to claim.");
         }
     }
@@ -59,8 +83,10 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
     public void click(Player player, Location loc1){
         World world = loc1.getWorld();
 
-        if (world == null)
+        if (world == null) {
+            cleanup(player.getUniqueId());
             throw new RuntimeException("World was null on claim mode manager click");
+        }
 
         Claim claim = manager.getClaim(loc1.getBlockX(), loc1.getBlockZ(), loc1.getWorld().getUID());
 
@@ -91,21 +117,41 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
         if ((lowerCorner.getBlockX() - upperCorner.getBlockX()) < 4 || (lowerCorner.getBlockZ() - upperCorner.getBlockZ()) < 4) {
             player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
+            cleanup(player.getUniqueId());
             return;
         }
 
         if (manager.checkOverLapSurroudningClaims(upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ(), world)){
             player.sendMessage(ChatColor.RED + "You cannot claim over an existing claim.");
+            cleanup(player.getUniqueId());
             return;
         }
 
-        manager.createClaim(upperCorner, lowerCorner, uuid);
+        ClaimResponse response = manager.createClaim(upperCorner, lowerCorner, uuid);
 
-        player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
+        if (response.isStatus()) {
+            player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
+
+            VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+            ClaimVisual claimVisual = new ClaimVisual(response.getClaim(), player.getLocation().getBlockY() - 1);
+            group.addVisual(claimVisual);
+
+            claimVisual.spawn();
+            claimVisual.color(TeamColor.GREEN);
+        } else {
+            player.sendMessage(ChatColor.RED + "Error creating claim");
+        }
+
+        cleanup(player.getUniqueId());
     }
 
     public void clickedExistingClaim(Player player, Location location){
 
+    }
+
+    private void cleanup(UUID uuid){
+        clickMap.remove(uuid);
+        enabledMode.remove(uuid);
     }
 
     private static boolean isClaimBorder(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z) {

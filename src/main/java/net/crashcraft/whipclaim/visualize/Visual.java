@@ -13,17 +13,16 @@ public abstract class Visual {
 
     private VisualGroup parent;
 
-    public Visual(VisualType type, VisualGroup parent) {
+    public Visual(VisualType type) {
         this.type = type;
-        this.parent = parent;
 
         this.fakeEntities = new HashMap<>();
         this.entityLocations = new HashMap<>();
     }
 
-    abstract void color(TeamColor color);
+    public abstract void color(TeamColor color);
 
-    abstract void spawn();
+    public abstract void spawn();
 
     protected void spawnEntity(int x, int z, int y){
         parent.getManager().spawnEntity(parent.getPlayer(),
@@ -72,5 +71,9 @@ public abstract class Visual {
 
     boolean containsUUID(String uuid){
         return fakeEntities.containsValue(uuid);
+    }
+
+    public void setParent(VisualGroup parent) {
+        this.parent = parent;
     }
 }

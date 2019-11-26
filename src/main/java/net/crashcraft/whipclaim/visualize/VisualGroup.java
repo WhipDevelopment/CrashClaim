@@ -16,8 +16,13 @@ public class VisualGroup {
         activeVisuals = new ArrayList<>();
     }
 
+    public void addVisual(Visual visual){
+        visual.setParent(this);
+
+        activeVisuals.add(visual);
+    }
+
     public void removeVisual(Visual visual){
-        visual.remove();
         activeVisuals.remove(visual);
     }
 

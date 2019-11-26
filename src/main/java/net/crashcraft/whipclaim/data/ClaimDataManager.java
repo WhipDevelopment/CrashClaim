@@ -199,11 +199,14 @@ public class ClaimDataManager implements Listener {
             for (long xs = NWChunkX; xs <= SEChunkX; xs++) {
                 ArrayList<Integer> integers = chunkLookup.get(world).get(getChunkHash(xs, zs));
 
-                if (integers == null)
+                if (integers == null) {
                     continue;
+                }
 
                 for (int id : integers){
-                    claims.add(getClaim(id));
+                    Claim claim = getClaim(id);
+                    if (!claims.contains(claim))
+                        claims.add(claim);
                 }
             }
         }
@@ -248,7 +251,12 @@ public class ClaimDataManager implements Listener {
     }
 
     private void loadChunksForClaim(Claim claim){
-        chunkLookup.get(claim.getWorld()).putAll(getChunksForClaim(claim));
+        Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(claim.getWorld());
+        for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
+            map.computeIfAbsent(entry.getKey(), (id) -> new ArrayList<>());
+            ArrayList<Integer> integers = map.get(entry.getKey().longValue());
+            integers.add(claim.getId());
+        }
     }
 
     private HashMap<Long, ArrayList<Integer>> getChunksForClaim(Claim claim){
@@ -370,6 +378,10 @@ getClaimAtLocation(int x, int z, String world){
  */
     public ConcurrentMap<Integer, Claim> temporaryTestGetClaimMap(){
         return claimLookup.asMap();
+    }
+
+    public HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> temporaryTestGetChunkMap(){
+        return chunkLookup;
     }
 
     public ArrayList<Integer> getOwnedClaims(UUID uuid) {

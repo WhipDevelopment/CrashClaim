@@ -1,7 +1,6 @@
 package net.crashcraft.whipclaim.visualize;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -13,8 +12,12 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import net.crashcraft.whipclaim.WhipClaim;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -33,6 +36,21 @@ public class VisualizationManager {
 
         visualHashMap = new HashMap<>();
         timeMap = new HashMap<>();
+
+        ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+
+        if (scoreboardManager == null)
+            throw new RuntimeException("Scoreboard manager was null.");
+
+        Scoreboard scoreboard = scoreboardManager.getMainScoreboard();
+
+        for (TeamColor color : TeamColor.values()){
+            if (scoreboard.getTeam(color.name()) == null) {
+                Team team = scoreboard.registerNewTeam(color.name());
+                team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
+                team.setColor(ChatColor.valueOf(color.name()));
+            }
+        }
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(whipClaim, () -> {
             if (timeMap.size() == 0)

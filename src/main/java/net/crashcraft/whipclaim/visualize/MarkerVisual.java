@@ -5,13 +5,13 @@ import org.bukkit.Location;
 public class MarkerVisual extends Visual{
     private Location location;
 
-    public MarkerVisual(Location location, VisualGroup parent) {
-        super(VisualType.MARKER, parent);
+    public MarkerVisual(Location location) {
+        super(VisualType.MARKER);
         this.location = location;
     }
 
     @Override
-    void spawn() {
+    public void spawn() {
         getParent().getManager().spawnEntity(getParent().getPlayer(),
                 location.getBlockX(),
                 location.getBlockZ(),
@@ -22,7 +22,7 @@ public class MarkerVisual extends Visual{
     }
 
     @Override
-    void color(TeamColor color) {
+    public void color(TeamColor color) {
         getParent().getManager().colorEntities(getParent().getPlayer(), color, getEntityUUIDs());
     }
 }

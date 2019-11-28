@@ -4,17 +4,17 @@ import net.crashcraft.whipclaim.claimobjects.Claim;
 
 public class ClaimResponse {
     private boolean status;
-    private String error;
+    private ErrorType error;
     private Claim claim;
 
-    public ClaimResponse(boolean status, String error) {
+    public ClaimResponse(boolean status, ErrorType error) {
         this.status = status;
         this.error = error;
     }
 
     public ClaimResponse(boolean status, Claim claim) {
         this.status = status;
-        this.error = "";
+        this.error = ErrorType.NONE;
         this.claim = claim;
     }
 
@@ -22,7 +22,7 @@ public class ClaimResponse {
         return status;
     }
 
-    public String getError() {
+    public ErrorType getError() {
         return error;
     }
 

@@ -33,6 +33,9 @@ public class VisualGroup {
     }
 
     public void removeAllVisualsOfType(VisualType type){
+        if (activeVisuals == null)
+            return;
+
         for (Visual visual : activeVisuals){
             if (visual.getType().equals(type))
                 visual.remove();

@@ -7,9 +7,13 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.ClaimResponse;
+import net.crashcraft.whipclaim.data.ErrorType;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
+import net.crashcraft.whipclaim.permissions.PermissionRoute;
+import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.visualize.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -32,6 +36,7 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
     private ArrayList<UUID> enabledMode;
     private HashMap<UUID, Location> clickMap;
+    private HashMap<UUID, Claim> resizingMap;
 
     public ClaimModeCommand(WhipClaim whipClaim){
         manager = whipClaim.getDataManager();
@@ -39,6 +44,7 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
         enabledMode = new ArrayList<>();
         clickMap = new HashMap<>();
+        resizingMap = new HashMap<>();
     }
 
     @Subcommand("debug")
@@ -90,8 +96,8 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
         Claim claim = manager.getClaim(loc1.getBlockX(), loc1.getBlockZ(), loc1.getWorld().getUID());
 
-        if (claim != null){
-            clickedExistingClaim(player, loc1);
+        if (claim != null || resizingMap.containsKey(player.getUniqueId())){
+            clickedExistingClaim(player, loc1, claim);
             return;
         }
 
@@ -107,6 +113,15 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
         if (!clickMap.containsKey(uuid)){
             clickMap.put(uuid, location);
             player.sendMessage(ChatColor.GREEN + "Click the an opposite corner to form a new claim.");
+
+            VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+            group.removeAllVisualsOfType(VisualType.MARKER);
+
+            MarkerVisual visual = new MarkerVisual(location);
+            group.addVisual(visual);
+
+            visual.spawn();
+            visual.color(TeamColor.YELLOW);
             return;
         }
 
@@ -121,7 +136,7 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
             return;
         }
 
-        if (manager.checkOverLapSurroudningClaims(upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ(), world)){
+        if (manager.checkOverLapSurroudningClaims(-1, upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ(), world)){
             player.sendMessage(ChatColor.RED + "You cannot claim over an existing claim.");
             cleanup(player.getUniqueId());
             return;
@@ -136,6 +151,8 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
             ClaimVisual claimVisual = new ClaimVisual(response.getClaim(), player.getLocation().getBlockY() - 1);
             group.addVisual(claimVisual);
 
+            visualizationManager.despawnAfter(claimVisual, 30);
+
             claimVisual.spawn();
             claimVisual.color(TeamColor.GREEN);
         } else {
@@ -145,73 +162,89 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
         cleanup(player.getUniqueId());
     }
 
-    public void clickedExistingClaim(Player player, Location location){
+    public void clickedExistingClaim(Player player, Location location, Claim claim){
+        UUID uuid = player.getUniqueId();
 
+        if (claim == null) {    //Already have it in the clickmap
+            claim = resizingMap.get(player.getUniqueId());
+            Location loc1 = clickMap.get(uuid);
+
+            if (claim == null)
+                return;
+
+            ErrorType error = manager.resizeClaim(claim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ(),
+                    (arr) -> {
+                    //TODO  Do payments in here
+                        return ErrorType.NONE;
+                    });
+
+            switch (error){
+                case TOO_SMALL:
+                    player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
+                    cleanup(uuid);
+                    break;
+                case CANNOT_FLIP_ON_RESIZE:
+                    player.sendMessage(ChatColor.RED + "Claims cannot be flipped, please retry and grab the other edge to expand in this direction");
+                    cleanup(player.getUniqueId());
+                    break;
+                case NONE:
+                    player.sendMessage(ChatColor.GREEN + "Claim has been successfully resized");
+
+                    VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+
+                    group.removeAllVisuals();
+                    ClaimVisual visual = new ClaimVisual(claim, player.getLocation().getBlockY() - 1);
+                    group.addVisual(visual);
+
+                    visual.spawn();
+                    visual.color(TeamColor.GREEN);
+
+                    visualizationManager.despawnAfter(visual, 30);
+
+                    cleanup(uuid);
+                    break;
+            }
+            return;
+        }
+
+        if (isClaimBorder(claim.getUpperCornerX(), claim.getLowerCornerX(), claim.getUpperCornerZ(),
+                claim.getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
+            if (PermissionRouter.getLayeredPermission(claim, null, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
+
+                clickMap.put(uuid, location);
+                resizingMap.put(uuid, claim);
+
+                claim.setResizing(true);
+
+                VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+
+                group.removeAllVisuals();
+                ClaimVisual visual = new ClaimVisual(claim, player.getLocation().getBlockY() - 1);
+                group.addVisual(visual);
+
+                visual.spawn();
+                visual.color(TeamColor.GOLD);
+
+                player.sendMessage(ChatColor.GREEN + "Click another location to resize the claim.");
+            } else {
+                player.sendMessage(ChatColor.RED + "You do not have permission to modify this claim.");
+            }
+        } else {
+            player.sendMessage(ChatColor.RED + "Unable to claim over an existing claim.");
+        }
     }
 
     private void cleanup(UUID uuid){
         clickMap.remove(uuid);
         enabledMode.remove(uuid);
+
+        if (resizingMap.containsKey(uuid)){
+            resizingMap.get(uuid).setResizing(false);
+            resizingMap.remove(uuid);
+        }
     }
 
     private static boolean isClaimBorder(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z) {
         return Start_x == NWCorner_x || Start_x == SECorner_x || Start_z == NWCorner_z || Start_z == SECorner_z;
-    }
-
-    private static int[] calculateResize(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z, int End_x, int End_z) {
-        /*
-        Works for any size changes: corners or sides.
-        Note:
-        NWCorner_x defines the West Line
-        SECorner_x defines the East Line
-
-        NWCorner_z defines the North Line
-        SECorner_z defines the South Line
-         */
-
-        int newNWCorner_x = NWCorner_x;
-        int newSECorner_x = SECorner_x;
-        int newNWCorner_z = NWCorner_z;
-        int newSECorner_z = SECorner_z;
-
-        int change = 0;
-
-        if (Start_x == NWCorner_x) {
-            /*Start is West*/
-            newNWCorner_x = End_x;
-        }
-
-        if (Start_x == SECorner_x) {
-            /*Start is East*/
-            newSECorner_x = End_x;
-        }
-
-        if (Start_z == NWCorner_z) {
-            /*Start is North*/
-            newNWCorner_z = End_z;
-        }
-
-        if (Start_z == SECorner_z) {
-            /*Start is South*/
-            newSECorner_z = End_z;
-        }
-
-        if (newSECorner_x > NWCorner_x && newNWCorner_x < SECorner_x && newSECorner_z > NWCorner_z && newNWCorner_z < SECorner_z) {
-            NWCorner_x = newNWCorner_x;
-            SECorner_x = newSECorner_x;
-            NWCorner_z = newNWCorner_z;
-            SECorner_z = newSECorner_z;
-            change = 1;
-        }
-
-        int[] arr = new int[5];
-
-        arr[0] = NWCorner_x;
-        arr[1] = SECorner_x;
-        arr[2] = NWCorner_z;
-        arr[3] = SECorner_z;
-        arr[4] = change;
-
-        return arr;
     }
 }

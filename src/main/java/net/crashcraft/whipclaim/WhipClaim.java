@@ -1,18 +1,13 @@
 package net.crashcraft.whipclaim;
 
 import co.aikar.commands.PaperCommandManager;
-import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.commands.ClaimModeCommand;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.data.ClaimResponse;
-import net.crashcraft.whipclaim.data.StaticClaimLogic;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Map;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class WhipClaim extends JavaPlugin {
     private static WhipClaim plugin;
@@ -27,12 +22,17 @@ public class WhipClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        this.getDataFolder().mkdirs();
+
+        saveDefaultConfig();
+        saveResource("localization.yml", false);
+        saveResource("lookup.yml", false);
+
         visualizationManager = new VisualizationManager(this);
         manager = new ClaimDataManager(this);
 
         PaperCommandManager commandManager = new PaperCommandManager(this);
         ClaimModeCommand claimModeCommand = new ClaimModeCommand(this);
-
 
         commandManager.registerCommand(claimModeCommand);
 

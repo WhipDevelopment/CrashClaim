@@ -5,10 +5,7 @@ import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import static net.crashcraft.whipclaim.data.StaticClaimLogic.getChunkHash;
@@ -172,7 +170,11 @@ public class ClaimDataManager implements Listener {
 
     public ClaimResponse createClaim(Location upperCorner, Location lowerCorner, UUID owner){
         if (upperCorner == null || lowerCorner == null || upperCorner.getWorld() == null){
-            return new ClaimResponse(false, "Claim locations were null.");
+            return new ClaimResponse(false, ErrorType.CLAIM_LOCATIONS_WERE_NULL);
+        }
+
+        if (isTooSmall(upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ())){
+            return new ClaimResponse(false, ErrorType.TOO_SMALL);
         }
 
         Claim claim = new Claim(requestUniqueID(),
@@ -184,10 +186,109 @@ public class ClaimDataManager implements Listener {
                 new PermissionGroup(null, null),
                 owner);
 
-        return addClaim(claim) ? new ClaimResponse(true, claim) : new ClaimResponse(false, "Error adding claim to memory and filesystem");
+        return addClaim(claim) ? new ClaimResponse(true, claim) : new ClaimResponse(false, ErrorType.FILESYSTEM_OR_MEMORY_ERROR);
     }
 
-    public boolean checkOverLapSurroudningClaims(int upperX, int upperZ, int lowerX, int lowerZ, UUID world){
+    public ErrorType resizeClaim(Claim claim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
+        claim.setResizing(true);
+
+        int[] arr = calculateResize(claim.getUpperCornerX(), claim.getLowerCornerX(),
+                claim.getUpperCornerZ(), claim.getLowerCornerZ(), start_x, start_z, end_x, end_z);
+
+        ErrorType val = verify.apply(arr);
+
+        if (val != ErrorType.NONE)
+            return val;
+
+        int newUpperX = arr[0];
+        int newUpperZ = arr[2];
+        int newLowerX = arr[1];
+        int newLowerZ = arr[3];
+
+        if (isTooSmall(newUpperX, newUpperZ, newLowerX, newLowerZ)){
+            return ErrorType.TOO_SMALL;
+        }
+
+        if (arr[4] == 1) {
+            removeChunksForClaim(claim);
+
+            claim.setUpperCornerX(newUpperX);
+            claim.setUpperCornerZ(newUpperZ);
+            claim.setLowerCornerX(newLowerX);
+            claim.setLowerCornerZ(newLowerZ);
+
+            loadChunksForClaim(claim);
+
+            claim.setResizing(false);
+            return ErrorType.NONE;
+        } else {
+            claim.setResizing(false);
+            return ErrorType.CANNOT_FLIP_ON_RESIZE;
+        }
+    }
+
+    private static int[] calculateResize(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z, int End_x, int End_z) {
+        /*
+            Works for any size changes: corners or sides.
+            Note:
+            NWCorner_x defines the West Line
+            SECorner_x defines the East Line
+
+            NWCorner_z defines the North Line
+            SECorner_z defines the South Line
+         */
+
+        int newNWCorner_x = NWCorner_x;
+        int newSECorner_x = SECorner_x;
+        int newNWCorner_z = NWCorner_z;
+        int newSECorner_z = SECorner_z;
+
+        int change = 0;
+
+        if (Start_x == NWCorner_x) {
+            /*Start is West*/
+            newNWCorner_x = End_x;
+        }
+
+        if (Start_x == SECorner_x) {
+            /*Start is East*/
+            newSECorner_x = End_x;
+        }
+
+        if (Start_z == NWCorner_z) {
+            /*Start is North*/
+            newNWCorner_z = End_z;
+        }
+
+        if (Start_z == SECorner_z) {
+            /*Start is South*/
+            newSECorner_z = End_z;
+        }
+
+        if (newSECorner_x > NWCorner_x && newNWCorner_x < SECorner_x && newSECorner_z > NWCorner_z && newNWCorner_z < SECorner_z) {
+            NWCorner_x = newNWCorner_x;
+            SECorner_x = newSECorner_x;
+            NWCorner_z = newNWCorner_z;
+            SECorner_z = newSECorner_z;
+            change = 1;
+        }
+
+        int[] arr = new int[5];
+
+        arr[0] = NWCorner_x;
+        arr[1] = SECorner_x;
+        arr[2] = NWCorner_z;
+        arr[3] = SECorner_z;
+        arr[4] = change;
+
+        return arr;
+    }
+
+    public boolean isTooSmall(int upperX, int upperZ, int lowerX, int lowerZ){
+        return ((lowerX - upperX) < 4 || (lowerZ - upperZ) < 4);
+    }
+
+    public boolean checkOverLapSurroudningClaims(int claimid, int upperX, int upperZ, int lowerX, int lowerZ, UUID world){
         long NWChunkX = upperX >> 4;
         long NWChunkZ = upperZ >> 4;
         long SEChunkX = lowerX >> 4;
@@ -204,6 +305,9 @@ public class ClaimDataManager implements Listener {
                 }
 
                 for (int id : integers){
+                    if (id == claimid)
+                        continue;
+
                     Claim claim = getClaim(id);
                     if (!claims.contains(claim))
                         claims.add(claim);
@@ -256,6 +360,15 @@ public class ClaimDataManager implements Listener {
             map.computeIfAbsent(entry.getKey(), (id) -> new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());
             integers.add(claim.getId());
+        }
+    }
+
+    private void removeChunksForClaim(Claim claim){
+        Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(claim.getWorld());
+        for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
+            map.computeIfAbsent(entry.getKey(), (id) -> new ArrayList<>());
+            ArrayList<Integer> integers = map.get(entry.getKey().longValue());
+            integers.remove(claim.getId());
         }
     }
 

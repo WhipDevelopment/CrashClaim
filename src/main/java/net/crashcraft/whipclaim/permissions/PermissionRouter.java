@@ -3,6 +3,7 @@ package net.crashcraft.whipclaim.permissions;
 import net.crashcraft.whipclaim.claimobjects.*;
 import org.bukkit.Material;
 
+import java.security.Permission;
 import java.util.UUID;
 
 public class PermissionRouter {
@@ -23,40 +24,57 @@ public class PermissionRouter {
     }
 
     public static int getLayeredPermission(PermissionSet global, PermissionSet main, PermissionRoute route){
-        return processPerm(route.getPerm(global), route.getPerm(main));
+        return processPerm(route.getPerm(global), main == null ? PermState.NUETRAL : route.getPerm(main));
     }
 
     public static int getLayeredPermission(Claim parent, SubClaim subClaim, UUID uuid, PermissionRoute route){
         PermissionGroup parentPerms = parent.getPerms();
         if (subClaim == null){
-            return getLayeredPermission(parentPerms.getPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), route);
+            PermissionSet main = parentPerms.getPlayerPermissionSet(uuid);
+            if (main == null){
+                return route.getPerm(parentPerms.getPermissionSet());
+            } else return getLayeredPermission(parentPerms.getPermissionSet(), main, route);
         } else {
-            PermissionGroup subPerms = parent.getPerms();
+            PermissionGroup subPerms = subClaim.getPerms();
+
+            PermissionSet parentMainSet = parentPerms.getPlayerPermissionSet(uuid);
+            PermissionSet subMainSet = subPerms.getPlayerPermissionSet(uuid);
+
             return processPerm(
-                    processPerm(route.getPerm(parentPerms.getPermissionSet()), route.getPerm(parentPerms.getPlayerPermissionSet(uuid))),
-                    processPerm(route.getPerm(subPerms.getPermissionSet()), route.getPerm(subPerms.getPlayerPermissionSet(uuid)))
+                    getLayeredPermission(parentPerms.getPermissionSet(), parentMainSet, route),
+                    getLayeredPermission(subPerms.getPermissionSet(), subMainSet, route)
             );
         }
     }
 
-    public static int getLayeredContainer(Claim parent, SubClaim subClaim, UUID uuid, PermissionRoute route, Material material){
+    /*
+         if null or -1
+         treat as neutral
+     */
+
+    public static int getLayeredContainer(Claim parent, SubClaim subClaim, UUID uuid, Material material){
         PermissionGroup parentPerms = parent.getPerms();
         if (subClaim == null){
-            return getLayeredContainer(parentPerms.getPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), route, material);
+            return getLayeredContainer(parentPerms.getPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material);
         } else {
             PermissionGroup subPerms = parent.getPerms();
             return processPerm(
-                    processPerm(route.getPerm(parentPerms.getPermissionSet()), route.getListPerms(parentPerms.getPlayerPermissionSet(uuid)).get(material)),
-                    processPerm(route.getPerm(subPerms.getPermissionSet()), route.getListPerms(subPerms.getPlayerPermissionSet(uuid)).get(material))
+                    getLayeredContainer(parentPerms.getPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material),
+                    getLayeredContainer(subPerms.getPermissionSet(), subPerms.getPlayerPermissionSet(uuid), material)
             );
         }
     }
 
-    public static int getLayeredContainer(PermissionSet parent, PermissionSet secondary, PermissionRoute route, Material material){
-        int mainPerm = route.getListPerms(secondary).get(material);
-        int globalPerm = route.getListPerms(parent).get(material);
+    public static int getLayeredContainer(PermissionSet parent, PermissionSet secondary, Material material){
+        int globalPerm = PermissionRoute.CONTAINERS.getListPerms(parent).get(material);
 
-        return mainPerm == 2 ?
+        if (secondary == null){
+            return globalPerm;
+        }
+
+        int mainPerm = PermissionRoute.CONTAINERS.getListPerms(secondary).get(material);
+
+        return mainPerm == PermState.NUETRAL ?
                         globalPerm : mainPerm;
     }
 

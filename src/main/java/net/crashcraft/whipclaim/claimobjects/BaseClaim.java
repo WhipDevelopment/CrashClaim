@@ -17,6 +17,8 @@ public class BaseClaim implements Serializable {
 
     private PermissionGroup perms;
 
+    private transient boolean isResizing = false;
+
     public BaseClaim(){
 
     }
@@ -57,6 +59,30 @@ public class BaseClaim implements Serializable {
 
     public PermissionGroup getPerms() {
         return perms;
+    }
+
+    public boolean isResizing() {
+        return isResizing;
+    }
+
+    public void setResizing(boolean resizing) {
+        isResizing = resizing;
+    }
+
+    public void setUpperCornerX(int upperCornerX) {
+        this.upperCornerX = upperCornerX;
+    }
+
+    public void setUpperCornerZ(int upperCornerZ) {
+        this.upperCornerZ = upperCornerZ;
+    }
+
+    public void setLowerCornerX(int lowerCornerX) {
+        this.lowerCornerX = lowerCornerX;
+    }
+
+    public void setLowerCornerZ(int lowerCornerZ) {
+        this.lowerCornerZ = lowerCornerZ;
     }
 }
 

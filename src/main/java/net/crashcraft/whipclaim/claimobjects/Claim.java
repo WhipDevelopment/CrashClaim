@@ -50,12 +50,12 @@ public class Claim extends BaseClaim implements Serializable {
                 if (MathUtils.checkPointCollide(getLowerCornerX(), getLowerCornerZ(), getUpperCornerX(),
                         getUpperCornerZ(), location.getBlockX(), location.getBlockZ())){
 
-                    return PermissionRouter.getLayeredContainer(this, subClaim, uuid, route, material);
+                    return PermissionRouter.getLayeredContainer(this, subClaim, uuid, material);
                 }
             }
             return route.getPerm(getPerms().getPermissionSet());
         } else {
-            return PermissionRouter.getLayeredContainer(this, null, uuid, route, material);
+            return PermissionRouter.getLayeredContainer(this, null, uuid, material);
         }
     }
 
@@ -86,4 +86,6 @@ public class Claim extends BaseClaim implements Serializable {
     public void setOwner(UUID owner) {
         this.owner = owner;
     }
+
+
 }

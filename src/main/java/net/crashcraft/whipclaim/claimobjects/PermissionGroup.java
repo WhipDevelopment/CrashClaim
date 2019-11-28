@@ -19,7 +19,7 @@ public class PermissionGroup implements Serializable {
 
     }
 
-    public PermissionGroup(PermissionSet globalPermissionSet, HashMap<UUID, PermissionSet> playerPermissions) {
+    public  PermissionGroup(PermissionSet globalPermissionSet, HashMap<UUID, PermissionSet> playerPermissions) {
         this.globalPermissionSet = globalPermissionSet == null ?
                 new PermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
                         PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,

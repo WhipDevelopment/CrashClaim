@@ -30,6 +30,9 @@ public class Claim extends BaseClaim implements Serializable {
     }
 
     public int getActivePermission(UUID uuid, Location location, PermissionRoute route){   //should only be executed with a location inside the claim
+        if (uuid.equals(owner))
+            return PermState.ENABLED;
+
         if (location != null && subClaims.size() > 0){
             for (SubClaim subClaim : subClaims){
                 if (MathUtils.checkPointCollide(getLowerCornerX(), getLowerCornerZ(), getUpperCornerX(),
@@ -45,6 +48,9 @@ public class Claim extends BaseClaim implements Serializable {
     }
 
     public int getActivePermission(UUID uuid, Location location, PermissionRoute route, Material material){   //should only be executed with a location inside the claim
+        if (uuid.equals(owner))
+            return PermState.ENABLED;
+
         if (location != null && subClaims.size() > 0){
             for (SubClaim subClaim : subClaims){
                 if (MathUtils.checkPointCollide(getLowerCornerX(), getLowerCornerZ(), getUpperCornerX(),

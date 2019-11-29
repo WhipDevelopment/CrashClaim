@@ -23,12 +23,15 @@ public class VisualGroup {
     }
 
     public void removeVisual(Visual visual){
+        visual.remove();
         activeVisuals.remove(visual);
     }
 
     public void removeAllVisuals(){
-        for (Visual visual : activeVisuals){
+        for (Iterator<Visual> it = activeVisuals.iterator(); it.hasNext();){
+            Visual visual = it.next();
             visual.remove();
+            it.remove();
         }
     }
 
@@ -36,9 +39,12 @@ public class VisualGroup {
         if (activeVisuals == null)
             return;
 
-        for (Visual visual : activeVisuals){
-            if (visual.getType().equals(type))
+        for (Iterator<Visual> it = activeVisuals.iterator(); it.hasNext();){
+            Visual visual = it.next();
+            if (visual.getType().equals(type)) {
                 visual.remove();
+                it.remove();
+            }
         }
     }
 

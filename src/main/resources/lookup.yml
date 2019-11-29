@@ -1,0 +1,18 @@
+untracked-blocks:
+  - ""
+
+#An issue with the Bukkit API has required this list to add intractable block materials to an incomplete list.
+#If a block is not falling under the interaction category then add it to this list. Use the Bukkit material name.
+additional-tracked-interactables:
+  - "ACACIA_PRESSURE_PLATE"
+  - "BIRCH_PRESSURE_PLATE"
+  - "DARK_OAK_PRESSURE_PLATE"
+  - "HEAVY_WEIGHTED_PRESSURE_PLATE"
+  - "JUNGLE_PRESSURE_PLATE"
+  - "LIGHT_WEIGHTED_PRESSURE_PLATE"
+  - "SPRUCE_PRESSURE_PLATE"
+  - "OAK_PRESSURE_PLATE"
+  - "STONE_PRESSURE_PLATE"
+  - "TRIPWIRE"
+  - "REDSTONE_ORE"
+  - "FARMLAND"

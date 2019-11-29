@@ -1,6 +1,8 @@
 package net.crashcraft.whipclaim.permissions;
 
 import net.crashcraft.whipclaim.WhipClaim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
+import net.crashcraft.whipclaim.claimobjects.PermissionSet;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,12 +13,15 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class PermissionSetup {
     private ArrayList<Material> trackedContainers;
     private ArrayList<Material> untrackedBlocks;
     private ArrayList<Material> extraInteractables;
+
+    private PermissionSet ownerPermissionSet;
 
     public PermissionSetup(WhipClaim claim){
         Logger logger = claim.getLogger();
@@ -61,5 +66,42 @@ public class PermissionSetup {
                         "\n Make sure to be using the Bukkit Material names.");
             }
         }
+
+
+        //TODO remove this unneeded
+
+        HashMap<Material, Integer> temp = new HashMap<>();
+
+        for (Material material : trackedContainers){
+            temp.put(material, PermState.ENABLED);
+        }
+
+        ownerPermissionSet = new PermissionSet(PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                PermState.ENABLED,
+                temp);
+    }
+
+    public ArrayList<Material> getTrackedContainers() {
+        return trackedContainers;
+    }
+
+    public ArrayList<Material> getUntrackedBlocks() {
+        return untrackedBlocks;
+    }
+
+    public ArrayList<Material> getExtraInteractables() {
+        return extraInteractables;
+    }
+
+    public PermissionSet getOwnerPermissionSet() {
+        return ownerPermissionSet;
     }
 }

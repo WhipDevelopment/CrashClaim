@@ -92,8 +92,6 @@ public class ClaimDataManager implements Listener {
                         PermissionGroup permissionGroup = claim.getPerms();
                         ArrayList<SubClaim> subClaims = claim.getSubClaims();
 
-
-
                         for (Map.Entry<UUID, PermissionSet> entry : permissionGroup.getPlayerPermissions().entrySet()) {
                             UUID uuid = entry.getKey();
 
@@ -123,8 +121,6 @@ public class ClaimDataManager implements Listener {
                         }
 
                         logger.info("Loaded claims into admin and owner map for claim id: " + claim.getId());
-
-                        logger.info(chunkLookup.toString());
                     } catch (NumberFormatException e){
                         logger.warning("Claim file[" + file.getName() + "] had an invalid filename, continuing however that claim will not be loaded.");
                     } catch (FileNotFoundException ex){
@@ -368,7 +364,7 @@ public class ClaimDataManager implements Listener {
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
             map.computeIfAbsent(entry.getKey(), (id) -> new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());
-            integers.remove(claim.getId());
+            integers.remove(Integer.valueOf(claim.getId()));
         }
     }
 
@@ -489,6 +485,10 @@ getClaimAtLocation(int x, int z, String world){
 
         return null;
  */
+    public Long2ObjectOpenHashMap<ArrayList<Integer>> getClaimChunkMap(UUID world){
+        return chunkLookup.get(world);
+    }
+
     public ConcurrentMap<Integer, Claim> temporaryTestGetClaimMap(){
         return claimLookup.asMap();
     }

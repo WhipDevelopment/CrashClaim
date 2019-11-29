@@ -81,7 +81,7 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
     @EventHandler
     public void onClick(PlayerInteractEvent e){
-        if (e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND) && e.getClickedBlock() != null){
+        if (enabledMode.contains(e.getPlayer().getUniqueId()) && e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND) && e.getClickedBlock() != null){
             click(e.getPlayer(), e.getClickedBlock().getLocation());
         }
     }
@@ -90,7 +90,7 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
         World world = loc1.getWorld();
 
         if (world == null) {
-            cleanup(player.getUniqueId());
+            cleanup(player.getUniqueId(), true);
             throw new RuntimeException("World was null on claim mode manager click");
         }
 
@@ -132,13 +132,13 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
         if ((lowerCorner.getBlockX() - upperCorner.getBlockX()) < 4 || (lowerCorner.getBlockZ() - upperCorner.getBlockZ()) < 4) {
             player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
-            cleanup(player.getUniqueId());
+            cleanup(player.getUniqueId(),true);
             return;
         }
 
         if (manager.checkOverLapSurroudningClaims(-1, upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ(), world)){
             player.sendMessage(ChatColor.RED + "You cannot claim over an existing claim.");
-            cleanup(player.getUniqueId());
+            cleanup(player.getUniqueId(), true);
             return;
         }
 
@@ -148,18 +148,21 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
             player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
 
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+            group.removeAllVisuals();
+
             ClaimVisual claimVisual = new ClaimVisual(response.getClaim(), player.getLocation().getBlockY() - 1);
             group.addVisual(claimVisual);
 
-            visualizationManager.despawnAfter(claimVisual, 30);
-
             claimVisual.spawn();
             claimVisual.color(TeamColor.GREEN);
+
+            visualizationManager.despawnAfter(claimVisual, 30);
+
+            cleanup(player.getUniqueId(), false);
         } else {
             player.sendMessage(ChatColor.RED + "Error creating claim");
+            cleanup(player.getUniqueId(), true);
         }
-
-        cleanup(player.getUniqueId());
     }
 
     public void clickedExistingClaim(Player player, Location location, Claim claim){
@@ -181,11 +184,11 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
             switch (error){
                 case TOO_SMALL:
                     player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
-                    cleanup(uuid);
+                    cleanup(uuid, true);
                     break;
                 case CANNOT_FLIP_ON_RESIZE:
                     player.sendMessage(ChatColor.RED + "Claims cannot be flipped, please retry and grab the other edge to expand in this direction");
-                    cleanup(player.getUniqueId());
+                    cleanup(player.getUniqueId(), true);
                     break;
                 case NONE:
                     player.sendMessage(ChatColor.GREEN + "Claim has been successfully resized");
@@ -201,7 +204,7 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
                     visualizationManager.despawnAfter(visual, 30);
 
-                    cleanup(uuid);
+                    cleanup(uuid, false);
                     break;
             }
             return;
@@ -209,7 +212,8 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
 
         if (isClaimBorder(claim.getUpperCornerX(), claim.getLowerCornerX(), claim.getUpperCornerZ(),
                 claim.getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
-            if (PermissionRouter.getLayeredPermission(claim, null, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
+            if (PermissionRouter.getLayeredPermission(claim, null, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED
+                    || claim.getOwner().equals(uuid)){
 
                 clickMap.put(uuid, location);
                 resizingMap.put(uuid, claim);
@@ -234,13 +238,20 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
         }
     }
 
-    private void cleanup(UUID uuid){
+    private void cleanup(UUID uuid, boolean visuals){
         clickMap.remove(uuid);
         enabledMode.remove(uuid);
 
         if (resizingMap.containsKey(uuid)){
             resizingMap.get(uuid).setResizing(false);
             resizingMap.remove(uuid);
+        }
+
+        if (visuals) {
+            VisualGroup group = visualizationManager.fetchExistingGroup(uuid);
+            if (group != null) {
+                group.removeAllVisuals();
+            }
         }
     }
 

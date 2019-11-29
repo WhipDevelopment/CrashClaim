@@ -41,8 +41,6 @@ public abstract class Visual {
 
     public void remove(){
         getParent().getManager().despawnEntities(parent.getPlayer(), getEntityIDs());
-
-        parent.removeVisual(this);
     }
 
     public VisualType getType() {

@@ -10,6 +10,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import net.crashcraft.whipclaim.WhipClaim;
+import net.crashcraft.whipclaim.commands.ClaimModeCommand;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,8 +32,8 @@ public class VisualizationManager {
 
     private HashMap<Visual, Long> timeMap;
 
-    public VisualizationManager(WhipClaim whipClaim){
-        protocolManager = ProtocolLibrary.getProtocolManager();
+    public VisualizationManager(WhipClaim whipClaim, ProtocolManager protocolManager){
+        this.protocolManager = protocolManager;
 
         visualHashMap = new HashMap<>();
         timeMap = new HashMap<>();
@@ -61,41 +62,15 @@ public class VisualizationManager {
             for(Iterator<Map.Entry<Visual, Long>> it = timeMap.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Visual, Long> entry = it.next();
                 if (entry.getValue() <= time){
-                    entry.getKey().remove();
+                    entry.getKey().getParent().removeVisual(entry.getKey());
                     it.remove();
                 }
             }
-        },0,20);
+        },0,20L);
+    }
 
-        protocolManager.addPacketListener(
-                new PacketAdapter(whipClaim, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
-                    @Override
-                    public void onPacketReceiving(PacketEvent event){
-                        PacketContainer packet = event.getPacket();
-                        if (packet.getEntityUseActions().read(0).equals(EnumWrappers.EntityUseAction.INTERACT_AT) &&
-                                packet.getHands().read(0).equals(EnumWrappers.Hand.MAIN_HAND)){
-                            Player player = event.getPlayer();
-
-                            if (player == null)
-                                return;
-
-                            VisualGroup group = whipClaim.getVisualizationManager().fetchVisualGroup(player, false);
-
-                            if (group == null)
-                                return;
-
-                            int id = packet.getIntegers().read(0);
-
-                            for (Visual visual : group.getActiveVisuals()){
-                                Location location = visual.getEntityLocation(id);
-                                if (location != null){//TODO add this
-                                    //ClaimModeManager.clickBlock(UserCache.getUser(event.getPlayer()), location);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                });
+    public VisualGroup fetchExistingGroup(UUID uuid){
+        return visualHashMap.get(uuid);
     }
 
     public VisualGroup fetchVisualGroup(Player player, boolean create){

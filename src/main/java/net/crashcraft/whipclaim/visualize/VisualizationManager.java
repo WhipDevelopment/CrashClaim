@@ -9,8 +9,12 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
+import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.commands.ClaimModeCommand;
+import net.crashcraft.whipclaim.data.ClaimDataManager;
+import net.crashcraft.whipclaim.data.StaticClaimLogic;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -149,6 +153,47 @@ public class VisualizationManager {
             protocolManager.sendServerPacket(player, packet);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void visualizeSuroudningClaims(Player player, ClaimDataManager claimDataManager){
+        long chunkx = player.getLocation().getChunk().getX();
+        long chunkz = player.getLocation().getChunk().getZ();
+
+        Long2ObjectOpenHashMap<ArrayList<Integer>> chunks = claimDataManager.getClaimChunkMap(player.getWorld().getUID());
+
+        ArrayList<Integer> tempClaims = new ArrayList<>();
+
+        for (long x = chunkx - 6; x <= chunkx + 6; x++){
+            for (long z = chunkz + 6; z >= chunkz - 6; z--){
+                ArrayList<Integer> chu = chunks.get(StaticClaimLogic.getChunkHash(x, z));
+
+                if (chu == null)
+                    continue;
+
+                for (Integer integer : chu){
+                    if (!tempClaims.contains(integer))
+                        tempClaims.add(integer);
+                }
+            }
+        }
+
+        ArrayList<Claim> claims = new ArrayList<>();
+        for (Integer integer : tempClaims){
+            claims.add(claimDataManager.getClaim(integer));
+        }
+
+        VisualGroup group = fetchVisualGroup(player, true);
+        group.removeAllVisuals();
+
+        int y = player.getLocation().getBlockY() - 1;
+
+        for (Claim claim : claims){
+            ClaimVisual visual = new ClaimVisual(claim, y);
+            group.addVisual(visual);
+
+            visual.spawn();
+            visual.color(null);
         }
     }
 

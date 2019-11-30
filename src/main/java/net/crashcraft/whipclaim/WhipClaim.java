@@ -3,8 +3,7 @@ package net.crashcraft.whipclaim;
 import co.aikar.commands.PaperCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import net.crashcraft.whipclaim.commands.ClaimModeCommand;
-import net.crashcraft.whipclaim.commands.CommandManager;
+import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.listeners.ProtocalListener;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
@@ -37,15 +36,23 @@ public class WhipClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PermissionSetup permissionSetup = new PermissionSetup(this);
-
         visualizationManager = new VisualizationManager(this, protocolManager);
         manager = new ClaimDataManager(this);
 
         CommandManager commandManager = new CommandManager(this);
+
         ClaimModeCommand claimModeCommand = new ClaimModeCommand(this);
+        ShowClaimsCommand showClaimsCommand = new ShowClaimsCommand(visualizationManager, manager);
+        TestCommand testCommand = new TestCommand(manager);
+        HideClaimsCommand hideClaimsCommand = new HideClaimsCommand(visualizationManager);
+
         commandManager.registerCommand(claimModeCommand);
+        commandManager.registerCommand(showClaimsCommand);
+        commandManager.registerCommand(testCommand);
+        commandManager.registerCommand(hideClaimsCommand);
+
         Bukkit.getPluginManager().registerEvents(claimModeCommand, this);
+        Bukkit.getPluginManager().registerEvents(manager, this);
 
         new ProtocalListener(protocolManager, this, claimModeCommand);
     }

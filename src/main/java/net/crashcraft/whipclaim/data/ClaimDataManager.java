@@ -5,6 +5,7 @@ import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
+import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,7 +15,6 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.cache2k.Cache2kBuilder;
 import org.cache2k.IntCache;
-import org.cache2k.integration.CacheLoader;
 import org.nustaq.serialization.FSTConfiguration;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
@@ -37,6 +37,8 @@ public class ClaimDataManager implements Listener {
     private final Path dataPath;
     private final Logger logger;
 
+    private PermissionSetup permissionSetup;
+
     private HashMap<UUID, ArrayList<Integer>> ownedClaims;   // ids of claims that the user has permission to modify - used for menu lookups
     private HashMap<UUID, ArrayList<Integer>> ownedSubClaims;
 
@@ -48,6 +50,8 @@ public class ClaimDataManager implements Listener {
     public ClaimDataManager(WhipClaim plugin){
         this.plugin = plugin;
         this.logger = plugin.getLogger();
+
+        permissionSetup = new PermissionSetup(plugin);
 
         serializeConf.registerClass(Claim.class, BaseClaim.class, PermissionGroup.class, PermissionSet.class);
         dataPath = Paths.get(plugin.getDataFolder().getAbsolutePath(), "ClaimData");
@@ -149,7 +153,11 @@ public class ClaimDataManager implements Listener {
                         File file = new File(Paths.get(dataPath.toString(), id.toString()).toUri());
                         if (file.exists()){
                             FileInputStream stream = new FileInputStream(file);
-                            return readClaim(stream);
+                            Claim claim = readClaim(stream);
+
+                            fixupOwnerPerms(claim);
+
+                            return claim;
                         }
                         return null;
                     })
@@ -331,6 +339,8 @@ public class ClaimDataManager implements Listener {
         claimLookup.put(claim.getId(), claim);
         loadChunksForClaim(claim);
 
+        fixupOwnerPerms(claim);
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> saveClaim(claim));
         return true;
     }
@@ -444,8 +454,6 @@ public class ClaimDataManager implements Listener {
         Chunk chunk = e.getChunk();
         long seed = getChunkHash(chunk.getX(), chunk.getZ());
         preLoadChunk(e.getWorld().getUID(), seed);
-
-        logger.info("Chunk loaded and Claims loaded for seed: " + seed);
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
@@ -475,6 +483,11 @@ public class ClaimDataManager implements Listener {
         return null;
     }
 
+    public void fixupOwnerPerms(Claim claim){
+        PermissionGroup group = claim.getPerms();
+        group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet());
+    }
+
 /*
 getClaimAtLocation(int x, int z, String world){
         final ArrayList<ClaimObject> claimObjects = chunks.get(world).get(ClaimManager.getChunkHashFromLocation(x,z));
@@ -485,6 +498,11 @@ getClaimAtLocation(int x, int z, String world){
 
         return null;
  */
+
+    public PermissionSetup getPermissionSetup() {
+        return permissionSetup;
+    }
+
     public Long2ObjectOpenHashMap<ArrayList<Integer>> getClaimChunkMap(UUID world){
         return chunkLookup.get(world);
     }

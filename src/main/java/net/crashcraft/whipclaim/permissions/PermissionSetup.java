@@ -32,13 +32,16 @@ public class PermissionSetup {
 
         for (Material material : Material.values()){
             ItemStack stack = new ItemStack(material);
-            BlockStateMeta meta = (BlockStateMeta) stack.getItemMeta();
 
-            if (meta == null)
-                return;
+            if (stack.getItemMeta() instanceof BlockStateMeta) {
+                BlockStateMeta meta = (BlockStateMeta) stack.getItemMeta();
 
-            if (meta.getBlockState() instanceof Container){
-                trackedContainers.add(material);
+                if (meta == null)
+                    continue;
+
+                if (meta.getBlockState() instanceof Container) {
+                    trackedContainers.add(material);
+                }
             }
         }
 
@@ -66,9 +69,6 @@ public class PermissionSetup {
                         "\n Make sure to be using the Bukkit Material names.");
             }
         }
-
-
-        //TODO remove this unneeded
 
         HashMap<Material, Integer> temp = new HashMap<>();
 

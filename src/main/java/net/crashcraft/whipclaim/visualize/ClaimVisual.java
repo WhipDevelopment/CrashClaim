@@ -1,7 +1,8 @@
 package net.crashcraft.whipclaim.visualize;
 
-import net.crashcraft.whipclaim.claimobjects.BaseClaim;
-import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.permissions.PermissionRoute;
+import net.crashcraft.whipclaim.permissions.PermissionRouter;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,24 @@ public class ClaimVisual extends Visual{
 
     @Override
     public void color(TeamColor color) {
+        if (color == null){
+            PermissionGroup group = claim.getPerms();
+            System.out.println(group.getPlayerPermissions());
+            PermissionSet set = group.getPlayerPermissionSet(getParent().getPlayer().getUniqueId());
+
+            if (set == null) {
+                color = TeamColor.RED;
+            } else if (PermissionRouter.getLayeredPermission(group.getPermissionSet(), set, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
+                if (claim.isResizing()) {
+                    color = TeamColor.YELLOW;
+                } else {
+                    color =  TeamColor.GREEN;
+                }
+            } else {
+                color =  TeamColor.GOLD;
+            }
+        }
+
         getParent().getManager().colorEntities(getParent().getPlayer(), color, getEntityUUIDs());
     }
 
@@ -60,23 +79,6 @@ public class ClaimVisual extends Visual{
             return TeamColor.GOLD;
         }
     }
-
-    public TeamColor getColor() {
-        ClaimPermsObject permsObject = claim.getRAWClaimPermsForPlayer(UserCache.getUser(getOwner()).getUserID());
-
-        if (permsObject == null)
-            return TeamColor.RED;
-
-        if (permsObject.isCoOwner()){
-            if (claim.isResizing())
-                return TeamColor.YELLOW;
-
-            return TeamColor.GREEN;
-        } else {
-            return TeamColor.GOLD;
-        }
-    }
-
  */
 
     public BaseClaim getClaim() {

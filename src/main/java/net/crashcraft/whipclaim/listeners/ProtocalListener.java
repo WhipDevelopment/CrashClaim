@@ -38,7 +38,7 @@ public class ProtocalListener {
                             for (Visual visual : group.getActiveVisuals()){
                                 Location location = visual.getEntityLocation(id);
                                 if (location != null){
-                                    command.click(player, location);
+                                    command.customEntityClick(player, location);
                                     return;
                                 }
                             }

@@ -75,6 +75,8 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
         } else {
             enabledMode.add(uuid);
 
+            visualizationManager.visualizeSuroudningClaims(player, manager);
+
             player.sendMessage(ChatColor.GREEN + "Claim mode enabled, click 2 corners to claim.");
         }
     }
@@ -83,6 +85,12 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
     public void onClick(PlayerInteractEvent e){
         if (enabledMode.contains(e.getPlayer().getUniqueId()) && e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND) && e.getClickedBlock() != null){
             click(e.getPlayer(), e.getClickedBlock().getLocation());
+        }
+    }
+
+    public void customEntityClick(Player player, Location location){
+        if (enabledMode.contains(player.getUniqueId())){
+            click(player, location);
         }
     }
 

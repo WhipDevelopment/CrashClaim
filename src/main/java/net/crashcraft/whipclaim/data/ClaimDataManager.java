@@ -7,6 +7,7 @@ import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -131,6 +132,8 @@ public class ClaimDataManager implements Listener {
                         logger.warning("Claim was not found at file listed by directory");
                     } catch (IOException ex2) {
                         logger.warning("Claim failed to load into memory, skipping. file[ " + file.getName() + " ]");
+                        System.out.println(ex2.getMessage());
+                        ex2.printStackTrace();
                     } catch (ClassNotFoundException ex3) {
                         logger.warning("Claim class was not found this is fatal and" +
                                 " the server will not be able to load claims, corrupted jar file?\n " +
@@ -399,6 +402,45 @@ public class ClaimDataManager implements Listener {
         return chunks;
     }
 
+    public ClaimResponse createSubClaim(Player player, Claim claim, Location loc1, Location loc2){
+        if (!MathUtils.containedInside(claim.getUpperCornerX(), claim.getUpperCornerZ(), claim.getLowerCornerX(), claim.getLowerCornerZ(),
+                loc1.getBlockX(), loc1.getBlockZ(), loc2.getBlockX(), loc2.getBlockZ())){
+            return new ClaimResponse(false, ErrorType.OUT_OF_BOUNDS);
+        }
+
+        Location upper = StaticClaimLogic.calculateUpperCorner(loc1, loc2);
+        Location lower = StaticClaimLogic.calculateLowerCorner(loc1, loc2);
+
+        for (SubClaim subClaim : claim.getSubClaims()){
+            if (MathUtils.doOverlap(subClaim.getUpperCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerX(), subClaim.getLowerCornerZ(),
+                    upper.getBlockX(), upper.getBlockY(), lower.getBlockX(), lower.getBlockZ())){
+                return new ClaimResponse(false, ErrorType.OVERLAP_EXISITNG);
+            }
+        }
+
+        World world = loc1.getWorld();
+
+        if (world == null) {
+            return new ClaimResponse(false, ErrorType.GENERIC);
+        }
+
+        SubClaim subClaim = new SubClaim(claim,
+                requestUniqueID(),
+                upper.getBlockX(),
+                upper.getBlockZ(),
+                lower.getBlockX(),
+                lower.getBlockZ(),
+                loc1.getWorld().getUID(),
+                new PermissionGroup(null, null));
+
+        PermissionGroup permissionGroup = subClaim.getPerms();
+
+        permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
+
+        claim.addSubClaim(subClaim);
+        return new ClaimResponse(true, subClaim);
+    }
+
     private Claim readClaim(InputStream stream) throws IOException, ClassNotFoundException {
         FSTObjectInput in = new FSTObjectInput(stream);
         Claim result = (Claim)in.readObject();
@@ -485,19 +527,8 @@ public class ClaimDataManager implements Listener {
 
     public void fixupOwnerPerms(Claim claim){
         PermissionGroup group = claim.getPerms();
-        group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet());
+        group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet().clone());
     }
-
-/*
-getClaimAtLocation(int x, int z, String world){
-        final ArrayList<ClaimObject> claimObjects = chunks.get(world).get(ClaimManager.getChunkHashFromLocation(x,z));
-
-        if (claimObjects == null)
-            return null;
-
-
-        return null;
- */
 
     public PermissionSetup getPermissionSetup() {
         return permissionSetup;

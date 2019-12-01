@@ -75,7 +75,7 @@ public enum  PermissionRoute {
         @Override
         public int getPerm(PermissionSet set) {
             if (set == null)
-                return PermState.NUETRAL;
+                return PermState.NEUTRAL;
             return set.getModifyPermissions();
         }
     },
@@ -83,7 +83,7 @@ public enum  PermissionRoute {
         @Override
         public int getPerm(PermissionSet set) {
             if (set == null)
-                return PermState.NUETRAL;
+                return PermState.NEUTRAL;
             return set.getModifyClaim();
         }
     },

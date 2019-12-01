@@ -35,8 +35,8 @@ public class Claim extends BaseClaim implements Serializable {
 
         if (location != null && subClaims.size() > 0){
             for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getLowerCornerX(), getLowerCornerZ(), getUpperCornerX(),
-                        getUpperCornerZ(), location.getBlockX(), location.getBlockZ())){
+                if (MathUtils.checkPointCollide(getUpperCornerX(), getUpperCornerZ(), getLowerCornerX(),
+                        getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
 
                     return PermissionRouter.getLayeredPermission(this, subClaim, uuid, route);
                 }
@@ -53,8 +53,8 @@ public class Claim extends BaseClaim implements Serializable {
 
         if (location != null && subClaims.size() > 0){
             for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getLowerCornerX(), getLowerCornerZ(), getUpperCornerX(),
-                        getUpperCornerZ(), location.getBlockX(), location.getBlockZ())){
+                if (MathUtils.checkPointCollide(getUpperCornerX(), getUpperCornerZ(), getLowerCornerX(),
+                        getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
 
                     return PermissionRouter.getLayeredContainer(this, subClaim, uuid, material);
                 }
@@ -74,11 +74,16 @@ public class Claim extends BaseClaim implements Serializable {
     }
 
     public void addSubClaim(SubClaim subClaim){
-
+        subClaims.remove(subClaim);
     }
 
     public void removeSubClaim(int id){
-
+        for (SubClaim claim : subClaims){
+            if (claim.getId() == id){
+                subClaims.remove(claim);
+                return;
+            }
+        }
     }
 
     public ArrayList<SubClaim> getSubClaims(){

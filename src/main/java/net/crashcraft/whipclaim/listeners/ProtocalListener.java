@@ -8,7 +8,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.crashcraft.whipclaim.WhipClaim;
-import net.crashcraft.whipclaim.commands.ClaimModeCommand;
+import net.crashcraft.whipclaim.commands.modes.ClaimModeCommand;
 import net.crashcraft.whipclaim.visualize.Visual;
 import net.crashcraft.whipclaim.visualize.VisualGroup;
 import org.bukkit.Location;

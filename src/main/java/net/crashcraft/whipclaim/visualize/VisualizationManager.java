@@ -1,18 +1,12 @@
 package net.crashcraft.whipclaim.visualize;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
-import net.crashcraft.whipclaim.commands.ClaimModeCommand;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
 import org.apache.commons.lang.ArrayUtils;

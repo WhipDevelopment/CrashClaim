@@ -3,7 +3,6 @@ package net.crashcraft.whipclaim.permissions;
 import net.crashcraft.whipclaim.claimobjects.*;
 import org.bukkit.Material;
 
-import java.security.Permission;
 import java.util.UUID;
 
 public class PermissionRouter {
@@ -24,7 +23,7 @@ public class PermissionRouter {
     }
 
     public static int getLayeredPermission(PermissionSet global, PermissionSet main, PermissionRoute route){
-        return processPerm(route.getPerm(global), main == null ? PermState.NUETRAL : route.getPerm(main));
+        return processPerm(route.getPerm(global), main == null ? PermState.NEUTRAL : route.getPerm(main));
     }
 
     public static int getLayeredPermission(Claim parent, SubClaim subClaim, UUID uuid, PermissionRoute route){
@@ -74,7 +73,7 @@ public class PermissionRouter {
 
         int mainPerm = PermissionRoute.CONTAINERS.getListPerms(secondary).get(material);
 
-        return mainPerm == PermState.NUETRAL ?
+        return mainPerm == PermState.NEUTRAL ?
                         globalPerm : mainPerm;
     }
 

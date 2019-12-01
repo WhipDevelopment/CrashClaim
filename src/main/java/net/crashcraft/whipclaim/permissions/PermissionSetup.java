@@ -48,23 +48,27 @@ public class PermissionSetup {
         FileConfiguration lookup = YamlConfiguration.loadConfiguration(new File(Paths.get(claim.getDataFolder().getAbsolutePath(), "lookup.yml").toUri()));
 
         for (String name : lookup.getStringList("untracked-blocks")){
-            Material material = Material.getMaterial(name);
+            if (name.equals(""))
+                continue;
 
-            if (material != null){
+            try {
+                Material material = Material.valueOf(name);
                 untrackedBlocks.add(material);
                 trackedContainers.remove(material);
-            } else {
+            } catch (IllegalArgumentException e){
                 logger.warning("Material was not found whole parsing lookup.yml -> untracked-blocks: " + name +
                         "\n Make sure to be using the Bukkit Material names.");
             }
         }
 
         for (String name : lookup.getStringList("additional-tracked-interactables")){
-            Material material = Material.getMaterial(name);
+            if (name.equals(""))
+                continue;
 
-            if (material != null){
+            try {
+                Material material = Material.valueOf(name);
                 extraInteractables.add(material);
-            } else {
+            } catch (IllegalArgumentException e){
                 logger.warning("Material was not found whole parsing lookup.yml -> additional-tracked-interactables: " + name +
                         "\n Make sure to be using the Bukkit Material names.");
             }
@@ -77,6 +81,7 @@ public class PermissionSetup {
         }
 
         ownerPermissionSet = new PermissionSet(PermState.ENABLED,
+                PermState.ENABLED,
                 PermState.ENABLED,
                 PermState.ENABLED,
                 PermState.ENABLED,

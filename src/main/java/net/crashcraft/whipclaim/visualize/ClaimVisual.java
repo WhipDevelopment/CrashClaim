@@ -44,7 +44,6 @@ public class ClaimVisual extends Visual{
     public void color(TeamColor color) {
         if (color == null){
             PermissionGroup group = claim.getPerms();
-            System.out.println(group.getPlayerPermissions());
             PermissionSet set = group.getPlayerPermissionSet(getParent().getPlayer().getUniqueId());
 
             if (set == null) {

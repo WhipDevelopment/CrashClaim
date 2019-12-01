@@ -1,8 +1,5 @@
-package net.crashcraft.whipclaim.commands;
+package net.crashcraft.whipclaim.commands.modes;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import net.crashcraft.whipclaim.WhipClaim;
@@ -28,9 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-@CommandAlias("claim")
-@CommandPermission("whipclaim.user.claim")
-public class ClaimModeCommand extends BaseCommand implements Listener {
+public class ClaimModeCommand implements Listener, ClaimModeProvider {
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
 
@@ -38,34 +33,15 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
     private HashMap<UUID, Location> clickMap;
     private HashMap<UUID, Claim> resizingMap;
 
-    public ClaimModeCommand(WhipClaim whipClaim){
-        manager = whipClaim.getDataManager();
-        visualizationManager = whipClaim.getVisualizationManager();
+    public ClaimModeCommand(ClaimDataManager manager, VisualizationManager visualizationManage){
+        this.manager = manager;
+        this.visualizationManager = visualizationManage;
 
         enabledMode = new ArrayList<>();
         clickMap = new HashMap<>();
         resizingMap = new HashMap<>();
     }
 
-    @Subcommand("debug")
-    public void debug(Player player){
-        Location location = player.getLocation();
-        ArrayList<Integer> claims = manager.temporaryTestGetChunkMap().get(player.getWorld().getUID()).get(StaticClaimLogic.getChunkHashFromLocation(location.getBlockX(), location.getBlockZ()));
-        ArrayList<Claim> claimList = new ArrayList<>();
-        for (Integer integer : claims){
-            claimList.add(manager.temporaryTestGetClaimMap().get(integer));
-        }
-
-        for (Claim claim : claimList){
-            System.out.println(claim.getId());
-            System.out.println("|--Ux  " + claim.getUpperCornerX());
-            System.out.println("|--Uz  " + claim.getUpperCornerZ());
-            System.out.println("|--Lx  " + claim.getLowerCornerX());
-            System.out.println("|--Lz  " + claim.getLowerCornerZ());
-        }
-    }
-
-    @Default
     public void onClaim(Player player){
         UUID uuid = player.getUniqueId();
         if (enabledMode.contains(uuid)){
@@ -261,6 +237,11 @@ public class ClaimModeCommand extends BaseCommand implements Listener {
                 group.removeAllVisuals();
             }
         }
+    }
+
+    @Override
+    public void cleanup(UUID uuid) {
+        cleanup(uuid, true);
     }
 
     private static boolean isClaimBorder(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z) {

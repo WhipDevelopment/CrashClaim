@@ -6,5 +6,6 @@ public enum TeamColor {
     GREEN,
     YELLOW,
     DARK_RED,
-    DARK_GREEN
+    DARK_GREEN,
+    WHITE
 }

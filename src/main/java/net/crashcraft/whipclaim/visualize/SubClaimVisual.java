@@ -22,7 +22,7 @@ public class SubClaimVisual extends ClaimVisual{
             if (set == null) {
                 color = TeamColor.RED;
             } else if (PermissionRouter.getLayeredPermission(group.getPermissionSet(), set, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
-                if (subClaim.isResizing()) {
+                if (subClaim.isEditing()) {
                     color = TeamColor.YELLOW;
                 } else {
                     color =  TeamColor.GREEN;

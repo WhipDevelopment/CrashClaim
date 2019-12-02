@@ -17,7 +17,7 @@ public class BaseClaim implements Serializable {
 
     private PermissionGroup perms;
 
-    private transient boolean isResizing = false;
+    private transient boolean isEditing = false;
 
     public BaseClaim(){
 
@@ -61,12 +61,12 @@ public class BaseClaim implements Serializable {
         return perms;
     }
 
-    public boolean isResizing() {
-        return isResizing;
+    public boolean isEditing() {
+        return isEditing;
     }
 
-    public void setResizing(boolean resizing) {
-        isResizing = resizing;
+    public void setEditing(boolean editing) {
+        isEditing = editing;
     }
 
     public void setUpperCornerX(int upperCornerX) {

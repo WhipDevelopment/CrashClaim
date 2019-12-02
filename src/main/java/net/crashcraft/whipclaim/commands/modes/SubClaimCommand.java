@@ -1,12 +1,7 @@
 package net.crashcraft.whipclaim.commands.modes;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Default;
 import net.crashcraft.whipclaim.claimobjects.*;
-import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.data.ClaimResponse;
-import net.crashcraft.whipclaim.data.MathUtils;
+import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.visualize.*;
@@ -27,6 +22,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
 
     private HashMap<UUID, Claim> edditingMap;
     private HashMap<UUID, Location> clickMap;
+    private HashMap<UUID, SubClaim> resizingMap;
 
     public SubClaimCommand(ClaimDataManager manager, VisualizationManager visualizationManager){
         this.manager = manager;
@@ -34,6 +30,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
 
         edditingMap = new HashMap<>();
         clickMap = new HashMap<>();
+        resizingMap = new HashMap<>();
     }
 
     public void subclaim(Player player){
@@ -45,11 +42,18 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
             Location location = player.getLocation();
             Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());
             if (claim != null) {
+                if (claim.isEditing()){
+                    player.sendMessage(ChatColor.RED + "The claim your are attempting to resize is already being resized.");
+                    return;
+                }
+
                 PermissionGroup group = claim.getPerms();
                 PermissionSet main = group.getPlayerPermissionSet(uuid);
 
                 if (main != null && PermissionRouter.getLayeredPermission(group.getPermissionSet(), main, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
                     edditingMap.put(uuid, claim);
+
+                    claim.setEditing(true);
 
                     visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
@@ -87,10 +91,72 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
             return;
         }
 
-        if (clickMap.containsKey(uuid)){
+        if (resizingMap.containsKey(uuid)) {
+            Location loc1 = clickMap.get(uuid);
+            SubClaim subClaim = resizingMap.get(uuid);
+
+            ErrorType error = manager.resizeSubClaim(subClaim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ(),
+                    (arr) -> {
+                        //TODO  Do payments in here
+                        return ErrorType.NONE;
+                    });
+
+            switch (error){
+                case TOO_SMALL:
+                    player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
+                    cleanup(uuid, true);
+                    break;
+                case CANNOT_FLIP_ON_RESIZE:
+                    player.sendMessage(ChatColor.RED + "Claims cannot be flipped, please retry and grab the other edge to expand in this direction");
+                    cleanup(player.getUniqueId(), true);
+                    break;
+                case NONE:
+                    player.sendMessage(ChatColor.GREEN + "Claim has been successfully resized");
+
+                    VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+
+                    visualizationManager.visualizeSuroudningSubClaims(claim, player);
+
+                    for (Visual visual : group.getActiveVisuals()){
+                        visualizationManager.despawnAfter(visual, 30);
+                    }
+
+                    cleanup(uuid, false);
+                    break;
+            }
+        } else if (clickMap.containsKey(uuid)){
             formSubClaim(claim, player, location, clickMap.get(uuid));
         } else {
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+
+            for (SubClaim subClaim : claim.getSubClaims()){
+                if (StaticClaimLogic.isClaimBorder(subClaim.getUpperCornerX(), subClaim.getLowerCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerZ(),
+                        location.getBlockX(), location.getBlockZ())){
+                    resizingMap.put(uuid, subClaim);
+                    clickMap.put(uuid, location);
+
+                    claim.setEditing(true);
+
+                    player.sendMessage(ChatColor.GREEN + "Click another location to resize the claims. ");
+
+                    for (Visual visual : group.getActiveVisuals()){
+                        if (visual instanceof SubClaimVisual){
+                            SubClaimVisual subClaimVisual = (SubClaimVisual) visual;
+                            if (subClaimVisual.getClaim() instanceof SubClaim){
+                                SubClaim visualSubClaim = (SubClaim) subClaimVisual.getClaim();
+
+                                if (visualSubClaim.equals(subClaim)){
+                                    subClaimVisual.color(TeamColor.YELLOW);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    return;
+                }
+            }
+
+
             MarkerVisual markerVisual = new MarkerVisual(location.add(0, 1, 0));
 
             group.addVisual(markerVisual);
@@ -137,8 +203,17 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
     }
 
     private void cleanup(UUID uuid, boolean visuals){
+        if (edditingMap.containsKey(uuid)){
+            edditingMap.get(uuid).setEditing(false);
+        }
+
+        if (resizingMap.containsKey(uuid)){
+            resizingMap.get(uuid).getParent().setEditing(false);
+        }
+
         edditingMap.remove(uuid);
         clickMap.remove(uuid);
+        resizingMap.remove(uuid);
 
         if (visuals) {
             VisualGroup group = visualizationManager.fetchExistingGroup(uuid);

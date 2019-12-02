@@ -219,6 +219,20 @@ public class VisualizationManager {
         }
     }
 
+    public void visualizeSuroudningSubClaims(Player player, int y, ArrayList<SubClaim> claims){
+        VisualGroup group = fetchVisualGroup(player, true);
+        group.removeAllVisuals();
+
+        for (SubClaim subClaim : claims){
+            SubClaimVisual subClaimVisual = new SubClaimVisual(subClaim, y);
+
+            group.addVisual(subClaimVisual);
+
+            subClaimVisual.spawn();
+            subClaimVisual.color(null);
+        }
+    }
+
     private int[] toPrimitiveIntegerArrays(ArrayList<Integer> array){
         return ArrayUtils.toPrimitive(array.toArray(new Integer[0]));
     }

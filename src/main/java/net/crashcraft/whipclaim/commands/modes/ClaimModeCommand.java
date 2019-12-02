@@ -1,8 +1,5 @@
 package net.crashcraft.whipclaim.commands.modes;
 
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
-import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
@@ -46,8 +43,8 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
         UUID uuid = player.getUniqueId();
         if (enabledMode.contains(uuid)){
             player.sendMessage(ChatColor.RED + "Claim mode disabled");
-            enabledMode.remove(uuid);
-            clickMap.remove(uuid);
+
+            cleanup(uuid);
         } else {
             enabledMode.add(uuid);
 
@@ -194,7 +191,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             return;
         }
 
-        if (isClaimBorder(claim.getUpperCornerX(), claim.getLowerCornerX(), claim.getUpperCornerZ(),
+        if (StaticClaimLogic.isClaimBorder(claim.getUpperCornerX(), claim.getLowerCornerX(), claim.getUpperCornerZ(),
                 claim.getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
             if (PermissionRouter.getLayeredPermission(claim, null, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED
                     || claim.getOwner().equals(uuid)){
@@ -202,7 +199,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                 clickMap.put(uuid, location);
                 resizingMap.put(uuid, claim);
 
-                claim.setResizing(true);
+                claim.setEditing(true);
 
                 VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
@@ -227,7 +224,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
         enabledMode.remove(uuid);
 
         if (resizingMap.containsKey(uuid)){
-            resizingMap.get(uuid).setResizing(false);
+            resizingMap.get(uuid).setEditing(false);
             resizingMap.remove(uuid);
         }
 
@@ -242,9 +239,5 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
     @Override
     public void cleanup(UUID uuid) {
         cleanup(uuid, true);
-    }
-
-    private static boolean isClaimBorder(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z) {
-        return Start_x == NWCorner_x || Start_x == SECorner_x || Start_z == NWCorner_z || Start_z == SECorner_z;
     }
 }

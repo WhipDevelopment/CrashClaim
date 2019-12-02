@@ -49,7 +49,7 @@ public class ClaimVisual extends Visual{
             if (set == null) {
                 color = TeamColor.RED;
             } else if (PermissionRouter.getLayeredPermission(group.getPermissionSet(), set, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
-                if (claim.isResizing()) {
+                if (claim.isEditing()) {
                     color = TeamColor.YELLOW;
                 } else {
                     color =  TeamColor.GREEN;
@@ -70,7 +70,7 @@ public class ClaimVisual extends Visual{
             return TeamColor.RED;
 
         if (permsObject.isCoOwner()){
-            if (claim.isResizing())
+            if (claim.isEditing())
                 return TeamColor.YELLOW;
 
             return TeamColor.GREEN;

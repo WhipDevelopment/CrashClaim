@@ -13,7 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldSaveEvent;
 import org.cache2k.Cache2kBuilder;
 import org.cache2k.IntCache;
 import org.nustaq.serialization.FSTConfiguration;
@@ -206,8 +205,6 @@ public class ClaimDataManager implements Listener {
     }
 
     public ErrorType resizeClaim(Claim claim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
-        claim.setResizing(true);
-
         int[] arr = calculateResize(claim.getUpperCornerX(), claim.getLowerCornerX(),
                 claim.getUpperCornerZ(), claim.getLowerCornerZ(), start_x, start_z, end_x, end_z);
 
@@ -235,10 +232,40 @@ public class ClaimDataManager implements Listener {
 
             loadChunksForClaim(claim);
 
-            claim.setResizing(false);
             return ErrorType.NONE;
         } else {
-            claim.setResizing(false);
+            return ErrorType.CANNOT_FLIP_ON_RESIZE;
+        }
+    }
+
+    public ErrorType resizeSubClaim(SubClaim subClaim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
+        int[] arr = calculateResize(subClaim.getUpperCornerX(), subClaim.getLowerCornerX(),
+                subClaim.getUpperCornerZ(), subClaim.getLowerCornerZ(), start_x, start_z, end_x, end_z);
+
+        ErrorType val = verify.apply(arr);
+
+        if (val != ErrorType.NONE)
+            return val;
+
+        int newUpperX = arr[0];
+        int newUpperZ = arr[2];
+        int newLowerX = arr[1];
+        int newLowerZ = arr[3];
+
+        if (isTooSmall(newUpperX, newUpperZ, newLowerX, newLowerZ)){
+            return ErrorType.TOO_SMALL;
+        }
+
+        if (arr[4] == 1) {
+            subClaim.setUpperCornerX(newUpperX);
+            subClaim.setUpperCornerZ(newUpperZ);
+            subClaim.setLowerCornerX(newLowerX);
+            subClaim.setLowerCornerZ(newLowerZ);
+
+            subClaim.setEditing(false);
+            return ErrorType.NONE;
+        } else {
+            subClaim.setEditing(false);
             return ErrorType.CANNOT_FLIP_ON_RESIZE;
         }
     }

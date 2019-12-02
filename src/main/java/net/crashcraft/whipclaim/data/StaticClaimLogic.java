@@ -29,4 +29,9 @@ public class StaticClaimLogic {
     public static Location calculateLowerCorner(int x, int z, int x2, int z2, UUID world){
         return new Location(Bukkit.getWorld(world), Math.max(x, x2), 0, Math.max(z, z2));
     }
+
+    public static boolean isClaimBorder(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z) {
+        return Start_x == NWCorner_x || Start_x == SECorner_x || Start_z == NWCorner_z || Start_z == SECorner_z;
+    }
+
 }

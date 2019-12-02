@@ -57,7 +57,7 @@ public class WhipClaim extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        manager.saveClaims();
+        manager.saveClaimsSync();
     }
 
     public static WhipClaim getPlugin() {

@@ -53,6 +53,7 @@ public class ClaimDataManager implements Listener {
     public ClaimDataManager(WhipClaim plugin){
         this.plugin = plugin;
         this.logger = plugin.getLogger();
+        this.isSaving = false;
 
         permissionSetup = new PermissionSetup(plugin);
 
@@ -443,6 +444,9 @@ public class ClaimDataManager implements Listener {
         permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
 
         claim.addSubClaim(subClaim);
+
+        claim.setToSave(true);
+
         return new ClaimResponse(true, subClaim);
     }
 
@@ -487,12 +491,14 @@ public class ClaimDataManager implements Listener {
     public void saveClaims(){
         Collection<Claim> claims = claimLookup.asMap().values();
 
-        setSaving(true);
-
         if (isSaving){
             logger.warning("Tried to save claims while claims were already being saved. If this is on shutdown ignore it.");
             return;
         }
+
+        setSaving(true);
+
+        logger.info("Starting to save claims");
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             for (Claim claim : claims){
@@ -501,8 +507,20 @@ public class ClaimDataManager implements Listener {
                 }
             }
 
+            logger.info("Finished save successfully");
+
             this.setSaving(false);
         });
+    }
+
+    public void saveClaimsSync(){
+        Collection<Claim> claims = claimLookup.asMap().values();
+
+        for (Claim claim : claims){
+            if (claim.isToSave()) {
+                saveClaim(claim);
+            }
+        }
     }
 
     @EventHandler

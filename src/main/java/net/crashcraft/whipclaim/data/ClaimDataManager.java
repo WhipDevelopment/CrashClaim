@@ -49,6 +49,7 @@ public class ClaimDataManager implements Listener {
     private int idCounter;
 
     private boolean isSaving;
+    private boolean reSave;
 
     public ClaimDataManager(WhipClaim plugin){
         this.plugin = plugin;
@@ -495,6 +496,7 @@ public class ClaimDataManager implements Listener {
 
         if (isSaving){
             logger.warning("Tried to save claims while claims were already being saved. If this is on shutdown ignore it.");
+            setReSave(true);
             return;
         }
 
@@ -512,16 +514,23 @@ public class ClaimDataManager implements Listener {
             logger.info("Finished save successfully");
 
             this.setSaving(false);
+
+            if (reSave){
+                logger.info("ReSaving claims to disk.");
+
+                setReSave(false);
+                saveClaims();
+            }
         });
     }
 
-    public void saveClaimsSync(){
+    public void saveClaimsSync(){   //Force save all data - shutdown
         Collection<Claim> claims = claimLookup.asMap().values();
 
+        Bukkit.getScheduler().cancelTasks(plugin);  //Stop tasks here to prevent ReSaving old data over new data
+
         for (Claim claim : claims){
-            if (claim.isToSave()) {
-                saveClaim(claim);
-            }
+            saveClaim(claim);
         }
     }
 
@@ -597,5 +606,13 @@ public class ClaimDataManager implements Listener {
 
     public synchronized void setSaving(boolean saving) {
         isSaving = saving;
+    }
+
+    public synchronized boolean isReSave() {
+        return reSave;
+    }
+
+    public synchronized void setReSave(boolean reSave) {
+        this.reSave = reSave;
     }
 }

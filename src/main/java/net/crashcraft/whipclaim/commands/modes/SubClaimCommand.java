@@ -51,15 +51,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
                 if (main != null && PermissionRouter.getLayeredPermission(group.getPermissionSet(), main, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
                     edditingMap.put(uuid, claim);
 
-                    VisualGroup visualGroup = visualizationManager.fetchVisualGroup(player, true);
-
-                    visualGroup.removeAllVisuals();
-
-                    ClaimVisual visual = new ClaimVisual(claim, player.getLocation().getBlockY() - 1);
-                    visualGroup.addVisual(visual);
-
-                    visual.spawn();
-                    visual.color(TeamColor.WHITE);
+                    visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
                     player.sendMessage(ChatColor.GREEN + "Sub Claiming mode enabled.");
                 } else {
@@ -99,7 +91,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
             formSubClaim(claim, player, location, clickMap.get(uuid));
         } else {
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
-            MarkerVisual markerVisual = new MarkerVisual(location);
+            MarkerVisual markerVisual = new MarkerVisual(location.add(0, 1, 0));
 
             group.addVisual(markerVisual);
 
@@ -118,19 +110,16 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
             group.removeAllVisuals();
-            ClaimVisual claimVisual = new ClaimVisual(claim, player.getLocation().getBlockY() - 1);
-            SubClaimVisual subClaimVisual = new SubClaimVisual(response.getClaim(), player.getLocation().getBlockY());
 
-            group.addVisual(claimVisual);
-            group.addVisual(subClaimVisual);
+            visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
-            claimVisual.spawn();
-            subClaimVisual.spawn();
-
-            claimVisual.color(TeamColor.WHITE);
-            subClaimVisual.color(null);
+            for (Visual visual : group.getActiveVisuals()){
+                visualizationManager.despawnAfter(visual, 30);
+            }
 
             player.sendMessage(ChatColor.GREEN + "Successfully created sub claim.");
+
+            cleanup(player.getUniqueId(), false);
         } else {
             switch (response.getError()){
                 case OUT_OF_BOUNDS:
@@ -143,6 +132,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
                     player.sendMessage(ChatColor.RED + "There was an error creating the sub claim.");
                     break;
             }
+            cleanup(player.getUniqueId(), true);
         }
     }
 

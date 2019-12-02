@@ -74,7 +74,7 @@ public class Claim extends BaseClaim implements Serializable {
     }
 
     public void addSubClaim(SubClaim subClaim){
-        subClaims.remove(subClaim);
+        subClaims.add(subClaim);
     }
 
     public void removeSubClaim(int id){

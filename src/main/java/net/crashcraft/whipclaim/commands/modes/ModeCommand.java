@@ -3,11 +3,14 @@ package net.crashcraft.whipclaim.commands.modes;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Subcommand;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
+import net.crashcraft.whipclaim.listeners.ProtocalListener;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +28,7 @@ public class ModeCommand extends BaseCommand {
 
     private HashMap<UUID, ClaimModeProvider> modeState;
 
-    public ModeCommand(WhipClaim whipClaim){
+    public ModeCommand(WhipClaim whipClaim, ProtocolManager protocolManager){
         manager = whipClaim.getDataManager();
         VisualizationManager visualizationManager = whipClaim.getVisualizationManager();
 
@@ -36,6 +39,8 @@ public class ModeCommand extends BaseCommand {
         Bukkit.getPluginManager().registerEvents(claimModeCommand, whipClaim);
 
         modeState = new HashMap<>();
+
+        new ProtocalListener(protocolManager, whipClaim, claimModeCommand, subClaimCommand);
     }
 
     @CommandAlias("claim")
@@ -44,6 +49,7 @@ public class ModeCommand extends BaseCommand {
         if (modeState.containsKey(uuid)) {
             modeState.get(uuid).cleanup(uuid);
         }
+        modeState.put(uuid, claimModeCommand);
         claimModeCommand.onClaim(player);
     }
 
@@ -53,6 +59,7 @@ public class ModeCommand extends BaseCommand {
         if (modeState.containsKey(uuid)) {
             modeState.get(uuid).cleanup(uuid);
         }
+        modeState.put(uuid, subClaimCommand);
         subClaimCommand.subclaim(player);
     }
 

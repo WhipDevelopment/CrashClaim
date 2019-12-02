@@ -87,6 +87,14 @@ public enum  PermissionRoute {
             return set.getModifyClaim();
         }
     },
+    VIEW_SUB_CLAIMS{
+        @Override
+        public int getPerm(PermissionSet set) {
+            if (set == null)
+                return PermState.NEUTRAL;
+            return set.getViewSubClaims();
+        }
+    },
     CONTAINERS{
         @Override
         public int getPerm(PermissionSet set) {

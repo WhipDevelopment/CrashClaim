@@ -3,10 +3,9 @@ package net.crashcraft.whipclaim;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.whipclaim.commands.*;
-import net.crashcraft.whipclaim.commands.modes.ClaimModeCommand;
+import net.crashcraft.whipclaim.commands.modes.ModeCommand;
 import net.crashcraft.whipclaim.commands.modes.SubClaimCommand;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.listeners.ProtocalListener;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
 
@@ -40,28 +39,25 @@ public class WhipClaim extends JavaPlugin {
 
         CommandManager commandManager = new CommandManager(this);
 
-        ClaimModeCommand claimModeCommand = new ClaimModeCommand(this);
+        ModeCommand modeCommand = new ModeCommand(this, protocolManager);
+
         ShowClaimsCommand showClaimsCommand = new ShowClaimsCommand(visualizationManager, manager);
         TestCommand testCommand = new TestCommand(manager);
         HideClaimsCommand hideClaimsCommand = new HideClaimsCommand(visualizationManager);
         SubClaimCommand subClaimCommand = new SubClaimCommand(manager, visualizationManager);
 
-        commandManager.registerCommand(claimModeCommand);
         commandManager.registerCommand(showClaimsCommand);
         commandManager.registerCommand(testCommand);
         commandManager.registerCommand(hideClaimsCommand);
-        commandManager.registerCommand(subClaimCommand);
+        commandManager.registerCommand(modeCommand);
 
-        Bukkit.getPluginManager().registerEvents(claimModeCommand, this);
         Bukkit.getPluginManager().registerEvents(manager, this);
         Bukkit.getPluginManager().registerEvents(subClaimCommand, this);
-
-        new ProtocalListener(protocolManager, this, claimModeCommand);
     }
 
     @Override
     public void onDisable() {
-
+        manager.saveClaims();
     }
 
     public static WhipClaim getPlugin() {

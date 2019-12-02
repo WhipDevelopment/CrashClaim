@@ -48,6 +48,8 @@ public class ClaimDataManager implements Listener {
 
     private int idCounter;
 
+    private boolean isSaving;
+
     public ClaimDataManager(WhipClaim plugin){
         this.plugin = plugin;
         this.logger = plugin.getLogger();
@@ -169,6 +171,9 @@ public class ClaimDataManager implements Listener {
             e.printStackTrace();
             logger.info("Cache initialized with cache2k");
         }
+
+        logger.info("Starting claim saving routine");
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::saveClaims, 0, 1200);
     }
 
     public int requestUniqueID(){
@@ -482,12 +487,21 @@ public class ClaimDataManager implements Listener {
     public void saveClaims(){
         Collection<Claim> claims = claimLookup.asMap().values();
 
+        setSaving(true);
+
+        if (isSaving){
+            logger.warning("Tried to save claims while claims were already being saved. If this is on shutdown ignore it.");
+            return;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             for (Claim claim : claims){
                 if (claim.isToSave()) {
                     saveClaim(claim);
                 }
             }
+
+            this.setSaving(false);
         });
     }
 
@@ -501,11 +515,6 @@ public class ClaimDataManager implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST)
     void onWorldLoad(WorldLoadEvent e){  // make sur eon new world loads there is a cache entry
         chunkLookup.putIfAbsent(e.getWorld().getUID(), new Long2ObjectOpenHashMap<>());
-    }
-
-    @EventHandler
-    void onSave(WorldSaveEvent e){
-        saveClaims();
     }
 
     public Claim getClaim(int x, int z, UUID world){
@@ -560,5 +569,13 @@ public class ClaimDataManager implements Listener {
 
     public HashMap<UUID, ArrayList<Integer>> getOwnedSubClaims() {
         return ownedSubClaims;
+    }
+
+    public synchronized boolean isSaving() {
+        return isSaving;
+    }
+
+    public synchronized void setSaving(boolean saving) {
+        isSaving = saving;
     }
 }

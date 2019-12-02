@@ -7,8 +7,12 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
+import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
+import net.crashcraft.whipclaim.permissions.PermissionRoute;
+import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -188,6 +192,30 @@ public class VisualizationManager {
 
             visual.spawn();
             visual.color(null);
+        }
+    }
+
+    public void visualizeSuroudningSubClaims(Claim claim, Player player){
+        ArrayList<SubClaim> subClaims = claim.getSubClaims();
+        VisualGroup group = fetchVisualGroup(player, true);
+        group.removeAllVisuals();
+
+        int y = player.getLocation().getBlockY();
+
+        ClaimVisual visual = new ClaimVisual(claim, y - 1);
+
+        group.addVisual(visual);
+
+        visual.spawn();
+        visual.color(TeamColor.WHITE);
+
+        for (SubClaim subClaim : subClaims){
+            SubClaimVisual subClaimVisual = new SubClaimVisual(subClaim, y);
+
+            group.addVisual(subClaimVisual);
+
+            subClaimVisual.spawn();
+            subClaimVisual.color(null);
         }
     }
 

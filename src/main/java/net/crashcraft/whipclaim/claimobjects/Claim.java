@@ -97,6 +97,4 @@ public class Claim extends BaseClaim implements Serializable {
     public void setOwner(UUID owner) {
         this.owner = owner;
     }
-
-
 }

@@ -15,24 +15,19 @@ public class PermissionGroup implements Serializable {
     private PermissionSet globalPermissionSet;
     private HashMap<UUID, PermissionSet> playerPermissions;
 
+    private Claim parent;
+
     public PermissionGroup(){
 
     }
 
-    public PermissionGroup(PermissionSet globalPermissionSet, HashMap<UUID, PermissionSet> playerPermissions) {
+    public PermissionGroup(Claim parent, PermissionSet globalPermissionSet, HashMap<UUID, PermissionSet> playerPermissions) {
         this.globalPermissionSet = globalPermissionSet == null ?
                 new PermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
                         PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
                         PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, new HashMap<>()) : globalPermissionSet;
         this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions ;
     }
-
-/*
-    public int getActivePermission(UUID uuid, PermissionRoute route){
-        return PermissionRouter.getLayeredPermission(globalPermissionSet, playerPermissions.get(uuid), route);
-    }
-
- */
 
     public PermissionSet getPermissionSet() {
         return globalPermissionSet;
@@ -42,19 +37,18 @@ public class PermissionGroup implements Serializable {
         return playerPermissions.get(id);
     }
 
-    public void setPermissionSet(PermissionSet permissionSet) {
-        this.globalPermissionSet = permissionSet;
-    }
-
     public void setPlayerPermissionSet(UUID uuid, PermissionSet permissionSet) {
         playerPermissions.put(uuid, permissionSet);
-    }
-
-    public void setPlayerPermissions(HashMap<UUID, PermissionSet> playerPermissions) {
-        this.playerPermissions = playerPermissions;
+        parent.setToSave(true);
     }
 
     public HashMap<UUID, PermissionSet> getPlayerPermissions(){
         return playerPermissions;
     }
+
+    public void setParrent(Claim claim){
+        this.parent = claim;
+    }
+
+    //TODO add set permisison here using perms router
 }

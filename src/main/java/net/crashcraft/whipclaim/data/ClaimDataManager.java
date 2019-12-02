@@ -40,7 +40,7 @@ public class ClaimDataManager implements Listener {
 
     private PermissionSetup permissionSetup;
 
-    private HashMap<UUID, ArrayList<Integer>> ownedClaims;   // ids of claims that the user has permission to modify - used for menu lookups
+    private HashMap<UUID, ArrayList<Integer>> ownedClaims;   // ids of claims t  hat the user has permission to modify - used for menu lookups
     private HashMap<UUID, ArrayList<Integer>> ownedSubClaims;
 
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
@@ -196,8 +196,10 @@ public class ClaimDataManager implements Listener {
                 lowerCorner.getBlockX(),
                 lowerCorner.getBlockZ(),
                 upperCorner.getWorld().getUID(),
-                new PermissionGroup(null, null),
+                new PermissionGroup(null, null, null),
                 owner);
+
+        claim.getPerms().setParrent(claim);
 
         return addClaim(claim) ? new ClaimResponse(true, claim) : new ClaimResponse(false, ErrorType.FILESYSTEM_OR_MEMORY_ERROR);
     }
@@ -437,7 +439,7 @@ public class ClaimDataManager implements Listener {
                 lower.getBlockX(),
                 lower.getBlockZ(),
                 loc1.getWorld().getUID(),
-                new PermissionGroup(null, null));
+                new PermissionGroup(claim, null, null));
 
         PermissionGroup permissionGroup = subClaim.getPerms();
 

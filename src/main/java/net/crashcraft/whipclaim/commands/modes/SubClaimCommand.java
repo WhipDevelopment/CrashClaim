@@ -19,14 +19,16 @@ import java.util.UUID;
 public class SubClaimCommand implements Listener, ClaimModeProvider {
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
+    private ModeCommand command;
 
     private HashMap<UUID, Claim> edditingMap;
     private HashMap<UUID, Location> clickMap;
     private HashMap<UUID, SubClaim> resizingMap;
 
-    public SubClaimCommand(ClaimDataManager manager, VisualizationManager visualizationManager){
+    public SubClaimCommand(ClaimDataManager manager, VisualizationManager visualizationManager, ModeCommand command){
         this.manager = manager;
         this.visualizationManager = visualizationManager;
+        this.command = command;
 
         edditingMap = new HashMap<>();
         clickMap = new HashMap<>();
@@ -214,6 +216,8 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
         edditingMap.remove(uuid);
         clickMap.remove(uuid);
         resizingMap.remove(uuid);
+
+        command.signalDisabled(uuid);
 
         if (visuals) {
             VisualGroup group = visualizationManager.fetchExistingGroup(uuid);

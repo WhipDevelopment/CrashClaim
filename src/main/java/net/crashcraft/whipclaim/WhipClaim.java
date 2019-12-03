@@ -4,7 +4,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
-import net.crashcraft.whipclaim.commands.modes.SubClaimCommand;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
@@ -44,7 +43,6 @@ public class WhipClaim extends JavaPlugin {
         ShowClaimsCommand showClaimsCommand = new ShowClaimsCommand(visualizationManager, manager);
         TestCommand testCommand = new TestCommand(manager);
         HideClaimsCommand hideClaimsCommand = new HideClaimsCommand(visualizationManager);
-        SubClaimCommand subClaimCommand = new SubClaimCommand(manager, visualizationManager);
 
         commandManager.registerCommand(showClaimsCommand);
         commandManager.registerCommand(testCommand);
@@ -52,7 +50,6 @@ public class WhipClaim extends JavaPlugin {
         commandManager.registerCommand(modeCommand);
 
         Bukkit.getPluginManager().registerEvents(manager, this);
-        Bukkit.getPluginManager().registerEvents(subClaimCommand, this);
     }
 
     @Override

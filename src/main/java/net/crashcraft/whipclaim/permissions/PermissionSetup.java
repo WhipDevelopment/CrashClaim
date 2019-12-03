@@ -51,11 +51,12 @@ public class PermissionSetup {
             if (name.equals(""))
                 continue;
 
-            try {
-                Material material = Material.valueOf(name);
+            Material material = Material.getMaterial(name);
+
+            if (material != null) {
                 untrackedBlocks.add(material);
                 trackedContainers.remove(material);
-            } catch (IllegalArgumentException e){
+            } else {
                 logger.warning("Material was not found whole parsing lookup.yml -> untracked-blocks: " + name +
                         "\n Make sure to be using the Bukkit Material names.");
             }
@@ -65,13 +66,14 @@ public class PermissionSetup {
             if (name.equals(""))
                 continue;
 
-            try {
-                Material material = Material.valueOf(name);
-                extraInteractables.add(material);
-            } catch (IllegalArgumentException e){
-                logger.warning("Material was not found whole parsing lookup.yml -> additional-tracked-interactables: " + name +
-                        "\n Make sure to be using the Bukkit Material names.");
-            }
+                Material material = Material.getMaterial(name);
+
+                if (material != null) {
+                    extraInteractables.add(material);
+                } else {
+                    logger.warning("Material was not found whole parsing lookup.yml -> additional-tracked-interactables: " + name +
+                            "\n Make sure to be using the Bukkit Material names.");
+                }
         }
 
         HashMap<Material, Integer> temp = new HashMap<>();

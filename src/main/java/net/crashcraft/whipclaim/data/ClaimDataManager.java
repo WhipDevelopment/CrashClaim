@@ -471,6 +471,8 @@ public class ClaimDataManager implements Listener {
 
         PermissionGroup permissionGroup = subClaim.getPerms();
 
+        permissionGroup.setParrent(claim);
+
         permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
 
         claim.addSubClaim(subClaim);

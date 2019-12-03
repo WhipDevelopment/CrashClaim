@@ -13,6 +13,7 @@ import net.crashcraft.whipclaim.data.StaticClaimLogic;
 import net.crashcraft.whipclaim.listeners.ProtocalListener;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -32,8 +33,8 @@ public class ModeCommand extends BaseCommand {
         manager = whipClaim.getDataManager();
         VisualizationManager visualizationManager = whipClaim.getVisualizationManager();
 
-        subClaimCommand = new SubClaimCommand(manager, visualizationManager);
-        claimModeCommand = new ClaimModeCommand(manager, visualizationManager);
+        subClaimCommand = new SubClaimCommand(manager, visualizationManager, this);
+        claimModeCommand = new ClaimModeCommand(manager, visualizationManager, this);
 
         Bukkit.getPluginManager().registerEvents(subClaimCommand, whipClaim);
         Bukkit.getPluginManager().registerEvents(claimModeCommand, whipClaim);
@@ -46,8 +47,16 @@ public class ModeCommand extends BaseCommand {
     @CommandAlias("claim")
     public void onClaim(Player player){
         UUID uuid = player.getUniqueId();
+
         if (modeState.containsKey(uuid)) {
-            modeState.get(uuid).cleanup(uuid);
+            ClaimModeProvider provider = modeState.get(uuid);
+            provider.cleanup(uuid);
+
+            if (provider instanceof ClaimModeCommand){
+                modeState.remove(uuid);
+                player.sendMessage(ChatColor.RED + "Claim mode disabled");
+                return;
+            }
         }
         modeState.put(uuid, claimModeCommand);
         claimModeCommand.onClaim(player);
@@ -57,10 +66,21 @@ public class ModeCommand extends BaseCommand {
     public void onSubClaim(Player player){
         UUID uuid = player.getUniqueId();
         if (modeState.containsKey(uuid)) {
-            modeState.get(uuid).cleanup(uuid);
+            ClaimModeProvider provider = modeState.get(uuid);
+            provider.cleanup(uuid);
+
+            if (provider instanceof SubClaimCommand){
+                modeState.remove(uuid);
+                player.sendMessage(ChatColor.RED + "Sub Claim mode disabled");
+                return;
+            }
         }
         modeState.put(uuid, subClaimCommand);
         subClaimCommand.subclaim(player);
+    }
+
+    public void signalDisabled(UUID uuid){
+        modeState.remove(uuid);
     }
 
     @CommandAlias("debug")

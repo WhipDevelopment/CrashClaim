@@ -2,10 +2,8 @@ package net.crashcraft.whipclaim.commands.modes;
 
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.data.ClaimResponse;
-import net.crashcraft.whipclaim.data.ErrorType;
-import net.crashcraft.whipclaim.data.StaticClaimLogic;
+import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.visualize.*;
@@ -25,33 +23,30 @@ import java.util.UUID;
 public class ClaimModeCommand implements Listener, ClaimModeProvider {
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
+    private ModeCommand command;
 
     private ArrayList<UUID> enabledMode;
     private HashMap<UUID, Location> clickMap;
     private HashMap<UUID, Claim> resizingMap;
 
-    public ClaimModeCommand(ClaimDataManager manager, VisualizationManager visualizationManage){
+    public ClaimModeCommand(ClaimDataManager manager, VisualizationManager visualizationManage, ModeCommand command){
         this.manager = manager;
         this.visualizationManager = visualizationManage;
+        this.command = command;
 
         enabledMode = new ArrayList<>();
         clickMap = new HashMap<>();
         resizingMap = new HashMap<>();
     }
 
-    public void onClaim(Player player){
+    public void onClaim(Player player) {
         UUID uuid = player.getUniqueId();
-        if (enabledMode.contains(uuid)){
-            player.sendMessage(ChatColor.RED + "Claim mode disabled");
 
-            cleanup(uuid);
-        } else {
-            enabledMode.add(uuid);
+        enabledMode.add(uuid);
 
-            visualizationManager.visualizeSuroudningClaims(player, manager);
+        visualizationManager.visualizeSuroudningClaims(player, manager);
 
-            player.sendMessage(ChatColor.GREEN + "Claim mode enabled, click 2 corners to claim.");
-        }
+        player.sendMessage(ChatColor.GREEN + "Claim mode enabled, click 2 corners to claim.");
     }
 
     @EventHandler
@@ -149,12 +144,21 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
     public void clickedExistingClaim(Player player, Location location, Claim claim){
         UUID uuid = player.getUniqueId();
 
-        if (claim == null) {    //Already have it in the clickmap
-            claim = resizingMap.get(player.getUniqueId());
+        if (claim == null || resizingMap.containsKey(uuid)) {    //Already have it in the clickmap
+            claim = resizingMap.get(uuid);
             Location loc1 = clickMap.get(uuid);
 
             if (claim == null)
                 return;
+
+            for (SubClaim subClaim : claim.getSubClaims()){
+                if (!MathUtils.containedInside(claim.getUpperCornerX(), claim.getUpperCornerZ(), claim.getLowerCornerX(), claim.getLowerCornerZ(),
+                        subClaim.getUpperCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerX(), subClaim.getLowerCornerZ())){
+                    player.sendMessage(ChatColor.RED + "Sub claims need to stay inside of the claim when resizing,\n Delete or resize sub claims and try again.");
+                    cleanup(uuid, true);
+                    return;
+                }
+            }
 
             ErrorType error = manager.resizeClaim(claim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ(),
                     (arr) -> {
@@ -215,7 +219,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                 player.sendMessage(ChatColor.RED + "You do not have permission to modify this claim.");
             }
         } else {
-            player.sendMessage(ChatColor.RED + "Unable to claim over an existing claim.");
+           player.sendMessage(ChatColor.RED + "You need to click the border of the claim to resize it. Grabbing an edge will move it in that direction, grabbing a corner will move it in both directions relative to the corner.");
         }
     }
 
@@ -227,6 +231,8 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             resizingMap.get(uuid).setEditing(false);
             resizingMap.remove(uuid);
         }
+
+        command.signalDisabled(uuid);
 
         if (visuals) {
             VisualGroup group = visualizationManager.fetchExistingGroup(uuid);

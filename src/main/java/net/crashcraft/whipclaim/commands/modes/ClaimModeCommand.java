@@ -29,7 +29,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
     private HashMap<UUID, Location> clickMap;
     private HashMap<UUID, Claim> resizingMap;
 
-    public ClaimModeCommand(ClaimDataManager manager, VisualizationManager visualizationManage, ModeCommand command){
+    public ClaimModeCommand(ClaimDataManager manager,  VisualizationManager visualizationManage, ModeCommand command){
         this.manager = manager;
         this.visualizationManager = visualizationManage;
         this.command = command;
@@ -151,15 +151,6 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             if (claim == null)
                 return;
 
-            for (SubClaim subClaim : claim.getSubClaims()){
-                if (!MathUtils.containedInside(claim.getUpperCornerX(), claim.getUpperCornerZ(), claim.getLowerCornerX(), claim.getLowerCornerZ(),
-                        subClaim.getUpperCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerX(), subClaim.getLowerCornerZ())){
-                    player.sendMessage(ChatColor.RED + "Sub claims need to stay inside of the claim when resizing,\n Delete or resize sub claims and try again.");
-                    cleanup(uuid, true);
-                    return;
-                }
-            }
-
             ErrorType error = manager.resizeClaim(claim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ(),
                     (arr) -> {
                     //TODO  Do payments in here
@@ -170,11 +161,15 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                 case TOO_SMALL:
                     player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
                     cleanup(uuid, true);
-                    break;
+                    return;
                 case CANNOT_FLIP_ON_RESIZE:
                     player.sendMessage(ChatColor.RED + "Claims cannot be flipped, please retry and grab the other edge to expand in this direction");
                     cleanup(player.getUniqueId(), true);
-                    break;
+                    return;
+                case OVERLAP_EXISITNG:
+                    player.sendMessage(ChatColor.RED + "Sub claims need to stay inside of the claim when resizing,\n Delete or resize sub claims and try again.");
+                    cleanup(uuid, true);
+                    return;
                 case NONE:
                     player.sendMessage(ChatColor.GREEN + "Claim has been successfully resized");
 
@@ -190,9 +185,8 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                     visualizationManager.despawnAfter(visual, 30);
 
                     cleanup(uuid, false);
-                    break;
+                    return;
             }
-            return;
         }
 
         if (StaticClaimLogic.isClaimBorder(claim.getUpperCornerX(), claim.getLowerCornerX(), claim.getUpperCornerZ(),

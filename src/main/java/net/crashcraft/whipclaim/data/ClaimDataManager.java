@@ -199,7 +199,7 @@ public class ClaimDataManager implements Listener {
                 new PermissionGroup(null, null, null),
                 owner);
 
-        claim.getPerms().setParrent(claim);
+        claim.getPerms().setOwner(claim);
 
         return addClaim(claim) ? new ClaimResponse(true, claim) : new ClaimResponse(false, ErrorType.FILESYSTEM_OR_MEMORY_ERROR);
     }
@@ -217,6 +217,13 @@ public class ClaimDataManager implements Listener {
         int newUpperZ = arr[2];
         int newLowerX = arr[1];
         int newLowerZ = arr[3];
+
+        for (SubClaim subClaim : claim.getSubClaims()){
+            if (!MathUtils.containedInside(newUpperX, newUpperZ, newLowerX, newLowerZ,
+                    subClaim.getUpperCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerX(), subClaim.getLowerCornerZ())){
+                return ErrorType.OVERLAP_EXISITNG;
+            }
+        }
 
         if (isTooSmall(newUpperX, newUpperZ, newLowerX, newLowerZ)){
             return ErrorType.TOO_SMALL;
@@ -449,7 +456,7 @@ public class ClaimDataManager implements Listener {
 
         for (SubClaim subClaim : claim.getSubClaims()){
             if (MathUtils.doOverlap(subClaim.getUpperCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerX(), subClaim.getLowerCornerZ(),
-                    upper.getBlockX(), upper.getBlockY(), lower.getBlockX(), lower.getBlockZ())){
+                    upper.getBlockX(), upper.getBlockZ(), lower.getBlockX(), lower.getBlockZ())){
                 return new ClaimResponse(false, ErrorType.OVERLAP_EXISITNG);
             }
         }
@@ -470,8 +477,6 @@ public class ClaimDataManager implements Listener {
                 new PermissionGroup(claim, null, null));
 
         PermissionGroup permissionGroup = subClaim.getPerms();
-
-        permissionGroup.setParrent(claim);
 
         permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
 
@@ -595,6 +600,30 @@ public class ClaimDataManager implements Listener {
     public void fixupOwnerPerms(Claim claim){
         PermissionGroup group = claim.getPerms();
         group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet().clone());
+    }
+
+    public void addOwnedClaim(UUID uuid, Claim claim){
+        ownedClaims.computeIfAbsent(uuid, (u) -> new ArrayList<>());
+        ArrayList<Integer> arrayList = ownedClaims.get(uuid);
+        arrayList.add(claim.getId());
+    }
+
+    public void removeOwnedClaim(UUID uuid, Claim claim){
+        if (ownedClaims.containsKey(uuid)){
+            ownedClaims.get(uuid).remove(claim.getId());
+        }
+    }
+
+    public void addOwnedSubClaim(UUID uuid, Claim claim){
+        ownedSubClaims.computeIfAbsent(uuid, (u) -> new ArrayList<>());
+        ArrayList<Integer> arrayList = ownedSubClaims.get(uuid);
+        arrayList.add(claim.getId());
+    }
+
+    public void removeOwnedCSublaim(UUID uuid, Claim claim){
+        if (ownedSubClaims.containsKey(uuid)){
+            ownedSubClaims.get(uuid).remove(claim.getId());
+        }
     }
 
     public PermissionSetup getPermissionSetup() {

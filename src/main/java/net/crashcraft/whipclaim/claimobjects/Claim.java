@@ -65,10 +65,12 @@ public class Claim extends BaseClaim implements Serializable {
         }
     }
 
+    @Override
     public synchronized boolean isToSave() {
         return toSave;
     }
 
+    @Override
     public synchronized void setToSave(boolean toSave) {
         this.toSave = toSave;
     }

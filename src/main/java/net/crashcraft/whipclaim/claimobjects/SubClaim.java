@@ -17,6 +17,16 @@ public class SubClaim extends BaseClaim implements Serializable {
         this.parent = parent;
     }
 
+    @Override
+    void setToSave(boolean toSave) {
+        parent.setToSave(true);
+    }
+
+    @Override
+    boolean isToSave() {
+        return parent.isToSave();
+    }
+
     public Claim getParent() {
         return parent;
     }

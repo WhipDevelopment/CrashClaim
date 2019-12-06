@@ -3,7 +3,7 @@ package net.crashcraft.whipclaim.claimobjects;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class BaseClaim implements Serializable {
+public abstract class BaseClaim implements Serializable {
     private static final long serialVersionUID = 10L;
 
     private int id;
@@ -16,6 +16,10 @@ public class BaseClaim implements Serializable {
     private UUID world;
 
     private PermissionGroup perms;
+
+    private String name;
+    private String entryMessage;
+    private String exitMessage;
 
     private transient boolean isEditing = false;
 
@@ -32,6 +36,10 @@ public class BaseClaim implements Serializable {
         this.world = world;
         this.perms = perms;
     }
+
+    abstract void setToSave(boolean toSave);
+
+    abstract boolean isToSave();
 
     public int getId() {
         return id;
@@ -67,6 +75,33 @@ public class BaseClaim implements Serializable {
 
     public void setEditing(boolean editing) {
         isEditing = editing;
+    }
+
+    public String getName() {
+        return name == null ? Integer.toString(id) : name;
+    }
+
+    public String getEntryMessage() {
+        return entryMessage;
+    }
+
+    public String getExitMessage() {
+        return exitMessage;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        setToSave(true);
+    }
+
+    public void setEntryMessage(String entryMessage) {
+        this.entryMessage = entryMessage;
+        setToSave(true);
+    }
+
+    public void setExitMessage(String exitMessage) {
+        this.exitMessage = exitMessage;
+        setToSave(true);
     }
 
     public void setUpperCornerX(int upperCornerX) {

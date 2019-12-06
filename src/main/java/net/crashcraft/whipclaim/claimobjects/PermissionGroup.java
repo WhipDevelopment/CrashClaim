@@ -29,7 +29,7 @@ public class PermissionGroup implements Serializable {
         this.globalPermissionSet = globalPermissionSet == null ?
                 new PermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
                         PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
-                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, new HashMap<>()) : globalPermissionSet;
+                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,  new HashMap<>()) : globalPermissionSet;
         this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions ;
     }
 
@@ -44,14 +44,7 @@ public class PermissionGroup implements Serializable {
     //Used for fixing owner permissions only
     public void setPlayerPermissionSet(UUID uuid, PermissionSet permissionSet) {
         playerPermissions.put(uuid, permissionSet);
-
-        if (owner instanceof Claim){
-            Claim claim = (Claim) owner;
-            claim.setToSave(true);
-        } else if (owner instanceof SubClaim){
-            SubClaim claim = (SubClaim) owner;
-            claim.getParent().setToSave(true);
-        }
+        owner.setToSave(true);
     }
 
     public HashMap<UUID, PermissionSet> getPlayerPermissions(){
@@ -64,17 +57,21 @@ public class PermissionGroup implements Serializable {
 
     public void setPermission(PermissionRoute route, int value){
         route.setPerm(globalPermissionSet, value);
+        owner.setToSave(true);
     }
 
     public void setPlayerPermission(UUID uuid, PermissionRoute route, int value){
         route.setPerm(getPlayerPermissionSet(uuid), value);
+        owner.setToSave(true);
     }
 
     public void setContainerPermission(PermissionRoute route, int value, Material material){
         route.setListPerms(globalPermissionSet, material, value);
+        owner.setToSave(true);
     }
 
     public void setContainerPlayerPermission(UUID uuid, PermissionRoute route, int value, Material material) {
         route.setListPerms(getPlayerPermissionSet(uuid), material, value);
+        owner.setToSave(true);
     }
 }

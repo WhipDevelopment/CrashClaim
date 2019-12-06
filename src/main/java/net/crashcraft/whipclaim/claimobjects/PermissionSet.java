@@ -13,13 +13,12 @@ public class PermissionSet implements Serializable, Cloneable{
     private int entities;
     private int explosions;
     private int teleportation;
+
     private int pistons;
     private int fluids;
-    private int allowSlimes;
-
-    private int viewSubClaims;
 
     private int modifyPermissions;
+    private int viewSubClaims;
     private int modifyClaim;
 
     private HashMap<Material, Integer> containers;
@@ -28,7 +27,7 @@ public class PermissionSet implements Serializable, Cloneable{
 
     }
 
-    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int pistons, int fluids, int allowSlimes, int viewSubClaims, int modifyPermissions, int modifyClaim, HashMap<Material, Integer> containers) {
+    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int pistons, int fluids, int viewSubClaims, int modifyPermissions, int modifyClaim, HashMap<Material, Integer> containers) {
         this.build = build;
         this.interactions = interactions;
         this.entities = entities;
@@ -36,7 +35,6 @@ public class PermissionSet implements Serializable, Cloneable{
         this.teleportation = teleportation;
         this.pistons = pistons;
         this.fluids = fluids;
-        this.allowSlimes = allowSlimes;
         this.viewSubClaims = viewSubClaims;
         this.modifyPermissions = modifyPermissions;
         this.modifyClaim = modifyClaim;
@@ -101,14 +99,6 @@ public class PermissionSet implements Serializable, Cloneable{
 
     public void setFluids(int fluids) {
         this.fluids = fluids;
-    }
-
-    public int getAllowSlimes() {
-        return allowSlimes;
-    }
-
-    public void setAllowSlimes(int allowSlimes) {
-        this.allowSlimes = allowSlimes;
     }
 
     public int getViewSubClaims() {

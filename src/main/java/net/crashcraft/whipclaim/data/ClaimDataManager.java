@@ -401,7 +401,7 @@ public class ClaimDataManager implements Listener {
         Long2ObjectOpenHashMap<ArrayList<Integer>> chunks = chunkLookup.get(claim.getWorld());
 
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
-            ArrayList<Integer> chunkMap = chunks.get(entry.getKey());
+            ArrayList<Integer> chunkMap = chunks.get(entry.getKey().longValue());
             chunkMap.removeAll(entry.getValue());   //Remove all of the existing claim chunk entries
         }
     }

@@ -98,19 +98,6 @@ public enum  PermissionRoute {
             set.setFluids(value);
         }
     },
-    ALLOW_SLIMES{
-        @Override
-        public int getPerm(PermissionSet set) {
-            if (set == null)
-                return -1;
-            return set.getAllowSlimes();
-        }
-
-        @Override
-        public void setPerm(PermissionSet set, int value) {
-            set.setAllowSlimes(value);
-        }
-    },
     MODIFY_PERMISSIONS{
         @Override
         public int getPerm(PermissionSet set) {

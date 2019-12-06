@@ -8,6 +8,7 @@ import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.PermissionSet;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
+import net.crashcraft.whipclaim.menus.ClaimMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -43,6 +44,17 @@ public class TestCommand extends BaseCommand {
             for (SubClaim subClaim : claim.getSubClaims()){
                 player.sendMessage("Sub Claim: " + subClaim.getId());
             }
+        } else {
+            player.sendMessage(ChatColor.RED + "No claim");
+        }
+    }
+
+    @Subcommand("menu")
+    public void onMenuTest(Player player){
+        Location location = player.getLocation();
+        Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
+        if (claim != null){
+            new ClaimMenu(player, claim).open();
         } else {
             player.sendMessage(ChatColor.RED + "No claim");
         }

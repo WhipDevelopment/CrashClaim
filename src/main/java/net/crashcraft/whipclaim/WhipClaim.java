@@ -2,6 +2,7 @@ package net.crashcraft.whipclaim;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import dev.whip.crashutils.CrashUtils;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
@@ -16,6 +17,7 @@ public class WhipClaim extends JavaPlugin {
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
     private ProtocolManager protocolManager;
+    private CrashUtils crashUtils;
 
     @Override
     public void onLoad() {
@@ -29,6 +31,8 @@ public class WhipClaim extends JavaPlugin {
         saveDefaultConfig();
         saveResource("localization.yml", false);
         saveResource("lookup.yml", false);
+
+        this.crashUtils = new CrashUtils(this);
     }
 
     @Override
@@ -50,6 +54,8 @@ public class WhipClaim extends JavaPlugin {
         commandManager.registerCommand(modeCommand);
 
         Bukkit.getPluginManager().registerEvents(manager, this);
+
+        crashUtils.setupMenuSubSystem();
     }
 
     @Override
@@ -67,5 +73,9 @@ public class WhipClaim extends JavaPlugin {
 
     public VisualizationManager getVisualizationManager() {
         return visualizationManager;
+    }
+
+    public CrashUtils getCrashUtils() {
+        return crashUtils;
     }
 }

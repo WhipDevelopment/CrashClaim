@@ -14,12 +14,14 @@ import java.util.Arrays;
 
 public class GlobalPermissionMenu extends GUI {
     private BaseClaim claim;
-    private PermissionSet permissionSet;
+    private GlobalPermissionSet permissionSet;
+    private GUI previousMenu;
 
-    public GlobalPermissionMenu(Player player, BaseClaim claim) {
+    public GlobalPermissionMenu(Player player, BaseClaim claim, GUI previousMenu) {
         super(player, "Global Permissions", 54);
         this.claim = claim;
         this.permissionSet = claim.getPerms().getPermissionSet();
+        this.previousMenu = previousMenu;
         setupGUI();
     }
 
@@ -108,6 +110,8 @@ public class GlobalPermissionMenu extends GUI {
 
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Advanced Permissions", Material.NETHER_STAR));
+
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override
@@ -121,8 +125,15 @@ public class GlobalPermissionMenu extends GUI {
         int slot = event.getSlot();
         if (slot >= 28 && slot <= 32){
             clickPermOption(getRoute(slot - 28), PermState.ENABLED);
+            return;
         } else if (slot >= 37 && slot <= 41){
             clickPermOption(getRoute(slot - 37), PermState.DISABLE);
+            return;
+        }
+
+        if (rawItemName.equals("back")){
+            previousMenu.initialize();
+            previousMenu.open();
         }
     }
 

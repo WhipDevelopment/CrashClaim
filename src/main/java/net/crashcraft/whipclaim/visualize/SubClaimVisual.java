@@ -17,7 +17,7 @@ public class SubClaimVisual extends ClaimVisual{
 
         if (color == null){
             PermissionGroup group = parentClaim.getPerms();
-            PermissionSet set = group.getPlayerPermissionSet(getParent().getPlayer().getUniqueId());
+            PlayerPermissionSet set = group.getPlayerPermissionSet(getParent().getPlayer().getUniqueId());
 
             if (set == null) {
                 color = TeamColor.RED;

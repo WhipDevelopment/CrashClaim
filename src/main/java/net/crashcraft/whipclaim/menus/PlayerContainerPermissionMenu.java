@@ -7,6 +7,7 @@ import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.PermissionSet;
+import net.crashcraft.whipclaim.claimobjects.PlayerPermissionSet;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import org.bukkit.ChatColor;
@@ -16,6 +17,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -29,7 +31,7 @@ public class PlayerContainerPermissionMenu extends GUI {
     private GUI previousMenu;
     private UUID target;
 
-    private PermissionSet set;
+    private PlayerPermissionSet set;
 
     private HashMap<Integer, Material> trackingMap;
 
@@ -55,6 +57,9 @@ public class PlayerContainerPermissionMenu extends GUI {
         inv.clear();
         trackingMap.clear();
 
+        inv.setItem(16, createPlayerHead(target, new ArrayList<>(Arrays.asList(ChatColor.GREEN + "You are currently editing",
+                ChatColor.GREEN + "this players permissions."))));
+
         int offset = (5 * page);
 
         for (int x = 0; x < 5; x++){
@@ -64,7 +69,7 @@ public class PlayerContainerPermissionMenu extends GUI {
             Material material = containers.get(x + offset);
 
             inv.setItem(itemOffset + x, createGuiItem(
-                    CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, material.name()), material
+                    ChatColor.GOLD + WhipClaim.getPlugin().getMaterialName().getMaterialName(material), material
             ));
 
             trackingMap.put(x, material);
@@ -109,6 +114,9 @@ public class PlayerContainerPermissionMenu extends GUI {
                 inv.setItem(49, createGuiItem(ChatColor.GOLD + "Next Page", Material.ARROW));
             }
         }
+
+        inv.setItem(25, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
+        inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Admin Permissions", Material.BEACON));
 
         inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }

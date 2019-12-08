@@ -3,6 +3,7 @@ package net.crashcraft.whipclaim.permissions;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.PermissionSet;
+import net.crashcraft.whipclaim.claimobjects.PlayerPermissionSet;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,7 +22,7 @@ public class PermissionSetup {
     private ArrayList<Material> untrackedBlocks;
     private ArrayList<Material> extraInteractables;
 
-    private PermissionSet ownerPermissionSet;
+    private PlayerPermissionSet ownerPermissionSet;
 
     public PermissionSetup(WhipClaim claim){
         Logger logger = claim.getLogger();
@@ -82,17 +83,15 @@ public class PermissionSetup {
             temp.put(material, PermState.ENABLED);
         }
 
-        ownerPermissionSet = new PermissionSet(PermState.ENABLED,
+        ownerPermissionSet = new PlayerPermissionSet(PermState.ENABLED,
                 PermState.ENABLED,
                 PermState.ENABLED,
                 PermState.ENABLED,
                 PermState.ENABLED,
                 PermState.ENABLED,
+                temp,
                 PermState.ENABLED,
-                PermState.ENABLED,
-                PermState.ENABLED,
-                PermState.ENABLED,
-                temp);
+                PermState.ENABLED);
     }
 
     public ArrayList<Material> getTrackedContainers() {
@@ -107,7 +106,7 @@ public class PermissionSetup {
         return extraInteractables;
     }
 
-    public PermissionSet getOwnerPermissionSet() {
+    public PlayerPermissionSet getOwnerPermissionSet() {
         return ownerPermissionSet;
     }
 }

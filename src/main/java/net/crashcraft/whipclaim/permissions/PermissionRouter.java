@@ -22,22 +22,22 @@ public class PermissionRouter {
         return secondary == 2 ? primary : secondary;
     }
 
-    public static int getLayeredPermission(PermissionSet global, PermissionSet main, PermissionRoute route){
+    public static int getLayeredPermission(GlobalPermissionSet global, PlayerPermissionSet main, PermissionRoute route){
         return processPerm(route.getPerm(global), main == null ? PermState.NEUTRAL : route.getPerm(main));
     }
 
     public static int getLayeredPermission(Claim parent, SubClaim subClaim, UUID uuid, PermissionRoute route){
         PermissionGroup parentPerms = parent.getPerms();
         if (subClaim == null){
-            PermissionSet main = parentPerms.getPlayerPermissionSet(uuid);
+            PlayerPermissionSet main = parentPerms.getPlayerPermissionSet(uuid);
             if (main == null){
                 return route.getPerm(parentPerms.getPermissionSet());
             } else return getLayeredPermission(parentPerms.getPermissionSet(), main, route);
         } else {
             PermissionGroup subPerms = subClaim.getPerms();
 
-            PermissionSet parentMainSet = parentPerms.getPlayerPermissionSet(uuid);
-            PermissionSet subMainSet = subPerms.getPlayerPermissionSet(uuid);
+            PlayerPermissionSet parentMainSet = parentPerms.getPlayerPermissionSet(uuid);
+            PlayerPermissionSet subMainSet = subPerms.getPlayerPermissionSet(uuid);
 
             return processPerm(
                     getLayeredPermission(parentPerms.getPermissionSet(), parentMainSet, route),
@@ -64,7 +64,7 @@ public class PermissionRouter {
         }
     }
 
-    public static int getLayeredContainer(PermissionSet parent, PermissionSet secondary, Material material){
+    public static int getLayeredContainer(GlobalPermissionSet parent, PlayerPermissionSet secondary, Material material){
         int globalPerm = PermissionRoute.CONTAINERS.getPerm(parent, material);
 
         if (secondary == null){

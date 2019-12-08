@@ -6,6 +6,7 @@ import dev.whip.crashutils.CrashUtils;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
+import net.crashcraft.whipclaim.data.MaterialName;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
 
@@ -18,6 +19,8 @@ public class WhipClaim extends JavaPlugin {
     private VisualizationManager visualizationManager;
     private ProtocolManager protocolManager;
     private CrashUtils crashUtils;
+
+    private MaterialName materialName;
 
     @Override
     public void onLoad() {
@@ -39,6 +42,7 @@ public class WhipClaim extends JavaPlugin {
     public void onEnable() {
         visualizationManager = new VisualizationManager(this, protocolManager);
         manager = new ClaimDataManager(this);
+        materialName = new MaterialName();
 
         CommandManager commandManager = new CommandManager(this);
 
@@ -77,5 +81,9 @@ public class WhipClaim extends JavaPlugin {
 
     public CrashUtils getCrashUtils() {
         return crashUtils;
+    }
+
+    public MaterialName getMaterialName() {
+        return materialName;
     }
 }

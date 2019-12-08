@@ -57,7 +57,7 @@ public class ClaimDataManager implements Listener {
 
         permissionSetup = new PermissionSetup(plugin);
 
-        serializeConf.registerClass(Claim.class, BaseClaim.class, PermissionGroup.class, PermissionSet.class);
+        serializeConf.registerClass(Claim.class, BaseClaim.class, PermissionGroup.class, PermissionSet.class, PlayerPermissionSet.class, GlobalPermissionSet.class);
         dataPath = Paths.get(plugin.getDataFolder().getAbsolutePath(), "ClaimData");
 
         chunkLookup = new HashMap<>();
@@ -100,7 +100,7 @@ public class ClaimDataManager implements Listener {
                         PermissionGroup permissionGroup = claim.getPerms();
                         ArrayList<SubClaim> subClaims = claim.getSubClaims();
 
-                        for (Map.Entry<UUID, PermissionSet> entry : permissionGroup.getPlayerPermissions().entrySet()) {
+                        for (Map.Entry<UUID, PlayerPermissionSet> entry : permissionGroup.getPlayerPermissions().entrySet()) {
                             UUID uuid = entry.getKey();
 
                             if (PermissionRouter.getLayeredPermission(claim,

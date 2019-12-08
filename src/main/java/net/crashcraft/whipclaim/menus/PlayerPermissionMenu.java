@@ -1,11 +1,10 @@
 package net.crashcraft.whipclaim.menus;
 
 import dev.whip.crashutils.menusystem.GUI;
-import net.crashcraft.whipclaim.claimobjects.BaseClaim;
-import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
-import net.crashcraft.whipclaim.claimobjects.PermissionSet;
+import net.crashcraft.menu.defaultmenus.PlayerListMenu;
+import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,7 +17,7 @@ import java.util.UUID;
 
 public class PlayerPermissionMenu extends GUI {
     private PermissionGroup group;
-    private PermissionSet permissionSet;
+    private PlayerPermissionSet permissionSet;
     private UUID target;
 
     public PlayerPermissionMenu(Player player, PermissionGroup group, UUID target) {
@@ -44,6 +43,9 @@ public class PlayerPermissionMenu extends GUI {
         inv.setItem(12, createGuiItem(ChatColor.GOLD + "Interactions", Material.OAK_FENCE_GATE));
         inv.setItem(13, createGuiItem(ChatColor.GOLD + "Explosions", Material.TNT));
         inv.setItem(14, createGuiItem(ChatColor.GOLD + "Teleportation", Material.ENDER_PEARL));
+
+        inv.setItem(16, createPlayerHead(target, new ArrayList<>(Arrays.asList(ChatColor.GREEN + "You are currently editing",
+                ChatColor.GREEN + "this players permissions."))));
 
         switch (PermissionRoute.BUILD.getPerm(permissionSet)){
             case 1:
@@ -128,6 +130,8 @@ public class PlayerPermissionMenu extends GUI {
 
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Admin Permissions", Material.BEACON));
+
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override
@@ -156,6 +160,31 @@ public class PlayerPermissionMenu extends GUI {
                 break;
             case "admin permissions":
 
+                break;
+            case "back":
+                ArrayList<UUID> uuids = new ArrayList<>(group.getPlayerPermissions().keySet());
+
+                for (Player player : Bukkit.getOnlinePlayers()){
+                    if (!uuids.contains(player.getUniqueId()))
+                        uuids.add(player.getUniqueId());
+                }
+
+                uuids.remove(getPlayer().getUniqueId());    //Cant modify perms of yourself
+
+                BaseClaim claim = group.getOwner();
+                if (claim instanceof Claim){
+                    Claim parent = (Claim) claim;
+                    uuids.remove(parent.getOwner());    //Owners permissions are off limits.
+
+                    new PlayerListMenu(getPlayer(), new ClaimMenu(player, parent), uuids, (player, uuid) -> {
+                        new PlayerPermissionMenu(player, group, uuid).open();
+                        return "";
+                    }).open();
+                } else if (claim instanceof SubClaim){
+                    SubClaim subClaim = (SubClaim) claim;
+                    uuids.remove(subClaim.getParent().getOwner());    //Owners permissions are off limits.
+                }
+                break;
         }
     }
 

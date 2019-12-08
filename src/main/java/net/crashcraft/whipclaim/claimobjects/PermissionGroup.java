@@ -18,8 +18,8 @@ public class PermissionGroup implements Serializable {
      * Sub Claim will have all perms except for admin as that gets inherited
      */
 
-    private PermissionSet globalPermissionSet;
-    private HashMap<UUID, PermissionSet> playerPermissions;
+    private GlobalPermissionSet globalPermissionSet;
+    private HashMap<UUID, PlayerPermissionSet> playerPermissions;
 
     private BaseClaim owner;
 
@@ -27,42 +27,46 @@ public class PermissionGroup implements Serializable {
 
     }
 
-    public PermissionGroup(BaseClaim owner, PermissionSet globalPermissionSet, HashMap<UUID, PermissionSet> playerPermissions) {
+    public PermissionGroup(BaseClaim owner, GlobalPermissionSet globalPermissionSet, HashMap<UUID, PlayerPermissionSet> playerPermissions) {
         this.owner = owner;
         this.globalPermissionSet = globalPermissionSet == null ?
-                new PermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
-                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
-                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,  new HashMap<>()) : globalPermissionSet;
-        this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions ;
+                new GlobalPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
+                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,  new HashMap<>(),
+                        PermState.DISABLE, PermState.DISABLE) : globalPermissionSet;
+        this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions;
     }
 
-    public PermissionSet getPermissionSet() {
+    public GlobalPermissionSet getPermissionSet() {
         return globalPermissionSet;
     }
 
-    public PermissionSet getPlayerPermissionSet(UUID id) {
+    public PlayerPermissionSet getPlayerPermissionSet(UUID id) {
         if (playerPermissions.containsKey(id)) {
             return playerPermissions.get(id);
         } else {
-            PermissionSet perms = new PermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
-                    PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,  new HashMap<>());
+            PlayerPermissionSet perms = new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
+                    PermState.NEUTRAL,  new HashMap<>(), PermState.NEUTRAL, PermState.NEUTRAL);
             playerPermissions.put(id, perms);
             return perms;
         }
     }
 
     //Used for fixing owner permissions only
-    public void setPlayerPermissionSet(UUID uuid, PermissionSet permissionSet) {
+    public void setPlayerPermissionSet(UUID uuid, PlayerPermissionSet permissionSet) {
         playerPermissions.put(uuid, permissionSet);
         owner.setToSave(true);
     }
 
-    public HashMap<UUID, PermissionSet> getPlayerPermissions(){
+    public HashMap<UUID, PlayerPermissionSet> getPlayerPermissions(){
         return playerPermissions;
     }
 
     public void setOwner(BaseClaim owner){
         this.owner = owner;
+    }
+
+    public BaseClaim getOwner() {
+        return owner;
     }
 
     public void setPermission(PermissionRoute route, int value){

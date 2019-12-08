@@ -13,13 +13,7 @@ public class PermissionSet implements Serializable, Cloneable{
     private int entities;
     private int explosions;
     private int teleportation;
-
-    private int pistons;
-    private int fluids;
-
-    private int modifyPermissions;
     private int viewSubClaims;
-    private int modifyClaim;
 
     private HashMap<Material, Integer> containers;
 
@@ -27,22 +21,14 @@ public class PermissionSet implements Serializable, Cloneable{
 
     }
 
-    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int pistons, int fluids, int viewSubClaims, int modifyPermissions, int modifyClaim, HashMap<Material, Integer> containers) {
+    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers) {
         this.build = build;
         this.interactions = interactions;
         this.entities = entities;
         this.explosions = explosions;
         this.teleportation = teleportation;
-        this.pistons = pistons;
-        this.fluids = fluids;
         this.viewSubClaims = viewSubClaims;
-        this.modifyPermissions = modifyPermissions;
-        this.modifyClaim = modifyClaim;
         this.containers = containers;
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public int getBuild() {
@@ -85,22 +71,6 @@ public class PermissionSet implements Serializable, Cloneable{
         this.teleportation = teleportation;
     }
 
-    public int getPistons() {
-        return pistons;
-    }
-
-    public void setPistons(int pistons) {
-        this.pistons = pistons;
-    }
-
-    public int getFluids() {
-        return fluids;
-    }
-
-    public void setFluids(int fluids) {
-        this.fluids = fluids;
-    }
-
     public int getViewSubClaims() {
         return viewSubClaims;
     }
@@ -109,28 +79,8 @@ public class PermissionSet implements Serializable, Cloneable{
         this.viewSubClaims = viewSubClaims;
     }
 
-    public int getModifyPermissions() {
-        return modifyPermissions;
-    }
-
-    public void setModifyPermissions(int modifyPermissions) {
-        this.modifyPermissions = modifyPermissions;
-    }
-
-    public int getModifyClaim() {
-        return modifyClaim;
-    }
-
-    public void setModifyClaim(int modifyClaim) {
-        this.modifyClaim = modifyClaim;
-    }
-
     public HashMap<Material, Integer> getContainers() {
         return containers;
-    }
-
-    public void setContainers(HashMap<Material, Integer> containers) {
-        this.containers = containers;
     }
 
     public PermissionSet clone() {

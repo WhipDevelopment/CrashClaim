@@ -91,7 +91,7 @@ public class ClaimMenu extends GUI {
                 }).open();
                 break;
             case "global claim settings":
-                new GlobalPermissionMenu(player, claim).open();
+                new GlobalPermissionMenu(player, claim, this).open();
                 break;
             case "rename claim":
                 new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim name", (player, reply) -> {
@@ -134,8 +134,7 @@ public class ClaimMenu extends GUI {
                         }, player -> "").open();
                 break;
             case "back":
-                //new ClaimListMenu(getPlayer(), new MainMenu(getPlayer()));
-                //TODO maybe re implement this
+
                 break;
         }
     }

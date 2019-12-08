@@ -148,16 +148,20 @@ public enum  PermissionRoute {
             throw new RuntimeException("PermissionRoute was called with an invalid perm. (CONTAINERS called setPerm");
         }
 
-        @Override
-        public HashMap<Material, Integer> getListPerms(PermissionSet set) {
-            if (set == null)
-                return null;
-            return set.getContainers();
+        public void setPerm(PermissionSet set, int value, Material material) {
+            set.getContainers().put(material, value);
         }
 
-        @Override
-        public void setListPerms(PermissionSet set, Material material, int value){
-            set.getContainers().replace(material, value);
+        public int getPerm(PermissionSet set, Material material){
+            if (set == null)
+                return PermState.NEUTRAL;
+            Integer integer = set.getContainers().get(material);
+
+            return integer == null ? PermState.NEUTRAL : integer;
+        }
+
+        public HashMap<Material, Integer> getPerms(PermissionSet set){
+            return set.getContainers();
         }
     };
 
@@ -169,11 +173,15 @@ public enum  PermissionRoute {
 
     public abstract void setPerm(PermissionSet set, int value);
 
-    public HashMap<Material, Integer> getListPerms(PermissionSet set){
-        throw new RuntimeException("PermissionRoute was called with an invalid perm");
+    public void setPerm(PermissionSet set, int value, Material material) {
+        throw new RuntimeException("PermissionRoute was called with an invalid perm. (CONTAINERS called setPerm");
     }
 
-    public void setListPerms(PermissionSet set, Material material, int value){
-        throw new RuntimeException("PermissionRoute was called with an invalid perm");
+    public int getPerm(PermissionSet set, Material material){
+        throw new RuntimeException("PermissionRoute was called with an invalid perm. (CONTAINERS called getPerm");
+    }
+
+    public HashMap<Material, Integer> getPerms(PermissionSet set){
+        throw new RuntimeException("PermissionRoute was called with an invalid perm. (CONTAINERS called getPerms");
     }
 }

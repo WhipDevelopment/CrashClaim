@@ -14,15 +14,18 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 public class PlayerPermissionMenu extends GUI {
-    private BaseClaim claim;
+    private PermissionGroup group;
     private PermissionSet permissionSet;
+    private UUID target;
 
-    public PlayerPermissionMenu(Player player, BaseClaim claim) {
-        super(player, "Global Permissions", 54);
-        this.claim = claim;
-        this.permissionSet = claim.getPerms().getPermissionSet();
+    public PlayerPermissionMenu(Player player, PermissionGroup group, UUID target) {
+        super(player, "Player Permissions", 54);
+        this.group = group;
+        this.target = target;
+        this.permissionSet = group.getPlayerPermissionSet(target);
         setupGUI();
     }
 
@@ -42,7 +45,7 @@ public class PlayerPermissionMenu extends GUI {
         inv.setItem(13, createGuiItem(ChatColor.GOLD + "Explosions", Material.TNT));
         inv.setItem(14, createGuiItem(ChatColor.GOLD + "Teleportation", Material.ENDER_PEARL));
 
-        switch (permissionSet.getBuild()){
+        switch (PermissionRoute.BUILD.getPerm(permissionSet)){
             case 1:
                 inv.setItem(19, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -54,7 +57,7 @@ public class PlayerPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getEntities()){
+        switch (PermissionRoute.ENTITIES.getPerm(permissionSet)){
             case 1:
                 inv.setItem(20, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -66,7 +69,7 @@ public class PlayerPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getInteractions()){
+        switch (PermissionRoute.INTERACTIONS.getPerm(permissionSet)){
             case 1:
                 inv.setItem(21, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -78,7 +81,7 @@ public class PlayerPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getExplosions()){
+        switch (PermissionRoute.EXPLOSIONS.getPerm(permissionSet)){
             case 1:
                 inv.setItem(22, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -90,7 +93,7 @@ public class PlayerPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getTeleportation()){
+        switch (PermissionRoute.TELEPORTATION.getPerm(permissionSet)){
             case 1:
                 inv.setItem(23, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -105,21 +108,21 @@ public class PlayerPermissionMenu extends GUI {
         for (int start = 19; start < 24; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.GREEN + "Enable", Material.GREEN_STAINED_GLASS));
+                inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
             }
         }
 
         for (int start = 28; start < 33; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.GREEN + "Neutral", Material.GRAY_STAINED_GLASS));
+                inv.setItem(start, createGuiItem(ChatColor.DARK_GRAY + "Neutral", Material.GRAY_STAINED_GLASS));
             }
         }
 
         for (int start = 37; start < 42; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.GREEN + "Disable", Material.RED_STAINED_GLASS));
+                inv.setItem(start, createGuiItem(ChatColor.DARK_RED + "Disable", Material.RED_STAINED_GLASS));
             }
         }
 
@@ -138,10 +141,21 @@ public class PlayerPermissionMenu extends GUI {
         int slot = event.getSlot();
         if (slot >= 19 && slot <= 23){
             clickPermOption(getRoute(slot - 19), PermState.ENABLED);
+            return;
         } else if (slot >= 28 && slot <= 32){
             clickPermOption(getRoute(slot - 28), PermState.NEUTRAL);
+            return;
         } else if (slot >= 37 && slot <= 41){
             clickPermOption(getRoute(slot - 37), PermState.DISABLE);
+            return;
+        }
+
+        switch (rawItemName){
+            case "container permissions":
+                new PlayerContainerPermissionMenu(player, group, target, this).open();
+                break;
+            case "admin permissions":
+
         }
     }
 
@@ -162,8 +176,7 @@ public class PlayerPermissionMenu extends GUI {
     }
 
     private void clickPermOption(PermissionRoute route, int value) {
-        PermissionGroup group = claim.getPerms();
-        group.setPermission(route, value);
+        group.setPlayerPermission(target, route, value);
         loadItems();
     }
 }

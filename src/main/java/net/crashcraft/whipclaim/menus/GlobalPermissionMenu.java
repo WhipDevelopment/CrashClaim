@@ -38,7 +38,7 @@ public class GlobalPermissionMenu extends GUI {
         inv.setItem(13, createGuiItem(ChatColor.GOLD + "Explosions", Material.TNT));
         inv.setItem(14, createGuiItem(ChatColor.GOLD + "Teleportation", Material.ENDER_PEARL));
 
-        switch (permissionSet.getBuild()){
+        switch (PermissionRoute.BUILD.getPerm(permissionSet)){
             case 1:
                 inv.setItem(28, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -47,7 +47,7 @@ public class GlobalPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getEntities()){
+        switch (PermissionRoute.ENTITIES.getPerm(permissionSet)){
             case 1:
                 inv.setItem(29, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -56,7 +56,7 @@ public class GlobalPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getInteractions()){
+        switch (PermissionRoute.INTERACTIONS.getPerm(permissionSet)){
             case 1:
                 inv.setItem(30, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -65,7 +65,7 @@ public class GlobalPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getExplosions()){
+        switch (PermissionRoute.EXPLOSIONS.getPerm(permissionSet)){
             case 1:
                 inv.setItem(31, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -74,7 +74,7 @@ public class GlobalPermissionMenu extends GUI {
                 break;
         }
 
-        switch (permissionSet.getTeleportation()){
+        switch (PermissionRoute.TELEPORTATION.getPerm(permissionSet)){
             case 1:
                 inv.setItem(32, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -86,14 +86,14 @@ public class GlobalPermissionMenu extends GUI {
         for (int start = 28; start < 33; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.GREEN + "Enable", Material.GREEN_STAINED_GLASS));
+                inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
             }
         }
 
         for (int start = 37; start < 42; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.GREEN + "Disable", Material.RED_STAINED_GLASS));
+                inv.setItem(start, createGuiItem(ChatColor.DARK_RED + "Disable", Material.RED_STAINED_GLASS));
             }
         }
 

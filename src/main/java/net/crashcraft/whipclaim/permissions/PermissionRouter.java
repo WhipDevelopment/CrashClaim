@@ -65,13 +65,13 @@ public class PermissionRouter {
     }
 
     public static int getLayeredContainer(PermissionSet parent, PermissionSet secondary, Material material){
-        int globalPerm = PermissionRoute.CONTAINERS.getListPerms(parent).get(material);
+        int globalPerm = PermissionRoute.CONTAINERS.getPerm(parent, material);
 
         if (secondary == null){
             return globalPerm;
         }
 
-        int mainPerm = PermissionRoute.CONTAINERS.getListPerms(secondary).get(material);
+        int mainPerm = PermissionRoute.CONTAINERS.getPerm(secondary, material);
 
         return mainPerm == PermState.NEUTRAL ?
                         globalPerm : mainPerm;

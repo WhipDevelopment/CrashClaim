@@ -1,9 +1,12 @@
 package net.crashcraft.whipclaim.claimobjects;
 
+import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
+import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import org.bukkit.Material;
 
 import java.io.Serializable;
+import java.security.Permission;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -38,7 +41,14 @@ public class PermissionGroup implements Serializable {
     }
 
     public PermissionSet getPlayerPermissionSet(UUID id) {
-        return playerPermissions.get(id);
+        if (playerPermissions.containsKey(id)) {
+            return playerPermissions.get(id);
+        } else {
+            PermissionSet perms = new PermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
+                    PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,  new HashMap<>());
+            playerPermissions.put(id, perms);
+            return perms;
+        }
     }
 
     //Used for fixing owner permissions only
@@ -65,13 +75,13 @@ public class PermissionGroup implements Serializable {
         owner.setToSave(true);
     }
 
-    public void setContainerPermission(PermissionRoute route, int value, Material material){
-        route.setListPerms(globalPermissionSet, material, value);
+    public void setContainerPermission(int value, Material material){
+        PermissionRoute.CONTAINERS.setPerm(globalPermissionSet, value, material);
         owner.setToSave(true);
     }
 
-    public void setContainerPlayerPermission(UUID uuid, PermissionRoute route, int value, Material material) {
-        route.setListPerms(getPlayerPermissionSet(uuid), material, value);
+    public void setContainerPlayerPermission(UUID uuid, int value, Material material) {
+        PermissionRoute.CONTAINERS.setPerm(getPlayerPermissionSet(uuid), value, material);
         owner.setToSave(true);
     }
 }

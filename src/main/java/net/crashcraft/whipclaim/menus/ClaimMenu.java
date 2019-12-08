@@ -86,7 +86,7 @@ public class ClaimMenu extends GUI {
                 uuids.remove(claim.getOwner());    //Owners permissions are off limits.
 
                 new PlayerListMenu(getPlayer(), this, uuids, (player, uuid) -> {
-                    //new PerPlayerClaimPermsMenu(player, uuid.toString(), claimObject).open();
+                    new PlayerPermissionMenu(player, claim.getPerms(), uuid).open();
                     return "";
                 }).open();
                 break;

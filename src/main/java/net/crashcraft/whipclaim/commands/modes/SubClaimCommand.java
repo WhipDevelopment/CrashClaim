@@ -5,6 +5,11 @@ import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.visualize.*;
+import net.crashcraft.whipclaim.visualize.api.BaseVisual;
+import net.crashcraft.whipclaim.visualize.api.VisualColor;
+import net.crashcraft.whipclaim.visualize.api.VisualGroup;
+import net.crashcraft.whipclaim.visualize.api.claim.BlockClaimVisual;
+import net.crashcraft.whipclaim.visualize.api.claim.GlowClaimVisual;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -119,7 +124,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
 
                     visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
-                    for (Visual visual : group.getActiveVisuals()){
+                    for (BaseVisual visual : group.getActiveVisuals()){
                         visualizationManager.despawnAfter(visual, 30);
                     }
 
@@ -141,16 +146,17 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
 
                     player.sendMessage(ChatColor.GREEN + "Click another location to resize the claims. ");
 
-                    for (Visual visual : group.getActiveVisuals()){
-                        if (visual instanceof SubClaimVisual){
-                            SubClaimVisual subClaimVisual = (SubClaimVisual) visual;
-                            if (subClaimVisual.getClaim() instanceof SubClaim){
-                                SubClaim visualSubClaim = (SubClaim) subClaimVisual.getClaim();
+                    for (BaseVisual visual : group.getActiveVisuals()){
+                        BaseClaim tempClaim = visual.getClaim();
+                        if (tempClaim == null)
+                            continue;
 
-                                if (visualSubClaim.equals(subClaim)){
-                                    subClaimVisual.color(TeamColor.YELLOW);
-                                    return;
-                                }
+                        if (tempClaim instanceof SubClaim){
+                            SubClaim visualSubClaim = (SubClaim) tempClaim;
+                            if (visualSubClaim.equals(subClaim)){
+                                group .removeVisual(visual);
+
+                                visualizationManager.getProvider().spawnClaimVisual(VisualColor.YELLOW, group, subClaim, visual.getY()).spawn();
                             }
                         }
                     }
@@ -158,13 +164,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
                 }
             }
 
-
-            MarkerVisual markerVisual = new MarkerVisual(location.add(0, 1, 0));
-
-            group.addVisual(markerVisual);
-
-            markerVisual.spawn();
-            markerVisual.color(TeamColor.YELLOW);
+            visualizationManager.getProvider().spawnMarkerVisual(VisualColor.YELLOW, group, location.add(0, 1, 0)).spawn();
 
             clickMap.put(uuid, location);
             player.sendMessage(ChatColor.GREEN + "Click an opposite corner to form a sub claim");
@@ -181,7 +181,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
 
             visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
-            for (Visual visual : group.getActiveVisuals()){
+            for (BaseVisual visual : group.getActiveVisuals()){
                 visualizationManager.despawnAfter(visual, 30);
             }
 

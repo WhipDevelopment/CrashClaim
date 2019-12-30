@@ -2,11 +2,14 @@ package net.crashcraft.whipclaim.commands.modes;
 
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.visualize.*;
+import net.crashcraft.whipclaim.visualize.api.BaseVisual;
+import net.crashcraft.whipclaim.visualize.api.VisualColor;
+import net.crashcraft.whipclaim.visualize.api.VisualGroup;
+import net.crashcraft.whipclaim.visualize.api.VisualType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -93,11 +96,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
             group.removeAllVisualsOfType(VisualType.MARKER);
 
-            MarkerVisual visual = new MarkerVisual(location);
-            group.addVisual(visual);
-
-            visual.spawn();
-            visual.color(TeamColor.YELLOW);
+            visualizationManager.getProvider().spawnMarkerVisual(VisualColor.YELLOW, group, location).spawn();
             return;
         }
 
@@ -126,13 +125,10 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
             group.removeAllVisuals();
 
-            ClaimVisual claimVisual = new ClaimVisual(response.getClaim(), player.getLocation().getBlockY() - 1);
-            group.addVisual(claimVisual);
+            BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
+            visual.spawn();
 
-            claimVisual.spawn();
-            claimVisual.color(TeamColor.GREEN);
-
-            visualizationManager.despawnAfter(claimVisual, 30);
+            visualizationManager.despawnAfter(visual, 30);
 
             cleanup(player.getUniqueId(), false);
         } else {
@@ -176,11 +172,9 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                     VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
                     group.removeAllVisuals();
-                    ClaimVisual visual = new ClaimVisual(claim, player.getLocation().getBlockY() - 1);
-                    group.addVisual(visual);
 
+                    BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, claim, player.getLocation().getBlockY() - 1);
                     visual.spawn();
-                    visual.color(TeamColor.GREEN);
 
                     visualizationManager.despawnAfter(visual, 30);
 
@@ -200,13 +194,9 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                 claim.setEditing(true);
 
                 VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
-
                 group.removeAllVisuals();
-                ClaimVisual visual = new ClaimVisual(claim, player.getLocation().getBlockY() - 1);
-                group.addVisual(visual);
 
-                visual.spawn();
-                visual.color(TeamColor.GOLD);
+                visualizationManager.getProvider().spawnClaimVisual(VisualColor.GOLD, group, claim, player.getLocation().getBlockY() - 1).spawn();
 
                 player.sendMessage(ChatColor.GREEN + "Click another location to resize the claim.");
             } else {

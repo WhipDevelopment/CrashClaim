@@ -3,20 +3,22 @@ package net.crashcraft.whipclaim.visualize;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
-import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
-import net.crashcraft.whipclaim.permissions.PermissionRoute;
-import net.crashcraft.whipclaim.permissions.PermissionRouter;
-import org.apache.commons.lang.ArrayUtils;
+import net.crashcraft.whipclaim.visualize.api.*;
+import net.crashcraft.whipclaim.visualize.api.providers.BlockVisualProvider;
+import net.crashcraft.whipclaim.visualize.api.providers.GlowVisualProvider;
+import net.crashcraft.whipclaim.visualize.api.visuals.BaseGlowVisual;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -26,19 +28,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class VisualizationManager {
-    private static WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
-    private static WrappedDataWatcher.Serializer integerSerializer = WrappedDataWatcher.Registry.get(Integer.class);
-
     private ProtocolManager protocolManager;
     private HashMap<UUID, VisualGroup> visualHashMap;
 
-    private HashMap<Visual, Long> timeMap;
+    private HashMap<BaseVisual, Long> timeMap;
+
+    private VisualProvider provider;
 
     public VisualizationManager(WhipClaim whipClaim, ProtocolManager protocolManager){
         this.protocolManager = protocolManager;
 
         visualHashMap = new HashMap<>();
         timeMap = new HashMap<>();
+
+        if (ValueConfig.VISUALIZE_VISUAL_TYPE.equals("glow")){
+            provider = new GlowVisualProvider();
+        } else {
+            provider = new BlockVisualProvider();
+        }
 
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
 
@@ -47,7 +54,7 @@ public class VisualizationManager {
 
         Scoreboard scoreboard = scoreboardManager.getMainScoreboard();
 
-        for (TeamColor color : TeamColor.values()){
+        for (VisualColor color : VisualColor.values()){
             if (scoreboard.getTeam(color.name()) == null) {
                 Team team = scoreboard.registerNewTeam(color.name());
                 team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
@@ -55,20 +62,42 @@ public class VisualizationManager {
             }
         }
 
+        BaseGlowVisual.setProtocolManager(protocolManager);
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(whipClaim, () -> {
-            if (timeMap.size() == 0)
-                return;
+            if (timeMap.size() != 0) {
+                long time = System.currentTimeMillis();
 
-            long time = System.currentTimeMillis();
-
-            for(Iterator<Map.Entry<Visual, Long>> it = timeMap.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry<Visual, Long> entry = it.next();
-                if (entry.getValue() <= time){
-                    entry.getKey().getParent().removeVisual(entry.getKey());
-                    it.remove();
+                for (Iterator<Map.Entry<BaseVisual, Long>> it = timeMap.entrySet().iterator(); it.hasNext(); ) {
+                    Map.Entry<BaseVisual, Long> entry = it.next();
+                    if (entry.getValue() <= time) {
+                        entry.getKey().getParent().removeVisual(entry.getKey());
+                        it.remove();
+                    }
                 }
             }
         },0,20L);
+
+        String key = "visualization.visual-colors.";
+        FileConfiguration configuration = whipClaim.getConfig();
+        for (VisualColor color : VisualColor.values()){
+            String material = configuration.getString(key + color.name());
+            if (material == null){
+                configuration.set(key + color.name(), Material.ORANGE_CONCRETE.name());
+                color.setMaterial(Material.ORANGE_CONCRETE);
+                continue;
+            }
+            Material mat = Material.getMaterial(material);
+            if (mat == null){
+                configuration.set(key + color.name(), Material.ORANGE_CONCRETE.name());
+                whipClaim.getLogger().warning(key + color.name() + ", is not a valid material, defaulting to ORANGE_CONCRETE");
+                color.setMaterial(Material.ORANGE_CONCRETE);
+                continue;
+            }
+            color.setMaterial(mat);
+        }
+
+        whipClaim.saveConfig();
     }
 
     public VisualGroup fetchExistingGroup(UUID uuid){
@@ -86,11 +115,11 @@ public class VisualizationManager {
         return null;
     }
 
-    public void despawnAfter(Visual visual, int seconds){
+    public void despawnAfter(BaseVisual visual, int seconds){
         timeMap.put(visual, System.currentTimeMillis() + (seconds * 1000));
     }
 
-    public void colorEntities(Player player, TeamColor color, ArrayList<String> uuids){
+    public void colorEntities(Player player, VisualColor color, ArrayList<String> uuids){
         PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
 
         packet.getStrings()
@@ -107,52 +136,7 @@ public class VisualizationManager {
         }
     }
 
-    public void spawnEntity(Player player, int x, int z, int y, int id, UUID uuid, Visual visual){
-        double dx;
-        double dz;
 
-        dx = x + 0.5;
-        dz = z + 0.5;
-
-        WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-        watcher.setObject(0, byteSerializer, (byte) (0x20 | 0x40)); // Glowing Invisible
-        watcher.setObject(14, integerSerializer, 2); //Slime size : 12
-
-        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
-
-        packet.getIntegers()
-                .write(0, id)
-                .write(1, 40);//38  //Entity id
-        packet.getUUIDs()
-                .write(0, uuid);
-        packet.getDoubles() //Cords
-                .write(0, dx)
-                .write(1, (double) y)
-                .write(2, dz);
-
-        packet.getDataWatcherModifier().write(0, watcher);
-
-        try {
-            protocolManager.sendServerPacket(player, packet);
-            visual.addSpawnData(id, uuid.toString(), new Location(player.getWorld(), dx, y, dz));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void despawnEntities(Player player, ArrayList<Integer> entities){
-        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
-
-        packet.getIntegerArrays()
-                .write(0, toPrimitiveIntegerArrays(entities));
-
-        try {
-            protocolManager.sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void visualizeSuroudningClaims(Player player, ClaimDataManager claimDataManager){
         long chunkx = player.getLocation().getChunk().getX();
@@ -187,11 +171,8 @@ public class VisualizationManager {
         int y = player.getLocation().getBlockY() - 1;
 
         for (Claim claim : claims){
-            ClaimVisual visual = new ClaimVisual(claim, y);
-            group.addVisual(visual);
-
+            BaseVisual visual = provider.spawnClaimVisual(null, group, claim, y);
             visual.spawn();
-            visual.color(null);
         }
     }
 
@@ -202,28 +183,20 @@ public class VisualizationManager {
 
         int y = player.getLocation().getBlockY();
 
-        ClaimVisual visual = new ClaimVisual(claim, y - 1);
-
-        group.addVisual(visual);
-
-        visual.spawn();
-        visual.color(TeamColor.WHITE);
+        provider.spawnClaimVisual(VisualColor.WHITE, group, claim, y - 1).spawn();
 
         for (SubClaim subClaim : subClaims){
-            SubClaimVisual subClaimVisual = new SubClaimVisual(subClaim, y);
-
-            group.addVisual(subClaimVisual);
-
-            subClaimVisual.spawn();
-            subClaimVisual.color(null);
+            provider.spawnClaimVisual(null, group, subClaim, y).spawn();
         }
     }
-
+/*
     public void visualizeSuroudningSubClaims(Player player, int y, ArrayList<SubClaim> claims){
         VisualGroup group = fetchVisualGroup(player, true);
         group.removeAllVisuals();
 
         for (SubClaim subClaim : claims){
+            provider.spawnClaimVisual(null, )
+
             SubClaimVisual subClaimVisual = new SubClaimVisual(subClaim, y);
 
             group.addVisual(subClaimVisual);
@@ -233,7 +206,9 @@ public class VisualizationManager {
         }
     }
 
-    private int[] toPrimitiveIntegerArrays(ArrayList<Integer> array){
-        return ArrayUtils.toPrimitive(array.toArray(new Integer[0]));
+ */
+
+    public VisualProvider getProvider(){
+        return provider;
     }
 }

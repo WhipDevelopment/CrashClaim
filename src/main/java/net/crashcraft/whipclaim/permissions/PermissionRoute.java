@@ -243,12 +243,14 @@ public enum  PermissionRoute {
 
         @Override
         public int getPerm(GlobalPermissionSet set) {
-            return PermState.DISABLE;
+            if (set == null)
+                return PermState.DISABLE;
+            return set.getViewSubClaims();
         }
 
         @Override
         public void setPerm(GlobalPermissionSet set, int value) {
-            throw new RuntimeException("Unsupported operation in permission class");
+            set.setViewSubClaims(value);
         }
     },
     CONTAINERS{

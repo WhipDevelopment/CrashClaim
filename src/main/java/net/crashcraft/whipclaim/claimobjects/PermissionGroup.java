@@ -70,22 +70,30 @@ public class PermissionGroup implements Serializable {
     }
 
     public void setPermission(PermissionRoute route, int value){
+        System.out.println("[PermsLog][Before] " + route.name() + ": " + route.getPerm(globalPermissionSet));
         route.setPerm(globalPermissionSet, value);
         owner.setToSave(true);
+        System.out.println("[PermsLog][After] " + route.name() + ": " + route.getPerm(globalPermissionSet));
     }
 
     public void setPlayerPermission(UUID uuid, PermissionRoute route, int value){
+        System.out.println("[PermsLog][Before] " + route.name() + ": " + route.getPerm(getPlayerPermissionSet(uuid)));
         route.setPerm(getPlayerPermissionSet(uuid), value);
         owner.setToSave(true);
+        System.out.println("[PermsLog][After] " + route.name() + ": " + route.getPerm(getPlayerPermissionSet(uuid)));
     }
 
     public void setContainerPermission(int value, Material material){
+        System.out.println("[PermsLog][Before] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(globalPermissionSet, material));
         PermissionRoute.CONTAINERS.setPerm(globalPermissionSet, value, material);
         owner.setToSave(true);
+        System.out.println("[PermsLog][After] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(globalPermissionSet, material));
     }
 
     public void setContainerPlayerPermission(UUID uuid, int value, Material material) {
+        System.out.println("[PermsLog][Before] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(getPlayerPermissionSet(uuid), material));
         PermissionRoute.CONTAINERS.setPerm(getPlayerPermissionSet(uuid), value, material);
         owner.setToSave(true);
+        System.out.println("[PermsLog][After] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(getPlayerPermissionSet(uuid), material));
     }
 }

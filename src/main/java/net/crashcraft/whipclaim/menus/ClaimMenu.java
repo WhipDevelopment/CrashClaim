@@ -2,11 +2,12 @@ package net.crashcraft.whipclaim.menus;
 
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
-import net.crashcraft.menu.defaultmenus.PlayerListMenu;
 import net.crashcraft.whipclaim.WhipClaim;
+import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
+import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,13 +16,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.UUID;
 
 public class ClaimMenu extends GUI {
-    private Claim claim;
+    private BaseClaim claim;
     private Material material;
 
-    public ClaimMenu(Player player, Claim claim) {
+    public ClaimMenu(Player player, BaseClaim claim) {
         super(player, "Claim Menu", 54);
         this.claim = claim;
         setupGUI();
@@ -75,30 +75,17 @@ public class ClaimMenu extends GUI {
     public void onClick(InventoryClickEvent event, String rawItemName) {
         switch (rawItemName){
             case "per player settings":
-                ArrayList<UUID> uuids = new ArrayList<>(claim.getPerms().getPlayerPermissions().keySet());
-
-                for (Player player : Bukkit.getOnlinePlayers()){
-                    if (!uuids.contains(player.getUniqueId()))
-                        uuids.add(player.getUniqueId());
-                }
-
-                uuids.remove(getPlayer().getUniqueId());    //Cant modify perms of yourself
-                uuids.remove(claim.getOwner());    //Owners permissions are off limits.
-
-                new PlayerListMenu(getPlayer(), this, uuids, (player, uuid) -> {
-                    new PlayerPermissionMenu(player, claim.getPerms(), uuid).open();
-                    return "";
-                }).open();
+                new PlayerPermListMenu(claim, getPlayer(), this);
                 break;
             case "global claim settings":
-                new GlobalPermissionMenu(player, claim, this).open();
+                new GlobalPermissionMenu(player, claim).open();
                 break;
             case "rename claim":
                 new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim name", (player, reply) -> {
                     claim.setName(reply);
                     player.sendMessage(ChatColor.GREEN + "Change claim name to " + ChatColor.GOLD + reply);
 
-                    //TODO Make sure they cant set duplicate names maybe?
+                    //TODO Make sure they cant set duplicate names maybe? might not matter because 2 claims can be named the same by 2 diffferent people then shared
 
                     return null;
                 });

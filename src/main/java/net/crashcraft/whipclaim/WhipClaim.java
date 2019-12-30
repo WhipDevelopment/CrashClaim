@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
+import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.MaterialName;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
@@ -31,7 +32,15 @@ public class WhipClaim extends JavaPlugin {
             getLogger().info("Created plugin directory");
         }
 
-        saveDefaultConfig();
+        saveResource("localization.yml", false);
+        saveResource("lookup.yml", false);
+        saveResource("config.yml", false);
+
+        reloadConfig();
+        ValueConfig.writeDefault(getConfig(), this);
+        ValueConfig.loadConfig(getConfig(), this);
+        saveConfig();
+
         saveResource("localization.yml", false);
         saveResource("lookup.yml", false);
 

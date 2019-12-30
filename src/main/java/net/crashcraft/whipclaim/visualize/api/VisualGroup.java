@@ -1,12 +1,17 @@
-package net.crashcraft.whipclaim.visualize;
+package net.crashcraft.whipclaim.visualize.api;
 
+import net.crashcraft.whipclaim.visualize.VisualizationManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import javax.xml.stream.Location;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.UUID;
 
 public class VisualGroup {
-    private ArrayList<Visual> activeVisuals;
+    private int uniqueID = 21346787;
+
+    private ArrayList<BaseVisual> activeVisuals;
     private Player player;
     private VisualizationManager manager;
 
@@ -16,20 +21,17 @@ public class VisualGroup {
         activeVisuals = new ArrayList<>();
     }
 
-    public void addVisual(Visual visual){
-        visual.setParent(this);
-
+    public void addVisual(BaseVisual visual){
         activeVisuals.add(visual);
     }
 
-    public void removeVisual(Visual visual){
-        visual.remove();
+    public void removeVisual(BaseVisual visual){
         activeVisuals.remove(visual);
     }
 
     public void removeAllVisuals(){
-        for (Iterator<Visual> it = activeVisuals.iterator(); it.hasNext();){
-            Visual visual = it.next();
+        for (Iterator<BaseVisual> it = activeVisuals.iterator(); it.hasNext();){
+            BaseVisual visual = it.next();
             visual.remove();
             it.remove();
         }
@@ -39,8 +41,8 @@ public class VisualGroup {
         if (activeVisuals == null)
             return;
 
-        for (Iterator<Visual> it = activeVisuals.iterator(); it.hasNext();){
-            Visual visual = it.next();
+        for (Iterator<BaseVisual> it = activeVisuals.iterator(); it.hasNext();){
+            BaseVisual visual = it.next();
             if (visual.getType().equals(type)) {
                 visual.remove();
                 it.remove();
@@ -49,24 +51,18 @@ public class VisualGroup {
     }
 
     public int generateUiniqueID(){
-        int id = (int) (Math.random() * 1000000);
-        for (Visual visual : activeVisuals){
-            if (visual.containsID(id))
-                return generateUiniqueID();
-        }
-        return id;
+        return uniqueID++;
     }
 
     public UUID generateUiniqueUUID(){
         UUID uuid = UUID.randomUUID();
-        for (Visual visual : activeVisuals){
-            if (visual.containsUUID(uuid.toString()))
-                return generateUiniqueUUID();
+        if (Bukkit.getEntity(uuid) == null){
+            return uuid;
         }
-        return uuid;
+        return generateUiniqueUUID();
     }
 
-    public ArrayList<Visual> getActiveVisuals() {
+    public ArrayList<BaseVisual> getActiveVisuals() {
         return activeVisuals;
     }
 

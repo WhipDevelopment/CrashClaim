@@ -1,4 +1,4 @@
-package net.crashcraft.whipclaim.visualize;
+package net.crashcraft.whipclaim.visualize.api;
 
 public enum VisualType {
     MARKER,

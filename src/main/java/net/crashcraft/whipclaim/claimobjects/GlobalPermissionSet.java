@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class GlobalPermissionSet extends PermissionSet implements Serializable {
     private int pistons;
     private int fluids;
+    private boolean skipValueCheck;
 
     public GlobalPermissionSet() {
 
@@ -19,7 +20,17 @@ public class GlobalPermissionSet extends PermissionSet implements Serializable {
         this.fluids = fluids;
     }
 
+    public GlobalPermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int pistons, int fluids, boolean skipValueCheck) {
+        super(build, interactions, entities, explosions, teleportation, viewSubClaims, containers);
+        this.pistons = pistons;
+        this.fluids = fluids;
+        this.skipValueCheck = skipValueCheck;
+    }
+
     private int checkValue(int value){
+        if (skipValueCheck){
+            return value;
+        }
         return value == PermState.NEUTRAL ? PermState.DISABLE : value;
     }
 

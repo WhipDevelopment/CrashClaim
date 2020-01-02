@@ -36,6 +36,15 @@ public class PermissionGroup implements Serializable {
         this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions;
     }
 
+    public PermissionGroup(BaseClaim owner, GlobalPermissionSet globalPermissionSet, HashMap<UUID, PlayerPermissionSet> playerPermissions, boolean skipGlobalchecks) {
+        this.owner = owner;
+        this.globalPermissionSet = globalPermissionSet == null ?
+                new GlobalPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
+                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,  new HashMap<>(),
+                        PermState.DISABLE, PermState.DISABLE, skipGlobalchecks) : globalPermissionSet;
+        this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions;
+    }
+
     public GlobalPermissionSet getPermissionSet() {
         return globalPermissionSet;
     }
@@ -70,6 +79,7 @@ public class PermissionGroup implements Serializable {
     }
 
     public void setPermission(PermissionRoute route, int value){
+        System.out.println(value);
         System.out.println("[PermsLog][Before] " + route.name() + ": " + route.getPerm(globalPermissionSet));
         route.setPerm(globalPermissionSet, value);
         owner.setToSave(true);

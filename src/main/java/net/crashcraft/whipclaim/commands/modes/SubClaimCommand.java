@@ -8,8 +8,6 @@ import net.crashcraft.whipclaim.visualize.*;
 import net.crashcraft.whipclaim.visualize.api.BaseVisual;
 import net.crashcraft.whipclaim.visualize.api.VisualColor;
 import net.crashcraft.whipclaim.visualize.api.VisualGroup;
-import net.crashcraft.whipclaim.visualize.api.claim.BlockClaimVisual;
-import net.crashcraft.whipclaim.visualize.api.claim.GlowClaimVisual;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -91,8 +89,8 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
         UUID uuid = player.getUniqueId();
         Claim claim = edditingMap.get(player.getUniqueId());
 
-        if (!MathUtils.checkPointCollide(claim.getUpperCornerX(), claim.getUpperCornerZ(),
-                claim.getLowerCornerX(), claim.getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
+        if (!MathUtils.checkPointCollide(claim.getMinX(), claim.getMinZ(),
+                claim.getMaxX(), claim.getMaxZ(), location.getBlockX(), location.getBlockZ())){
             player.sendMessage(ChatColor.RED + "Sub claims can only be formed inside of a parent claim.");
             cleanup(player.getUniqueId(), true);
             return;
@@ -137,7 +135,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
             for (SubClaim subClaim : claim.getSubClaims()){
-                if (StaticClaimLogic.isClaimBorder(subClaim.getUpperCornerX(), subClaim.getLowerCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerZ(),
+                if (StaticClaimLogic.isClaimBorder(subClaim.getMinX(), subClaim.getMaxX(), subClaim.getMinZ(), subClaim.getMaxZ(),
                         location.getBlockX(), location.getBlockZ())){
                     resizingMap.put(uuid, subClaim);
                     clickMap.put(uuid, location);

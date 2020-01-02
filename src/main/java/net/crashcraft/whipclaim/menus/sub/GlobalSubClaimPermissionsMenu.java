@@ -125,10 +125,10 @@ public class GlobalSubClaimPermissionsMenu extends GUI {
 
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
-                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getUpperCornerX() +
-                                ", " + claim.getUpperCornerZ(),
-                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getLowerCornerX() +
-                                ", " + claim.getLowerCornerZ())),
+                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getMinX() +
+                                ", " + claim.getMinZ(),
+                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getMaxX() +
+                                ", " + claim.getMaxZ())),
                 Material.PAPER));
 
         inv.setItem(25, createGuiItem(ChatColor.GRAY + "General Permissions", Material.GRAY_STAINED_GLASS_PANE));

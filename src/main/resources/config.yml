@@ -1,0 +1,15 @@
+visualization:
+  # blocks - Use fake blocks to show the outline of the claim, uses solid line
+  # glow - Use fake entities to show a glowing outline of the block, uses corners and side markings to reduce client entity lag.
+  visual-type: "glow"
+  visual-block-type: "GREEN_CONCRETE"
+  visual-use-highest-block: false
+  visual-colors:
+
+menu:
+  visualize:
+    visualize-claim-items:
+      vanilla: "OAK_FENCE"
+      vanilla_nether: "NETHER_BRICK_FENCE"
+      vanilla_the_end: "BIRCH_FENCE"
+      default: "OAK_FENCE"

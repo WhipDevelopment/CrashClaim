@@ -3,7 +3,6 @@ package net.crashcraft.whipclaim.menus;
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
-import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
@@ -17,7 +16,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class ClaimMenu extends GUI {
     private Claim claim;
@@ -38,10 +36,10 @@ public class ClaimMenu extends GUI {
     public void loadItems() {
         inv.setItem(13, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
-                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getUpperCornerX() +
-                                ", " + claim.getUpperCornerZ(),
-                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getLowerCornerX() +
-                                ", " + claim.getLowerCornerZ())),
+                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getMinX() +
+                                ", " + claim.getMinZ(),
+                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getMaxX() +
+                                ", " + claim.getMaxZ())),
                 material));
 
         inv.setItem(28, createGuiItem(ChatColor.GOLD + "Per Player settings",

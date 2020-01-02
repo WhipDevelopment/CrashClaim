@@ -15,7 +15,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.cache2k.IntCache;
 import org.nustaq.serialization.FSTConfiguration;
@@ -245,21 +244,21 @@ public class ClaimDataManager implements Listener {
         return idCounter+=1;
     }
 
-    public ClaimResponse createClaim(Location upperCorner, Location lowerCorner, UUID owner){
-        if (upperCorner == null || lowerCorner == null || upperCorner.getWorld() == null){
+    public ClaimResponse createClaim(Location maxCorner, Location minCorner, UUID owner){
+        if (maxCorner == null || minCorner == null || maxCorner.getWorld() == null){
             return new ClaimResponse(false, ErrorType.CLAIM_LOCATIONS_WERE_NULL);
         }
 
-        if (isTooSmall(upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ())){
+        if (isTooSmall(maxCorner.getBlockX(), maxCorner.getBlockZ(), minCorner.getBlockX(), minCorner.getBlockZ())){
             return new ClaimResponse(false, ErrorType.TOO_SMALL);
         }
 
         Claim claim = new Claim(requestUniqueID(),
-                upperCorner.getBlockX(),
-                upperCorner.getBlockZ(),
-                lowerCorner.getBlockX(),
-                lowerCorner.getBlockZ(),
-                upperCorner.getWorld().getUID(),
+                maxCorner.getBlockX(),
+                maxCorner.getBlockZ(),
+                minCorner.getBlockX(),
+                minCorner.getBlockZ(),
+                maxCorner.getWorld().getUID(),
                 new PermissionGroup(null, null, null),
                 owner);
 
@@ -269,37 +268,38 @@ public class ClaimDataManager implements Listener {
     }
 
     public ErrorType resizeClaim(Claim claim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
-        int[] arr = calculateResize(claim.getUpperCornerX(), claim.getLowerCornerX(),
-                claim.getUpperCornerZ(), claim.getLowerCornerZ(), start_x, start_z, end_x, end_z);
+        int[] arr = calculateResize(claim.getMinX(), claim.getMaxX(),
+                claim.getMinZ(), claim.getMaxZ(), start_x, start_z, end_x, end_z);
 
         ErrorType val = verify.apply(arr);
 
         if (val != ErrorType.NONE)
             return val;
 
-        int newUpperX = arr[0];
-        int newUpperZ = arr[2];
-        int newLowerX = arr[1];
-        int newLowerZ = arr[3];
+        int newMinX = arr[0];
+        int newMinZ = arr[2];
+        int newMaxX = arr[1];
+        int newMaxZ = arr[3];
 
         for (SubClaim subClaim : claim.getSubClaims()){
-            if (!MathUtils.containedInside(newUpperX, newUpperZ, newLowerX, newLowerZ,
-                    subClaim.getUpperCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerX(), subClaim.getLowerCornerZ())){
+            if (!MathUtils.containedInside(newMinX, newMinZ, newMaxX, newMaxZ,
+                    subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ())){
                 return ErrorType.OVERLAP_EXISITNG;
             }
         }
 
-        if (isTooSmall(newUpperX, newUpperZ, newLowerX, newLowerZ)){
+        if (isTooSmall(newMaxX, newMaxZ, newMinX, newMinZ)){
             return ErrorType.TOO_SMALL;
         }
+
 
         if (arr[4] == 1) {
             removeChunksForClaim(claim);
 
-            claim.setUpperCornerX(newUpperX);
-            claim.setUpperCornerZ(newUpperZ);
-            claim.setLowerCornerX(newLowerX);
-            claim.setLowerCornerZ(newLowerZ);
+            claim.setMinCornerX(newMinX);
+            claim.setMinCornerZ(newMinZ);
+            claim.setMaxCornerX(newMaxX);
+            claim.setMaxCornerZ(newMaxZ);
 
             loadChunksForClaim(claim);
 
@@ -310,28 +310,28 @@ public class ClaimDataManager implements Listener {
     }
 
     public ErrorType resizeSubClaim(SubClaim subClaim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
-        int[] arr = calculateResize(subClaim.getUpperCornerX(), subClaim.getLowerCornerX(),
-                subClaim.getUpperCornerZ(), subClaim.getLowerCornerZ(), start_x, start_z, end_x, end_z);
+        int[] arr = calculateResize(subClaim.getMinX(), subClaim.getMaxX(),
+                subClaim.getMinZ(), subClaim.getMaxZ(), start_x, start_z, end_x, end_z);
 
         ErrorType val = verify.apply(arr);
 
         if (val != ErrorType.NONE)
             return val;
 
-        int newUpperX = arr[0];
-        int newUpperZ = arr[2];
-        int newLowerX = arr[1];
-        int newLowerZ = arr[3];
+        int newMinX = arr[0];
+        int newMinZ = arr[2];
+        int newMaxX = arr[1];
+        int newMaxZ = arr[3];
 
-        if (isTooSmall(newUpperX, newUpperZ, newLowerX, newLowerZ)){
+        if (isTooSmall(newMaxX, newMaxZ, newMinX, newMinZ)){
             return ErrorType.TOO_SMALL;
         }
 
         if (arr[4] == 1) {
-            subClaim.setUpperCornerX(newUpperX);
-            subClaim.setUpperCornerZ(newUpperZ);
-            subClaim.setLowerCornerX(newLowerX);
-            subClaim.setLowerCornerZ(newLowerZ);
+            subClaim.setMinCornerX(newMinX);
+            subClaim.setMinCornerZ(newMinZ);
+            subClaim.setMaxCornerX(newMaxX);
+            subClaim.setMaxCornerZ(newMaxZ);
 
             subClaim.setEditing(false);
             return ErrorType.NONE;
@@ -341,65 +341,73 @@ public class ClaimDataManager implements Listener {
         }
     }
 
-    private static int[] calculateResize(int NWCorner_x, int SECorner_x, int NWCorner_z, int SECorner_z, int Start_x, int Start_z, int End_x, int End_z) {
+    private static int[] calculateResize(int min_x, int max_x, int min_z, int max_z, int Start_x, int Start_z, int End_x, int End_z) {
         /*
             Works for any size changes: corners or sides.
             Note:
-            NWCorner_x defines the West Line
-            SECorner_x defines the East Line
+            min_x defines the West Line
+            max_x defines the East Line
 
-            NWCorner_z defines the North Line
-            SECorner_z defines the South Line
+            min_z defines the North Line
+            max_z defines the South Line
+
+            NW is now min
+            SE is now max
          */
 
-        int newNWCorner_x = NWCorner_x;
-        int newSECorner_x = SECorner_x;
-        int newNWCorner_z = NWCorner_z;
-        int newSECorner_z = SECorner_z;
+        int newMin_x = min_x;
+        int newMax_x = max_x;
+        int newMin_z = min_z;
+        int newMax_z = max_z;
 
         int change = 0;
 
-        if (Start_x == NWCorner_x) {
+        if (Start_x == min_x) {
             /*Start is West*/
-            newNWCorner_x = End_x;
+            // is now south
+            newMin_x = End_x;
         }
 
-        if (Start_x == SECorner_x) {
+        if (Start_x == max_x) {
             /*Start is East*/
-            newSECorner_x = End_x;
+            // is now north
+            newMax_x = End_x;
         }
 
-        if (Start_z == NWCorner_z) {
+        if (Start_z == min_z) {
             /*Start is North*/
-            newNWCorner_z = End_z;
+            //  is now west
+            newMin_z = End_z;
         }
 
-        if (Start_z == SECorner_z) {
+        if (Start_z == max_z) {
             /*Start is South*/
-            newSECorner_z = End_z;
+            // is now east
+            newMax_z = End_z;
         }
 
-        if (newSECorner_x > NWCorner_x && newNWCorner_x < SECorner_x && newSECorner_z > NWCorner_z && newNWCorner_z < SECorner_z) {
-            NWCorner_x = newNWCorner_x;
-            SECorner_x = newSECorner_x;
-            NWCorner_z = newNWCorner_z;
-            SECorner_z = newSECorner_z;
+        if (newMax_x > min_x && newMin_x < max_x && newMax_z > min_z && newMin_z < max_z) {
+            min_x = newMin_x;
+            max_x = newMax_x;
+            min_z = newMin_z;
+            max_z = newMax_z;
             change = 1;
         }
 
         int[] arr = new int[5];
 
-        arr[0] = NWCorner_x;
-        arr[1] = SECorner_x;
-        arr[2] = NWCorner_z;
-        arr[3] = SECorner_z;
+        arr[0] = min_x;
+        arr[1] = max_x;
+        arr[2] = min_z;
+        arr[3] = max_z;
+
         arr[4] = change;
 
         return arr;
     }
 
-    public boolean isTooSmall(int upperX, int upperZ, int lowerX, int lowerZ){
-        return ((lowerX - upperX) < 4 || (lowerZ - upperZ) < 4);
+    public boolean isTooSmall(int maxX, int maxZ, int minX, int minZ){
+        return ((maxX - minX) < 4 || (maxZ - minZ) < 4);
     }
 
     public boolean checkOverLapSurroudningClaims(int claimid, int upperX, int upperZ, int lowerX, int lowerZ, UUID world){
@@ -431,7 +439,7 @@ public class ClaimDataManager implements Listener {
 
         for (Claim claim : claims){
             if (MathUtils.doOverlap(upperX, upperZ, lowerX, lowerZ,
-                    claim.getUpperCornerX(), claim.getUpperCornerZ(), claim.getLowerCornerX(), claim.getLowerCornerZ())){
+                    claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ())){
                 return true;
             }
         }
@@ -491,10 +499,10 @@ public class ClaimDataManager implements Listener {
     private HashMap<Long, ArrayList<Integer>> getChunksForClaim(Claim claim){
         HashMap<Long, ArrayList<Integer>> chunks = new HashMap<>();
 
-        long NWChunkX = claim.getUpperCornerX() >> 4;
-        long NWChunkZ = claim.getUpperCornerZ() >> 4;
-        long SEChunkX = claim.getLowerCornerX() >> 4;
-        long SEChunkZ = claim.getLowerCornerZ() >> 4;
+        long NWChunkX = claim.getMinX() >> 4;
+        long NWChunkZ = claim.getMinZ() >> 4;
+        long SEChunkX = claim.getMaxX() >> 4;
+        long SEChunkZ = claim.getMaxZ() >> 4;
 
         for (long zs = NWChunkZ; zs <= SEChunkZ; zs++) {
             for (long xs = NWChunkX; xs <= SEChunkX; xs++) {
@@ -510,17 +518,21 @@ public class ClaimDataManager implements Listener {
     }
 
     public ClaimResponse createSubClaim(Player player, Claim claim, Location loc1, Location loc2){
-        if (!MathUtils.containedInside(claim.getUpperCornerX(), claim.getUpperCornerZ(), claim.getLowerCornerX(), claim.getLowerCornerZ(),
+        if (!MathUtils.containedInside(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ(),
                 loc1.getBlockX(), loc1.getBlockZ(), loc2.getBlockX(), loc2.getBlockZ())){
             return new ClaimResponse(false, ErrorType.OUT_OF_BOUNDS);
         }
 
-        Location upper = StaticClaimLogic.calculateUpperCorner(loc1, loc2);
-        Location lower = StaticClaimLogic.calculateLowerCorner(loc1, loc2);
+        Location max = StaticClaimLogic.calculateMaxCorner(loc1, loc2);
+        Location min = StaticClaimLogic.calculateMinCorner(loc1, loc2);
+
+        if (isTooSmall(max.getBlockX(), max.getBlockZ(), min.getBlockX(), min.getBlockZ())){
+            return new ClaimResponse(false, ErrorType.TOO_SMALL);
+        }
 
         for (SubClaim subClaim : claim.getSubClaims()){
-            if (MathUtils.doOverlap(subClaim.getUpperCornerX(), subClaim.getUpperCornerZ(), subClaim.getLowerCornerX(), subClaim.getLowerCornerZ(),
-                    upper.getBlockX(), upper.getBlockZ(), lower.getBlockX(), lower.getBlockZ())){
+            if (MathUtils.doOverlap(subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ(),
+                    max.getBlockX(), max.getBlockZ(), min.getBlockX(), min.getBlockZ())){
                 return new ClaimResponse(false, ErrorType.OVERLAP_EXISITNG);
             }
         }
@@ -533,14 +545,16 @@ public class ClaimDataManager implements Listener {
 
         SubClaim subClaim = new SubClaim(claim,
                 requestUniqueID(),
-                upper.getBlockX(),
-                upper.getBlockZ(),
-                lower.getBlockX(),
-                lower.getBlockZ(),
+                max.getBlockX(),
+                max.getBlockZ(),
+                min.getBlockX(),
+                min.getBlockZ(),
                 loc1.getWorld().getUID(),
-                new PermissionGroup(claim, null, null));
+                new PermissionGroup(null, null, null));
 
         PermissionGroup permissionGroup = subClaim.getPerms();
+
+        permissionGroup.setOwner(subClaim);
 
         permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
 
@@ -653,8 +667,8 @@ public class ClaimDataManager implements Listener {
         for (Integer id : integers){
             Claim claim = getClaim(id);
 
-            if (x >= claim.getUpperCornerX() && x <= claim.getLowerCornerX()
-                    && z >= claim.getUpperCornerZ() && z <= claim.getLowerCornerZ()){
+            if (x >= claim.getMinX() && x <= claim.getMaxX()
+                    && z >= claim.getMinZ() && z <= claim.getMaxZ()){
                 return claim;
             }
         }

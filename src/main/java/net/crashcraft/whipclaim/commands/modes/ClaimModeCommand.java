@@ -102,22 +102,22 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
 
         Location loc2 = clickMap.get(uuid);
 
-        Location upperCorner = StaticClaimLogic.calculateUpperCorner(loc2, location);
-        Location lowerCorner = StaticClaimLogic.calculateLowerCorner(loc2, location);
+        Location max = StaticClaimLogic.calculateMaxCorner(loc2, location);
+        Location min = StaticClaimLogic.calculateMinCorner(loc2, location);
 
-        if ((lowerCorner.getBlockX() - upperCorner.getBlockX()) < 4 || (lowerCorner.getBlockZ() - upperCorner.getBlockZ()) < 4) {
+        if ((max.getBlockX() - min.getBlockX()) < 4 || (max.getBlockZ() - min.getBlockZ()) < 4) {
             player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
             cleanup(player.getUniqueId(),true);
             return;
         }
 
-        if (manager.checkOverLapSurroudningClaims(-1, upperCorner.getBlockX(), upperCorner.getBlockZ(), lowerCorner.getBlockX(), lowerCorner.getBlockZ(), world)){
+        if (manager.checkOverLapSurroudningClaims(-1, max.getBlockX(), max.getBlockZ(), min.getBlockX(), min.getBlockZ(), world)){
             player.sendMessage(ChatColor.RED + "You cannot claim over an existing claim.");
             cleanup(player.getUniqueId(), true);
             return;
         }
 
-        ClaimResponse response = manager.createClaim(upperCorner, lowerCorner, uuid);
+        ClaimResponse response = manager.createClaim(max, min, uuid);
 
         if (response.isStatus()) {
             player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
@@ -183,8 +183,8 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             }
         }
 
-        if (StaticClaimLogic.isClaimBorder(claim.getUpperCornerX(), claim.getLowerCornerX(), claim.getUpperCornerZ(),
-                claim.getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
+        if (StaticClaimLogic.isClaimBorder(claim.getMinX(), claim.getMaxX(), claim.getMinZ(),
+                claim.getMaxZ(), location.getBlockX(), location.getBlockZ())){
             if (PermissionRouter.getLayeredPermission(claim, null, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED
                     || claim.getOwner().equals(uuid)){
 

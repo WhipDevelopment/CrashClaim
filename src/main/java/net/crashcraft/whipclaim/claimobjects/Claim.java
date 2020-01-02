@@ -35,8 +35,8 @@ public class Claim extends BaseClaim implements Serializable {
 
         if (location != null && subClaims.size() > 0){
             for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getUpperCornerX(), getUpperCornerZ(), getLowerCornerX(),
-                        getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
+                if (MathUtils.checkPointCollide(getMinX(), getMinZ(), getMaxX(),
+                        getMaxZ(), location.getBlockX(), location.getBlockZ())){
 
                     return PermissionRouter.getLayeredPermission(this, subClaim, uuid, route);
                 }
@@ -53,8 +53,8 @@ public class Claim extends BaseClaim implements Serializable {
 
         if (location != null && subClaims.size() > 0){
             for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getUpperCornerX(), getUpperCornerZ(), getLowerCornerX(),
-                        getLowerCornerZ(), location.getBlockX(), location.getBlockZ())){
+                if (MathUtils.checkPointCollide(getMinX(), getMinZ(), getMaxX(),
+                        getMaxZ(), location.getBlockX(), location.getBlockZ())){
 
                     return PermissionRouter.getLayeredContainer(this, subClaim, uuid, material);
                 }

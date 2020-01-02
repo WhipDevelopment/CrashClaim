@@ -23,10 +23,10 @@ public class GlowClaimVisual extends BaseGlowVisual {
     public void spawn() {
         World world = getPlayer().getWorld();
 
-        int NWCordX = getClaim().getUpperCornerX();
-        int NWCordZ = getClaim().getUpperCornerZ();
-        int SECordX = getClaim().getLowerCornerX();
-        int SECordZ = getClaim().getLowerCornerZ();
+        int NWCordX = getClaim().getMinX();
+        int NWCordZ = getClaim().getMinZ();
+        int SECordX = getClaim().getMaxX();
+        int SECordZ = getClaim().getMaxZ();
 
         spawnEntity(NWCordX, NWCordZ, calcY(NWCordX, NWCordZ, world));
         spawnEntity(NWCordX, SECordZ, calcY(NWCordX, SECordZ, world));

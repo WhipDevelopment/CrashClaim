@@ -2,11 +2,8 @@ package net.crashcraft.whipclaim.commands.modes;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Subcommand;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.whipclaim.WhipClaim;
-import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
@@ -94,10 +91,10 @@ public class ModeCommand extends BaseCommand {
 
         for (Claim claim : claimList){
             System.out.println(claim.getId());
-            System.out.println("|--Ux  " + claim.getUpperCornerX());
-            System.out.println("|--Uz  " + claim.getUpperCornerZ());
-            System.out.println("|--Lx  " + claim.getLowerCornerX());
-            System.out.println("|--Lz  " + claim.getLowerCornerZ());
+            System.out.println("|--Ux  " + claim.getMinX());
+            System.out.println("|--Uz  " + claim.getMinZ());
+            System.out.println("|--Lx  " + claim.getMaxX());
+            System.out.println("|--Lz  " + claim.getMaxZ());
         }
     }
 }

@@ -4,9 +4,6 @@ import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
-import net.crashcraft.whipclaim.menus.player.AdminPermissionMenu;
-import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
-import net.crashcraft.whipclaim.menus.player.PlayerPermissionMenu;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -100,10 +97,10 @@ public class GlobalContainerMenu extends GUI {
 
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
-                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getUpperCornerX() +
-                                ", " + claim.getUpperCornerZ(),
-                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getLowerCornerX() +
-                                ", " + claim.getLowerCornerZ())),
+                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getMinX() +
+                                ", " + claim.getMinZ(),
+                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getMaxX() +
+                                ", " + claim.getMaxZ())),
                 Material.OAK_FENCE));
 
         inv.setItem(25, createGuiItem(ChatColor.GREEN + "General Permissions", Material.CRAFTING_TABLE));

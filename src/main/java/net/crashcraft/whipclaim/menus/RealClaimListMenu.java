@@ -1,7 +1,6 @@
 package net.crashcraft.whipclaim.menus;
 
 import dev.whip.crashutils.menusystem.GUI;
-import net.crashcraft.menu.defaultmenus.ComplexItemListMenu;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import org.bukkit.Bukkit;
@@ -9,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -52,9 +50,9 @@ public class RealClaimListMenu extends GUI{
 
             ArrayList<String> desc = new ArrayList<>(Arrays.asList(
                     ChatColor.GREEN + "Coordinates: " + ChatColor.YELLOW +
-                            ChatColor.YELLOW + item.getUpperCornerX() + ", " + item.getUpperCornerZ()
+                            ChatColor.YELLOW + item.getMinX() + ", " + item.getMinZ()
                             + ChatColor.GOLD + ", " +
-                            ChatColor.YELLOW + item.getLowerCornerX() + ", " + item.getLowerCornerZ(),
+                            ChatColor.YELLOW + item.getMaxX() + ", " + item.getMaxZ(),
                     ChatColor.GREEN + "World: " + ChatColor.YELLOW + Bukkit.getWorld(item.getWorld()).getName()
             ));
 

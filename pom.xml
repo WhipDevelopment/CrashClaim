@@ -80,7 +80,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
                 <configuration>
-                    <outputDirectory>../Server/plugins</outputDirectory>
+                    <outputDirectory>../Server-1.14/plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

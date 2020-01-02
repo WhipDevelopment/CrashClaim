@@ -1,10 +1,29 @@
 package net.crashcraft.whipclaim.data;
 
 public class MathUtils {
-    public static boolean checkPointCollide(int lx, int ly, int rx, int ry, int x, int y) {
-        return (y >= ly && y <= ry) && (x >= lx && x <= rx);
-    }
 
+
+
+
+
+
+
+
+
+
+
+
+    public static boolean checkPointCollide(int maxX, int maxZ, int minX, int minZ, int x, int z) {
+        return (z <= minZ && z >= maxZ) && (x <= minX && x >= maxX);
+    }
+        /*
+        maxX = -4
+maxZ = -1
+minX = 24
+minZ = 26
+x = -1
+z = 23
+         */
     /*
             (y >= ly && y <= ry) && (x >= lx && x <= rx)
 (y <= ly && y >= ry) && (x <= lx && x >= rx)

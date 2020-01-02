@@ -8,10 +8,10 @@ public abstract class BaseClaim implements Serializable {
 
     private int id;
 
-    private int upperCornerX;
-    private int upperCornerZ;
-    private int lowerCornerX;
-    private int lowerCornerZ;
+    private int minCornerX;
+    private int minCornerZ;
+    private int maxCornerX;
+    private int maxCornerZ;
 
     private UUID world;
 
@@ -27,12 +27,12 @@ public abstract class BaseClaim implements Serializable {
 
     }
 
-    public BaseClaim(int id, int upperCornerX, int upperCornerZ, int lowerCornerX, int lowerCornerZ, UUID world, PermissionGroup perms) {
+    public BaseClaim(int id, int maxCornerX, int maxCornerZ, int minCornerX, int minCornerZ, UUID world, PermissionGroup perms) {
         this.id = id;
-        this.upperCornerX = upperCornerX;
-        this.upperCornerZ = upperCornerZ;
-        this.lowerCornerX = lowerCornerX;
-        this.lowerCornerZ = lowerCornerZ;
+        this.maxCornerX = maxCornerX;
+        this.maxCornerZ = maxCornerZ;
+        this.minCornerX = minCornerX;
+        this.minCornerZ = minCornerZ;
         this.world = world;
         this.perms = perms;
     }
@@ -45,20 +45,38 @@ public abstract class BaseClaim implements Serializable {
         return id;
     }
 
-    public int getUpperCornerX() {
-        return upperCornerX;
+    /*
+    public int getMinX() {
+        return maxCornerX;
     }
 
-    public int getUpperCornerZ() {
-        return upperCornerZ;
+    public int getMinZ() {
+        return maxCornerZ;
     }
 
-    public int getLowerCornerX() {
-        return lowerCornerX;
+    public int getMaxX() {
+        return minCornerX;
     }
 
-    public int getLowerCornerZ() {
-        return lowerCornerZ;
+    public int getMaxZ() {
+        return minCornerZ;
+    }
+     */
+
+    public int getMinX() {
+        return minCornerX;
+    }
+
+    public int getMinZ() {
+        return minCornerZ;
+    }
+
+    public int getMaxX() {
+        return maxCornerX;
+    }
+
+    public int getMaxZ() {
+        return maxCornerZ;
     }
 
     public UUID getWorld() {
@@ -104,20 +122,21 @@ public abstract class BaseClaim implements Serializable {
         setToSave(true);
     }
 
-    public void setUpperCornerX(int upperCornerX) {
-        this.upperCornerX = upperCornerX;
+    //Check these
+    public void setMinCornerX(int minCornerX) {
+        this.minCornerX = minCornerX;
     }
 
-    public void setUpperCornerZ(int upperCornerZ) {
-        this.upperCornerZ = upperCornerZ;
+    public void setMinCornerZ(int minCornerZ) {
+        this.minCornerZ = minCornerZ;
     }
 
-    public void setLowerCornerX(int lowerCornerX) {
-        this.lowerCornerX = lowerCornerX;
+    public void setMaxCornerX(int maxCornerX) {
+        this.maxCornerX = maxCornerX;
     }
 
-    public void setLowerCornerZ(int lowerCornerZ) {
-        this.lowerCornerZ = lowerCornerZ;
+    public void setMaxCornerZ(int maxCornerZ) {
+        this.maxCornerZ = maxCornerZ;
     }
 }
 

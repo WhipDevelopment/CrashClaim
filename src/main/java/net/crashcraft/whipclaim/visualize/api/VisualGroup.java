@@ -26,6 +26,7 @@ public class VisualGroup {
     }
 
     public void removeVisual(BaseVisual visual){
+        visual.remove();
         activeVisuals.remove(visual);
     }
 

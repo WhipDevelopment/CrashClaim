@@ -16,6 +16,9 @@ public class PermissionRouter {
         Sub Group  [ build: 1, interactions: 2, container{ chest }: 2 ]
 
         Output  [ build: 1, interactions: 1, container{ chest }: 1 ]
+
+
+        TODO should  have sub claims global as a per player with a nuetral to fall back on i guess
      */
 
     private static int processPerm(int primary, int secondary){
@@ -23,7 +26,9 @@ public class PermissionRouter {
     }
 
     public static int getLayeredPermission(GlobalPermissionSet global, PlayerPermissionSet main, PermissionRoute route){
-        return processPerm(route.getPerm(global), main == null ? PermState.NEUTRAL : route.getPerm(main));
+        return main == null ? route.getPerm(global) : processPerm(route.getPerm(global), route.getPerm(main));
+
+       // return processPerm(route.getPerm(global), main == null ? PermState.NEUTRAL : route.getPerm(main));
     }
 
     public static int getLayeredPermission(Claim parent, SubClaim subClaim, UUID uuid, PermissionRoute route){

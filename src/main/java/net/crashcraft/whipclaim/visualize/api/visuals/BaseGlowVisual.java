@@ -50,11 +50,6 @@ public abstract class BaseGlowVisual extends BaseVisual {
                 getParent().generateUiniqueUUID());
     }
 
-    public void addSpawnData( int id, String uuid, Location location){
-        fakeEntities.put(id, uuid);
-        entityLocations.put(id, location);
-    }
-
     public void removeAll(){
         PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
 

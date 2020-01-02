@@ -8,6 +8,7 @@ import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
+import net.crashcraft.whipclaim.menus.sub.GlobalSubClaimPermissionsMenu;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,13 +18,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
-public class ClaimMenu extends GUI {
-    private Claim claim;
+public class SubClaimMenu extends GUI {
+    private SubClaim claim;
     private Material material;
 
-    public ClaimMenu(Player player, Claim claim) {
+    public SubClaimMenu(Player player, SubClaim claim) {
         super(player, "Claim Menu", 54);
         this.claim = claim;
         setupGUI();
@@ -31,7 +31,7 @@ public class ClaimMenu extends GUI {
 
     @Override
     public void initialize() {
-        material = Material.OAK_FENCE; //TODO  make this dynamic from config
+        material = Material.PAPER; //TODO  make this dynamic from config
     }
 
     @Override
@@ -49,9 +49,6 @@ public class ClaimMenu extends GUI {
 
         inv.setItem(29, createGuiItem(ChatColor.GOLD + "Global Claim settings",
                 new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Set global permissions for your claim")), Material.COMPASS));
-
-        inv.setItem(30, createGuiItem(ChatColor.GOLD + "Sub Claims",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "View the a list of the sub claims for this claim")), Material.WRITABLE_BOOK));
 
         inv.setItem(32, createGuiItem(ChatColor.GOLD + "Rename Claim",
                 new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Rename your claim to easily identify it")), Material.ANVIL));
@@ -75,21 +72,12 @@ public class ClaimMenu extends GUI {
 
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
-        switch (rawItemName){
+        switch (rawItemName) {
             case "per player settings":
                 new PlayerPermListMenu(claim, getPlayer(), this);
                 break;
             case "global claim settings":
-                new GlobalPermissionMenu(player, claim).open();
-                break;
-            case "sub claims":
-                new RealClaimListMenu(getPlayer(), this,  "Sub Claims", claim.getSubClaims(), Material.PAPER, (p, c) -> {
-                    if (c instanceof SubClaim) {
-                        SubClaim claim = (SubClaim) c;
-                        new SubClaimMenu(getPlayer(), claim).open();
-                    }
-                    return null;
-                }).open();
+                new GlobalSubClaimPermissionsMenu(getPlayer(), claim.getPerms()).open();
                 break;
             case "rename claim":
                 new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim name", (player, reply) -> {
@@ -118,8 +106,8 @@ public class ClaimMenu extends GUI {
                 });
                 break;
             case "delete claim":
-                new ConfirmationMenu(getPlayer(),"Confirm Delete Claim",
-                        ChatColor.DARK_RED + "Permanently Delete this claim?",
+                new ConfirmationMenu(getPlayer(), "Confirm Delete Claim",
+                        ChatColor.DARK_RED + "Permanently Delete this sub claim?",
                         new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
                                 ChatColor.RED + "the contributing parties")),
                         material,
@@ -132,7 +120,14 @@ public class ClaimMenu extends GUI {
                         }, player -> "").open();
                 break;
             case "back":
-
+                Claim main = claim.getParent();
+                new RealClaimListMenu(getPlayer(), new ClaimMenu(getPlayer(), main),  "Sub Claims", main.getSubClaims(), Material.PAPER, (p, c) -> {
+                    if (c instanceof SubClaim) {
+                        SubClaim claim = (SubClaim) c;
+                        new SubClaimMenu(getPlayer(), claim).open();
+                    }
+                    return null;
+                }).open();
                 break;
         }
     }

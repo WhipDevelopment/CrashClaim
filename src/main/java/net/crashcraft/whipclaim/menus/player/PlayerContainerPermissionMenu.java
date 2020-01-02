@@ -2,10 +2,10 @@ package net.crashcraft.whipclaim.menus.player;
 
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.WhipClaim;
-import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
-import net.crashcraft.whipclaim.claimobjects.PlayerPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.menus.sub.SubPlayerAdminPermissions;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -137,7 +137,11 @@ public class PlayerContainerPermissionMenu extends GUI {
 
         switch (rawItemName){
             case "admin permissions":
-                new AdminPermissionMenu(getPlayer(), group, target).open();
+                if (group.getOwner() instanceof SubClaim){
+                    new SubPlayerAdminPermissions(getPlayer(), group, target).open();
+                } else {
+                    new AdminPermissionMenu(getPlayer(), group, target).open();
+                }
                 break;
             case "previous page":
                 page--;
@@ -151,7 +155,14 @@ public class PlayerContainerPermissionMenu extends GUI {
                 new PlayerPermissionMenu(getPlayer(), group, target).open();
                 break;
             case "back":
-                new PlayerPermListMenu(group.getOwner(), getPlayer(), new ClaimMenu(getPlayer(), group.getOwner()));
+                GUI menu = null;
+                BaseClaim temp = group.getOwner();
+                if (temp instanceof SubClaim){
+                    menu = new SubClaimMenu(getPlayer(), (SubClaim) temp);
+                } else if (temp instanceof Claim){
+                    menu = new ClaimMenu(getPlayer(), (Claim) temp);
+                }
+                new PlayerPermListMenu(group.getOwner(), getPlayer(), menu);
                 break;
         }
     }

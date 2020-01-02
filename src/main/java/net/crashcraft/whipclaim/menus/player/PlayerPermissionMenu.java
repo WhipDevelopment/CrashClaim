@@ -5,6 +5,8 @@ import net.crashcraft.menu.defaultmenus.PlayerListMenu;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.menus.ClaimListMenu;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.menus.sub.SubPlayerAdminPermissions;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,7 +25,7 @@ public class PlayerPermissionMenu extends GUI {
     private UUID target;
 
     public PlayerPermissionMenu(Player player, PermissionGroup group, UUID target) {
-        super(player, "Permissions", 54);
+        super(player, "General Permissions", 54);
         this.group = group;
         this.target = target;
         this.permissionSet = group.getPlayerPermissionSet(target);
@@ -161,10 +163,21 @@ public class PlayerPermissionMenu extends GUI {
                 new PlayerContainerPermissionMenu(player, group, target).open();
                 break;
             case "admin permissions":
-                new AdminPermissionMenu(getPlayer(), group, target).open();
+                if (group.getOwner() instanceof SubClaim){
+                    new SubPlayerAdminPermissions(getPlayer(), group, target).open();
+                } else {
+                    new AdminPermissionMenu(getPlayer(), group, target).open();
+                }
                 break;
             case "back":
-                new PlayerPermListMenu(group.getOwner(), getPlayer(), new ClaimMenu(getPlayer(), group.getOwner()));
+                GUI menu = null;
+                BaseClaim temp = group.getOwner();
+                if (temp instanceof SubClaim){
+                    menu = new SubClaimMenu(getPlayer(), (SubClaim) temp);
+                } else if (temp instanceof Claim){
+                    menu = new ClaimMenu(getPlayer(), (Claim) temp);
+                }
+                new PlayerPermListMenu(group.getOwner(), getPlayer(), menu);
                 break;
         }
     }
@@ -186,6 +199,9 @@ public class PlayerPermissionMenu extends GUI {
     }
 
     private void clickPermOption(PermissionRoute route, int value) {
+        if (route == null)
+            return;
+
         group.setPlayerPermission(target, route, value);
         loadItems();
     }

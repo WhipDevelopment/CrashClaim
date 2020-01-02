@@ -15,12 +15,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GlobalPermissionMenu extends GUI {
-    private BaseClaim claim;
+    private Claim claim;
     private GlobalPermissionSet permissionSet;
-    private GUI previousMenu;
 
-    public GlobalPermissionMenu(Player player, BaseClaim claim) {
-        super(player, "Global Permissions", 54);
+    public GlobalPermissionMenu(Player player, Claim claim) {
+        super(player, "General Permissions", 54);
         this.claim = claim;
         this.permissionSet = claim.getPerms().getPermissionSet();
         setupGUI();
@@ -140,7 +139,7 @@ public class GlobalPermissionMenu extends GUI {
                 new GlobalAdvancedPermissions(getPlayer(), claim.getPerms()).open();
                 break;
             case "back":
-                new ClaimMenu(getPlayer(), claim);
+                new ClaimMenu(getPlayer(), claim).open();
                 break;
         }
     }
@@ -162,6 +161,9 @@ public class GlobalPermissionMenu extends GUI {
     }
 
     public void clickPermOption(PermissionRoute route, int value) {
+        if (route == null)
+            return;
+
         PermissionGroup group = claim.getPerms();
         group.setPermission(route, value);
         loadItems();

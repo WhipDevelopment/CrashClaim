@@ -49,8 +49,13 @@ public class ClaimListMenu {
                                     ChatColor.WHITE,
                                     false,
                                     ((p, itemMeta) -> {
-                                        Claim claim = lookupMap.get(ChatColor.stripColor(itemMeta.getDisplayName()));
+                                        String name = ChatColor.stripColor(itemMeta.getDisplayName());
+                                        Claim claim = lookupMap.get(name);
                                         if (claim == null){
+                                            name += "(" + claim.getId() + ")";
+
+
+
                                             player.sendMessage(ChatColor.RED + "Unable to find claim.");
                                             return "";
                                         }

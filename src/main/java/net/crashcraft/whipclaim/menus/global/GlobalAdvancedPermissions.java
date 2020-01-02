@@ -117,13 +117,13 @@ public class GlobalAdvancedPermissions extends GUI {
 
         switch (rawItemName) {
             case "general permissions":
-                new GlobalPermissionMenu(getPlayer(), group.getOwner()).open();
+                new GlobalPermissionMenu(getPlayer(), (Claim) group.getOwner()).open();
                 break;
             case "container permissions":
                 new GlobalContainerMenu(getPlayer(), group).open();
                 break;
             case "back":
-                new ClaimMenu(getPlayer(), group.getOwner());
+                new ClaimMenu(getPlayer(), (Claim) group.getOwner()).open();
                 break;
         }
     }
@@ -141,6 +141,9 @@ public class GlobalAdvancedPermissions extends GUI {
     }
 
     private void clickPermOption(PermissionRoute route, int value) {
+        if (route == null)
+            return;
+
         group.setPermission(route, value);
         loadItems();
     }

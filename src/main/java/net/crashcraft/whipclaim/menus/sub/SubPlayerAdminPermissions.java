@@ -1,9 +1,14 @@
-package net.crashcraft.whipclaim.menus.player;
+package net.crashcraft.whipclaim.menus.sub;
 
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.menus.global.GlobalContainerMenu;
+import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
+import net.crashcraft.whipclaim.menus.player.PlayerContainerPermissionMenu;
+import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
+import net.crashcraft.whipclaim.menus.player.PlayerPermissionMenu;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class AdminPermissionMenu extends GUI {
+public class SubPlayerAdminPermissions extends GUI {
     private UUID target;
     private PlayerPermissionSet permissionSet;
     private PermissionGroup group;
 
-    public AdminPermissionMenu(Player player, PermissionGroup group, UUID target) {
+    public SubPlayerAdminPermissions(Player player, PermissionGroup group, UUID target) {
         super(player, "Admin Permissions", 54);
         this.target = target;
         this.group = group;
@@ -38,8 +43,7 @@ public class AdminPermissionMenu extends GUI {
         inv.clear();
 
         inv.setItem(11, createGuiItem(ChatColor.GOLD + "Modify Permissions", Material.CRAFTING_TABLE));
-        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Modify Claim", Material.OAK_FENCE_GATE));
-        inv.setItem(13, createGuiItem(ChatColor.GOLD + "View Sub Claims", Material.SEA_LANTERN));
+        inv.setItem(12, createGuiItem(ChatColor.GOLD + "View Sub Claims", Material.SEA_LANTERN));
 
         switch (PermissionRoute.MODIFY_PERMISSIONS.getPerm(permissionSet)){
             case 1:
@@ -53,7 +57,7 @@ public class AdminPermissionMenu extends GUI {
                 break;
         }
 
-        switch (PermissionRoute.MODIFY_CLAIM.getPerm(permissionSet)){
+        switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)){
             case 1:
                 inv.setItem(21, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -65,33 +69,21 @@ public class AdminPermissionMenu extends GUI {
                 break;
         }
 
-        switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(22, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(31, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(40, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        for (int start = 20; start < 23; start++){
+        for (int start = 20; start < 22; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
                 inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
             }
         }
 
-        for (int start = 29; start < 32; start++){
+        for (int start = 29; start < 31; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
                 inv.setItem(start, createGuiItem(ChatColor.DARK_GRAY + "Neutral", Material.GRAY_STAINED_GLASS));
             }
         }
 
-        for (int start = 38; start < 41; start++){
+        for (int start = 38; start < 40; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
                 inv.setItem(start, createGuiItem(ChatColor.DARK_RED + "Disable", Material.RED_STAINED_GLASS));
@@ -152,8 +144,6 @@ public class AdminPermissionMenu extends GUI {
             case 1:
                 return PermissionRoute.MODIFY_PERMISSIONS;
             case 2:
-                return PermissionRoute.MODIFY_CLAIM;
-            case 3:
                 return PermissionRoute.VIEW_SUB_CLAIMS;
         }
         return null;

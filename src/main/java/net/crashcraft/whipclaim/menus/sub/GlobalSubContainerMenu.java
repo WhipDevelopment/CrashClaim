@@ -1,10 +1,13 @@
-package net.crashcraft.whipclaim.menus.global;
+package net.crashcraft.whipclaim.menus.sub;
 
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.RealClaimListMenu;
+import net.crashcraft.whipclaim.menus.SubClaimMenu;
 import net.crashcraft.whipclaim.menus.player.AdminPermissionMenu;
+import net.crashcraft.whipclaim.menus.player.PlayerContainerPermissionMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermissionMenu;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
@@ -17,8 +20,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.UUID;
 
-public class GlobalContainerMenu extends GUI {
+@SuppressWarnings("Duplicates")
+public class GlobalSubContainerMenu extends GUI {
     private static final int itemOffset = 10;
 
     private ArrayList<Material> containers;
@@ -29,7 +34,7 @@ public class GlobalContainerMenu extends GUI {
 
     private HashMap<Integer, Material> trackingMap;
 
-    public GlobalContainerMenu(Player player, PermissionGroup group) {
+    public GlobalSubContainerMenu(Player player, PermissionGroup group) {
         super(player, "Container Permissions", 54);
         this.group = group;
         this.trackingMap = new HashMap<>();
@@ -49,7 +54,7 @@ public class GlobalContainerMenu extends GUI {
         inv.clear();
         trackingMap.clear();
 
-        BaseClaim claim = group.getOwner();
+        SubClaim claim = (SubClaim) group.getOwner();
 
         int offset = (5 * page);
 
@@ -70,14 +75,21 @@ public class GlobalContainerMenu extends GUI {
                     inv.setItem(itemOffset + x + 27, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
                     break;
                 case 1:
-                    inv.setItem(itemOffset + x + 18, createGuiItem(  ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                    inv.setItem(itemOffset + x + 9, createGuiItem(  ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                    break;
+                case 2:
+                    inv.setItem(itemOffset + x + 18, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
                     break;
             }
 
-
-            ItemStack itemStack = inv.getItem(itemOffset + x + 18);
+            ItemStack itemStack = inv.getItem(itemOffset + x + 9);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(itemOffset + x + 18, createGuiItem(ChatColor.GREEN + "Enable", Material.GREEN_STAINED_GLASS));
+                inv.setItem(itemOffset + x + 9, createGuiItem(ChatColor.GREEN + "Enable", Material.GREEN_STAINED_GLASS));
+            }
+
+            itemStack = inv.getItem(itemOffset + x + 18);
+            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
+                inv.setItem(itemOffset + x + 18, createGuiItem(ChatColor.GREEN + "Neutral", Material.GRAY_STAINED_GLASS));
             }
 
             itemStack = inv.getItem(itemOffset + x + 27);
@@ -104,13 +116,13 @@ public class GlobalContainerMenu extends GUI {
                                 ", " + claim.getUpperCornerZ(),
                         ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getLowerCornerX() +
                                 ", " + claim.getLowerCornerZ())),
-                Material.OAK_FENCE));
+                Material.PAPER));
 
         inv.setItem(25, createGuiItem(ChatColor.GREEN + "General Permissions", Material.CRAFTING_TABLE));
         inv.setItem(34, createGuiItem(ChatColor.GRAY + "Container Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Advanced Permissions", Material.NETHER_STAR));
 
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Exit", Material.ARROW));
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override
@@ -121,8 +133,11 @@ public class GlobalContainerMenu extends GUI {
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
         int slot = event.getSlot();
-        if (slot >= 28 && slot <= 32){
-            clickPermOption(trackingMap.get(slot - itemOffset - 18), PermState.ENABLED);
+        if (slot >= 19 && slot <= 23){
+            clickPermOption(trackingMap.get(slot - itemOffset - 9), PermState.ENABLED);
+            return;
+        } else if (slot >= 28 && slot <= 32){
+            clickPermOption(trackingMap.get(slot - itemOffset - 18), PermState.NEUTRAL);
             return;
         } else if (slot >= 37 && slot <= 41){
             clickPermOption(trackingMap.get(slot - itemOffset - 27), PermState.DISABLE);
@@ -130,6 +145,9 @@ public class GlobalContainerMenu extends GUI {
         }
 
         switch (rawItemName){
+            case "advanced permissions":
+                new SubClaimAdvancedPermissions(getPlayer(), group).open();
+                break;
             case "previous page":
                 page--;
                 loadItems();
@@ -139,16 +157,14 @@ public class GlobalContainerMenu extends GUI {
                 loadItems();
                 break;
             case "general permissions":
-                new GlobalPermissionMenu(getPlayer(), (Claim) group.getOwner()).open();
-                break;
-            case "advanced permissions":
-                new GlobalAdvancedPermissions(getPlayer(), group).open();
+                new GlobalSubClaimPermissionsMenu(getPlayer(), group).open();
                 break;
             case "back":
-                new ClaimMenu(getPlayer(), (Claim) group.getOwner()).open();
+                new SubClaimMenu(getPlayer(), (SubClaim) group.getOwner()).open();
                 break;
         }
     }
+
 
     private void clickPermOption(Material material, int value) {
         if (material == null)

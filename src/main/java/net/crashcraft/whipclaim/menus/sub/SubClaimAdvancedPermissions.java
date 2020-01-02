@@ -1,9 +1,12 @@
-package net.crashcraft.whipclaim.menus.player;
+package net.crashcraft.whipclaim.menus.sub;
 
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.RealClaimListMenu;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.menus.global.GlobalContainerMenu;
+import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,18 +16,16 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 
-public class AdminPermissionMenu extends GUI {
-    private UUID target;
-    private PlayerPermissionSet permissionSet;
+@SuppressWarnings("Duplicates")
+public class SubClaimAdvancedPermissions  extends GUI {
+    private GlobalPermissionSet permissionSet;
     private PermissionGroup group;
 
-    public AdminPermissionMenu(Player player, PermissionGroup group, UUID target) {
-        super(player, "Admin Permissions", 54);
-        this.target = target;
+    public SubClaimAdvancedPermissions(Player player, PermissionGroup group) {
+        super(player, "Advanced Permissions", 54);
         this.group = group;
-        this.permissionSet = group.getPlayerPermissionSet(target);
+        this.permissionSet = group.getPermissionSet();
         setupGUI();
     }
 
@@ -36,41 +37,34 @@ public class AdminPermissionMenu extends GUI {
     @Override
     public void loadItems() {
         inv.clear();
+        BaseClaim claim = group.getOwner();
 
-        inv.setItem(11, createGuiItem(ChatColor.GOLD + "Modify Permissions", Material.CRAFTING_TABLE));
-        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Modify Claim", Material.OAK_FENCE_GATE));
+        //TODO define everything with an accurate descitption
+        inv.setItem(11, createGuiItem(ChatColor.GOLD + "Allow Pistons", Material.CRAFTING_TABLE));
+        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Allow Fluids", Material.OAK_FENCE_GATE));
         inv.setItem(13, createGuiItem(ChatColor.GOLD + "View Sub Claims", Material.SEA_LANTERN));
 
-        switch (PermissionRoute.MODIFY_PERMISSIONS.getPerm(permissionSet)){
+        switch (PermissionRoute.FLUIDS.getPerm(permissionSet)) {
             case 1:
-                inv.setItem(20, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(29, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
+                inv.setItem(29, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
             case 0:
                 inv.setItem(38, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
                 break;
         }
 
-        switch (PermissionRoute.MODIFY_CLAIM.getPerm(permissionSet)){
+        switch (PermissionRoute.PISTONS.getPerm(permissionSet)) {
             case 1:
-                inv.setItem(21, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(30, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
+                inv.setItem(30, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
             case 0:
                 inv.setItem(39, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
                 break;
         }
 
-        switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)){
+        switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)) {
             case 1:
-                inv.setItem(22, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(31, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
+                inv.setItem(31, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
             case 0:
                 inv.setItem(40, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
@@ -98,12 +92,17 @@ public class AdminPermissionMenu extends GUI {
             }
         }
 
-        inv.setItem(16, createPlayerHead(target, new ArrayList<>(Arrays.asList(ChatColor.GREEN + "You are currently editing",
-                ChatColor.GREEN + "this players permissions."))));
+        inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
+                new ArrayList<>(Arrays.asList(
+                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getUpperCornerX() +
+                                ", " + claim.getUpperCornerZ(),
+                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getLowerCornerX() +
+                                ", " + claim.getLowerCornerZ())),
+                Material.OAK_FENCE));
 
         inv.setItem(25, createGuiItem(ChatColor.GREEN + "General Permissions", Material.CRAFTING_TABLE));
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
-        inv.setItem(43, createGuiItem(ChatColor.GRAY + "Admin Permissions", Material.GRAY_STAINED_GLASS_PANE));
+        inv.setItem(43, createGuiItem(ChatColor.GRAY + "Advanced Permissions", Material.GRAY_STAINED_GLASS_PANE));
 
         inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
@@ -127,32 +126,25 @@ public class AdminPermissionMenu extends GUI {
             return;
         }
 
-        switch (rawItemName){
+        switch (rawItemName) {
             case "general permissions":
-                new PlayerPermissionMenu(getPlayer(), group, target).open();
+                new GlobalSubClaimPermissionsMenu(getPlayer(), group).open();
                 break;
             case "container permissions":
-                new PlayerContainerPermissionMenu(getPlayer(), group, target).open();
+                new GlobalSubContainerMenu(getPlayer(), group).open();
                 break;
             case "back":
-                GUI menu = null;
-                BaseClaim temp = group.getOwner();
-                if (temp instanceof SubClaim){
-                    menu = new SubClaimMenu(getPlayer(), (SubClaim) temp);
-                } else if (temp instanceof Claim){
-                    menu = new ClaimMenu(getPlayer(), (Claim) temp);
-                }
-                new PlayerPermListMenu(group.getOwner(), getPlayer(), menu);
+                new SubClaimMenu(getPlayer(), (SubClaim) group.getOwner()).open();
                 break;
         }
     }
 
-    private PermissionRoute getRoute(int slot){
-        switch (slot){
+    private PermissionRoute getRoute(int slot) {
+        switch (slot) {
             case 1:
-                return PermissionRoute.MODIFY_PERMISSIONS;
+                return PermissionRoute.FLUIDS;
             case 2:
-                return PermissionRoute.MODIFY_CLAIM;
+                return PermissionRoute.PISTONS;
             case 3:
                 return PermissionRoute.VIEW_SUB_CLAIMS;
         }
@@ -163,7 +155,7 @@ public class AdminPermissionMenu extends GUI {
         if (route == null)
             return;
 
-        group.setPlayerPermission(target, route, value);
+        group.setPermission(route, value);
         loadItems();
     }
 }

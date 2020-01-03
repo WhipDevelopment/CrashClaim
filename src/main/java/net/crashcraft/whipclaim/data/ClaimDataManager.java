@@ -410,11 +410,11 @@ public class ClaimDataManager implements Listener {
         return ((maxX - minX) < 4 || (maxZ - minZ) < 4);
     }
 
-    public boolean checkOverLapSurroudningClaims(int claimid, int upperX, int upperZ, int lowerX, int lowerZ, UUID world){
-        long NWChunkX = upperX >> 4;
-        long NWChunkZ = upperZ >> 4;
-        long SEChunkX = lowerX >> 4;
-        long SEChunkZ = lowerZ >> 4;
+    public boolean checkOverLapSurroudningClaims(int claimid, int maxX, int maxZ, int minX, int minZ, UUID world){
+        long NWChunkX = minX >> 4;
+        long NWChunkZ = minZ >> 4;
+        long SEChunkX = maxX >> 4;
+        long SEChunkZ = maxZ >> 4;
 
         ArrayList<Claim> claims = new ArrayList<>();
 
@@ -438,7 +438,7 @@ public class ClaimDataManager implements Listener {
         }
 
         for (Claim claim : claims){
-            if (MathUtils.doOverlap(upperX, upperZ, lowerX, lowerZ,
+            if (MathUtils.doOverlap(minX, minZ, maxX, maxZ,
                     claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ())){
                 return true;
             }

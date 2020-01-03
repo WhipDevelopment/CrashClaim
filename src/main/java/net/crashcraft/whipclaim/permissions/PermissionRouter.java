@@ -25,6 +25,31 @@ public class PermissionRouter {
         return secondary == 2 ? primary : secondary;
     }
 
+    public static int getLayeredPermission(Claim parent, SubClaim subClaim, PermissionRoute route){
+        if (subClaim != null){
+            return processPerm(route.getPerm(parent.getPerms().getPermissionSet()), route.getPerm(subClaim.getPerms().getPermissionSet()));
+        } else {
+            return route.getPerm(parent.getPerms().getPermissionSet());
+        }
+    }
+
+    public static int getLayeredPermission(Claim parent, SubClaim subClaim, Material material){
+        if (subClaim != null){
+            return processPerm(PermissionRoute.CONTAINERS.getPerm(parent.getPerms().getPermissionSet(), material),
+                    PermissionRoute.CONTAINERS.getPerm(subClaim.getPerms().getPermissionSet(), material));
+        } else {
+            return PermissionRoute.CONTAINERS.getPerm(parent.getPerms().getPermissionSet(), material);
+        }
+    }
+
+    public static int getLayeredPermission(GlobalPermissionSet global, GlobalPermissionSet main, PermissionRoute route){
+        return processPerm(route.getPerm(global), route.getPerm(main));
+    }
+
+    public static int getLayeredPermission(GlobalPermissionSet global, GlobalPermissionSet main, Material material){
+        return processPerm(PermissionRoute.CONTAINERS.getPerm(global, material), PermissionRoute.CONTAINERS.getPerm(main, material));
+    }
+
     public static int getLayeredPermission(GlobalPermissionSet global, PlayerPermissionSet main, PermissionRoute route){
         return main == null ? route.getPerm(global) : processPerm(route.getPerm(global), route.getPerm(main));
 

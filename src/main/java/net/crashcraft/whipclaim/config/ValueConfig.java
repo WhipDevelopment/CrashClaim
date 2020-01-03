@@ -1,5 +1,6 @@
 package net.crashcraft.whipclaim.config;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,6 +30,18 @@ public class ValueConfig {
     public static boolean VISUALIZE_VISUAL_USE_HIGHEST_BLOCK = false;
     private static String VISUALIZE_VISUAL_USE_HIGHEST_BLOCK_KEY = "visualization.visual-use-highest-block";
 
+    public static EnumWrappers.TitleAction VISUALIZE_ALERT_TYPE = EnumWrappers.TitleAction.ACTIONBAR;
+    private static String VISUALIZE_ALERT_TYPE_KEY = "visualization.alert.type";
+
+    public static int VISUALIZE_ALERT_FADE_IN = 10;
+    private static String VISUALIZE_ALERT_FADE_IN_KEY = "visualization.alert.fade-in";
+
+    public static int VISUALIZE_ALERT_DURATION = 1;
+    private static String VISUALIZE_ALERT_DURATION_KEY = "visualization.alert.duration";
+
+    public static int VISUALIZE_ALERT_FADE_OUT = 10;
+    private static String VISUALIZE_ALERT_FADE_OUT_KEY = "visualization.alert.fade-out";
+
     public static void writeDefault(FileConfiguration configuration, Plugin plugin){
         YamlConfiguration config = new YamlConfiguration();
 
@@ -36,38 +49,41 @@ public class ValueConfig {
         config.set(VISUALIZE_VISUAL_BLOCK_KEY, VISUALIZE_VISUAL_BLOCK.name());
         config.set(MENU_VISUAL_CLAIM_ITEMS_KET, MENU_VISUAL_CLAIM_ITEMS);
         config.set(VISUALIZE_VISUAL_USE_HIGHEST_BLOCK_KEY, VISUALIZE_VISUAL_USE_HIGHEST_BLOCK);
+        config.set(VISUALIZE_ALERT_TYPE_KEY, VISUALIZE_ALERT_TYPE.name());
+        config.set(VISUALIZE_ALERT_FADE_IN_KEY, VISUALIZE_ALERT_FADE_IN);
+        config.set(VISUALIZE_ALERT_DURATION_KEY, VISUALIZE_ALERT_DURATION);
+        config.set(VISUALIZE_ALERT_FADE_OUT_KEY, VISUALIZE_ALERT_FADE_OUT);
 
         configuration.options().copyDefaults(true);
         configuration.setDefaults(config);
 
         try {
-            System.out.println(configuration.getCurrentPath());
             configuration.save(configuration.getCurrentPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void loadConfig(FileConfiguration configuration, Plugin plugin){
+    public static void loadConfig(FileConfiguration configuration, Plugin plugin) {
         Material material = null;
         logger = plugin.getLogger();
 
         VISUALIZE_VISUAL_TYPE = configuration.getString(VISUALIZE_VISUAL_TYPE_KEY);
 
         material = Material.getMaterial(configuration.getString(VISUALIZE_VISUAL_BLOCK_KEY));
-        if (material == null){
+        if (material == null) {
             logger.warning("[Config] " + VISUALIZE_VISUAL_BLOCK_KEY + " is not a valid material. Defaulting values.");
         } else {
             VISUALIZE_VISUAL_BLOCK = material;
         }
 
         ArrayList<Material> materials = new ArrayList<>();
-        for (String worldname : configuration.getStringList(MENU_VISUAL_CLAIM_ITEMS_KET)){
+        for (String worldname : configuration.getStringList(MENU_VISUAL_CLAIM_ITEMS_KET)) {
             material = Material.valueOf(configuration.getString(MENU_VISUAL_CLAIM_ITEMS_KET + "." + worldname));
             World world = Bukkit.getWorld(worldname);
-            if (material == null){
+            if (material == null) {
                 logger.warning("[Config] " + MENU_VISUAL_CLAIM_ITEMS_KET + "." + worldname + " is not a valid material. Defaulting values.");
-            } else if (world == null){
+            } else if (world == null) {
                 logger.warning("[Config] " + MENU_VISUAL_CLAIM_ITEMS_KET + "." + worldname + " is not a valid world name. Defaulting values.");
             } else {
                 MENU_VISUAL_CLAIM_ITEMS.put(world.getUID(), material);
@@ -75,5 +91,15 @@ public class ValueConfig {
         }
 
         VISUALIZE_VISUAL_USE_HIGHEST_BLOCK = configuration.getBoolean(VISUALIZE_VISUAL_USE_HIGHEST_BLOCK_KEY, VISUALIZE_VISUAL_USE_HIGHEST_BLOCK);
+
+        try {
+            VISUALIZE_ALERT_TYPE = EnumWrappers.TitleAction.valueOf(configuration.getString(VISUALIZE_ALERT_TYPE_KEY));
+        } catch (EnumConstantNotPresentException e) {
+            logger.warning("Invalid " + VISUALIZE_ALERT_TYPE_KEY + ", defaulting to " + VISUALIZE_ALERT_TYPE.name());
+        }
+
+        VISUALIZE_ALERT_FADE_IN = configuration.getInt(VISUALIZE_ALERT_FADE_IN_KEY, VISUALIZE_ALERT_FADE_IN);
+        VISUALIZE_ALERT_DURATION = configuration.getInt(VISUALIZE_ALERT_DURATION_KEY, VISUALIZE_ALERT_DURATION);
+        VISUALIZE_ALERT_FADE_OUT = configuration.getInt(VISUALIZE_ALERT_FADE_OUT_KEY, VISUALIZE_ALERT_FADE_OUT);
     }
 }

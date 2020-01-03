@@ -8,6 +8,7 @@ import net.crashcraft.whipclaim.commands.modes.ModeCommand;
 import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.MaterialName;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
 
@@ -52,6 +53,8 @@ public class WhipClaim extends JavaPlugin {
         visualizationManager = new VisualizationManager(this, protocolManager);
         manager = new ClaimDataManager(this);
         materialName = new MaterialName();
+
+        new PermissionHelper(manager);
 
         CommandManager commandManager = new CommandManager(this);
 

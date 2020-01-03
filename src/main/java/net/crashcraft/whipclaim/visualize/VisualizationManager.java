@@ -3,6 +3,8 @@ package net.crashcraft.whipclaim.visualize;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
@@ -100,6 +102,22 @@ public class VisualizationManager {
         whipClaim.saveConfig();
     }
 
+    public void sendAlert(Player player, String message){
+        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.TITLE);
+
+        packet.getTitleActions().write(0, ValueConfig.VISUALIZE_ALERT_TYPE);
+        packet.getChatComponents().write(0, WrappedChatComponent.fromText(ChatColor.translateAlternateColorCodes('&', message)));
+        packet.getIntegers().write(0, ValueConfig.VISUALIZE_ALERT_FADE_IN);
+        packet.getIntegers().write(1, ValueConfig.VISUALIZE_ALERT_DURATION);
+        packet.getIntegers().write(2, ValueConfig.VISUALIZE_ALERT_FADE_OUT);
+
+        try {
+            protocolManager.sendServerPacket(player, packet);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     public VisualGroup fetchExistingGroup(UUID uuid){
         return visualHashMap.get(uuid);
     }
@@ -135,8 +153,6 @@ public class VisualizationManager {
             e.printStackTrace();
         }
     }
-
-
 
     public void visualizeSuroudningClaims(Player player, ClaimDataManager claimDataManager){
         long chunkx = player.getLocation().getChunk().getX();

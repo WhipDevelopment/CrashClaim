@@ -1,13 +1,13 @@
 package net.crashcraft.whipclaim.permissions;
 
-import net.crashcraft.whipclaim.claimobjects.GlobalPermissionSet;
-import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.claimobjects.PermissionSet;
-import net.crashcraft.whipclaim.claimobjects.PlayerPermissionSet;
+import net.crashcraft.whipclaim.WhipClaim;
+import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.data.ClaimDataManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public enum  PermissionRoute {
     BUILD{
@@ -204,6 +204,24 @@ public enum  PermissionRoute {
         public void setPerm(GlobalPermissionSet set, int value) {
             throw new RuntimeException("Unsupported operation in permission class");
         }
+
+        @Override
+        public void postSetPayload(PermissionGroup group, int value, UUID player){
+            BaseClaim claim = group.getOwner();
+            if (claim instanceof Claim){
+                if (value == PermState.ENABLED) {
+                    WhipClaim.getPlugin().getDataManager().addOwnedClaim(player, (Claim) claim);
+                } else {
+                    WhipClaim.getPlugin().getDataManager().removeOwnedClaim(player, (Claim) claim);
+                }
+            } else if (claim instanceof SubClaim){
+                if (value == PermState.ENABLED) {
+                    WhipClaim.getPlugin().getDataManager().addOwnedSubClaim(player, (SubClaim) claim);
+                } else {
+                    WhipClaim.getPlugin().getDataManager().removeOwnedCSublaim(player, (SubClaim) claim);
+                }
+            }
+        }
     },
     MODIFY_CLAIM{
         @Override
@@ -227,8 +245,26 @@ public enum  PermissionRoute {
         public void setPerm(GlobalPermissionSet set, int value) {
             throw new RuntimeException("Unsupported operation in permission class");
         }
+
+        @Override
+        public void postSetPayload(PermissionGroup group, int value, UUID player){
+            BaseClaim claim = group.getOwner();
+            if (claim instanceof Claim){
+                if (value == PermState.ENABLED) {
+                    WhipClaim.getPlugin().getDataManager().addOwnedClaim(player, (Claim) claim);
+                } else {
+                    WhipClaim.getPlugin().getDataManager().removeOwnedClaim(player, (Claim) claim);
+                }
+            } else if (claim instanceof SubClaim){
+                if (value == PermState.ENABLED) {
+                    WhipClaim.getPlugin().getDataManager().addOwnedSubClaim(player, (SubClaim) claim);
+                } else {
+                    WhipClaim.getPlugin().getDataManager().removeOwnedCSublaim(player, (SubClaim) claim);
+                }
+            }
+        }
     },
-    VIEW_SUB_CLAIMS{
+        VIEW_SUB_CLAIMS{
         @Override
         public int getPerm(PlayerPermissionSet set) {
             if (set == null)
@@ -275,7 +311,7 @@ public enum  PermissionRoute {
         }
 
         public void setPerm(PlayerPermissionSet set, int value, Material material) {
-            set.getContainers().put(material, value);
+            set.setContainer(material, value);
         }
 
         public int getPerm(PlayerPermissionSet set, Material material){
@@ -287,7 +323,7 @@ public enum  PermissionRoute {
         }
 
         public void setPerm(GlobalPermissionSet set, int value, Material material) {
-            set.getContainers().put(material, value == PermState.NEUTRAL ? PermState.DISABLE : value);
+            set.setContainer(material, value);
         }
 
         public int getPerm(GlobalPermissionSet set, Material material){
@@ -326,5 +362,9 @@ public enum  PermissionRoute {
 
     public int getPerm(PlayerPermissionSet set, Material material){
         throw new RuntimeException("PermissionRoute was called with an invalid perm. (CONTAINERS called getPerm");
+    }
+
+    public void postSetPayload(PermissionGroup group, int value, UUID player){
+
     }
 }

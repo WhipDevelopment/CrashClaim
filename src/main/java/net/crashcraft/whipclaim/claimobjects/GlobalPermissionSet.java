@@ -51,6 +51,11 @@ public class GlobalPermissionSet extends PermissionSet implements Serializable {
     }
 
     @Override
+    public void setContainer(Material material, int value) {
+        super.setContainer(material, checkValue(value));
+    }
+
+    @Override
     public void setBuild(int build) {
         super.setBuild(checkValue(build));
     }

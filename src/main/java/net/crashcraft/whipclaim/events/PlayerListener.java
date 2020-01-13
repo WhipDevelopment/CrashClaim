@@ -1,21 +1,16 @@
 package net.crashcraft.whipclaim.events;
 
-import dev.whip.crashclaim.ClaimManager;
-import dev.whip.crashclaim.ClaimModeManager;
-import dev.whip.crashclaim.StaticValueLookup;
-import dev.whip.crashclaim.ClaimData;
-import dev.whip.crashclaim.ClaimPermissionData;
-import dev.whip.crashclaim.objects.ClaimObject;
-import dev.whip.crashclaim.objects.ClaimPermsObject;
-import dev.whip.crashclaim.user.User;
-import dev.whip.crashclaim.user.UserCache;
-import org.bukkit.ChatColor;
+import net.crashcraft.whipclaim.claimobjects.BaseClaim;
+import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.data.ClaimDataManager;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
+import net.crashcraft.whipclaim.permissions.PermissionRoute;
+import net.crashcraft.whipclaim.permissions.PermissionSetup;
+import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.block.Container;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -25,203 +20,150 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.InventoryHolder;
+
+import java.util.UUID;
 
 public class PlayerListener implements Listener {
-    final private ClaimData claimData = ClaimData.getInstance();
+    private PermissionHelper helper;
+    private PermissionSetup perms;
+    private VisualizationManager visuals;
+    private ClaimDataManager manager;
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    public PlayerListener(ClaimDataManager manager, VisualizationManager visuals){
+        this.manager = manager;
+        this.perms = manager.getPermissionSetup();
+        this.visuals = visuals;
+        this.helper = PermissionHelper.getPermissionHelper();
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteractEvent(PlayerInteractEvent e){
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getHand().equals(EquipmentSlot.HAND))
-            ClaimModeManager.clickBlock(UserCache.getUser(e.getPlayer()), e.getClickedBlock().getLocation());
+        Player player = e.getPlayer();
 
-        if (e.getClickedBlock() == null || (!e.getClickedBlock().getType().isInteractable()
-                && !StaticValueLookup.getInteractableMaterials().contains(e.getClickedBlock().getType())))
+        if (e.getClickedBlock() == null)
             return;
 
         Location location = e.getClickedBlock().getLocation();
-        Material material = e.getClickedBlock().getType();
-        ClaimPermsObject permsObject = ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer()));
 
-        if (permsObject == null)
-            return;
-
-        if (!permsObject.getEnabledContainers().contains(material)) {
-            switch (material) {
-                case DROPPER:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case CHEST:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case TRAPPED_CHEST:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case FURNACE:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case HOPPER:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case DISPENSER:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case WHITE_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case ORANGE_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case MAGENTA_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case LIGHT_BLUE_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case YELLOW_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case LIME_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case PINK_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case LIGHT_GRAY_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case RED_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case PURPLE_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case GREEN_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case GRAY_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case CYAN_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case BROWN_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case BLUE_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case BLACK_SHULKER_BOX:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case ANVIL:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case CHIPPED_ANVIL:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case DAMAGED_ANVIL:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case BARREL:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case LECTERN:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
-                case BLAST_FURNACE:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to open containers in this claim");
-                    return;
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && perms.getHeldItemInteraction().contains(e.getItem().getType())) {
+            if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){
+                e.setCancelled(true);
+                visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
             }
-        } else {
             return;
         }
 
-        if (!permsObject.isInteractions()) {
-            switch (material) {
-                case ENDER_CHEST:
-                    return;
-                case CRAFTING_TABLE:
-                    return;
-                case ENCHANTING_TABLE:
-                    return;
-                case LOOM:
-                    return;
-                case STONECUTTER:
-                    return;
-                case FLETCHING_TABLE:
-                    return;
-                case SMITHING_TABLE:
-                    return;
-                default:
-                    e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to interact in this claim");
-                    break;
+        if (!e.getClickedBlock().getType().isInteractable()
+                        && !perms.getExtraInteractables().contains(e.getClickedBlock().getType())
+                        || perms.getUntrackedBlocks().contains(e.getClickedBlock().getType()))
+            return;
+
+
+
+        if (e.getClickedBlock().getState() instanceof Container){
+            if (helper.hasPermission(player.getUniqueId(), location, e.getClickedBlock().getType())){
+                return;
             }
+
+            e.setCancelled(true);
+            visuals.sendAlert(player, "You do not have permission to open containers in this claim.");
+        } else if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
+            e.setCancelled(true);
+            visuals.sendAlert(player, "You do not have permission to interact in this claim.");
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+
+    @SuppressWarnings("Duplicates")
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerMoveEvent(PlayerMoveEvent e){
         final int fromX = e.getFrom().getBlockX();
         final int fromZ = e.getFrom().getBlockZ();
+
+        if (e.getTo() == null)
+            return;
+
         final int toX = e.getTo().getBlockX();
         final int toZ = e.getTo().getBlockZ();
-        final String world = e.getTo().getWorld().getName();
+        final UUID world = e.getTo().getWorld().getUID();
+        final Player player = e.getPlayer();
 
-        if(!e.getPlayer().isGliding() &&
-                !e.getPlayer().isFlying() &&
+        if(!player.isGliding() &&
+                !player.isFlying() &&
                 (fromX != toX || fromZ != toZ)) {
 
-            ClaimObject toClaim = claimData.getClaimAtLocation(toX, toZ, world);
-            ClaimObject fromClaim = claimData.getClaimAtLocation(fromX, fromZ, world);
+            /*
+                If the sub claim has no entry or exit set, it is treated as if it was not there
+                If the sub claim has anything set then its treated like its own claim
+
+                Play entry before exit
+
+                Parent claim needs to have entry null to play sub claim exit on enter to parent claim
+             */
+
+
+            Claim toClaim = manager.getClaim(toX, toZ, world);
+            Claim fromClaim = manager.getClaim(fromX, fromZ, world);
+
+            BaseClaim to = null;
+            BaseClaim from = null;
 
             if (toClaim != null) {
-                if (toClaim != fromClaim && !toClaim.getEnterMessage().equals(""))
-                    ClaimManager.sendMessageTitle(e.getPlayer(), 1, toClaim.getColor(UserCache.getUser(e.getPlayer()).getUserID()), toClaim.getEnterMessage());
-            } else if (fromClaim != null && !fromClaim.getEnterMessage().equals("")){
-                ClaimManager.sendMessageTitle(e.getPlayer(), 1, fromClaim.getColor(UserCache.getUser(e.getPlayer()).getUserID()), fromClaim.getExitMessage());
+                SubClaim toSubClaim = toClaim.getSubClaim(toX, toZ);
+                if (toSubClaim != null) {
+                    if (toSubClaim.getEntryMessage() != null || toSubClaim.getExitMessage() != null) {
+                        to = toSubClaim;
+                    } else {
+                        to = toClaim;
+                    }
+                } else {
+                    to = toClaim;
+                }
+            }
+
+            if (fromClaim != null) {
+                SubClaim fromSubClaim = fromClaim.getSubClaim(fromX, fromZ);
+                if (fromSubClaim != null) {
+                    if (fromSubClaim.getEntryMessage() != null || fromSubClaim.getExitMessage() != null) {
+                        from = fromSubClaim;
+                    } else {
+                        from = fromClaim;
+                    }
+                } else {
+                    from = fromClaim;
+                }
+            }
+
+            if (to != null){
+                if (from != null){
+                    if (to.equals(from)){
+                        return;
+                    }
+
+                    if (to.getEntryMessage() != null){
+                        visuals.sendAlert(player, to.getEntryMessage());
+                    } else if (from.getEntryMessage() != null){
+                        visuals.sendAlert(player, from.getExitMessage());
+                    }
+                } else {
+                    if (to.getEntryMessage() != null){
+                        visuals.sendAlert(player, to.getEntryMessage());
+                    }
+                }
+            } else {
+                if (from != null){
+                    if (from.getExitMessage() != null){
+                        visuals.sendAlert(player, from.getExitMessage());
+                    }
+                }
             }
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e){
         if (e.getEntity() instanceof Player)
             return;
@@ -231,30 +173,28 @@ public class PlayerListener implements Listener {
             Location location = arrow.getLocation();
             if (arrow.getShooter() instanceof Player){
                 Player player = (Player) arrow.getShooter();
-                if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(player)).isEntities()) {
+
+                if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){
                     e.setCancelled(true);
-                    ClaimManager.sendMessageTitle(player, 1, ChatColor.RED, "You do not have permission to interact with entities in this claim");
+                    visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
                 }
             } else {
-                if (!ClaimPermissionData.getGlobalPerms(location.getBlockX(), location.getBlockZ(), location.getWorld().getName()).isEntities()) {
+                if (!helper.hasPermission(location, PermissionRoute.ENTITIES)){
                     e.setCancelled(true);
                 }
             }
         } else if (e.getDamager() instanceof Player) {
             Player player = (Player) e.getDamager();
-            Location location = e.getEntity().getLocation();
-            if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(player)).isEntities()) {
+            if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                ClaimManager.sendMessageTitle(player, 1, ChatColor.RED, "You do not have permission to interact with entities in this claim");
+                visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
             }
         } else if (e.getDamager() instanceof TNTPrimed){
-            Location location = e.getEntity().getLocation();
-            if (!ClaimPermissionData.getGlobalPerms(location.getBlockX(), location.getBlockZ(), location.getWorld().getName()).isExplosions()) {
+            if (!helper.hasPermission(e.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
                 e.setCancelled(true);
             }
         } else if (e.getDamager() instanceof Creeper){
-            Location location = e.getEntity().getLocation();
-            if (!ClaimPermissionData.getGlobalPerms(location.getBlockX(), location.getBlockZ(), location.getWorld().getName()).isExplosions()) {
+            if (!helper.hasPermission(e.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
                 e.setCancelled(true);
             }
         }
@@ -263,8 +203,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHangingBreak(HangingBreakEvent event) {
         if (event.getCause() == HangingBreakEvent.RemoveCause.EXPLOSION) {
-            Location location = event.getEntity().getLocation();
-            if (!ClaimPermissionData.getGlobalPerms(location.getBlockX(), location.getBlockZ(), location.getWorld().getName()).isExplosions()) {
+            if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
                 event.setCancelled(true);
             }
         }
@@ -274,19 +213,16 @@ public class PlayerListener implements Listener {
     public void onVehicleDestroyEvent(VehicleDamageEvent e){
         if (e.getAttacker() instanceof Player) {
             Player player = (Player) e.getAttacker();
-            Location location = e.getVehicle().getLocation();
-            if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(player)).isEntities()) {
+            if (!helper.hasPermission(player.getUniqueId(), e.getVehicle().getLocation(), PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                ClaimManager.sendMessageTitle(player, 1, ChatColor.RED, "You do not have permission to interact with entities in this claim");
+                visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
             }
         } else if (e.getAttacker() instanceof TNTPrimed){
-            Location location = e.getAttacker().getLocation();
-            if (!ClaimPermissionData.getGlobalPerms(location.getBlockX(), location.getBlockZ(), location.getWorld().getName()).isExplosions()) {
+            if (!helper.hasPermission(e.getAttacker().getLocation(), PermissionRoute.EXPLOSIONS)){
                 e.setCancelled(true);
             }
         } else if (e.getAttacker() instanceof Creeper){
-            Location location = e.getAttacker().getLocation();
-            if (!ClaimPermissionData.getGlobalPerms(location.getBlockX(), location.getBlockZ(), location.getWorld().getName()).isExplosions()) {
+            if (!helper.hasPermission(e.getAttacker().getLocation(), PermissionRoute.EXPLOSIONS)){
                 e.setCancelled(true);
             }
         }
@@ -294,85 +230,73 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e){
-        Location location = e.getRightClicked().getLocation();
-        if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isEntities()) {
+        Player player = e.getPlayer();
+        if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to interact with entities in this claim");
+            visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
         }
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerArmorStandManipulateEvent(PlayerArmorStandManipulateEvent e){
-        Location location = e.getRightClicked().getLocation();
-        if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isEntities()) {
+        Player player = e.getPlayer();
+        if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to interact with entities in this claim");
+            visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
         }
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerPickupArrowEvent(PlayerPickupArrowEvent e){
-        Location location = e.getArrow().getLocation();
-        if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isEntities()) {
+        Player player = e.getPlayer();
+        if (!helper.hasPermission(player.getUniqueId(), e.getArrow().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to interact with entities in this claim");
+            visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
         }
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onBlockBreakEvent(BlockBreakEvent e){
-        Location location = e.getBlock().getLocation();
-        if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isBuild()) {
+        Player player = e.getPlayer();
+        if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, "You do not have permission to build in this claim");
         }
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onBlockPlaceEvent(BlockPlaceEvent e){
-        Location location = e.getBlock().getLocation();
-        if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isBuild()) {
+        Player player = e.getPlayer();
+        if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, "You do not have permission to build in this claim");
         }
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerBucketEmptyEvent(PlayerBucketEmptyEvent e){
-        Location location = e.getBlockClicked().getLocation();
-        if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isBuild()) {
+        Player player = e.getPlayer();
+        if (!helper.hasPermission(player.getUniqueId(), e.getBlockClicked().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, "You do not have permission to build in this claim");
         }
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerBucketFillEvent(PlayerBucketFillEvent e){
-        Location location = e.getBlockClicked().getLocation();
-        if (!ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isBuild()) {
+        Player player = e.getPlayer();
+        if (!helper.hasPermission(player.getUniqueId(), e.getBlockClicked().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, "You do not have permission to build in this claim");
         }
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onBlockIgniteEvent(BlockIgniteEvent e){
-        Location location = e.getBlock().getLocation();
         if (e.getIgnitingEntity() instanceof Player &&
-                !ClaimPermissionData.lookup(location.getBlockX(), location.getBlockZ(), UserCache.getUser(e.getPlayer())).isBuild()) {
+                !helper.hasPermission(e.getPlayer().getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)) {
             e.setCancelled(true);
-            ClaimManager.sendMessageTitle(e.getPlayer(), 1, ChatColor.RED, "You do not have permission to build in this claim");
+            visuals.sendAlert(e.getPlayer(), "You do not have permission to build in this claim");
         }
-    }
-
-    @EventHandler
-    public void onPlayerJoinEvent(PlayerJoinEvent e){
-        User user = UserCache.getUser(e.getPlayer());
-        user.onJoin(e);
-    }
-
-    @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent e){
-        ClaimModeManager.playerLeaveCleanup(UserCache.getUser(e.getPlayer()));
     }
 }

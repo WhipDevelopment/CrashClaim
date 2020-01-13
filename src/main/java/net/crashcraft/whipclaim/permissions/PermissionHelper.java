@@ -1,6 +1,9 @@
 package net.crashcraft.whipclaim.permissions;
 
+import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
+import net.crashcraft.whipclaim.claimobjects.PlayerPermissionSet;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +19,11 @@ public class PermissionHelper {
         helper = this;
 
         this.manager = manager;
+    }
+
+    public boolean hasPermission(BaseClaim claim, UUID player, PermissionRoute route){
+        PlayerPermissionSet set = claim.getPerms().getPlayerPermissionSet(player);
+        return set != null && route.getPerm(set) == PermState.ENABLED;
     }
 
     public boolean hasPermission(UUID player, Location location, Material material){

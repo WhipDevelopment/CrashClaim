@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class PermissionSetup {
     private ArrayList<Material> trackedContainers;
     private ArrayList<Material> untrackedBlocks;
     private ArrayList<Material> extraInteractables;
+    private ArrayList<Material> heldItemInteraction;
 
     private PlayerPermissionSet ownerPermissionSet;
 
@@ -30,6 +32,7 @@ public class PermissionSetup {
         trackedContainers = new ArrayList<>();
         untrackedBlocks = new ArrayList<>();
         extraInteractables = new ArrayList<>();
+        heldItemInteraction = new ArrayList<>();
 
         for (Material material : Material.values()){
             ItemStack stack = new ItemStack(material);
@@ -48,6 +51,20 @@ public class PermissionSetup {
 
         FileConfiguration lookup = YamlConfiguration.loadConfiguration(new File(Paths.get(claim.getDataFolder().getAbsolutePath(), "lookup.yml").toUri()));
 
+        for (String name : lookup.getStringList("additional-tracked-interactables")){
+            if (name.equals(""))
+                continue;
+
+            Material material = Material.getMaterial(name);
+
+            if (material != null) {
+                extraInteractables.add(material);
+            } else {
+                logger.warning("Material was not found whole parsing lookup.yml -> additional-tracked-interactables: " + name +
+                        "\n Make sure to be using the Bukkit Material names.");
+            }
+        }
+
         for (String name : lookup.getStringList("untracked-blocks")){
             if (name.equals(""))
                 continue;
@@ -57,24 +74,25 @@ public class PermissionSetup {
             if (material != null) {
                 untrackedBlocks.add(material);
                 trackedContainers.remove(material);
+                extraInteractables.remove(material);
             } else {
                 logger.warning("Material was not found whole parsing lookup.yml -> untracked-blocks: " + name +
                         "\n Make sure to be using the Bukkit Material names.");
             }
         }
 
-        for (String name : lookup.getStringList("additional-tracked-interactables")){
+        for (String name : lookup.getStringList("tracked-heldItemInteraction")){
             if (name.equals(""))
                 continue;
 
-                Material material = Material.getMaterial(name);
+            Material material = Material.getMaterial(name);
 
-                if (material != null) {
-                    extraInteractables.add(material);
-                } else {
-                    logger.warning("Material was not found whole parsing lookup.yml -> additional-tracked-interactables: " + name +
-                            "\n Make sure to be using the Bukkit Material names.");
-                }
+            if (material != null) {
+                heldItemInteraction.add(material);
+            } else {
+                logger.warning("Material was not found whole parsing lookup.yml -> tracked-heldItemInteraction: " + name +
+                        "\n Make sure to be using the Bukkit Material names.");
+            }
         }
 
         HashMap<Material, Integer> temp = new HashMap<>();
@@ -108,5 +126,9 @@ public class PermissionSetup {
 
     public PlayerPermissionSet getOwnerPermissionSet() {
         return ownerPermissionSet;
+    }
+
+    public ArrayList<Material> getHeldItemInteraction() {
+        return heldItemInteraction;
     }
 }

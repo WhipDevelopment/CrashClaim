@@ -89,7 +89,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
         UUID uuid = player.getUniqueId();
         Claim claim = edditingMap.get(player.getUniqueId());
 
-        if (!MathUtils.checkPointCollide(claim.getMinX(), claim.getMinZ(),
+        if (!MathUtils.iskPointCollide(claim.getMinX(), claim.getMinZ(),
                 claim.getMaxX(), claim.getMaxZ(), location.getBlockX(), location.getBlockZ())){
             player.sendMessage(ChatColor.RED + "Sub claims can only be formed inside of a parent claim.");
             cleanup(player.getUniqueId(), true);

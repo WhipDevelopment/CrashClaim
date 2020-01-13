@@ -1,6 +1,7 @@
 package net.crashcraft.whipclaim.menus;
 
 import dev.whip.crashutils.menusystem.GUI;
+import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import org.bukkit.Bukkit;
@@ -15,19 +16,18 @@ import java.util.function.BiFunction;
 public class RealClaimListMenu extends GUI{
     private int page = 1;
     private GUI previousMenu;
-    private Material material;
     private ArrayList<? extends BaseClaim> claims;
     private BiFunction<Player, BaseClaim, String> function;
+    private Material material;
 
     private ArrayList<BaseClaim> currentPageItems;
 
-    public RealClaimListMenu(Player player, GUI previousMenu, String name, ArrayList<? extends BaseClaim> claims,
-                             Material material, BiFunction<Player, BaseClaim, String> function){
+    public RealClaimListMenu(Player player, GUI previousMenu, String name, Material material, ArrayList<? extends BaseClaim> claims, BiFunction<Player, BaseClaim, String> function){
         super(player,name, 54);
         this.previousMenu = previousMenu;
-        this.material = material;
         this.claims = claims;
         this.function = function;
+        this.material = material;
         setupGUI();
     }
 
@@ -59,11 +59,11 @@ public class RealClaimListMenu extends GUI{
             if (item instanceof SubClaim){
                 SubClaim subClaim = (SubClaim) item;
                 if (!subClaim.getParent().getOwner().equals(getPlayer().getUniqueId())){
-                    desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()));
+                    desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()).getName());
                 }
             }
 
-            inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, material));
+            inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, material != null ? material : WhipClaim.getPlugin().getDataManager().getMaterialLookup().get(item.getWorld())));
 
             slot++;
         }
@@ -105,8 +105,7 @@ public class RealClaimListMenu extends GUI{
                 previousMenu.open();
                 break;
             default:
-                if (e.getCurrentItem().getType() == material)
-                    function.apply(getPlayer(), currentPageItems.get(e.getSlot() - 10));
+                function.apply(getPlayer(), currentPageItems.get(e.getSlot() - 10));
                 break;
         }
     }

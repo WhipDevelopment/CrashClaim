@@ -53,8 +53,14 @@ public class PermissionGroup implements Serializable {
         if (playerPermissions.containsKey(id)) {
             return playerPermissions.get(id);
         } else {
-            PlayerPermissionSet perms = new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
-                    PermState.NEUTRAL,  new HashMap<>(), PermState.NEUTRAL, PermState.NEUTRAL);
+            PlayerPermissionSet perms;
+            if (owner instanceof SubClaim){
+                perms = new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
+                        PermState.NEUTRAL, new HashMap<>(), PermState.NEUTRAL, PermState.NEUTRAL);
+            } else {
+                perms = new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
+                        PermState.DISABLE, new HashMap<>(), PermState.DISABLE, PermState.DISABLE);
+            }
             playerPermissions.put(id, perms);
             return perms;
         }
@@ -79,31 +85,23 @@ public class PermissionGroup implements Serializable {
     }
 
     public void setPermission(PermissionRoute route, int value){
-        System.out.println(value);
-        System.out.println("[PermsLog][Before] " + route.name() + ": " + route.getPerm(globalPermissionSet));
         route.setPerm(globalPermissionSet, value);
         owner.setToSave(true);
-        System.out.println("[PermsLog][After] " + route.name() + ": " + route.getPerm(globalPermissionSet));
     }
 
     public void setPlayerPermission(UUID uuid, PermissionRoute route, int value){
-        System.out.println("[PermsLog][Before] " + route.name() + ": " + route.getPerm(getPlayerPermissionSet(uuid)));
         route.setPerm(getPlayerPermissionSet(uuid), value);
         owner.setToSave(true);
-        System.out.println("[PermsLog][After] " + route.name() + ": " + route.getPerm(getPlayerPermissionSet(uuid)));
+        route.postSetPayload(this, route.getPerm(getPlayerPermissionSet(uuid)), uuid);
     }
 
     public void setContainerPermission(int value, Material material){
-        System.out.println("[PermsLog][Before] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(globalPermissionSet, material));
         PermissionRoute.CONTAINERS.setPerm(globalPermissionSet, value, material);
         owner.setToSave(true);
-        System.out.println("[PermsLog][After] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(globalPermissionSet, material));
     }
 
     public void setContainerPlayerPermission(UUID uuid, int value, Material material) {
-        System.out.println("[PermsLog][Before] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(getPlayerPermissionSet(uuid), material));
         PermissionRoute.CONTAINERS.setPerm(getPlayerPermissionSet(uuid), value, material);
         owner.setToSave(true);
-        System.out.println("[PermsLog][After] " + material.name() + ": " + PermissionRoute.CONTAINERS.getPerm(getPlayerPermissionSet(uuid), material));
     }
 }

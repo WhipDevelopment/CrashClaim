@@ -5,16 +5,13 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Subcommand;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
-import net.crashcraft.whipclaim.claimobjects.PermissionSet;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.menus.ClaimListMenu;
+import net.crashcraft.whipclaim.menus.AllClaimListMenu;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.Optional;
 
 @CommandAlias("test")
 public class TestCommand extends BaseCommand {
@@ -65,6 +62,7 @@ public class TestCommand extends BaseCommand {
 
     @Subcommand("listmenu")
     public void onListMenu(Player player){
-        new ClaimListMenu(player, null);
+        new AllClaimListMenu(player, null);
     }
+
 }

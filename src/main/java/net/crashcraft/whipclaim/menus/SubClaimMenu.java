@@ -7,7 +7,10 @@ import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
 import net.crashcraft.whipclaim.menus.sub.GlobalSubClaimPermissionsMenu;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
+import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,10 +23,12 @@ import java.util.Collections;
 public class SubClaimMenu extends GUI {
     private SubClaim claim;
     private Material material;
+    private PermissionHelper helper;
 
     public SubClaimMenu(Player player, SubClaim claim) {
         super(player, "Claim Menu", 54);
         this.claim = claim;
+        this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
@@ -34,31 +39,60 @@ public class SubClaimMenu extends GUI {
 
     @Override
     public void loadItems() {
-        inv.setItem(13, createGuiItem(ChatColor.GOLD + claim.getName(),
-                new ArrayList<>(Arrays.asList(
-                        ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getMinX() +
-                                ", " + claim.getMinZ(),
-                        ChatColor.GREEN + "SE Corner: " + ChatColor.YELLOW + claim.getMaxX() +
-                                ", " + claim.getMaxZ())),
-                material));
+        ArrayList<String> desc = new ArrayList<>(Arrays.asList(
+                ChatColor.GREEN + "Coordinates: " + ChatColor.YELLOW +
+                        ChatColor.YELLOW + claim.getMinX() + ", " + claim.getMinZ()
+                        + ChatColor.GOLD + ", " +
+                        ChatColor.YELLOW + claim.getMaxX() + ", " + claim.getMaxZ(),
+                ChatColor.GREEN + "World: " + ChatColor.YELLOW + Bukkit.getWorld(claim.getWorld()).getName()
+        ));
 
-        inv.setItem(28, createGuiItem(ChatColor.GOLD + "Per Player settings",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit claim permissions on a per player basis")), Material.PLAYER_HEAD));
+        if (!claim.getParent().getOwner().equals(getPlayer().getUniqueId())){
+            desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(claim.getParent().getOwner()).getName());
+        }
 
-        inv.setItem(29, createGuiItem(ChatColor.GOLD + "Global Claim settings",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Set global permissions for your claim")), Material.COMPASS));
+        inv.setItem(13, createGuiItem(ChatColor.GOLD + claim.getName(), desc, material));
 
-        inv.setItem(32, createGuiItem(ChatColor.GOLD + "Rename Claim",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Rename your claim to easily identify it")), Material.ANVIL));
+        if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
+            inv.setItem(28, createGuiItem(ChatColor.GOLD + "Per Player settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit claim permissions on a per player basis")), Material.PLAYER_HEAD));
 
-        inv.setItem(33, createGuiItem(ChatColor.GOLD + "Edit Entry Message",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the entry message of your claim")), Material.ANVIL));
+            inv.setItem(29, createGuiItem(ChatColor.GOLD + "Global Claim settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Set global permissions for your claim")), Material.COMPASS));
+        } else {
+            inv.setItem(28, createGuiItem(ChatColor.GRAY + "Per Player settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Edit claim permissions on a per player basis")), Material.PLAYER_HEAD));
 
-        inv.setItem(34, createGuiItem(ChatColor.GOLD + "Edit Exit Message",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the exit message of your claim")), Material.ANVIL));
+            inv.setItem(29, createGuiItem(ChatColor.GRAY + "Global Claim settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Set global permissions for your claim")), Material.COMPASS));
+        }
 
-        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Delete Claim",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Delete your claim permanently")), Material.RED_CONCRETE));
+        if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+            inv.setItem(32, createGuiItem(ChatColor.GOLD + "Rename Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Rename your claim to easily identify it")), Material.ANVIL));
+
+            inv.setItem(33, createGuiItem(ChatColor.GOLD + "Edit Entry Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the entry message of your claim")), Material.ANVIL));
+
+            inv.setItem(34, createGuiItem(ChatColor.GOLD + "Edit Exit Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the exit message of your claim")), Material.ANVIL));
+
+            inv.setItem(49, createGuiItem(ChatColor.GOLD + "Delete Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Delete your claim permanently")), Material.RED_CONCRETE));
+        } else {
+            inv.setItem(32, createGuiItem(ChatColor.GRAY + "Rename Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Rename your claim to easily identify it")), Material.ANVIL));
+
+            inv.setItem(33, createGuiItem(ChatColor.GRAY + "Edit Entry Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Edit the entry message of your claim")), Material.ANVIL));
+
+            inv.setItem(34, createGuiItem(ChatColor.GRAY + "Edit Exit Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Edit the exit message of your claim")), Material.ANVIL));
+
+            inv.setItem(49, createGuiItem(ChatColor.GRAY + "Delete Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Delete your claim permanently")), Material.GRAY_CONCRETE));
+        }
+
 
         inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
@@ -70,6 +104,9 @@ public class SubClaimMenu extends GUI {
 
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
+        if (event.getCurrentItem().getItemMeta().getDisplayName().charAt(1) == ChatColor.GRAY.getChar())
+            return;
+
         switch (rawItemName) {
             case "per player settings":
                 new PlayerPermListMenu(claim, getPlayer(), this);
@@ -89,7 +126,7 @@ public class SubClaimMenu extends GUI {
                 break;
             case "edit entry message":
                 new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim entry message", (player, reply) -> {
-                    claim.setExitMessage(reply);
+                    claim.setEntryMessage(reply);
                     player.sendMessage(ChatColor.GREEN + "Change claim entry message to " + ChatColor.GOLD + reply);
 
                     return null;
@@ -97,7 +134,7 @@ public class SubClaimMenu extends GUI {
                 break;
             case "edit exit message":
                 new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim exit message", (player, reply) -> {
-                    claim.setEntryMessage(reply);
+                    claim.setExitMessage(reply);
                     player.sendMessage(ChatColor.GREEN + "Change claim exit message to " + ChatColor.GOLD + reply);
 
                     return null;
@@ -119,7 +156,7 @@ public class SubClaimMenu extends GUI {
                 break;
             case "back":
                 Claim main = claim.getParent();
-                new RealClaimListMenu(getPlayer(), new ClaimMenu(getPlayer(), main),  "Sub Claims", main.getSubClaims(), Material.PAPER, (p, c) -> {
+                new RealClaimListMenu(getPlayer(), new ClaimMenu(getPlayer(), main), "Sub Claims", Material.PAPER, main.getSubClaims(), (p, c) -> {
                     if (c instanceof SubClaim) {
                         SubClaim claim = (SubClaim) c;
                         new SubClaimMenu(getPlayer(), claim).open();

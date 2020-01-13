@@ -43,10 +43,7 @@ public class AdminPermissionMenu extends GUI {
 
         switch (PermissionRoute.MODIFY_PERMISSIONS.getPerm(permissionSet)){
             case 1:
-                inv.setItem(20, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(29, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
+                inv.setItem(29, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
             case 0:
                 inv.setItem(38, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
@@ -55,10 +52,7 @@ public class AdminPermissionMenu extends GUI {
 
         switch (PermissionRoute.MODIFY_CLAIM.getPerm(permissionSet)){
             case 1:
-                inv.setItem(21, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(30, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
+                inv.setItem(30, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
             case 0:
                 inv.setItem(39, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
@@ -67,27 +61,17 @@ public class AdminPermissionMenu extends GUI {
 
         switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)){
             case 1:
-                inv.setItem(22, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(31, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
+                inv.setItem(31, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
             case 0:
                 inv.setItem(40, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
                 break;
         }
 
-        for (int start = 20; start < 23; start++){
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
-            }
-        }
-
         for (int start = 29; start < 32; start++){
             ItemStack itemStack = inv.getItem(start);
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.DARK_GRAY + "Neutral", Material.GRAY_STAINED_GLASS));
+                inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
             }
         }
 
@@ -116,11 +100,8 @@ public class AdminPermissionMenu extends GUI {
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
         int slot = event.getSlot();
-        if (slot >= 19 && slot <= 23){
-            clickPermOption(getRoute(slot - 19), PermState.ENABLED);
-            return;
-        } else if (slot >= 28 && slot <= 32){
-            clickPermOption(getRoute(slot - 28), PermState.NEUTRAL);
+        if (slot >= 28 && slot <= 32){
+            clickPermOption(getRoute(slot - 28), PermState.ENABLED);
             return;
         } else if (slot >= 37 && slot <= 41){
             clickPermOption(getRoute(slot - 37), PermState.DISABLE);

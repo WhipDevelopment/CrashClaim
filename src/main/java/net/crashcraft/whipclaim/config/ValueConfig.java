@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,12 +57,6 @@ public class ValueConfig {
 
         configuration.options().copyDefaults(true);
         configuration.setDefaults(config);
-
-        try {
-            configuration.save(configuration.getCurrentPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void loadConfig(FileConfiguration configuration, Plugin plugin) {

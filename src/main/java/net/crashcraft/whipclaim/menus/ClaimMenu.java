@@ -4,9 +4,12 @@ import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
+import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,10 +23,13 @@ import java.util.Collections;
 public class ClaimMenu extends GUI {
     private Claim claim;
     private Material material;
+    private PermissionHelper helper;
 
     public ClaimMenu(Player player, Claim claim) {
         super(player, "Claim Menu", 54);
         this.claim = claim;
+        this.helper = PermissionHelper.getPermissionHelper();
+        System.out.println(claim);
         setupGUI();
     }
 
@@ -31,6 +37,7 @@ public class ClaimMenu extends GUI {
     public void initialize() {
         material = Material.OAK_FENCE; //TODO  make this dynamic from config
     }
+
 
     @Override
     public void loadItems() {
@@ -42,26 +49,57 @@ public class ClaimMenu extends GUI {
                                 ", " + claim.getMaxZ())),
                 material));
 
-        inv.setItem(28, createGuiItem(ChatColor.GOLD + "Per Player settings",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit claim permissions on a per player basis")), Material.PLAYER_HEAD));
+        if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
+            inv.setItem(28, createGuiItem(ChatColor.GOLD + "Per Player settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit claim permissions on a per player basis")), Material.PLAYER_HEAD));
 
-        inv.setItem(29, createGuiItem(ChatColor.GOLD + "Global Claim settings",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Set global permissions for your claim")), Material.COMPASS));
+            inv.setItem(29, createGuiItem(ChatColor.GOLD + "Global Claim settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Set global permissions for your claim")), Material.COMPASS));
+        } else {
+            inv.setItem(28, createGuiItem(ChatColor.GRAY + "Per Player settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Edit claim permissions on a per player basis")), Material.PLAYER_HEAD));
 
-        inv.setItem(30, createGuiItem(ChatColor.GOLD + "Sub Claims",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "View the a list of the sub claims for this claim")), Material.WRITABLE_BOOK));
+            inv.setItem(29, createGuiItem(ChatColor.GRAY + "Global Claim settings",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Set global permissions for your claim")), Material.COMPASS));
+        }
 
-        inv.setItem(32, createGuiItem(ChatColor.GOLD + "Rename Claim",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Rename your claim to easily identify it")), Material.ANVIL));
+        inv.setItem(30, createGuiItem(ChatColor.GRAY + "No Sub Claims",
+                new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "There are no sub claims you have permission to list.")), Material.WRITABLE_BOOK));
 
-        inv.setItem(33, createGuiItem(ChatColor.GOLD + "Edit Entry Message",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the entry message of your claim")), Material.ANVIL));
+        for (SubClaim subClaim : claim.getSubClaims()){
+            if (helper.hasPermission(subClaim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)
+            || helper.hasPermission(subClaim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                inv.setItem(30, createGuiItem(ChatColor.GOLD + "Sub Claims",
+                        new ArrayList<>(Collections.singleton(ChatColor.GREEN + "View the a list of the sub claims for this claim")), Material.WRITABLE_BOOK));
+                break;
+            }
+        }
 
-        inv.setItem(34, createGuiItem(ChatColor.GOLD + "Edit Exit Message",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the exit message of your claim")), Material.ANVIL));
+        if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+            inv.setItem(32, createGuiItem(ChatColor.GOLD + "Rename Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Rename your claim to easily identify it")), Material.ANVIL));
 
-        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Delete Claim",
-                new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Delete your claim permanently")), Material.RED_CONCRETE));
+            inv.setItem(33, createGuiItem(ChatColor.GOLD + "Edit Entry Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the entry message of your claim")), Material.ANVIL));
+
+            inv.setItem(34, createGuiItem(ChatColor.GOLD + "Edit Exit Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Edit the exit message of your claim")), Material.ANVIL));
+
+            inv.setItem(49, createGuiItem(ChatColor.GOLD + "Delete Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.GREEN + "Delete your claim permanently")), Material.RED_CONCRETE));
+        } else {
+            inv.setItem(32, createGuiItem(ChatColor.GRAY + "Rename Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Rename your claim to easily identify it")), Material.ANVIL));
+
+            inv.setItem(33, createGuiItem(ChatColor.GRAY + "Edit Entry Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Edit the entry message of your claim")), Material.ANVIL));
+
+            inv.setItem(34, createGuiItem(ChatColor.GRAY + "Edit Exit Message",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Edit the exit message of your claim")), Material.ANVIL));
+
+            inv.setItem(49, createGuiItem(ChatColor.GRAY + "Delete Claim",
+                    new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Delete your claim permanently")), Material.GRAY_CONCRETE));
+        }
 
         inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
@@ -73,15 +111,29 @@ public class ClaimMenu extends GUI {
 
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
+        if (event.getCurrentItem().getItemMeta().getDisplayName().charAt(1) == ChatColor.GRAY.getChar())
+            return;
+
         switch (rawItemName){
             case "per player settings":
-                new PlayerPermListMenu(claim, getPlayer(), this);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
+                    new PlayerPermListMenu(claim, getPlayer(), this);
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "global claim settings":
-                new GlobalPermissionMenu(player, claim).open();
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
+                    new GlobalPermissionMenu(player, claim).open();
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "sub claims":
-                new RealClaimListMenu(getPlayer(), this,  "Sub Claims", claim.getSubClaims(), Material.PAPER, (p, c) -> {
+                // Perm checks are done inside of this menu
+                new RealClaimListMenu(getPlayer(), this,  "Sub Claims", Material.PAPER, claim.getSubClaims(), (p, c) -> {
                     if (c instanceof SubClaim) {
                         SubClaim claim = (SubClaim) c;
                         new SubClaimMenu(getPlayer(), claim).open();
@@ -90,44 +142,65 @@ public class ClaimMenu extends GUI {
                 }).open();
                 break;
             case "rename claim":
-                new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim name", (player, reply) -> {
-                    claim.setName(reply);
-                    player.sendMessage(ChatColor.GREEN + "Change claim name to " + ChatColor.GOLD + reply);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim name", (player, reply) -> {
+                        claim.setName(reply);
+                        player.sendMessage(ChatColor.GREEN + "Change claim name to " + ChatColor.GOLD + reply);
 
-                    //TODO Make sure they cant set duplicate names maybe? might not matter because 2 claims can be named the same by 2 diffferent people then shared
+                        //TODO Make sure they cant set duplicate names maybe? might not matter because 2 claims can be named the same by 2 diffferent people then shared
 
-                    return null;
-                });
+                        return null;
+                    });
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "edit entry message":
-                new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim entry message", (player, reply) -> {
-                    claim.setExitMessage(reply);
-                    player.sendMessage(ChatColor.GREEN + "Change claim entry message to " + ChatColor.GOLD + reply);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim entry message", (player, reply) -> {
+                        claim.setEntryMessage(reply);
+                        player.sendMessage(ChatColor.GREEN + "Change claim entry message to " + ChatColor.GOLD + reply);
 
-                    return null;
-                });
+                        return null;
+                    });
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
+
                 break;
             case "edit exit message":
-                new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim exit message", (player, reply) -> {
-                    claim.setEntryMessage(reply);
-                    player.sendMessage(ChatColor.GREEN + "Change claim exit message to " + ChatColor.GOLD + reply);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim exit message", (player, reply) -> {
+                        claim.setExitMessage(reply);
+                        player.sendMessage(ChatColor.GREEN + "Change claim exit message to " + ChatColor.GOLD + reply);
 
-                    return null;
-                });
+                        return null;
+                    });
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "delete claim":
-                new ConfirmationMenu(getPlayer(),"Confirm Delete Claim",
-                        ChatColor.DARK_RED + "Permanently Delete this claim?",
-                        new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
-                                ChatColor.RED + "the contributing parties")),
-                        material,
-                        (player, aBoolean) -> {
-                            if (aBoolean.equals(true)) {
-                                //ClaimManager.getClaimManager().removeClaim(UserCache.getUser(player), claimObject);
-                                //TODO add remove claim here
-                            }
-                            return "";
-                        }, player -> "").open();
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new ConfirmationMenu(getPlayer(),"Confirm Delete Claim",
+                            ChatColor.DARK_RED + "Permanently Delete this claim?",
+                            new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
+                                    ChatColor.RED + "the contributing parties")),
+                            material,
+                            (player, aBoolean) -> {
+                                if (aBoolean) {
+                                    //ClaimManager.getClaimManager().removeClaim(UserCache.getUser(player), claimObject);
+                                    //TODO add remove claim here
+                                }
+                                return "";
+                            }, player -> "").open();
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "back":
 

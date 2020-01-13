@@ -42,7 +42,10 @@ public class SubClaimAdvancedPermissions  extends GUI {
 
         switch (PermissionRoute.FLUIDS.getPerm(permissionSet)) {
             case 1:
-                inv.setItem(29, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                inv.setItem(20, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                break;
+            case 2:
+                inv.setItem(29, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
                 break;
             case 0:
                 inv.setItem(38, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
@@ -51,7 +54,10 @@ public class SubClaimAdvancedPermissions  extends GUI {
 
         switch (PermissionRoute.PISTONS.getPerm(permissionSet)) {
             case 1:
-                inv.setItem(30, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                inv.setItem(21, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                break;
+            case 2:
+                inv.setItem(30, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
                 break;
             case 0:
                 inv.setItem(39, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
@@ -60,7 +66,10 @@ public class SubClaimAdvancedPermissions  extends GUI {
 
         switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)) {
             case 1:
-                inv.setItem(31, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                inv.setItem(22, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                break;
+            case 2:
+                inv.setItem(31, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
                 break;
             case 0:
                 inv.setItem(40, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));

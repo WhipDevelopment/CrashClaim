@@ -223,6 +223,16 @@ public class VisualizationManager {
     }
 
  */
+    public void cleanup(Player player) {
+        VisualGroup group = fetchVisualGroup(player, false);
+        if (group != null){
+            for (BaseVisual visual : group.getActiveVisuals()){
+                timeMap.remove(visual);
+            }
+            group.removeAllVisuals();
+        }
+        visualHashMap.remove(player.getUniqueId());
+    }
 
     public VisualProvider getProvider(){
         return provider;

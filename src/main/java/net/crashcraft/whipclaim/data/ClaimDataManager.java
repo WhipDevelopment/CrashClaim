@@ -1,5 +1,6 @@
 package net.crashcraft.whipclaim.data;
 
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.cache2k.Cache2kBuilder;
@@ -41,10 +43,12 @@ public class ClaimDataManager implements Listener {
 
     private PermissionSetup permissionSetup;
 
-    private HashMap<UUID, ArrayList<Integer>> ownedClaims;   // ids of claims t  hat the user has permission to modify - used for menu lookups
-    private HashMap<UUID, ArrayList<Integer>> ownedSubClaims;
+    private HashMap<UUID, Set<Integer>> ownedClaims;   // ids of claims t  hat the user has permission to modify - used for menu lookups
+    private HashMap<UUID, Set<Integer>> ownedSubClaims;
 
     private HashMap<UUID, Material> materialLookup;
+
+    private HashMap<Integer, Integer> subClaimLookupParent;
 
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
     private HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
@@ -58,6 +62,7 @@ public class ClaimDataManager implements Listener {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
         this.isSaving = false;
+        this.subClaimLookupParent = new HashMap<>();
 
         permissionSetup = new PermissionSetup(plugin);
 
@@ -159,6 +164,12 @@ public class ClaimDataManager implements Listener {
                         PermissionGroup permissionGroup = claim.getPerms();
                         ArrayList<SubClaim> subClaims = claim.getSubClaims();
 
+                        if (subClaims != null) {
+                            for (SubClaim subClaim : claim.getSubClaims()) {
+                                subClaimLookupParent.put(subClaim.getId(), claim.getId());
+                            }
+                        }
+
                         for (Map.Entry<UUID, PlayerPermissionSet> entry : permissionGroup.getPlayerPermissions().entrySet()) {
                             UUID uuid = entry.getKey();
 
@@ -166,8 +177,8 @@ public class ClaimDataManager implements Listener {
                                     null, uuid, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED ||
                                     PermissionRouter.getLayeredPermission(claim,
                                             null, uuid, PermissionRoute.MODIFY_PERMISSIONS) == PermState.ENABLED) {
-                                ownedClaims.computeIfAbsent(uuid, u -> new ArrayList<>());
-                                ArrayList<Integer> ids = ownedClaims.get(uuid);
+                                ownedClaims.computeIfAbsent(uuid, u -> new HashSet<>());
+                                Set<Integer> ids = ownedClaims.get(uuid);
                                 ids.add(claim.getId());
                                 continue;
                             }
@@ -179,8 +190,8 @@ public class ClaimDataManager implements Listener {
                                             subPerms.getPlayerPermissionSet(uuid), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED ||
                                             PermissionRouter.getLayeredPermission(subPerms.getPermissionSet(),
                                                     subPerms.getPlayerPermissionSet(uuid), PermissionRoute.MODIFY_PERMISSIONS) == PermState.ENABLED) {
-                                        ownedSubClaims.computeIfAbsent(uuid, u -> new ArrayList<>());
-                                        ArrayList<Integer> ids = ownedSubClaims.get(uuid);
+                                        ownedSubClaims.computeIfAbsent(uuid, u -> new HashSet<>());
+                                        Set<Integer> ids = ownedSubClaims.get(uuid);
                                         ids.add(subClaim.getId());
                                     }
                                 }
@@ -454,6 +465,7 @@ public class ClaimDataManager implements Listener {
             return false;
         }
 
+        addOwnedClaim(claim.getOwner(), claim);
         claimLookup.put(claim.getId(), claim);
         loadChunksForClaim(claim);
 
@@ -467,7 +479,10 @@ public class ClaimDataManager implements Listener {
         //Claim Data
         File file = new File(Paths.get(dataPath.toString(), Integer.toString(claim.getId())).toUri());
         file.delete();
-        //TODO Player Claim Data, is this needed?
+
+        for (Set<Integer> set : ownedClaims.values()){
+            set.remove(claim.getId()); // remove from everyone
+        }
 
         //Chunks
         Long2ObjectOpenHashMap<ArrayList<Integer>> chunks = chunkLookup.get(claim.getWorld());
@@ -476,6 +491,20 @@ public class ClaimDataManager implements Listener {
             ArrayList<Integer> chunkMap = chunks.get(entry.getKey().longValue());
             chunkMap.removeAll(entry.getValue());   //Remove all of the existing claim chunk entries
         }
+
+        for (SubClaim subClaim : claim.getSubClaims()){
+            deleteSubClaim(subClaim);
+        }
+    }
+
+    public void deleteSubClaim(SubClaim subClaim){
+        subClaimLookupParent.remove(subClaim.getId());
+        for (Set<Integer> set : ownedSubClaims.values()){
+            set.remove(subClaim.getId()); //remove from everyone
+        }
+
+        Claim parent = subClaim.getParent();
+        parent.removeSubClaim(subClaim.getId());
     }
 
     private void loadChunksForClaim(Claim claim){
@@ -550,7 +579,11 @@ public class ClaimDataManager implements Listener {
                 min.getBlockX(),
                 min.getBlockZ(),
                 loc1.getWorld().getUID(),
-                new PermissionGroup(null, null, null));
+                new PermissionGroup(null,
+                        new GlobalPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
+                                PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,  new HashMap<>(),
+                                PermState.NEUTRAL, PermState.NEUTRAL, true),
+                        null, true));
 
         PermissionGroup permissionGroup = subClaim.getPerms();
 
@@ -559,6 +592,8 @@ public class ClaimDataManager implements Listener {
         permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
 
         claim.addSubClaim(subClaim);
+
+        subClaimLookupParent.put(subClaim.getId(), claim.getId());
 
         claim.setToSave(true);
 
@@ -580,6 +615,10 @@ public class ClaimDataManager implements Listener {
 
     public Claim getClaim(int id){
         return claimLookup.get(id);
+    }
+
+    public Claim getParentClaim(int subID){
+        return claimLookup.get(subClaimLookupParent.get(subID));
     }
 
     public void preLoadChunk(UUID world, long seed){
@@ -658,6 +697,11 @@ public class ClaimDataManager implements Listener {
         chunkLookup.putIfAbsent(e.getWorld().getUID(), new Long2ObjectOpenHashMap<>());
     }
 
+    @EventHandler
+    void onLeave(PlayerQuitEvent e){
+        plugin.getVisualizationManager().cleanup(e.getPlayer());
+    }
+
     public Claim getClaim(int x, int z, UUID world){
         ArrayList<Integer> integers = chunkLookup.get(world).get(getChunkHashFromLocation(x, z));
 
@@ -681,9 +725,9 @@ public class ClaimDataManager implements Listener {
     }
 
     public void addOwnedClaim(UUID uuid, Claim claim){
-        ownedClaims.computeIfAbsent(uuid, (u) -> new ArrayList<>());
-        ArrayList<Integer> arrayList = ownedClaims.get(uuid);
-        arrayList.add(claim.getId());
+        ownedClaims.computeIfAbsent(uuid, (u) -> new HashSet<>());
+        Set<Integer> set = ownedClaims.get(uuid);
+        set.add(claim.getId());
     }
 
     public void removeOwnedClaim(UUID uuid, Claim claim){
@@ -692,13 +736,13 @@ public class ClaimDataManager implements Listener {
         }
     }
 
-    public void addOwnedSubClaim(UUID uuid, Claim claim){
-        ownedSubClaims.computeIfAbsent(uuid, (u) -> new ArrayList<>());
-        ArrayList<Integer> arrayList = ownedSubClaims.get(uuid);
-        arrayList.add(claim.getId());
+    public void addOwnedSubClaim(UUID uuid, SubClaim claim){
+        ownedSubClaims.computeIfAbsent(uuid, (u) -> new HashSet<>());
+        Set<Integer> set = ownedSubClaims.get(uuid);
+        set.add(claim.getId());
     }
 
-    public void removeOwnedCSublaim(UUID uuid, Claim claim){
+    public void removeOwnedCSublaim(UUID uuid, SubClaim claim){
         if (ownedSubClaims.containsKey(uuid)){
             ownedSubClaims.get(uuid).remove(claim.getId());
         }
@@ -720,20 +764,12 @@ public class ClaimDataManager implements Listener {
         return chunkLookup;
     }
 
-    public ArrayList<Integer> getOwnedClaims(UUID uuid) {
+    public Set<Integer> getOwnedClaims(UUID uuid) {
         return ownedClaims.get(uuid);
     }
 
-    public ArrayList<Integer> getOwnedSubClaims(UUID uuid) {
+    public Set<Integer> getOwnedSubClaims(UUID uuid) {
         return ownedSubClaims.get(uuid);
-    }
-
-    public HashMap<UUID, ArrayList<Integer>> getOwnedClaims() {
-        return ownedClaims;
-    }
-
-    public HashMap<UUID, ArrayList<Integer>> getOwnedSubClaims() {
-        return ownedSubClaims;
     }
 
     public synchronized boolean isSaving() {

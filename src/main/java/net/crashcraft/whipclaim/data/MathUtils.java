@@ -1,8 +1,14 @@
 package net.crashcraft.whipclaim.data;
 
 public class MathUtils {
-    public static boolean checkPointCollide(int maxX, int maxZ, int minX, int minZ, int x, int z) {
-        return (z <= minZ && z >= maxZ) && (x <= minX && x >= maxX);
+
+
+
+
+
+
+    public static boolean iskPointCollide(int minX, int minZ, int maxX, int maxZ, int x, int z) {
+        return (z >= minZ && z <= maxZ) && (x >= minX && x <= maxX);
     }
 
     public static boolean doOverlap(int minX_1, int minZ_1, int maxX_1, int maxZ_1, int minX_2, int minZ_2, int maxX_2, int maxZ_2) {
@@ -12,8 +18,9 @@ public class MathUtils {
                 minZ_1 > maxZ_2);
     }
 
-    public static boolean containedInside(int l1x, int l1y, int r1x, int r1y, int l2x, int l2y, int r2x, int r2y) {
-        return checkPointCollide(l1x, l1y, r1x, r1y, l2x, l2y) && checkPointCollide(l1x, l1y, r1x, r1y, r2x, r2y);
+    public static boolean containedInside(int minX_1, int minZ_1, int maxX_1, int maxZ_1, int minX_2, int minZ_2, int maxX_2, int maxZ_2) {
+        return iskPointCollide(minX_1, minZ_1, maxX_1, maxZ_1, minX_2, minZ_2)
+                && iskPointCollide(minX_1, minZ_1, maxX_1, maxZ_1, maxX_2, maxZ_2);
     }
 
             /*

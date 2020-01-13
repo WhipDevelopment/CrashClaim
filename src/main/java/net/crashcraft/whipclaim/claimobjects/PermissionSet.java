@@ -79,6 +79,10 @@ public class PermissionSet implements Serializable, Cloneable{
         this.viewSubClaims = viewSubClaims;
     }
 
+    public void setContainer(Material material, int value){
+        this.containers.put(material, value);
+    }
+
     public HashMap<Material, Integer> getContainers() {
         return containers;
     }

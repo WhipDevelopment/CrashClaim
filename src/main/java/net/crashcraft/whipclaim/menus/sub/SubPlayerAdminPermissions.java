@@ -43,7 +43,7 @@ public class SubPlayerAdminPermissions extends GUI {
         inv.clear();
 
         inv.setItem(11, createGuiItem(ChatColor.GOLD + "Modify Permissions", Material.CRAFTING_TABLE));
-        inv.setItem(12, createGuiItem(ChatColor.GOLD + "View Sub Claims", Material.SEA_LANTERN));
+        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Modify Claim", Material.OAK_FENCE_GATE));
 
         switch (PermissionRoute.MODIFY_PERMISSIONS.getPerm(permissionSet)){
             case 1:
@@ -57,7 +57,7 @@ public class SubPlayerAdminPermissions extends GUI {
                 break;
         }
 
-        switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)){
+        switch (PermissionRoute.MODIFY_CLAIM.getPerm(permissionSet)){
             case 1:
                 inv.setItem(21, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
                 break;
@@ -144,7 +144,7 @@ public class SubPlayerAdminPermissions extends GUI {
             case 1:
                 return PermissionRoute.MODIFY_PERMISSIONS;
             case 2:
-                return PermissionRoute.VIEW_SUB_CLAIMS;
+                return PermissionRoute.MODIFY_CLAIM;
         }
         return null;
     }

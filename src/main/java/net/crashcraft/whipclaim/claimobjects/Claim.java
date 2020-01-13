@@ -6,7 +6,6 @@ import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import java.awt.peer.ContainerPeer;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -46,14 +45,21 @@ public class Claim extends BaseClaim implements Serializable {
         return getActivePermission(location, material) == PermState.ENABLED;
     }
 
+    public SubClaim getSubClaim(int x, int z){
+        for (SubClaim subClaim : subClaims) {
+            if (MathUtils.iskPointCollide(subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(),
+                    subClaim.getMaxZ(), x, z)) {
+                return subClaim;
+            }
+        }
+        return null;
+    }
+
     private int getActivePermission(Location location, PermissionRoute route){
         if (location != null && subClaims.size() > 0){
-            for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getMinX(), getMinZ(), getMaxX(),
-                        getMaxZ(), location.getBlockX(), location.getBlockZ())){
-
-                    return PermissionRouter.getLayeredPermission(this, subClaim, route);
-                }
+            SubClaim subClaim = getSubClaim(location.getBlockX(), location.getBlockZ());
+            if (subClaim != null){
+                return PermissionRouter.getLayeredPermission(this, subClaim, route);
             }
             return route.getPerm(getPerms().getPermissionSet());
         } else {
@@ -63,12 +69,9 @@ public class Claim extends BaseClaim implements Serializable {
 
     private int getActivePermission(Location location, Material material){
         if (location != null && subClaims.size() > 0){
-            for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getMinX(), getMinZ(), getMaxX(),
-                        getMaxZ(), location.getBlockX(), location.getBlockZ())){
-
-                    return PermissionRouter.getLayeredPermission(this, subClaim, material);
-                }
+            SubClaim subClaim = getSubClaim(location.getBlockX(), location.getBlockZ());
+            if (subClaim != null){
+                return PermissionRouter.getLayeredPermission(this, subClaim, material);
             }
             return PermissionRoute.CONTAINERS.getPerm(getPerms().getPermissionSet());
         } else {
@@ -81,12 +84,9 @@ public class Claim extends BaseClaim implements Serializable {
             return PermState.ENABLED;
 
         if (location != null && subClaims.size() > 0){
-            for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getMinX(), getMinZ(), getMaxX(),
-                        getMaxZ(), location.getBlockX(), location.getBlockZ())){
-
-                    return PermissionRouter.getLayeredPermission(this, subClaim, uuid, route);
-                }
+            SubClaim subClaim = getSubClaim(location.getBlockX(), location.getBlockZ());
+            if (subClaim != null){
+                return PermissionRouter.getLayeredPermission(this, subClaim, uuid, route);
             }
             return route.getPerm(getPerms().getPermissionSet());
         } else {
@@ -99,12 +99,9 @@ public class Claim extends BaseClaim implements Serializable {
             return PermState.ENABLED;
 
         if (location != null && subClaims.size() > 0){
-            for (SubClaim subClaim : subClaims){
-                if (MathUtils.checkPointCollide(getMinX(), getMinZ(), getMaxX(),
-                        getMaxZ(), location.getBlockX(), location.getBlockZ())){
-
-                    return PermissionRouter.getLayeredContainer(this, subClaim, uuid, material);
-                }
+            SubClaim subClaim = getSubClaim(location.getBlockX(), location.getBlockZ());
+            if (subClaim != null){
+                return PermissionRouter.getLayeredContainer(this, subClaim, uuid, material);
             }
             return PermissionRoute.CONTAINERS.getPerm(getPerms().getPermissionSet());
         } else {

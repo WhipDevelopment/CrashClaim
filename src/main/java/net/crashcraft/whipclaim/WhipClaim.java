@@ -8,6 +8,8 @@ import net.crashcraft.whipclaim.commands.modes.ModeCommand;
 import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.MaterialName;
+import net.crashcraft.whipclaim.events.PlayerListener;
+import net.crashcraft.whipclaim.events.WorldListener;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
@@ -72,6 +74,9 @@ public class WhipClaim extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(manager, this);
 
         crashUtils.setupMenuSubSystem();
+
+        Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
     }
 
     @Override

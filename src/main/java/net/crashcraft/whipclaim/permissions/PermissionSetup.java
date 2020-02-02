@@ -2,8 +2,7 @@ package net.crashcraft.whipclaim.permissions;
 
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.claimobjects.PermissionSet;
-import net.crashcraft.whipclaim.claimobjects.PlayerPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;

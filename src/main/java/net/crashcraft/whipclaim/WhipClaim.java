@@ -3,6 +3,8 @@ package net.crashcraft.whipclaim;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
+import dev.whip.crashutils.Payment.PaymentProcessor;
+import dev.whip.crashutils.Payment.ProcessorManager;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
 import net.crashcraft.whipclaim.config.ValueConfig;
@@ -25,6 +27,8 @@ public class WhipClaim extends JavaPlugin {
     private CrashUtils crashUtils;
 
     private MaterialName materialName;
+
+    private PaymentProcessor payment;
 
     @Override
     public void onLoad() {
@@ -74,6 +78,7 @@ public class WhipClaim extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(manager, this);
 
         crashUtils.setupMenuSubSystem();
+        payment = new ProcessorManager(this, null).getProcessor();
 
         Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
@@ -98,6 +103,10 @@ public class WhipClaim extends JavaPlugin {
 
     public CrashUtils getCrashUtils() {
         return crashUtils;
+    }
+
+    public PaymentProcessor getPayment() {
+        return payment;
     }
 
     public MaterialName getMaterialName() {

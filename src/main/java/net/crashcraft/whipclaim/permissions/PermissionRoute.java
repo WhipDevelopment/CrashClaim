@@ -2,11 +2,10 @@ package net.crashcraft.whipclaim.permissions;
 
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
-import net.crashcraft.whipclaim.data.ClaimDataManager;
+import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 public enum  PermissionRoute {

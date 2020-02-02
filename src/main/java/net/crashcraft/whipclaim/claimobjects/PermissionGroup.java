@@ -1,16 +1,15 @@
 package net.crashcraft.whipclaim.claimobjects;
 
-import net.crashcraft.whipclaim.WhipClaim;
+import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
-import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import org.bukkit.Material;
 
 import java.io.Serializable;
-import java.security.Permission;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PermissionGroup implements Serializable {
+public abstract class PermissionGroup implements Serializable {
     private static final long serialVersionUID = 30L;
 
     /**
@@ -30,20 +29,17 @@ public class PermissionGroup implements Serializable {
     public PermissionGroup(BaseClaim owner, GlobalPermissionSet globalPermissionSet, HashMap<UUID, PlayerPermissionSet> playerPermissions) {
         this.owner = owner;
         this.globalPermissionSet = globalPermissionSet == null ?
-                new GlobalPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
-                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,  new HashMap<>(),
-                        PermState.DISABLE, PermState.DISABLE) : globalPermissionSet;
+                createGlobalPermissionSet() : globalPermissionSet;
         this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions;
     }
 
-    public PermissionGroup(BaseClaim owner, GlobalPermissionSet globalPermissionSet, HashMap<UUID, PlayerPermissionSet> playerPermissions, boolean skipGlobalchecks) {
-        this.owner = owner;
-        this.globalPermissionSet = globalPermissionSet == null ?
-                new GlobalPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
-                        PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,  new HashMap<>(),
-                        PermState.DISABLE, PermState.DISABLE, skipGlobalchecks) : globalPermissionSet;
-        this.playerPermissions = playerPermissions == null ? new HashMap<>() : playerPermissions;
-    }
+    public abstract PlayerPermissionSet createPlayerPermissionSet();
+
+    public abstract GlobalPermissionSet createGlobalPermissionSet();
+
+    public abstract int checkGlobalValue(int value, PermissionRoute route);
+
+    public abstract int checkPlayerValue(int value, PermissionRoute route);
 
     public GlobalPermissionSet getPermissionSet() {
         return globalPermissionSet;
@@ -53,16 +49,12 @@ public class PermissionGroup implements Serializable {
         if (playerPermissions.containsKey(id)) {
             return playerPermissions.get(id);
         } else {
-            PlayerPermissionSet perms;
-            if (owner instanceof SubClaim){
-                perms = new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
-                        PermState.NEUTRAL, new HashMap<>(), PermState.NEUTRAL, PermState.NEUTRAL);
-            } else {
-                perms = new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
-                        PermState.DISABLE, new HashMap<>(), PermState.DISABLE, PermState.DISABLE);
-            }
-            playerPermissions.put(id, perms);
-            return perms;
+
+            PlayerPermissionSet set = createPlayerPermissionSet();
+
+            playerPermissions.put(id, set);
+
+            return set;
         }
     }
 
@@ -85,23 +77,23 @@ public class PermissionGroup implements Serializable {
     }
 
     public void setPermission(PermissionRoute route, int value){
-        route.setPerm(globalPermissionSet, value);
+        route.setPerm(globalPermissionSet, checkGlobalValue(value, route));
         owner.setToSave(true);
     }
 
     public void setPlayerPermission(UUID uuid, PermissionRoute route, int value){
-        route.setPerm(getPlayerPermissionSet(uuid), value);
+        route.setPerm(getPlayerPermissionSet(uuid), checkPlayerValue(value, route));
         owner.setToSave(true);
         route.postSetPayload(this, route.getPerm(getPlayerPermissionSet(uuid)), uuid);
     }
 
     public void setContainerPermission(int value, Material material){
-        PermissionRoute.CONTAINERS.setPerm(globalPermissionSet, value, material);
+        PermissionRoute.CONTAINERS.setPerm(globalPermissionSet, checkGlobalValue(value, PermissionRoute.CONTAINERS), material);
         owner.setToSave(true);
     }
 
     public void setContainerPlayerPermission(UUID uuid, int value, Material material) {
-        PermissionRoute.CONTAINERS.setPerm(getPlayerPermissionSet(uuid), value, material);
+        PermissionRoute.CONTAINERS.setPerm(getPlayerPermissionSet(uuid), checkPlayerValue(value, PermissionRoute.CONTAINERS), material);
         owner.setToSave(true);
     }
 }

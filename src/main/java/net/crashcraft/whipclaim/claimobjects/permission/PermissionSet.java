@@ -1,4 +1,4 @@
-package net.crashcraft.whipclaim.claimobjects;
+package net.crashcraft.whipclaim.claimobjects.permission;
 
 import org.bukkit.Material;
 

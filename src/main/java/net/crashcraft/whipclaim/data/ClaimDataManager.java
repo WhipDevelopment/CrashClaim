@@ -1,9 +1,18 @@
 package net.crashcraft.whipclaim.data;
 
-import it.unimi.dsi.fastutil.Hash;
+import dev.whip.crashutils.Payment.TransactionRecipe;
+import dev.whip.crashutils.Payment.TransactionResponse;
+import dev.whip.crashutils.Payment.TransactionType;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.permission.PermissionSet;
+import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.permission.child.SubPermissionGroup;
+import net.crashcraft.whipclaim.claimobjects.permission.parent.ParentPermissionGroup;
+import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
@@ -28,6 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -270,22 +280,19 @@ public class ClaimDataManager implements Listener {
                 minCorner.getBlockX(),
                 minCorner.getBlockZ(),
                 maxCorner.getWorld().getUID(),
-                new PermissionGroup(null, null, null),
+                new ParentPermissionGroup(null, null, null),
                 owner);
 
         claim.getPerms().setOwner(claim);
 
+        claim.addContribution(owner, ContributionManager.getArea(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ())); //Contribution tracking initial put
+
         return addClaim(claim) ? new ClaimResponse(true, claim) : new ClaimResponse(false, ErrorType.FILESYSTEM_OR_MEMORY_ERROR);
     }
 
-    public ErrorType resizeClaim(Claim claim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
+    public ErrorType resizeClaim(Claim claim, int start_x, int start_z, int end_x, int end_z, Player resizer, Consumer<Boolean> consumer){
         int[] arr = calculateResize(claim.getMinX(), claim.getMaxX(),
                 claim.getMinZ(), claim.getMaxZ(), start_x, start_z, end_x, end_z);
-
-        ErrorType val = verify.apply(arr);
-
-        if (val != ErrorType.NONE)
-            return val;
 
         int newMinX = arr[0];
         int newMinZ = arr[2];
@@ -303,8 +310,49 @@ public class ClaimDataManager implements Listener {
             return ErrorType.TOO_SMALL;
         }
 
-
         if (arr[4] == 1) {
+            int area = ContributionManager.getArea(newMinX, newMinZ, newMaxX, newMaxZ);
+            int originalArea = ContributionManager.getArea(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ());
+
+            int difference = area - originalArea;
+
+            if (difference > 0) {
+                int price = (int) Math.ceil(difference * ValueConfig.MONEY_PER_BLOCK);
+                //Check price with player
+                new ConfirmationMenu(resizer,
+                        "Confirm Claim Resize",
+                        ChatColor.GREEN + "The claim resize will cost: " + ChatColor.YELLOW + price,
+                        new ArrayList<>(Arrays.asList("Confirm or deny the resize.")),
+                        Material.EMERALD,
+                        (player, aBoolean) -> {
+                            if (aBoolean) {
+                                TransactionRecipe response = WhipClaim.getPlugin().getPayment().makeTransaction(resizer.getUniqueId(), TransactionType.WITHDRAW, "Claim Resize Up", price);
+                                if (response.getTransactionStatus() == TransactionResponse.SUCCESS) {
+                                    ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking
+                                    resizeClaimCall(claim, newMinX, newMinZ, newMaxX, newMaxZ);
+
+                                    consumer.accept(true);
+                                } else {
+                                    //Didnt have enough money or something
+                                    player.sendMessage(ChatColor.RED + response.getTransactionError());
+                                    consumer.accept(false);
+                                }
+                            }
+                            return "";
+                        },
+                        player -> {
+                            consumer.accept(false);
+                            return "";
+                        }).open();
+            }
+
+            return ErrorType.NONE;
+        } else {
+            return ErrorType.CANNOT_FLIP_ON_RESIZE;
+        }
+    }
+
+    private void resizeClaimCall(Claim claim, int newMinX, int newMinZ, int newMaxX, int newMaxZ){
             removeChunksForClaim(claim);
 
             claim.setMinCornerX(newMinX);
@@ -313,11 +361,6 @@ public class ClaimDataManager implements Listener {
             claim.setMaxCornerZ(newMaxZ);
 
             loadChunksForClaim(claim);
-
-            return ErrorType.NONE;
-        } else {
-            return ErrorType.CANNOT_FLIP_ON_RESIZE;
-        }
     }
 
     public ErrorType resizeSubClaim(SubClaim subClaim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
@@ -579,11 +622,7 @@ public class ClaimDataManager implements Listener {
                 min.getBlockX(),
                 min.getBlockZ(),
                 loc1.getWorld().getUID(),
-                new PermissionGroup(null,
-                        new GlobalPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
-                                PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,  new HashMap<>(),
-                                PermState.NEUTRAL, PermState.NEUTRAL, true),
-                        null, true));
+                new SubPermissionGroup(null, null, null));
 
         PermissionGroup permissionGroup = subClaim.getPerms();
 
@@ -717,6 +756,13 @@ public class ClaimDataManager implements Listener {
             }
         }
         return null;
+    }
+
+    public Claim getClaim(Location location) {
+        if (location.getWorld() == null)
+            return null;
+
+        return getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
     }
 
     public void fixupOwnerPerms(Claim claim){

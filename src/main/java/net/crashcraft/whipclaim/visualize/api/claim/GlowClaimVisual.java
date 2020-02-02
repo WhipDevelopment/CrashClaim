@@ -1,6 +1,7 @@
 package net.crashcraft.whipclaim.visualize.api.claim;
 
 import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;

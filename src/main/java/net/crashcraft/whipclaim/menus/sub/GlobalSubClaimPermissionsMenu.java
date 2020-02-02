@@ -2,6 +2,7 @@ package net.crashcraft.whipclaim.menus.sub;
 
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
@@ -133,7 +134,7 @@ public class GlobalSubClaimPermissionsMenu extends GUI {
 
         inv.setItem(25, createGuiItem(ChatColor.GRAY + "General Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
-        inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Advanced Permissions", Material.NETHER_STAR));
+        inv.setItem(43, createGuiItem(ChatColor.DARK_GRAY + "Advanced Permissions", Material.LIGHT_GRAY_STAINED_GLASS_PANE));
 
         inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
@@ -161,9 +162,6 @@ public class GlobalSubClaimPermissionsMenu extends GUI {
         switch (rawItemName){
             case "container permissions":
                 new GlobalSubContainerMenu(player, group).open();
-                break;
-            case "advanced permissions":
-                new SubClaimAdvancedPermissions(getPlayer(), group).open();
                 break;
             case "back":
                 new SubClaimMenu(getPlayer(), (SubClaim) group.getOwner()).open();

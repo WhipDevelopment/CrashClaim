@@ -2,6 +2,7 @@ package net.crashcraft.whipclaim.menus.player;
 
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;

@@ -148,8 +148,11 @@ public class SubClaimMenu extends GUI {
                         material,
                         (player, aBoolean) -> {
                             if (aBoolean.equals(true)) {
-                                //ClaimManager.getClaimManager().removeClaim(UserCache.getUser(player), claimObject);
-                                //TODO add remove claim here
+                                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
+                                    WhipClaim.getPlugin().getDataManager().deleteSubClaim(claim);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "You do not have permission to modify this claim.");
+                                }
                             }
                             return "";
                         }, player -> "").open();

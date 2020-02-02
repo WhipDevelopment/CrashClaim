@@ -1,5 +1,6 @@
-package net.crashcraft.whipclaim.claimobjects;
+package net.crashcraft.whipclaim.claimobjects.permission;
 
+import net.crashcraft.whipclaim.claimobjects.PermState;
 import org.bukkit.Material;
 
 import java.io.Serializable;
@@ -8,7 +9,6 @@ import java.util.HashMap;
 public class GlobalPermissionSet extends PermissionSet implements Serializable {
     private int pistons;
     private int fluids;
-    private boolean skipValueCheck;
 
     public GlobalPermissionSet() {
 
@@ -20,26 +20,12 @@ public class GlobalPermissionSet extends PermissionSet implements Serializable {
         this.fluids = fluids;
     }
 
-    public GlobalPermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int pistons, int fluids, boolean skipValueCheck) {
-        super(build, interactions, entities, explosions, teleportation, viewSubClaims, containers);
-        this.pistons = pistons;
-        this.fluids = fluids;
-        this.skipValueCheck = skipValueCheck;
-    }
-
-    private int checkValue(int value){
-        if (skipValueCheck){
-            return value;
-        }
-        return value == PermState.NEUTRAL ? PermState.DISABLE : value;
-    }
-
     public int getPistons() {
         return pistons;
     }
 
     public void setPistons(int pistons) {
-        this.pistons = checkValue(pistons);
+        this.pistons = pistons;
     }
 
     public int getFluids() {
@@ -47,41 +33,41 @@ public class GlobalPermissionSet extends PermissionSet implements Serializable {
     }
 
     public void setFluids(int fluids) {
-        this.fluids = checkValue(fluids);
+        this.fluids = fluids;
     }
 
     @Override
     public void setContainer(Material material, int value) {
-        super.setContainer(material, checkValue(value));
+        super.setContainer(material, value);
     }
 
     @Override
     public void setBuild(int build) {
-        super.setBuild(checkValue(build));
+        super.setBuild(build);
     }
 
     @Override
     public void setInteractions(int interactions) {
-        super.setInteractions(checkValue(interactions));
+        super.setInteractions(interactions);
     }
 
     @Override
     public void setEntities(int entities) {
-        super.setEntities(checkValue(entities));
+        super.setEntities(entities);
     }
 
     @Override
     public void setExplosions(int explosions) {
-        super.setExplosions(checkValue(explosions));
+        super.setExplosions(explosions);
     }
 
     @Override
     public void setTeleportation(int teleportation) {
-        super.setTeleportation(checkValue(teleportation));
+        super.setTeleportation(teleportation);
     }
 
     @Override
     public void setViewSubClaims(int viewSubClaims) {
-        super.setViewSubClaims(checkValue(viewSubClaims));
+        super.setViewSubClaims(viewSubClaims);
     }
 }

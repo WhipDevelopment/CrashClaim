@@ -3,27 +3,33 @@ package net.crashcraft.whipclaim.events;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
+import sun.security.krb5.Config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
@@ -41,11 +47,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteractEvent(PlayerInteractEvent e){
-        Player player = e.getPlayer();
-
         if (e.getClickedBlock() == null)
             return;
 
+        Player player = e.getPlayer();
         Location location = e.getClickedBlock().getLocation();
 
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && perms.getHeldItemInteraction().contains(e.getItem().getType())) {
@@ -61,8 +66,6 @@ public class PlayerListener implements Listener {
                         || perms.getUntrackedBlocks().contains(e.getClickedBlock().getType()))
             return;
 
-
-
         if (e.getClickedBlock().getState() instanceof Container){
             if (helper.hasPermission(player.getUniqueId(), location, e.getClickedBlock().getType())){
                 return;
@@ -76,6 +79,107 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onBlockFromTo(BlockFromToEvent event) {
+        if (isFullOfLiquid(event.getBlock()) && checkToCancel(event.getBlock(), event.getToBlock())){
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean isFullOfLiquid(Block block){
+        return block.isLiquid()
+                || (block.getBlockData() instanceof Waterlogged && ((Waterlogged) block.getBlockData()).isWaterlogged());
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPistonEvent(BlockPistonExtendEvent event){
+        //TODO add world check
+        if (processPistonEvent(event.getDirection(), event.getBlocks(), event.getBlock())){
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPistonEvent(BlockPistonRetractEvent event){
+        //TODO add world check
+        if (processPistonEvent(event.getDirection(), event.getBlocks(), event.getBlock())){
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean checkToCancel(Block block, Block pushingBlock){
+        Claim pistonClaim = manager.getClaim(block.getLocation());
+        Claim pushedClaim = manager.getClaim(pushingBlock.getLocation());
+
+        if (pistonClaim == pushedClaim)
+            return false;
+
+        //Check both claims if one has it disabled then the event is canceled
+        if (pistonClaim != null && !pistonClaim.hasGlobalPermission(PermissionRoute.PISTONS)) {
+            return true;
+        }
+
+        // Could combine but this is easier to read
+        return pushedClaim != null && !pushedClaim.hasGlobalPermission(PermissionRoute.PISTONS);
+    }
+
+    private boolean processPistonEvent(BlockFace direction, List<Block> blocks, Block pistonBlock){
+        if(blocks.size() == 0) {
+            Block pushed = pistonBlock.getRelative(direction);
+
+            return checkToCancel(pistonBlock, pushed);
+        }
+
+        Claim pistonClaim = manager.getClaim(pistonBlock.getLocation());
+        if (pistonClaim != null && !pistonClaim.hasGlobalPermission(PermissionRoute.PISTONS)) {
+            return true;
+        }
+
+        for (Block block : blocks){
+            Block pushingBlock = block.getRelative(direction);
+
+            if (checkToCancel(block, pushingBlock)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onTeleportEvent(PlayerTeleportEvent event){
+        Location location = event.getTo();
+        switch (ValueConfig.EVENTS_TELEPORT.get(event.getCause())){
+            case 0: //Disable
+                return;
+            case 1: //Block
+                if (!helper.hasPermission(event.getPlayer().getUniqueId(), location, PermissionRoute.TELEPORTATION)){
+                    visuals.sendAlert(event.getPlayer(), "You do not have permission to teleport to that claim.");
+                    event.setCancelled(true);
+                }
+                return;
+            case 2: //Relocate
+                if (!helper.hasPermission(event.getPlayer().getUniqueId(), location, PermissionRoute.TELEPORTATION)){
+                    visuals.sendAlert(event.getPlayer(), "You do not have permission to teleport to that claim. You have been relocated outside of it.");
+
+                    Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
+                    if (claim != null) {
+                        int distMax = Math.abs(location.getBlockX() - claim.getMaxX());
+                        int distMin = Math.abs(location.getBlockX() - claim.getMinX());
+
+                        World world = location.getWorld();
+                        if (distMax > distMin) {    //Find closest side
+                            event.setTo(new Location(world, claim.getMinX(),
+                                    world.getHighestBlockYAt(claim.getMinX(),
+                                            location.getBlockZ()), location.getBlockZ()));
+                        } else {
+                            event.setTo(new Location(world, claim.getMaxX(),
+                                    world.getHighestBlockYAt(claim.getMaxX(),
+                                            location.getBlockZ()), location.getBlockZ()));
+                        }
+                    }
+                }
+        }
+    }
 
     @SuppressWarnings("Duplicates")
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -200,7 +304,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onHangingBreak(HangingBreakEvent event) {
         if (event.getCause() == HangingBreakEvent.RemoveCause.EXPLOSION) {
             if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
@@ -209,7 +313,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVehicleDestroyEvent(VehicleDamageEvent e){
         if (e.getAttacker() instanceof Player) {
             Player player = (Player) e.getAttacker();
@@ -228,7 +332,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e){
         Player player = e.getPlayer();
         if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
@@ -237,7 +341,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerArmorStandManipulateEvent(PlayerArmorStandManipulateEvent e){
         Player player = e.getPlayer();
         if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
@@ -246,7 +350,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerPickupArrowEvent(PlayerPickupArrowEvent e){
         Player player = e.getPlayer();
         if (!helper.hasPermission(player.getUniqueId(), e.getArrow().getLocation(), PermissionRoute.ENTITIES)){
@@ -255,7 +359,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockBreakEvent(BlockBreakEvent e){
         Player player = e.getPlayer();
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
@@ -264,7 +368,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockPlaceEvent(BlockPlaceEvent e){
         Player player = e.getPlayer();
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
@@ -273,7 +377,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBucketEmptyEvent(PlayerBucketEmptyEvent e){
         Player player = e.getPlayer();
         if (!helper.hasPermission(player.getUniqueId(), e.getBlockClicked().getLocation(), PermissionRoute.BUILD)){
@@ -282,7 +386,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBucketFillEvent(PlayerBucketFillEvent e){
         Player player = e.getPlayer();
         if (!helper.hasPermission(player.getUniqueId(), e.getBlockClicked().getLocation(), PermissionRoute.BUILD)){
@@ -291,7 +395,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockIgniteEvent(BlockIgniteEvent e){
         if (e.getIgnitingEntity() instanceof Player &&
                 !helper.hasPermission(e.getPlayer().getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)) {

@@ -1,7 +1,9 @@
 package net.crashcraft.whipclaim.commands.modes;
 
+import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
+import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
@@ -12,6 +14,7 @@ import net.crashcraft.whipclaim.visualize.api.VisualGroup;
 import net.crashcraft.whipclaim.visualize.api.VisualType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -117,24 +121,44 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             return;
         }
 
-        ClaimResponse response = manager.createClaim(max, min, uuid);
+        int area = ContributionManager.getArea(min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ());
 
-        if (response.isStatus()) {
-            player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
+        int price = (int) Math.ceil(area * ValueConfig.MONEY_PER_BLOCK);
+        //Check price with player
+        new ConfirmationMenu(player,
+                "Confirm Claim Creation",
+                ChatColor.GREEN + "The claim creation will cost: " + ChatColor.YELLOW + price,
+                new ArrayList<>(Arrays.asList("Confirm or deny the creation.")),
+                Material.EMERALD,
+                (p, aBoolean) -> {
+                    if (aBoolean){
+                        ClaimResponse response = manager.createClaim(max, min, uuid);
 
-            VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
-            group.removeAllVisuals();
+                        if (response.isStatus()) {
+                            ((Claim) response.getClaim()).addContribution(player.getUniqueId(), area); //Contribution tracking
 
-            BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
-            visual.spawn();
+                            player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
 
-            visualizationManager.despawnAfter(visual, 30);
+                            VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+                            group.removeAllVisuals();
 
-            cleanup(player.getUniqueId(), false);
-        } else {
-            player.sendMessage(ChatColor.RED + "Error creating claim");
-            cleanup(player.getUniqueId(), true);
-        }
+                            BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
+                            visual.spawn();
+
+                            visualizationManager.despawnAfter(visual, 30);
+
+                            cleanup(player.getUniqueId(), false);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Error creating claim");
+                            cleanup(player.getUniqueId(), true);
+                        }
+                    }
+                    return "";
+                },
+                p -> {
+                    cleanup(player.getUniqueId(), true);
+                    return "";
+                }).open();
     }
 
     public void clickedExistingClaim(Player player, Location location, Claim claim){
@@ -147,12 +171,19 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             if (claim == null)
                 return;
 
-            ErrorType error = manager.resizeClaim(claim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ(),
-                    (arr) -> {
-                    //TODO  Do payments in here
-                        return ErrorType.NONE;
-                    });
+            VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+            BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, claim, player.getLocation().getBlockY() - 1);
 
+            ErrorType error = manager.resizeClaim(claim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ(), player,
+                    aBoolean -> {
+                        group.removeAllVisuals();
+                        visual.spawn();
+
+                        visualizationManager.despawnAfter(visual, 30);
+
+                        if (aBoolean)
+                            player.sendMessage(ChatColor.GREEN + "Claim successfully resized");
+                    });
             switch (error){
                 case TOO_SMALL:
                     player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
@@ -167,17 +198,6 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                     cleanup(uuid, true);
                     return;
                 case NONE:
-                    player.sendMessage(ChatColor.GREEN + "Claim has been successfully resized");
-
-                    VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
-
-                    group.removeAllVisuals();
-
-                    BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, claim, player.getLocation().getBlockY() - 1);
-                    visual.spawn();
-
-                    visualizationManager.despawnAfter(visual, 30);
-
                     cleanup(uuid, false);
                     return;
             }

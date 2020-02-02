@@ -8,6 +8,7 @@ import org.bukkit.Material;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Claim extends BaseClaim implements Serializable {
@@ -18,6 +19,8 @@ public class Claim extends BaseClaim implements Serializable {
     private ArrayList<SubClaim> subClaims;
     private UUID owner;
 
+    private HashMap<UUID, Integer> contribution;
+
     public Claim(){
 
     }
@@ -27,6 +30,11 @@ public class Claim extends BaseClaim implements Serializable {
         this.toSave = false;
         this.subClaims = new ArrayList<>();
         this.owner = owner;
+        this.contribution = new HashMap<>();
+    }
+
+    public boolean hasGlobalPermission(PermissionRoute route){
+        return route.getPerm(getPerms().getPermissionSet()) == PermState.ENABLED;
     }
 
     public boolean hasPermission(UUID uuid, Location location, PermissionRoute route){
@@ -107,6 +115,28 @@ public class Claim extends BaseClaim implements Serializable {
         } else {
             return PermissionRouter.getLayeredContainer(this, null, uuid, material);
         }
+    }
+
+    public void addContribution(UUID player, int area){
+        int adder = contribution.get(player) != null ? contribution.get(player) : 0;
+        contribution.put(player, adder + area);
+    }
+
+    public void removeContriubtion(UUID player, int area){
+        int adder = (contribution.get(player) != null ? contribution.get(player) : 0) - area;
+        if (adder <= 0){
+            contribution.remove(player);
+        } else {
+            contribution.put(player, adder);
+        }
+    }
+
+    public int getContriubtion(UUID player){
+        return contribution.get(player);
+    }
+
+    public HashMap<UUID, Integer> getContributionMap(){
+        return contribution;
     }
 
     @Override

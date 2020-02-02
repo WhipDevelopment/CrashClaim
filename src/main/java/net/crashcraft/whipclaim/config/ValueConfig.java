@@ -4,15 +4,15 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 @SuppressWarnings("all")
@@ -43,6 +43,12 @@ public class ValueConfig {
     public static int VISUALIZE_ALERT_FADE_OUT = 10;
     private static String VISUALIZE_ALERT_FADE_OUT_KEY = "visualization.alert.fade-out";
 
+    public static HashMap<PlayerTeleportEvent.TeleportCause, Integer> EVENTS_TELEPORT;
+    private static String EVENTS_TELEPORT_KEY = "events.teleport";
+
+    public static double MONEY_PER_BLOCK = 0.01;
+    private static String MONEY_PER_BLOCK_KEY = "money-per-block";
+
     public static void writeDefault(FileConfiguration configuration, Plugin plugin){
         YamlConfiguration config = new YamlConfiguration();
 
@@ -54,6 +60,11 @@ public class ValueConfig {
         config.set(VISUALIZE_ALERT_FADE_IN_KEY, VISUALIZE_ALERT_FADE_IN);
         config.set(VISUALIZE_ALERT_DURATION_KEY, VISUALIZE_ALERT_DURATION);
         config.set(VISUALIZE_ALERT_FADE_OUT_KEY, VISUALIZE_ALERT_FADE_OUT);
+        config.set(MONEY_PER_BLOCK_KEY, MONEY_PER_BLOCK);
+
+        for (PlayerTeleportEvent.TeleportCause cause : PlayerTeleportEvent.TeleportCause.values()){
+            config.set(EVENTS_TELEPORT_KEY + "." + cause.name(), "block");
+        }
 
         configuration.options().copyDefaults(true);
         configuration.setDefaults(config);
@@ -96,5 +107,37 @@ public class ValueConfig {
         VISUALIZE_ALERT_FADE_IN = configuration.getInt(VISUALIZE_ALERT_FADE_IN_KEY, VISUALIZE_ALERT_FADE_IN);
         VISUALIZE_ALERT_DURATION = configuration.getInt(VISUALIZE_ALERT_DURATION_KEY, VISUALIZE_ALERT_DURATION);
         VISUALIZE_ALERT_FADE_OUT = configuration.getInt(VISUALIZE_ALERT_FADE_OUT_KEY, VISUALIZE_ALERT_FADE_OUT);
+
+        EVENTS_TELEPORT = new HashMap<>();
+
+        ConfigurationSection section = configuration.getConfigurationSection(EVENTS_TELEPORT_KEY);
+        if (section == null){
+            section = configuration.createSection(EVENTS_TELEPORT_KEY);
+        }
+
+        // 0 | NONE  - diable, 1 | BLOCK - enable check with blocking, 2 | RELOCATE - enable check with relocating
+
+        for (PlayerTeleportEvent.TeleportCause cause : PlayerTeleportEvent.TeleportCause.values()){
+            String value = section.getString(cause.name());
+
+            switch (value.toLowerCase()){
+                case "none":
+                    EVENTS_TELEPORT.put(cause, 0);
+                    continue;
+                case "block":
+                    EVENTS_TELEPORT.put(cause, 1);
+                    continue;
+                case "relocate":
+                    EVENTS_TELEPORT.put(cause, 2);
+                    continue;
+                default:
+                    //Bad value default to good one
+                    logger.warning("Invalid value for " + section.getCurrentPath() + "." + cause.name() + "\nUsing `block`");
+                    EVENTS_TELEPORT.put(cause, 1);
+                    continue;
+            }
+        }
+
+        MONEY_PER_BLOCK = configuration.getDouble(MONEY_PER_BLOCK_KEY);
     }
 }

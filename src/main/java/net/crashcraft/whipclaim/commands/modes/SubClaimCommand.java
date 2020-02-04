@@ -101,11 +101,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
             Location loc1 = clickMap.get(uuid);
             SubClaim subClaim = resizingMap.get(uuid);
 
-            ErrorType error = manager.resizeSubClaim(subClaim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ(),
-                    (arr) -> {
-                        //TODO  Do payments in here
-                        return ErrorType.NONE;
-                    });
+            ErrorType error = manager.resizeSubClaim(subClaim, loc1.getBlockX(), loc1.getBlockZ(), location.getBlockX(), location.getBlockZ()); //Resize no payment here
 
             switch (error){
                 case TOO_SMALL:

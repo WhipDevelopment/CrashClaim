@@ -6,6 +6,7 @@ import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
@@ -34,7 +35,7 @@ public class ClaimMenu extends GUI {
 
     @Override
     public void initialize() {
-        material = Material.OAK_FENCE; //TODO  make this dynamic from config
+        material = ValueConfig.MENU_VISUAL_CLAIM_ITEMS.get(claim.getWorld());
     }
 
 

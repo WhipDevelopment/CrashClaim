@@ -56,8 +56,6 @@ public class ClaimDataManager implements Listener {
     private HashMap<UUID, Set<Integer>> ownedClaims;   // ids of claims t  hat the user has permission to modify - used for menu lookups
     private HashMap<UUID, Set<Integer>> ownedSubClaims;
 
-    private HashMap<UUID, Material> materialLookup;
-
     private HashMap<Integer, Integer> subClaimLookupParent;
 
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
@@ -82,66 +80,11 @@ public class ClaimDataManager implements Listener {
         chunkLookup = new HashMap<>();
         ownedClaims = new HashMap<>();
         ownedSubClaims = new HashMap<>();
-        materialLookup = new HashMap<>();
 
         for (World world : Bukkit.getWorlds()){
             chunkLookup.put(world.getUID(), new Long2ObjectOpenHashMap<>());
             logger.info("Loaded " + world.getName() + " into chunk map");
         }
-
-        /*
-        menu:
-  visualize:
-    visualize-claim-items:
-         */
-
-        FileConfiguration config = plugin.getConfig();
-
-        ConfigurationSection section = config.getConfigurationSection("menu.visualize.visualize-claim-items");
-
-        if (section == null){
-            section = config.createSection("menu.visualize.visualize-claim-items");
-
-            for (World world : Bukkit.getWorlds()){
-                section.set(world.getName(), Material.GRASS.name());
-                logger.info("World name not found, adding with GRASS");
-                materialLookup.put(world.getUID(), Material.GRASS);
-            }
-
-            config.set("menu.visualize.visualize-claim-items", section);
-        } else {
-            for (String key : section.getKeys(true)) {
-                String name = config.getString("menu.visualize.visualize-claim-items." + key);
-
-                if (name == null) {
-                    continue;
-                }
-
-                World world = Bukkit.getWorld(name);
-
-                if (world == null) {
-                    logger.warning("World name for menu.visualize.visualize-claim-items." + key + " is not valid.");
-                    continue;
-                }
-
-                Material material = Material.getMaterial(name);
-
-                if (material == null) {
-                    logger.warning("Material for menu.visualize.visualize-claim-items." + key + " is not a valid material. Defaulting to OAK_FENCE");
-                    continue;
-                }
-
-                materialLookup.put(world.getUID(), material);
-            }
-
-            for (World world : Bukkit.getWorlds()){
-                if (!materialLookup.containsKey(world.getUID())){
-                    config.set(world.getName(), Material.GRASS.name());
-                    materialLookup.put(world.getUID(), Material.GRASS);
-                }
-            }
-        }
-
 
         File dataFolder = dataPath.toFile();
         idCounter = 0;
@@ -210,8 +153,9 @@ public class ClaimDataManager implements Listener {
 
                         logger.info("Loaded claims into admin and owner map for claim id: " + claim.getId());
 
-                        if (!materialLookup.containsKey(claim.getWorld())){
-                            materialLookup.put(claim.getWorld(), Material.OAK_FENCE);
+                        //ValueConfig check to make sure no dinky plugins loaded worlds
+                        if (!ValueConfig.MENU_VISUAL_CLAIM_ITEMS.containsKey(claim.getWorld())){
+                            ValueConfig.MENU_VISUAL_CLAIM_ITEMS.put(claim.getWorld(), Material.OAK_FENCE);
                         }
                     } catch (NumberFormatException e){
                         logger.warning("Claim file[" + file.getName() + "] had an invalid filename, continuing however that claim will not be loaded.");
@@ -363,14 +307,9 @@ public class ClaimDataManager implements Listener {
             loadChunksForClaim(claim);
     }
 
-    public ErrorType resizeSubClaim(SubClaim subClaim, int start_x, int start_z, int end_x, int end_z, Function<int[], ErrorType> verify){
+    public ErrorType resizeSubClaim(SubClaim subClaim, int start_x, int start_z, int end_x, int end_z){
         int[] arr = calculateResize(subClaim.getMinX(), subClaim.getMaxX(),
                 subClaim.getMinZ(), subClaim.getMaxZ(), start_x, start_z, end_x, end_z);
-
-        ErrorType val = verify.apply(arr);
-
-        if (val != ErrorType.NONE)
-            return val;
 
         int newMinX = arr[0];
         int newMinZ = arr[2];
@@ -832,10 +771,6 @@ public class ClaimDataManager implements Listener {
 
     public synchronized void setReSave(boolean reSave) {
         this.reSave = reSave;
-    }
-
-    public HashMap<UUID, Material> getMaterialLookup() {
-        return materialLookup;
     }
 
     public IntCache<Claim> getClaimCache(){

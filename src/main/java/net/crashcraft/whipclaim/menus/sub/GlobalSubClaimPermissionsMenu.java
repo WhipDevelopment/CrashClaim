@@ -4,6 +4,7 @@ import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,11 +18,13 @@ import java.util.Arrays;
 public class GlobalSubClaimPermissionsMenu extends GUI {
     private PermissionGroup group;
     private GlobalPermissionSet permissionSet;
+    private PermissionHelper helper;
 
     public GlobalSubClaimPermissionsMenu(Player player, PermissionGroup group) {
         super(player, "General Permissions", 54);
         this.group = group;
         this.permissionSet = group.getPermissionSet();
+        this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
@@ -188,6 +191,12 @@ public class GlobalSubClaimPermissionsMenu extends GUI {
     private void clickPermOption(PermissionRoute route, int value) {
         if (route == null)
             return;
+
+        if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
+            player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+            forceClose();
+            return;
+        }
 
         group.setPermission(route, value);
         loadItems();

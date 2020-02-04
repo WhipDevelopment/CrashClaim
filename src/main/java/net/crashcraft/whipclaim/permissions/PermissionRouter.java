@@ -18,9 +18,6 @@ public class PermissionRouter {
         Sub Group  [ build: 1, interactions: 2, container{ chest }: 2 ]
 
         Output  [ build: 1, interactions: 1, container{ chest }: 1 ]
-
-
-        TODO should  have sub claims global as a per player with a nuetral to fall back on i guess
      */
 
     private static int processPerm(int primary, int secondary){

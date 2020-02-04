@@ -2,6 +2,7 @@ package net.crashcraft.whipclaim.commands.modes;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
@@ -42,6 +43,7 @@ public class ModeCommand extends BaseCommand {
     }
 
     @CommandAlias("claim")
+    @CommandPermission("crashclaim.user.claim")
     public void onClaim(Player player){
         UUID uuid = player.getUniqueId();
 
@@ -60,6 +62,7 @@ public class ModeCommand extends BaseCommand {
     }
 
     @CommandAlias("subClaim")
+    @CommandPermission("crashclaim.user.subclaim")
     public void onSubClaim(Player player){
         UUID uuid = player.getUniqueId();
         if (modeState.containsKey(uuid)) {
@@ -78,23 +81,5 @@ public class ModeCommand extends BaseCommand {
 
     public void signalDisabled(UUID uuid){
         modeState.remove(uuid);
-    }
-
-    @CommandAlias("debug")
-    public void debug(Player player){
-        Location location = player.getLocation();
-        ArrayList<Integer> claims = manager.temporaryTestGetChunkMap().get(player.getWorld().getUID()).get(StaticClaimLogic.getChunkHashFromLocation(location.getBlockX(), location.getBlockZ()));
-        ArrayList<Claim> claimList = new ArrayList<>();
-        for (Integer integer : claims){
-            claimList.add(manager.temporaryTestGetClaimMap().get(integer));
-        }
-
-        for (Claim claim : claimList){
-            System.out.println(claim.getId());
-            System.out.println("|--Ux  " + claim.getMinX());
-            System.out.println("|--Uz  " + claim.getMinZ());
-            System.out.println("|--Lx  " + claim.getMaxX());
-            System.out.println("|--Lz  " + claim.getMaxZ());
-        }
     }
 }

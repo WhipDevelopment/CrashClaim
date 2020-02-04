@@ -1,5 +1,6 @@
 package net.crashcraft.whipclaim.events;
 
+import net.crashcraft.whipclaim.config.ValueConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
@@ -33,6 +34,10 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onProjectileHitEvent(EntityInteractEvent e){
+        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+            return;
+        }
+
         if (e.getEntity() instanceof Projectile){
             Location location = e.getBlock().getLocation();
             if (((Projectile) e.getEntity()).getShooter() instanceof Player) {
@@ -56,6 +61,10 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onEntityChangeBlockEvent(EntityChangeBlockEvent e) {
+        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+            return;
+        }
+
         Location location = e.getBlock().getLocation();
         if (e.getEntity() instanceof Arrow && ((Arrow) e.getEntity()).getShooter() instanceof Player) {
             Player player = (Player) ((Arrow) e.getEntity()).getShooter();
@@ -91,6 +100,10 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onBlockIgniteEvent(BlockIgniteEvent e){
+        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+            return;
+        }
+
         Location location = e.getBlock().getLocation();
         if (e.getPlayer() != null){
             if (!helper.hasPermission(e.getPlayer().getUniqueId(), location, PermissionRoute.BUILD)) {
@@ -104,11 +117,19 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onBlockExplodeEvent(BlockExplodeEvent e){
+        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+            return;
+        }
+
         e.blockList().removeAll(processExplosion(e.blockList()));
     }
 
     @EventHandler
     public void onBlockExplodeEvent(EntityExplodeEvent e){
+        if (ValueConfig.DISABLED_WORLDS.contains(e.getLocation().getWorld().getUID())){
+            return;
+        }
+
         e.blockList().removeAll(processExplosion(e.blockList()));
     }
 

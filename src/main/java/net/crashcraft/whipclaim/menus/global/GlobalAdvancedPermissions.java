@@ -4,6 +4,7 @@ import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,11 +18,13 @@ import java.util.Arrays;
 public class GlobalAdvancedPermissions extends GUI {
     private GlobalPermissionSet permissionSet;
     private PermissionGroup group;
+    private PermissionHelper helper;
 
     public GlobalAdvancedPermissions(Player player, PermissionGroup group) {
         super(player, "Advanced Permissions", 54);
         this.group = group;
         this.permissionSet = group.getPermissionSet();
+        this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
@@ -35,10 +38,12 @@ public class GlobalAdvancedPermissions extends GUI {
         inv.clear();
         BaseClaim claim = group.getOwner();
 
-        //TODO define everything with an accurate descitption
-        inv.setItem(11, createGuiItem(ChatColor.GOLD + "Allow Pistons", Material.CRAFTING_TABLE));
-        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Allow Fluids", Material.OAK_FENCE_GATE));
-        inv.setItem(13, createGuiItem(ChatColor.GOLD + "View Sub Claims", Material.SEA_LANTERN));
+        inv.setItem(11, createGuiItem(ChatColor.GOLD + "Allow Pistons",
+                new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows pistons to cross into and out of claim")), Material.CRAFTING_TABLE));
+        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Allow Fluids",
+                new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows fluids to cross into and out of claim")), Material.OAK_FENCE_GATE));
+        inv.setItem(13, createGuiItem(ChatColor.GOLD + "View Sub Claims",
+                new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows players to view the sub claims")), Material.SEA_LANTERN));
 
         switch (PermissionRoute.FLUIDS.getPerm(permissionSet)) {
             case 1:
@@ -140,6 +145,12 @@ public class GlobalAdvancedPermissions extends GUI {
     private void clickPermOption(PermissionRoute route, int value) {
         if (route == null)
             return;
+
+        if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
+            player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+            forceClose();
+            return;
+        }
 
         group.setPermission(route, value);
         loadItems();

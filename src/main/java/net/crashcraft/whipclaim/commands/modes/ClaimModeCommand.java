@@ -77,6 +77,11 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             throw new RuntimeException("World was null on claim mode manager click");
         }
 
+        if (ValueConfig.DISABLED_WORLDS.contains(world.getUID())){
+            player.sendMessage(ChatColor.RED + "You are unable to claim in this world");
+            return;
+        }
+
         Claim claim = manager.getClaim(loc1.getBlockX(), loc1.getBlockZ(), loc1.getWorld().getUID());
 
         if (claim != null || resizingMap.containsKey(player.getUniqueId())){
@@ -88,8 +93,6 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
     }
 
     public void clickClaim(Player player, Location location){
-        //TODO check for disabled worlds and disabled locations - bypass mode should bypass this
-
         UUID uuid = player.getUniqueId();
         UUID world = player.getWorld().getUID();
 

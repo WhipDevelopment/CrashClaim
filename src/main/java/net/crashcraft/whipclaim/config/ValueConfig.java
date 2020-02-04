@@ -49,6 +49,9 @@ public class ValueConfig {
     public static double MONEY_PER_BLOCK = 0.01;
     private static String MONEY_PER_BLOCK_KEY = "money-per-block";
 
+    public static ArrayList<UUID> DISABLED_WORLDS = new ArrayList<>();
+    private static String DISABLED_WORLDS_KEY = "disabled-worlds";
+
     public static void writeDefault(FileConfiguration configuration, Plugin plugin){
         YamlConfiguration config = new YamlConfiguration();
 
@@ -61,10 +64,20 @@ public class ValueConfig {
         config.set(VISUALIZE_ALERT_DURATION_KEY, VISUALIZE_ALERT_DURATION);
         config.set(VISUALIZE_ALERT_FADE_OUT_KEY, VISUALIZE_ALERT_FADE_OUT);
         config.set(MONEY_PER_BLOCK_KEY, MONEY_PER_BLOCK);
+        config.set(DISABLED_WORLDS_KEY, DISABLED_WORLDS);
 
         for (PlayerTeleportEvent.TeleportCause cause : PlayerTeleportEvent.TeleportCause.values()){
             config.set(EVENTS_TELEPORT_KEY + "." + cause.name(), "block");
         }
+
+        ConfigurationSection section = configuration.createSection(MENU_VISUAL_CLAIM_ITEMS_KET);
+
+        for (World world : Bukkit.getWorlds()) {
+            section.set(world.getName(), Material.GRASS.name());
+            MENU_VISUAL_CLAIM_ITEMS.put(world.getUID(), Material.GRASS);
+        }
+
+        configuration.set(MENU_VISUAL_CLAIM_ITEMS_KET, section);
 
         configuration.options().copyDefaults(true);
         configuration.setDefaults(config);
@@ -90,9 +103,16 @@ public class ValueConfig {
             if (material == null) {
                 logger.warning("[Config] " + MENU_VISUAL_CLAIM_ITEMS_KET + "." + worldname + " is not a valid material. Defaulting values.");
             } else if (world == null) {
-                logger.warning("[Config] " + MENU_VISUAL_CLAIM_ITEMS_KET + "." + worldname + " is not a valid world name. Defaulting values.");
+                logger.warning("[Config] " + MENU_VISUAL_CLAIM_ITEMS_KET + "." + worldname + " is not a valid world name.");
             } else {
                 MENU_VISUAL_CLAIM_ITEMS.put(world.getUID(), material);
+            }
+        }
+
+        for (World world : Bukkit.getWorlds()){
+            Material mat = MENU_VISUAL_CLAIM_ITEMS.get(world.getUID());
+            if (mat == null){
+                MENU_VISUAL_CLAIM_ITEMS.put(world.getUID(), Material.OAK_FENCE);
             }
         }
 
@@ -101,7 +121,7 @@ public class ValueConfig {
         try {
             VISUALIZE_ALERT_TYPE = EnumWrappers.TitleAction.valueOf(configuration.getString(VISUALIZE_ALERT_TYPE_KEY));
         } catch (EnumConstantNotPresentException e) {
-            logger.warning("Invalid " + VISUALIZE_ALERT_TYPE_KEY + ", defaulting to " + VISUALIZE_ALERT_TYPE.name());
+            logger.warning("[Config] Invalid " + VISUALIZE_ALERT_TYPE_KEY + ", defaulting to " + VISUALIZE_ALERT_TYPE.name());
         }
 
         VISUALIZE_ALERT_FADE_IN = configuration.getInt(VISUALIZE_ALERT_FADE_IN_KEY, VISUALIZE_ALERT_FADE_IN);
@@ -132,12 +152,22 @@ public class ValueConfig {
                     continue;
                 default:
                     //Bad value default to good one
-                    logger.warning("Invalid value for " + section.getCurrentPath() + "." + cause.name() + "\nUsing `block`");
+                    logger.warning("[Config] Invalid value for " + section.getCurrentPath() + "." + cause.name() + "\nUsing `block`");
                     EVENTS_TELEPORT.put(cause, 1);
                     continue;
             }
         }
 
         MONEY_PER_BLOCK = configuration.getDouble(MONEY_PER_BLOCK_KEY);
+
+        for (String s : configuration.getStringList(DISABLED_WORLDS_KEY)){
+            World world = Bukkit.getWorld(s);
+            if (world == null){
+                logger.warning("[Config] Invalid world name for " + DISABLED_WORLDS_KEY);
+                return;
+            }
+
+            DISABLED_WORLDS.add(world.getUID());
+        }
     }
 }

@@ -4,6 +4,7 @@ import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.config.ValueConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -63,7 +64,7 @@ public class RealClaimListMenu extends GUI{
                 }
             }
 
-            inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, material != null ? material : WhipClaim.getPlugin().getDataManager().getMaterialLookup().get(item.getWorld())));
+            inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, material != null ? material : ValueConfig.MENU_VISUAL_CLAIM_ITEMS.get(item.getWorld())));
 
             slot++;
         }
@@ -106,6 +107,7 @@ public class RealClaimListMenu extends GUI{
                 break;
             default:
                 function.apply(getPlayer(), currentPageItems.get(e.getSlot() - 10));
+                //Checking perms at menu
                 break;
         }
     }

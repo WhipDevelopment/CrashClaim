@@ -34,7 +34,7 @@ public class SubClaimMenu extends GUI {
 
     @Override
     public void initialize() {
-        material = Material.PAPER; //TODO  make this dynamic from config
+        material = Material.PAPER;
     }
 
     @Override
@@ -109,56 +109,87 @@ public class SubClaimMenu extends GUI {
 
         switch (rawItemName) {
             case "per player settings":
-                new PlayerPermListMenu(claim, getPlayer(), this);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
+                    new PlayerPermListMenu(claim, getPlayer(), this);
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "global claim settings":
-                new GlobalSubClaimPermissionsMenu(getPlayer(), claim.getPerms()).open();
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
+                    new GlobalSubClaimPermissionsMenu(getPlayer(), claim.getPerms()).open();
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "rename claim":
-                new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim name", (player, reply) -> {
-                    claim.setName(reply);
-                    player.sendMessage(ChatColor.GREEN + "Change claim name to " + ChatColor.GOLD + reply);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim name", (player, reply) -> {
+                        claim.setName(reply);
+                        player.sendMessage(ChatColor.GREEN + "Change claim name to " + ChatColor.GOLD + reply);
 
-                    //TODO Make sure they cant set duplicate names maybe? might not matter because 2 claims can be named the same by 2 diffferent people then shared
+                        //TODO Make sure they cant set duplicate names maybe? might not matter because 2 claims can be named the same by 2 diffferent people then shared
 
-                    return null;
-                });
+                        return null;
+                    });
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "edit entry message":
-                new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim entry message", (player, reply) -> {
-                    claim.setEntryMessage(reply);
-                    player.sendMessage(ChatColor.GREEN + "Change claim entry message to " + ChatColor.GOLD + reply);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim entry message", (player, reply) -> {
+                        claim.setEntryMessage(reply);
+                        player.sendMessage(ChatColor.GREEN + "Change claim entry message to " + ChatColor.GOLD + reply);
 
-                    return null;
-                });
+                        return null;
+                    });
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "edit exit message":
-                new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim exit message", (player, reply) -> {
-                    claim.setExitMessage(reply);
-                    player.sendMessage(ChatColor.GREEN + "Change claim exit message to " + ChatColor.GOLD + reply);
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new AnvilGUI(WhipClaim.getPlugin(), getPlayer(), "Enter new claim exit message", (player, reply) -> {
+                        claim.setExitMessage(reply);
+                        player.sendMessage(ChatColor.GREEN + "Change claim exit message to " + ChatColor.GOLD + reply);
 
-                    return null;
-                });
+                        return null;
+                    });
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "delete claim":
-                new ConfirmationMenu(getPlayer(), "Confirm Delete Claim",
-                        ChatColor.DARK_RED + "Permanently Delete this sub claim?",
-                        new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
-                                ChatColor.RED + "the contributing parties")),
-                        material,
-                        (player, aBoolean) -> {
-                            if (aBoolean.equals(true)) {
-                                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
-                                    WhipClaim.getPlugin().getDataManager().deleteSubClaim(claim);
-                                } else {
-                                    player.sendMessage(ChatColor.RED + "You do not have permission to modify this claim.");
+                if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                    new ConfirmationMenu(getPlayer(), "Confirm Delete Claim",
+                            ChatColor.DARK_RED + "Permanently Delete this sub claim?",
+                            new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
+                                    ChatColor.RED + "the contributing parties")),
+                            material,
+                            (player, aBoolean) -> {
+                                if (aBoolean.equals(true)) {
+                                    if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                                        WhipClaim.getPlugin().getDataManager().deleteSubClaim(claim);
+                                    } else {
+                                        player.sendMessage(ChatColor.RED + "You do not have permission to modify this claim.");
+                                    }
                                 }
-                            }
-                            return "";
-                        }, player -> "").open();
+                                return "";
+                            }, player -> "").open();
+                } else {
+                    player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+                    forceClose();
+                }
                 break;
             case "back":
                 Claim main = claim.getParent();
+                //Perms are checked when menu is opened
                 new RealClaimListMenu(getPlayer(), new ClaimMenu(getPlayer(), main), "Sub Claims", Material.PAPER, main.getSubClaims(), (p, c) -> {
                     if (c instanceof SubClaim) {
                         SubClaim claim = (SubClaim) c;

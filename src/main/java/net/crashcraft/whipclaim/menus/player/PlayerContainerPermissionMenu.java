@@ -7,6 +7,7 @@ import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
 import net.crashcraft.whipclaim.menus.sub.SubPlayerAdminPermissions;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,6 +32,7 @@ public class PlayerContainerPermissionMenu extends GUI {
     private PlayerPermissionSet set;
 
     private HashMap<Integer, Material> trackingMap;
+    private PermissionHelper helper;
 
     public PlayerContainerPermissionMenu(Player player, PermissionGroup group, UUID target) {
         super(player, "Container Permissions", 54);
@@ -38,6 +40,7 @@ public class PlayerContainerPermissionMenu extends GUI {
         this.trackingMap = new HashMap<>();
         this.target = target;
         this.set = group.getPlayerPermissionSet(target);
+        this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
@@ -172,6 +175,12 @@ public class PlayerContainerPermissionMenu extends GUI {
     private void clickPermOption(Material material, int value) {
         if (material == null)
             return;
+
+        if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
+            player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+            forceClose();
+            return;
+        }
 
         group.setContainerPlayerPermission(target, value, material);
         loadItems();

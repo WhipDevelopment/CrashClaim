@@ -8,14 +8,16 @@ import net.crashcraft.whipclaim.data.ClaimDataManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class PermissionHelper {
     private static PermissionHelper helper;
 
     private ClaimDataManager manager;
+    private BypassManager bypassManager;
 
-    public PermissionHelper(ClaimDataManager manager){
+    public PermissionHelper(ClaimDataManager manager, BypassManager bypassManager){
         helper = this;
 
         this.manager = manager;

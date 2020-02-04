@@ -5,6 +5,7 @@ import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,12 +21,14 @@ public class AdminPermissionMenu extends GUI {
     private UUID target;
     private PlayerPermissionSet permissionSet;
     private PermissionGroup group;
+    private PermissionHelper helper;
 
     public AdminPermissionMenu(Player player, PermissionGroup group, UUID target) {
         super(player, "Admin Permissions", 54);
         this.target = target;
         this.group = group;
         this.permissionSet = group.getPlayerPermissionSet(target);
+        this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
@@ -144,6 +147,12 @@ public class AdminPermissionMenu extends GUI {
     private void clickPermOption(PermissionRoute route, int value) {
         if (route == null)
             return;
+
+        if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
+            player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+            forceClose();
+            return;
+        }
 
         group.setPlayerPermission(target, route, value);
         loadItems();

@@ -12,6 +12,7 @@ import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.MaterialName;
 import net.crashcraft.whipclaim.events.PlayerListener;
 import net.crashcraft.whipclaim.events.WorldListener;
+import net.crashcraft.whipclaim.permissions.BypassManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
@@ -29,6 +30,11 @@ public class WhipClaim extends JavaPlugin {
     private MaterialName materialName;
 
     private PaymentProcessor payment;
+
+    /*
+    crashclaim.admin.bypass
+
+     */
 
     @Override
     public void onLoad() {
@@ -60,20 +66,16 @@ public class WhipClaim extends JavaPlugin {
         manager = new ClaimDataManager(this);
         materialName = new MaterialName();
 
-        new PermissionHelper(manager);
+        BypassManager bypassManager = new BypassManager();
+        new PermissionHelper(manager, bypassManager);
 
         CommandManager commandManager = new CommandManager(this);
 
-        ModeCommand modeCommand = new ModeCommand(this, protocolManager);
-
-        ShowClaimsCommand showClaimsCommand = new ShowClaimsCommand(visualizationManager, manager);
-        TestCommand testCommand = new TestCommand(manager);
-        HideClaimsCommand hideClaimsCommand = new HideClaimsCommand(visualizationManager);
-
-        commandManager.registerCommand(showClaimsCommand);
-        commandManager.registerCommand(testCommand);
-        commandManager.registerCommand(hideClaimsCommand);
-        commandManager.registerCommand(modeCommand);
+        commandManager.registerCommand(new ShowClaimsCommand(visualizationManager, manager));
+        commandManager.registerCommand(new HideClaimsCommand(visualizationManager));
+        commandManager.registerCommand(new ModeCommand(this, protocolManager));
+        commandManager.registerCommand(new MenuCommand(manager));
+        commandManager.registerCommand(new BypassCommand(bypassManager));
 
         Bukkit.getPluginManager().registerEvents(manager, this);
 

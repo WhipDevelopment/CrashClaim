@@ -2,6 +2,7 @@ package net.crashcraft.whipclaim.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
@@ -27,11 +28,13 @@ public class MenuCommand extends BaseCommand {
     }
 
     @CommandAlias("claims")
+    @CommandPermission("crashclaim.user.claims")
     public void onClaimMenu(Player player){
         new AllClaimListMenu(player, null);
     }
 
     @CommandAlias("claimsettings")
+    @CommandPermission("crashclaim.user.claimsettings")
     public void onClaimMenuSingle(Player player){
         Location location = player.getLocation();
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
@@ -43,6 +46,7 @@ public class MenuCommand extends BaseCommand {
     }
 
     @CommandAlias("unclaim|removeclaim")
+    @CommandPermission("crashclaim.user.unclaim")
     public void unClaim(Player player){
         Location location = player.getLocation();
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
@@ -68,6 +72,7 @@ public class MenuCommand extends BaseCommand {
     }
 
     @CommandAlias("unclaimsubclaim|removesubclaim")
+    @CommandPermission("crashclaim.user.unclaimsubclaim")
     public void unSubClaim(Player player){
         Location location = player.getLocation();
         SubClaim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID()).getSubClaim(location.getBlockX(), location.getBlockZ());

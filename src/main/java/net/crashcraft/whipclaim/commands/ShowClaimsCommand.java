@@ -2,6 +2,7 @@ package net.crashcraft.whipclaim.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import net.crashcraft.whipclaim.claimobjects.Claim;
@@ -29,11 +30,13 @@ public class ShowClaimsCommand extends BaseCommand {
 
     @Default
     @Subcommand("claims")
+    @CommandPermission("crashclaim.user.show.claims")
     public void showClaims(Player player){
         visualizationManager.visualizeSuroudningClaims(player, claimDataManager);
     }
 
     @Subcommand("subclaims")
+    @CommandPermission("crashclaim.user.show.subclaims")
     public void showSubClaims(Player player){
         Location location = player.getLocation();
         Claim claim = claimDataManager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());

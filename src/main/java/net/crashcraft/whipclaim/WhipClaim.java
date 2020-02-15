@@ -31,37 +31,30 @@ public class WhipClaim extends JavaPlugin {
 
     private PaymentProcessor payment;
 
-    /*
-    crashclaim.admin.bypass
-
-     */
-
     @Override
     public void onLoad() {
         plugin = this;
         protocolManager = ProtocolLibrary.getProtocolManager();
-
-        if (getDataFolder().mkdirs()){
-            getLogger().info("Created plugin directory");
-        }
-
-        saveResource("localization.yml", false);
-        saveResource("lookup.yml", false);
-        saveResource("config.yml", false);
-
-        reloadConfig();
-        ValueConfig.writeDefault(getConfig(), this);
-        ValueConfig.loadConfig(getConfig(), this);
-        saveConfig();
-
-        saveResource("localization.yml", false);
-        saveResource("lookup.yml", false);
 
         this.crashUtils = new CrashUtils(this);
     }
 
     @Override
     public void onEnable() {
+        if (getDataFolder().mkdirs()){
+            getLogger().info("Created plugin directory");
+        }
+
+        saveResource("localization.yml", false);
+        saveResource("lookup.yml", false);
+
+        saveDefaultConfig();
+
+        reloadConfig(); //Needed for some reason
+        ValueConfig.writeDefault(getConfig(), this);
+        ValueConfig.loadConfig(getConfig(), this);
+        saveConfig();
+
         visualizationManager = new VisualizationManager(this, protocolManager);
         manager = new ClaimDataManager(this);
         materialName = new MaterialName();

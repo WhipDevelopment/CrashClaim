@@ -32,7 +32,7 @@ public class GlobalContainerMenu extends GUI {
         super(player, "Container Permissions", 54);
         this.group = group;
         this.trackingMap = new HashMap<>();
-        this.set = group.getPermissionSet();
+        this.set = group.getGlobalPermissionSet();
         this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
@@ -91,7 +91,7 @@ public class GlobalContainerMenu extends GUI {
                 inv.setItem(47, createGuiItem(ChatColor.GOLD + "Previous Page", Material.ARROW));
             }
 
-            inv.setItem(48, createGuiItem(ChatColor.GOLD + Integer.toString(page) + " / " + (Math.floor(containers.size() / 5)), Material.PAPER));
+            inv.setItem(48, createGuiItem(ChatColor.GOLD + Integer.toString(page + 1) + " / " + (int) (Math.floor(containers.size() / 5) + 1), Material.PAPER));
 
             if ((offset + 5) < containers.size() - 1){
                 inv.setItem(49, createGuiItem(ChatColor.GOLD + "Next Page", Material.ARROW));
@@ -110,7 +110,7 @@ public class GlobalContainerMenu extends GUI {
         inv.setItem(34, createGuiItem(ChatColor.GRAY + "Container Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Advanced Permissions", Material.NETHER_STAR));
 
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Exit", Material.ARROW));
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override

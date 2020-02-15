@@ -1,16 +1,29 @@
 package net.crashcraft.whipclaim.claimobjects;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.io.Serializable;
 import java.util.UUID;
 
-public abstract class BaseClaim implements Serializable {
-    private static final long serialVersionUID = 10L;
-
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
+        property = "@object_id")
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="name")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value= Claim.class, name = "Claim"),
+        @JsonSubTypes.Type(value= SubClaim.class, name = "SubClaim")
+})
+public abstract class BaseClaim {
     private int id;
 
+    @JsonProperty("minX")
     private int minCornerX;
+    @JsonProperty("minZ")
     private int minCornerZ;
+    @JsonProperty("maxX")
     private int maxCornerX;
+    @JsonProperty("maxZ")
     private int maxCornerZ;
 
     private UUID world;
@@ -21,7 +34,8 @@ public abstract class BaseClaim implements Serializable {
     private String entryMessage;
     private String exitMessage;
 
-    private transient boolean isEditing = false;
+    @JsonIgnore
+    private boolean isEditing = false;
 
     public BaseClaim(){
 
@@ -37,44 +51,34 @@ public abstract class BaseClaim implements Serializable {
         this.perms = perms;
     }
 
-    abstract void setToSave(boolean toSave);
+    public void setToSave(boolean toSave){
+        throw new RuntimeException("Not implemented");
+    }
 
-    abstract boolean isToSave();
+    public boolean isToSave(){
+        throw new RuntimeException("Not implemented");
+    }
 
     public int getId() {
         return id;
     }
 
-    /*
-    public int getMinX() {
-        return maxCornerX;
-    }
-
-    public int getMinZ() {
-        return maxCornerZ;
-    }
-
-    public int getMaxX() {
-        return minCornerX;
-    }
-
-    public int getMaxZ() {
-        return minCornerZ;
-    }
-     */
-
+    @JsonProperty("minX")
     public int getMinX() {
         return minCornerX;
     }
 
+    @JsonProperty("minZ")
     public int getMinZ() {
         return minCornerZ;
     }
 
+    @JsonProperty("maxX")
     public int getMaxX() {
         return maxCornerX;
     }
 
+    @JsonProperty("maxZ")
     public int getMaxZ() {
         return maxCornerZ;
     }
@@ -122,21 +126,38 @@ public abstract class BaseClaim implements Serializable {
         setToSave(true);
     }
 
-    //Check these
+    @JsonProperty("minX")
     public void setMinCornerX(int minCornerX) {
         this.minCornerX = minCornerX;
     }
 
+    @JsonProperty("minZ")
     public void setMinCornerZ(int minCornerZ) {
         this.minCornerZ = minCornerZ;
     }
 
+    @JsonProperty("maxX")
     public void setMaxCornerX(int maxCornerX) {
         this.maxCornerX = maxCornerX;
     }
 
+    @JsonProperty("maxZ")
     public void setMaxCornerZ(int maxCornerZ) {
         this.maxCornerZ = maxCornerZ;
+    }
+
+    //JSON needs this
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setWorld(UUID world) {
+        this.world = world;
+    }
+
+    public void setPerms(PermissionGroup perms) {
+        this.perms = perms;
     }
 }
 

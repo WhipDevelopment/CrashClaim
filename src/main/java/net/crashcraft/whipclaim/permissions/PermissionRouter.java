@@ -26,18 +26,18 @@ public class PermissionRouter {
 
     public static int getLayeredPermission(Claim parent, SubClaim subClaim, PermissionRoute route){
         if (subClaim != null){
-            return processPerm(route.getPerm(parent.getPerms().getPermissionSet()), route.getPerm(subClaim.getPerms().getPermissionSet()));
+            return processPerm(route.getPerm(parent.getPerms().getGlobalPermissionSet()), route.getPerm(subClaim.getPerms().getGlobalPermissionSet()));
         } else {
-            return route.getPerm(parent.getPerms().getPermissionSet());
+            return route.getPerm(parent.getPerms().getGlobalPermissionSet());
         }
     }
 
     public static int getLayeredPermission(Claim parent, SubClaim subClaim, Material material){
         if (subClaim != null){
-            return processPerm(PermissionRoute.CONTAINERS.getPerm(parent.getPerms().getPermissionSet(), material),
-                    PermissionRoute.CONTAINERS.getPerm(subClaim.getPerms().getPermissionSet(), material));
+            return processPerm(PermissionRoute.CONTAINERS.getPerm(parent.getPerms().getGlobalPermissionSet(), material),
+                    PermissionRoute.CONTAINERS.getPerm(subClaim.getPerms().getGlobalPermissionSet(), material));
         } else {
-            return PermissionRoute.CONTAINERS.getPerm(parent.getPerms().getPermissionSet(), material);
+            return PermissionRoute.CONTAINERS.getPerm(parent.getPerms().getGlobalPermissionSet(), material);
         }
     }
 
@@ -60,8 +60,8 @@ public class PermissionRouter {
         if (subClaim == null){
             PlayerPermissionSet main = parentPerms.getPlayerPermissionSet(uuid);
             if (main == null){
-                return route.getPerm(parentPerms.getPermissionSet());
-            } else return getLayeredPermission(parentPerms.getPermissionSet(), main, route);
+                return route.getPerm(parentPerms.getGlobalPermissionSet());
+            } else return getLayeredPermission(parentPerms.getGlobalPermissionSet(), main, route);
         } else {
             PermissionGroup subPerms = subClaim.getPerms();
 
@@ -69,8 +69,8 @@ public class PermissionRouter {
             PlayerPermissionSet subMainSet = subPerms.getPlayerPermissionSet(uuid);
 
             return processPerm(
-                    getLayeredPermission(parentPerms.getPermissionSet(), parentMainSet, route),
-                    getLayeredPermission(subPerms.getPermissionSet(), subMainSet, route)
+                    getLayeredPermission(parentPerms.getGlobalPermissionSet(), parentMainSet, route),
+                    getLayeredPermission(subPerms.getGlobalPermissionSet(), subMainSet, route)
             );
         }
     }
@@ -83,12 +83,12 @@ public class PermissionRouter {
     public static int getLayeredContainer(Claim parent, SubClaim subClaim, UUID uuid, Material material){
         PermissionGroup parentPerms = parent.getPerms();
         if (subClaim == null){
-            return getLayeredContainer(parentPerms.getPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material);
+            return getLayeredContainer(parentPerms.getGlobalPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material);
         } else {
             PermissionGroup subPerms = parent.getPerms();
             return processPerm(
-                    getLayeredContainer(parentPerms.getPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material),
-                    getLayeredContainer(subPerms.getPermissionSet(), subPerms.getPlayerPermissionSet(uuid), material)
+                    getLayeredContainer(parentPerms.getGlobalPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material),
+                    getLayeredContainer(subPerms.getGlobalPermissionSet(), subPerms.getPlayerPermissionSet(uuid), material)
             );
         }
     }

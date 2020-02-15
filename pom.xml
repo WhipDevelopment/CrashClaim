@@ -54,17 +54,26 @@
                     <relocations>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
-                            <shadedPattern>dev.whip.acf</shadedPattern>
+                            <shadedPattern>net.crashcraft.whipclaim.acf</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.idb</pattern>
-                            <shadedPattern>net.crashcraft.idb</shadedPattern>
+                            <shadedPattern>net.crashcraft.whipclaim.idb</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>dev.whip.crashutils</pattern>
                             <shadedPattern>net.crashcraft.whipclaim.crashutils</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.google.code.gson</pattern>
+                            <shadedPattern>net.crashcraft.whipclaim.com.google.code.gson</shadedPattern>
+                        </relocation>
                     </relocations>
+                    <artifactSet>
+                        <includes>
+                            <include>*:*</include>
+                        </includes>
+                    </artifactSet>
                 </configuration>
                 <executions>
                     <execution>
@@ -184,9 +193,19 @@
             <version>1.1</version>
         </dependency>
         <dependency>
-            <groupId>de.ruedigermoeller</groupId>
-            <artifactId>fst</artifactId>
-            <version>2.56</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.2</version>
         </dependency>
     </dependencies>
 </project>

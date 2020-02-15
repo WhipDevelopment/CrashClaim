@@ -1,5 +1,9 @@
 package net.crashcraft.whipclaim.claimobjects.permission.child;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
@@ -11,8 +15,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class SubPermissionGroup extends PermissionGroup implements Serializable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
+        property = "@object_id")
+@JsonTypeName("SubPermissionGroup")
+public class SubPermissionGroup extends PermissionGroup {
     public SubPermissionGroup() {
+
     }
 
     public SubPermissionGroup(BaseClaim owner, GlobalPermissionSet globalPermissionSet, HashMap<UUID, PlayerPermissionSet> playerPermissions) {
@@ -40,4 +48,8 @@ public class SubPermissionGroup extends PermissionGroup implements Serializable 
     public int checkPlayerValue(int value, PermissionRoute route) {
         return value;
     }
+
+    //JSON needs this
+
+
 }

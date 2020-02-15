@@ -56,7 +56,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
                 PermissionGroup group = claim.getPerms();
                 PlayerPermissionSet main = group.getPlayerPermissionSet(uuid);
 
-                if (main != null && PermissionRouter.getLayeredPermission(group.getPermissionSet(), main, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
+                if (main != null && PermissionRouter.getLayeredPermission(group.getGlobalPermissionSet(), main, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
                     edditingMap.put(uuid, claim);
 
                     claim.setEditing(true);

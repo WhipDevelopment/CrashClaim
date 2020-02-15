@@ -23,7 +23,7 @@ public class GlobalSubClaimPermissionsMenu extends GUI {
     public GlobalSubClaimPermissionsMenu(Player player, PermissionGroup group) {
         super(player, "General Permissions", 54);
         this.group = group;
-        this.permissionSet = group.getPermissionSet();
+        this.permissionSet = group.getGlobalPermissionSet();
         this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
@@ -137,7 +137,7 @@ public class GlobalSubClaimPermissionsMenu extends GUI {
 
         inv.setItem(25, createGuiItem(ChatColor.GRAY + "General Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
-        inv.setItem(43, createGuiItem(ChatColor.DARK_GRAY + "Advanced Permissions", Material.LIGHT_GRAY_STAINED_GLASS_PANE));
+        inv.setItem(43, createGuiItem(ChatColor.DARK_GRAY + "Advanced Permissions", Material.BLACK_STAINED_GLASS_PANE));
 
         inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }

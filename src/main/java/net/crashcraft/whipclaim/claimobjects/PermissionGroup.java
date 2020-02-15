@@ -1,7 +1,10 @@
 package net.crashcraft.whipclaim.claimobjects;
 
+import com.fasterxml.jackson.annotation.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.permission.child.SubPermissionGroup;
+import net.crashcraft.whipclaim.claimobjects.permission.parent.ParentPermissionGroup;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.Material;
 
@@ -9,15 +12,23 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 
-public abstract class PermissionGroup implements Serializable {
-    private static final long serialVersionUID = 30L;
-
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
+        property = "@object_id")
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="name")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value=ParentPermissionGroup.class, name="ParentPermissionGroup"),
+        @JsonSubTypes.Type(value=SubPermissionGroup.class, name="SubPermissionGroup"),
+})
+public abstract class PermissionGroup {
     /**
      * Base Claim will have all perms
      * Sub Claim will have all perms except for admin as that gets inherited
      */
 
     private GlobalPermissionSet globalPermissionSet;
+
     private HashMap<UUID, PlayerPermissionSet> playerPermissions;
 
     private BaseClaim owner;
@@ -41,7 +52,7 @@ public abstract class PermissionGroup implements Serializable {
 
     public abstract int checkPlayerValue(int value, PermissionRoute route);
 
-    public GlobalPermissionSet getPermissionSet() {
+    public GlobalPermissionSet getGlobalPermissionSet() {
         return globalPermissionSet;
     }
 
@@ -95,5 +106,15 @@ public abstract class PermissionGroup implements Serializable {
     public void setContainerPlayerPermission(UUID uuid, int value, Material material) {
         PermissionRoute.CONTAINERS.setPerm(getPlayerPermissionSet(uuid), checkPlayerValue(value, PermissionRoute.CONTAINERS), material);
         owner.setToSave(true);
+    }
+
+    //JSON needs this
+
+    public void setGlobalPermissionSet(GlobalPermissionSet globalPermissionSet) {
+        this.globalPermissionSet = globalPermissionSet;
+    }
+
+    public void setPlayerPermissions(HashMap<UUID, PlayerPermissionSet> playerPermissions) {
+        this.playerPermissions = playerPermissions;
     }
 }

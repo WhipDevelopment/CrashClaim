@@ -23,7 +23,7 @@ public class GlobalAdvancedPermissions extends GUI {
     public GlobalAdvancedPermissions(Player player, PermissionGroup group) {
         super(player, "Advanced Permissions", 54);
         this.group = group;
-        this.permissionSet = group.getPermissionSet();
+        this.permissionSet = group.getGlobalPermissionSet();
         this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }

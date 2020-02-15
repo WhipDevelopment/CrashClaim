@@ -1,5 +1,9 @@
 package net.crashcraft.whipclaim.claimobjects.permission.parent;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
@@ -11,8 +15,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class ParentPermissionGroup extends PermissionGroup implements Serializable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
+        property = "@object_id")
+@JsonTypeName("ParentPermissionGroup")
+public class ParentPermissionGroup extends PermissionGroup {
     public ParentPermissionGroup() {
+
     }
 
     public ParentPermissionGroup(BaseClaim owner, GlobalPermissionSet globalPermissionSet, HashMap<UUID, PlayerPermissionSet> playerPermissions) {
@@ -21,7 +29,7 @@ public class ParentPermissionGroup extends PermissionGroup implements Serializab
 
     @Override
     public PlayerPermissionSet createPlayerPermissionSet() {
-        return new PlayerPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
+        return new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
                 new HashMap<>(), PermState.DISABLE, PermState.DISABLE);
     }
 
@@ -55,4 +63,8 @@ public class ParentPermissionGroup extends PermissionGroup implements Serializab
                 return value;
         }
     }
+
+    //JSON needs this
+
+
 }

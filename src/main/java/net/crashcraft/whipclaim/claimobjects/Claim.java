@@ -1,20 +1,22 @@
 package net.crashcraft.whipclaim.claimobjects;
 
+import com.fasterxml.jackson.annotation.*;
 import net.crashcraft.whipclaim.data.MathUtils;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Claim extends BaseClaim implements Serializable {
-    private static final long serialVersionUID = 20L;
-
-    private transient boolean toSave;
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
+        property = "@object_id")
+@JsonTypeName("Claim")
+public class Claim extends BaseClaim {
+    @JsonIgnore
+    private boolean toSave;
 
     private ArrayList<SubClaim> subClaims;
     private UUID owner;
@@ -34,7 +36,7 @@ public class Claim extends BaseClaim implements Serializable {
     }
 
     public boolean hasGlobalPermission(PermissionRoute route){
-        return route.getPerm(getPerms().getPermissionSet()) == PermState.ENABLED;
+        return route.getPerm(getPerms().getGlobalPermissionSet()) == PermState.ENABLED;
     }
 
     public boolean hasPermission(UUID uuid, Location location, PermissionRoute route){
@@ -69,7 +71,7 @@ public class Claim extends BaseClaim implements Serializable {
             if (subClaim != null){
                 return PermissionRouter.getLayeredPermission(this, subClaim, route);
             }
-            return route.getPerm(getPerms().getPermissionSet());
+            return route.getPerm(getPerms().getGlobalPermissionSet());
         } else {
             return PermissionRouter.getLayeredPermission(this, null, route);
         }
@@ -81,7 +83,7 @@ public class Claim extends BaseClaim implements Serializable {
             if (subClaim != null){
                 return PermissionRouter.getLayeredPermission(this, subClaim, material);
             }
-            return PermissionRoute.CONTAINERS.getPerm(getPerms().getPermissionSet());
+            return PermissionRoute.CONTAINERS.getPerm(getPerms().getGlobalPermissionSet());
         } else {
             return PermissionRouter.getLayeredPermission(this, null, material);
         }
@@ -96,7 +98,7 @@ public class Claim extends BaseClaim implements Serializable {
             if (subClaim != null){
                 return PermissionRouter.getLayeredPermission(this, subClaim, uuid, route);
             }
-            return route.getPerm(getPerms().getPermissionSet());
+            return route.getPerm(getPerms().getGlobalPermissionSet());
         } else {
             return PermissionRouter.getLayeredPermission(this, null, uuid, route);
         }
@@ -111,7 +113,7 @@ public class Claim extends BaseClaim implements Serializable {
             if (subClaim != null){
                 return PermissionRouter.getLayeredContainer(this, subClaim, uuid, material);
             }
-            return PermissionRoute.CONTAINERS.getPerm(getPerms().getPermissionSet());
+            return PermissionRoute.CONTAINERS.getPerm(getPerms().getGlobalPermissionSet());
         } else {
             return PermissionRouter.getLayeredContainer(this, null, uuid, material);
         }
@@ -135,7 +137,7 @@ public class Claim extends BaseClaim implements Serializable {
         return contribution.get(player);
     }
 
-    public HashMap<UUID, Integer> getContributionMap(){
+    public HashMap<UUID, Integer> getContribution(){
         return contribution;
     }
 
@@ -170,7 +172,18 @@ public class Claim extends BaseClaim implements Serializable {
         return owner;
     }
 
+    //JSON needs this
+
+    public void setSubClaims(ArrayList<SubClaim> subClaims) {
+        this.subClaims = subClaims;
+    }
+
+    public void setContribution(HashMap<UUID, Integer> contribution) {
+        this.contribution = contribution;
+    }
+
     public void setOwner(UUID owner) {
         this.owner = owner;
     }
+
 }

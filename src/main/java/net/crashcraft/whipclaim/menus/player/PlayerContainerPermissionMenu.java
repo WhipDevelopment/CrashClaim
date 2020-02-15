@@ -103,7 +103,7 @@ public class PlayerContainerPermissionMenu extends GUI {
                 inv.setItem(47, createGuiItem(ChatColor.GOLD + "Previous Page", Material.ARROW));
             }
 
-            inv.setItem(48, createGuiItem(ChatColor.GOLD + Integer.toString(page) + " / " + (Math.floor(containers.size() / 5)), Material.PAPER));
+            inv.setItem(48, createGuiItem(ChatColor.GOLD + Integer.toString(page + 1) + " / " + (int) (Math.floor(containers.size() / 5) + 1), Material.PAPER));
 
             if ((offset + 5) < containers.size() - 1){
                 inv.setItem(49, createGuiItem(ChatColor.GOLD + "Next Page", Material.ARROW));

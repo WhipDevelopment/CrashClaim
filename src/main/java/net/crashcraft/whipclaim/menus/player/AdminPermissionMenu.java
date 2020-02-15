@@ -43,7 +43,7 @@ public class AdminPermissionMenu extends GUI {
 
         inv.setItem(11, createGuiItem(ChatColor.GOLD + "Modify Permissions", Material.CRAFTING_TABLE));
         inv.setItem(12, createGuiItem(ChatColor.GOLD + "Modify Claim", Material.OAK_FENCE_GATE));
-        inv.setItem(13, createGuiItem(ChatColor.GOLD + "View Sub Claims", Material.SEA_LANTERN));
+        inv.setItem(14, createGuiItem(ChatColor.GOLD + "View Sub Claims", Material.SEA_LANTERN));
 
         switch (PermissionRoute.MODIFY_PERMISSIONS.getPerm(permissionSet)){
             case 1:
@@ -65,10 +65,13 @@ public class AdminPermissionMenu extends GUI {
 
         switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)){
             case 1:
-                inv.setItem(31, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                inv.setItem(23, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                break;
+            case 2:
+                inv.setItem(32, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
                 break;
             case 0:
-                inv.setItem(40, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
+                inv.setItem(41, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
                 break;
         }
 
@@ -84,6 +87,11 @@ public class AdminPermissionMenu extends GUI {
             if (itemStack == null || itemStack.getType().equals(Material.AIR)){
                 inv.setItem(start, createGuiItem(ChatColor.DARK_RED + "Disable", Material.RED_STAINED_GLASS));
             }
+        }
+
+        ItemStack itemStack = inv.getItem(32);
+        if (itemStack == null || itemStack.getType().equals(Material.AIR)){
+            inv.setItem(32, createGuiItem(ChatColor.DARK_GRAY + "Neutral", Material.GRAY_STAINED_GLASS));
         }
 
         inv.setItem(16, createPlayerHead(target, new ArrayList<>(Arrays.asList(ChatColor.GREEN + "You are currently editing",
@@ -104,6 +112,15 @@ public class AdminPermissionMenu extends GUI {
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
         int slot = event.getSlot();
+
+        if (slot == 32){
+            clickPermOption(getRoute(slot - 28), PermState.NEUTRAL);
+        } else if (slot == 23){
+            clickPermOption(getRoute(slot - 28), PermState.ENABLED);
+        } else if (slot == 41){
+            clickPermOption(getRoute(slot - 28), PermState.DISABLE);
+        }
+
         if (slot >= 28 && slot <= 32){
             clickPermOption(getRoute(slot - 28), PermState.ENABLED);
             return;
@@ -139,6 +156,8 @@ public class AdminPermissionMenu extends GUI {
             case 2:
                 return PermissionRoute.MODIFY_CLAIM;
             case 3:
+                break;
+            case 4:
                 return PermissionRoute.VIEW_SUB_CLAIMS;
         }
         return null;

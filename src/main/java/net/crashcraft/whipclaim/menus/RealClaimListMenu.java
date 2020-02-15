@@ -74,7 +74,7 @@ public class RealClaimListMenu extends GUI{
             inv.setItem(48, createGuiItem(ChatColor.GOLD + "Page Down", Material.ARROW));
         }
 
-        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Page " + page + " / " + ((int)Math.ceil((float) claims.size() / 21) + 1),
+        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Page " + page + " / " + (int)Math.ceil((float) claims.size() / 21),
                 Material.ARROW));
 
         if (claims.size() > page * 21) {

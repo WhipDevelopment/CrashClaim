@@ -1,5 +1,8 @@
 package net.crashcraft.whipclaim.data;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.whip.crashutils.Payment.TransactionRecipe;
 import dev.whip.crashutils.Payment.TransactionResponse;
 import dev.whip.crashutils.Payment.TransactionType;
@@ -8,7 +11,6 @@ import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
-import net.crashcraft.whipclaim.claimobjects.permission.PermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.child.SubPermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.permission.parent.ParentPermissionGroup;
@@ -17,8 +19,6 @@ import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import org.bukkit.*;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,9 +28,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.cache2k.Cache2kBuilder;
 import org.cache2k.IntCache;
-import org.nustaq.serialization.FSTConfiguration;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -38,18 +35,17 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 import static net.crashcraft.whipclaim.data.StaticClaimLogic.getChunkHash;
 import static net.crashcraft.whipclaim.data.StaticClaimLogic.getChunkHashFromLocation;
 
 public class ClaimDataManager implements Listener {
-    private static FSTConfiguration serializeConf = FSTConfiguration.createDefaultConfiguration();
-
     private final WhipClaim plugin;
     private final Path dataPath;
     private final Logger logger;
+
+    private ObjectMapper mapper;
 
     private PermissionSetup permissionSetup;
 
@@ -72,9 +68,23 @@ public class ClaimDataManager implements Listener {
         this.isSaving = false;
         this.subClaimLookupParent = new HashMap<>();
 
+        mapper = new ObjectMapper();
+
+/*
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder().build();
+        mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS); // default to using DefaultTyping.OBJECT_AND_NON_CONCRETE
+
+ */
+
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        mapper.registerSubtypes(Claim.class, SubClaim.class, SubPermissionGroup.class, ParentPermissionGroup.class,
+                GlobalPermissionSet.class, PlayerPermissionSet.class);
+
+
         permissionSetup = new PermissionSetup(plugin);
 
-        serializeConf.registerClass(Claim.class, BaseClaim.class, PermissionGroup.class, PermissionSet.class, PlayerPermissionSet.class, GlobalPermissionSet.class);
         dataPath = Paths.get(plugin.getDataFolder().getAbsolutePath(), "ClaimData");
 
         chunkLookup = new HashMap<>();
@@ -139,9 +149,9 @@ public class ClaimDataManager implements Listener {
                             if (subClaims != null){
                                 for (SubClaim subClaim : subClaims){
                                     PermissionGroup subPerms = subClaim.getPerms();
-                                    if (PermissionRouter.getLayeredPermission(subPerms.getPermissionSet(),
+                                    if (PermissionRouter.getLayeredPermission(subPerms.getGlobalPermissionSet(),
                                             subPerms.getPlayerPermissionSet(uuid), PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED ||
-                                            PermissionRouter.getLayeredPermission(subPerms.getPermissionSet(),
+                                            PermissionRouter.getLayeredPermission(subPerms.getGlobalPermissionSet(),
                                                     subPerms.getPlayerPermissionSet(uuid), PermissionRoute.MODIFY_PERMISSIONS) == PermState.ENABLED) {
                                         ownedSubClaims.computeIfAbsent(uuid, u -> new HashSet<>());
                                         Set<Integer> ids = ownedSubClaims.get(uuid);
@@ -165,7 +175,9 @@ public class ClaimDataManager implements Listener {
                         logger.warning("Claim failed to load into memory, skipping. file[ " + file.getName() + " ]");
                         System.out.println(ex2.getMessage());
                         ex2.printStackTrace();
-                    } catch (ClassNotFoundException ex3) {
+                    }
+
+                    /*catch (ClassNotFoundException ex3) {
                         logger.warning("Claim class was not found this is fatal and" +
                                 " the server will not be able to load claims, corrupted jar file?\n " +
                                 "file[ " + file.getName() + " ]\n" +
@@ -173,6 +185,7 @@ public class ClaimDataManager implements Listener {
 
                         Bukkit.shutdown();
                     }
+                     */
                 }
             }
         }
@@ -543,7 +556,7 @@ public class ClaimDataManager implements Listener {
 
         for (SubClaim subClaim : claim.getSubClaims()){
             if (MathUtils.doOverlap(subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ(),
-                    max.getBlockX(), max.getBlockZ(), min.getBlockX(), min.getBlockZ())){
+                    min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ())){
                 return new ClaimResponse(false, ErrorType.OVERLAP_EXISITNG);
             }
         }
@@ -578,17 +591,12 @@ public class ClaimDataManager implements Listener {
         return new ClaimResponse(true, subClaim);
     }
 
-    private Claim readClaim(InputStream stream) throws IOException, ClassNotFoundException {
-        FSTObjectInput in = new FSTObjectInput(stream);
-        Claim result = (Claim)in.readObject();
-        in.close();
-        return result;
+    private Claim readClaim(InputStream stream) throws IOException {
+        return mapper.readValue(stream, Claim.class);
     }
 
-    private void writeClaim(OutputStream stream, Claim toWrite ) throws IOException {
-        FSTObjectOutput out = new FSTObjectOutput(stream);
-        out.writeObject( toWrite );
-        out.close();
+    private void writeClaim(File file, Claim toWrite) throws IOException {
+        mapper.writer().writeValue(file, toWrite);
     }
 
     public Claim getClaim(int id){
@@ -609,12 +617,9 @@ public class ClaimDataManager implements Listener {
     public void saveClaim(Claim claim){
         File file = new File(Paths.get(dataPath.toString(), Integer.toString(claim.getId())).toUri());
         try {
-            FileOutputStream stream = new FileOutputStream(file, false);
-            writeClaim(stream, claim);
+            writeClaim(file, claim);
 
             claim.setToSave(false);
-        } catch (FileNotFoundException ex) {
-            logger.warning("[WhipClaim] Claim was attempting to save but could not complete action due to file error. File: " + file.toURI());
         } catch (IOException ex1){
             logger.warning("[WhipClaim[ Claim was attempting to save but could not complete action due to an IO error. File: " + file.toURI());
         }
@@ -631,8 +636,6 @@ public class ClaimDataManager implements Listener {
 
         setSaving(true);
 
-        logger.info("Starting to save claims");
-
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             for (Claim claim : claims){
                 if (claim.isToSave()) {
@@ -640,13 +643,9 @@ public class ClaimDataManager implements Listener {
                 }
             }
 
-            logger.info("Finished save successfully");
-
             this.setSaving(false);
 
             if (reSave){
-                logger.info("ReSaving claims to disk.");
-
                 setReSave(false);
                 saveClaims();
             }

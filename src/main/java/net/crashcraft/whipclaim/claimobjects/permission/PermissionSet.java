@@ -1,13 +1,26 @@
 package net.crashcraft.whipclaim.claimobjects.permission;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import org.bukkit.Material;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class PermissionSet implements Serializable, Cloneable{
-    private static final long serialVersionUID = 40L;
-
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
+        property = "@object_id")
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="name")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value= PlayerPermissionSet.class, name = "PlayerPermissionSet"),
+        @JsonSubTypes.Type(value= GlobalPermissionSet.class, name = "GlobalPermissionSet")
+})
+public abstract class PermissionSet implements Cloneable{
     private int build;
     private int interactions;
     private int entities;
@@ -95,4 +108,12 @@ public class PermissionSet implements Serializable, Cloneable{
         }
         return null;
     }
+
+    //JSON needs this
+
+    public void setContainers(HashMap<Material, Integer> containers) {
+        this.containers = containers;
+    }
+
+
 }

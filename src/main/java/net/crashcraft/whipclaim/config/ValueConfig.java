@@ -73,8 +73,8 @@ public class ValueConfig {
         ConfigurationSection section = configuration.createSection(MENU_VISUAL_CLAIM_ITEMS_KET);
 
         for (World world : Bukkit.getWorlds()) {
-            section.set(world.getName(), Material.GRASS.name());
-            MENU_VISUAL_CLAIM_ITEMS.put(world.getUID(), Material.GRASS);
+            section.set(world.getName(), Material.OAK_FENCE.name());
+            MENU_VISUAL_CLAIM_ITEMS.put(world.getUID(), Material.OAK_FENCE);
         }
 
         configuration.set(MENU_VISUAL_CLAIM_ITEMS_KET, section);

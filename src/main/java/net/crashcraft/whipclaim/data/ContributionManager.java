@@ -28,9 +28,9 @@ public class ContributionManager {
         } else {
             PaymentProcessor processor = WhipClaim.getPlugin().getPayment();  //refund
 
-            int value = (int) Math.floor(Math.floor(difference * ValueConfig.MONEY_PER_BLOCK) / claim.getContributionMap().size());
+            int value = (int) Math.floor(Math.floor(difference * ValueConfig.MONEY_PER_BLOCK) / claim.getContribution().size());
 
-            for (Map.Entry<UUID, Integer> entry : claim.getContributionMap().entrySet()){
+            for (Map.Entry<UUID, Integer> entry : claim.getContribution().entrySet()){
                 processor.makeTransaction(entry.getKey(), TransactionType.DEPOSIT, "Claim Refund", value);
             }
         }

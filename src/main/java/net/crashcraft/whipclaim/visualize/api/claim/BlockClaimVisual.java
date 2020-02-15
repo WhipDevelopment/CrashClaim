@@ -90,7 +90,7 @@ public class BlockClaimVisual extends BaseBlockVisual {
 
             if (set == null) {
                 return VisualColor.RED;
-            } else if (PermissionRouter.getLayeredPermission(group.getPermissionSet(), set, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
+            } else if (PermissionRouter.getLayeredPermission(group.getGlobalPermissionSet(), set, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
                 if (isEditing) {
                     return VisualColor.YELLOW;
                 } else {

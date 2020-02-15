@@ -23,7 +23,7 @@ public class GlobalPermissionMenu extends GUI {
     public GlobalPermissionMenu(Player player, Claim claim) {
         super(player, "General Permissions", 54);
         this.claim = claim;
-        this.permissionSet = claim.getPerms().getPermissionSet();
+        this.permissionSet = claim.getPerms().getGlobalPermissionSet();
         this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }

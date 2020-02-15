@@ -1,12 +1,19 @@
 package net.crashcraft.whipclaim.claimobjects.permission;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import org.bukkit.Material;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class GlobalPermissionSet extends PermissionSet implements Serializable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
+        property = "@object_id")
+@JsonTypeName("GlobalPermissionSet")
+public class GlobalPermissionSet extends PermissionSet {
     private int pistons;
     private int fluids;
 
@@ -70,4 +77,8 @@ public class GlobalPermissionSet extends PermissionSet implements Serializable {
     public void setViewSubClaims(int viewSubClaims) {
         super.setViewSubClaims(viewSubClaims);
     }
+
+    //JSON needs this
+
+
 }

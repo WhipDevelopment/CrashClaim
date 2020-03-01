@@ -138,7 +138,7 @@ public enum  PermissionRoute {
     PISTONS{
         @Override
         public int getPerm(PlayerPermissionSet set) {
-            return PermState.NEUTRAL;
+            return PermState.ENABLED; //Enabled so we can set it as players
         }
 
         @Override
@@ -161,7 +161,7 @@ public enum  PermissionRoute {
     FLUIDS{
         @Override
         public int getPerm(PlayerPermissionSet set) {
-            return PermState.NEUTRAL;
+            return PermState.ENABLED; //Enabled so we can set it as players
         }
 
         @Override
@@ -316,9 +316,10 @@ public enum  PermissionRoute {
         public int getPerm(PlayerPermissionSet set, Material material){
             if (set == null)
                 return PermState.NEUTRAL;
+
             Integer integer = set.getContainers().get(material);
 
-            return integer == null ? PermState.NEUTRAL : integer;
+            return integer == null ? set.getDefaultConatinerValue() : integer;
         }
 
         public void setPerm(GlobalPermissionSet set, int value, Material material) {
@@ -331,7 +332,7 @@ public enum  PermissionRoute {
 
             Integer integer = set.getContainers().get(material);
 
-            return integer == null ? PermState.DISABLE : integer;
+            return integer == null ? set.getDefaultConatinerValue() : integer;
         }
     };
 

@@ -107,6 +107,7 @@ public class PermissionSetup {
                 PermState.ENABLED,
                 temp,
                 PermState.ENABLED,
+                PermState.ENABLED,
                 PermState.ENABLED);
     }
 

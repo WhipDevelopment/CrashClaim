@@ -10,6 +10,10 @@ public class BypassManager {
         bypassMode = new ArrayList<>();
     }
 
+    public boolean isBypass(UUID uuid){
+        return bypassMode.contains(uuid);
+    }
+
     public boolean toggleBypass(UUID uuid){
         if (bypassMode.contains(uuid)){
             bypassMode.remove(uuid);

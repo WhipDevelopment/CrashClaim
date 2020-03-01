@@ -21,8 +21,8 @@ public class GlobalPermissionSet extends PermissionSet {
 
     }
 
-    public GlobalPermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int pistons, int fluids) {
-        super(build, interactions, entities, explosions, teleportation, viewSubClaims, containers);
+    public GlobalPermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue, int pistons, int fluids) {
+        super(build, interactions, entities, explosions, teleportation, viewSubClaims, containers, defaultContainerValue);
         this.pistons = pistons;
         this.fluids = fluids;
     }

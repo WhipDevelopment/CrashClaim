@@ -4,6 +4,9 @@ import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.helpers.MenuListHelper;
+import net.crashcraft.whipclaim.menus.helpers.MenuSwitchType;
+import net.crashcraft.whipclaim.menus.helpers.StaticItemLookup;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
@@ -14,8 +17,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 
-public class GlobalAdvancedPermissions extends GUI {
+public class GlobalAdvancedPermissions extends MenuListHelper {
     private GlobalPermissionSet permissionSet;
     private PermissionGroup group;
     private PermissionHelper helper;
@@ -29,62 +33,32 @@ public class GlobalAdvancedPermissions extends GUI {
     }
 
     @Override
-    public void initialize() {
+    public void invalidPermissions() {
+        player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+        forceClose();
+    }
 
+    @Override
+    public void setPermission(PermissionRoute route, int value) {
+        group.setPermission(route, value);
+    }
+
+    @Override
+    public void initialize() {
+        LinkedHashMap<PermissionRoute, MenuSwitchType> menuList = new LinkedHashMap<>();
+
+        menuList.put(PermissionRoute.PISTONS, MenuSwitchType.DOUBLE);
+        menuList.put(PermissionRoute.FLUIDS, MenuSwitchType.DOUBLE);
+        menuList.put(PermissionRoute.VIEW_SUB_CLAIMS, MenuSwitchType.DOUBLE);
+
+        setup(menuList, permissionSet, player.getUniqueId(), group);
     }
 
     @Override
     public void loadItems() {
-        inv.clear();
+        super.loadItems();
+
         BaseClaim claim = group.getOwner();
-
-        inv.setItem(11, createGuiItem(ChatColor.GOLD + "Allow Pistons",
-                new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows pistons to cross into and out of claim")), Material.CRAFTING_TABLE));
-        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Allow Fluids",
-                new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows fluids to cross into and out of claim")), Material.OAK_FENCE_GATE));
-        inv.setItem(13, createGuiItem(ChatColor.GOLD + "View Sub Claims",
-                new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows players to view the sub claims")), Material.SEA_LANTERN));
-
-        switch (PermissionRoute.FLUIDS.getPerm(permissionSet)) {
-            case 1:
-                inv.setItem(29, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(38, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        switch (PermissionRoute.PISTONS.getPerm(permissionSet)) {
-            case 1:
-                inv.setItem(30, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(39, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        switch (PermissionRoute.VIEW_SUB_CLAIMS.getPerm(permissionSet)) {
-            case 1:
-                inv.setItem(31, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(40, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        for (int start = 29; start < 32; start++) {
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) {
-                inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
-            }
-        }
-
-        for (int start = 38; start < 41; start++) {
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) {
-                inv.setItem(start, createGuiItem(ChatColor.DARK_RED + "Disable", Material.RED_STAINED_GLASS));
-            }
-        }
 
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
@@ -108,14 +82,7 @@ public class GlobalAdvancedPermissions extends GUI {
 
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
-        int slot = event.getSlot();
-        if (slot >= 28 && slot <= 32) {
-            clickPermOption(getRoute(slot - 28), PermState.ENABLED);
-            return;
-        } else if (slot >= 37 && slot <= 41) {
-            clickPermOption(getRoute(slot - 37), PermState.DISABLE);
-            return;
-        }
+        super.onClick(event, rawItemName);
 
         switch (rawItemName) {
             case "general permissions":
@@ -128,31 +95,5 @@ public class GlobalAdvancedPermissions extends GUI {
                 new ClaimMenu(getPlayer(), (Claim) group.getOwner()).open();
                 break;
         }
-    }
-
-    private PermissionRoute getRoute(int slot) {
-        switch (slot) {
-            case 1:
-                return PermissionRoute.FLUIDS;
-            case 2:
-                return PermissionRoute.PISTONS;
-            case 3:
-                return PermissionRoute.VIEW_SUB_CLAIMS;
-        }
-        return null;
-    }
-
-    private void clickPermOption(PermissionRoute route, int value) {
-        if (route == null)
-            return;
-
-        if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
-            player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
-            forceClose();
-            return;
-        }
-
-        group.setPermission(route, value);
-        loadItems();
     }
 }

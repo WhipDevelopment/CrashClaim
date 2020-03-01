@@ -4,6 +4,8 @@ import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.helpers.MenuListHelper;
+import net.crashcraft.whipclaim.menus.helpers.MenuSwitchType;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
@@ -14,93 +16,46 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 
-public class GlobalPermissionMenu extends GUI {
+public class GlobalPermissionMenu extends MenuListHelper {
     private Claim claim;
     private GlobalPermissionSet permissionSet;
-    private PermissionHelper helper;
 
     public GlobalPermissionMenu(Player player, Claim claim) {
         super(player, "General Permissions", 54);
         this.claim = claim;
         this.permissionSet = claim.getPerms().getGlobalPermissionSet();
-        this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
     @Override
-    public void initialize() {
+    public void invalidPermissions() {
+        player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+        forceClose();
+    }
 
+    @Override
+    public void setPermission(PermissionRoute route, int value) {
+        claim.getPerms().setPermission(route, value);
+    }
+
+    @Override
+    public void initialize() {
+        LinkedHashMap<PermissionRoute, MenuSwitchType> menuList = new LinkedHashMap<>();
+
+        menuList.put(PermissionRoute.BUILD, MenuSwitchType.DOUBLE);
+        menuList.put(PermissionRoute.ENTITIES, MenuSwitchType.DOUBLE);
+        menuList.put(PermissionRoute.INTERACTIONS, MenuSwitchType.DOUBLE);
+        menuList.put(PermissionRoute.EXPLOSIONS, MenuSwitchType.DOUBLE);
+        menuList.put(PermissionRoute.TELEPORTATION, MenuSwitchType.DOUBLE);
+
+        setup(menuList, permissionSet, player.getUniqueId(), claim.getPerms());
     }
 
     @Override
     public void loadItems() {
-        inv.clear();
-
-        inv.setItem(10, createGuiItem(ChatColor.GOLD + "Build", Material.GRASS_BLOCK));
-        inv.setItem(11, createGuiItem(ChatColor.GOLD + "Entities", Material.CREEPER_HEAD));
-        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Interactions", Material.OAK_FENCE_GATE));
-        inv.setItem(13, createGuiItem(ChatColor.GOLD + "Explosions", Material.TNT));
-        inv.setItem(14, createGuiItem(ChatColor.GOLD + "Teleportation", Material.ENDER_PEARL));
-
-        switch (PermissionRoute.BUILD.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(28, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(37, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        switch (PermissionRoute.ENTITIES.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(29, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(38, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        switch (PermissionRoute.INTERACTIONS.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(30, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(39, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        switch (PermissionRoute.EXPLOSIONS.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(31, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(40, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        switch (PermissionRoute.TELEPORTATION.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(32, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(41, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
-
-        for (int start = 28; start < 33; start++){
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
-            }
-        }
-
-        for (int start = 37; start < 42; start++){
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.DARK_RED + "Disable", Material.RED_STAINED_GLASS));
-            }
-        }
+        super.loadItems();
 
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
@@ -125,14 +80,7 @@ public class GlobalPermissionMenu extends GUI {
     @SuppressWarnings("Duplicates")
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
-        int slot = event.getSlot();
-        if (slot >= 28 && slot <= 32){
-            clickPermOption(getRoute(slot - 28), PermState.ENABLED);
-            return;
-        } else if (slot >= 37 && slot <= 41){
-            clickPermOption(getRoute(slot - 37), PermState.DISABLE);
-            return;
-        }
+        super.onClick(event, rawItemName);
 
         switch (rawItemName){
             case "container permissions":
@@ -145,36 +93,5 @@ public class GlobalPermissionMenu extends GUI {
                 new ClaimMenu(getPlayer(), claim).open();
                 break;
         }
-    }
-
-    private PermissionRoute getRoute(int slot){
-        switch (slot){
-            case 0:
-                return PermissionRoute.BUILD;
-            case 1:
-                return PermissionRoute.ENTITIES;
-            case 2:
-                return PermissionRoute.INTERACTIONS;
-            case 3:
-                return PermissionRoute.EXPLOSIONS;
-            case 4:
-                return PermissionRoute.TELEPORTATION;
-        }
-        return null;
-    }
-
-    public void clickPermOption(PermissionRoute route, int value) {
-        if (route == null)
-            return;
-
-        if (!helper.hasPermission(claim, player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
-            player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
-            forceClose();
-            return;
-        }
-
-        PermissionGroup group = claim.getPerms();
-        group.setPermission(route, value);
-        loadItems();
     }
 }

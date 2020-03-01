@@ -5,6 +5,8 @@ import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.menus.helpers.MenuListHelper;
+import net.crashcraft.whipclaim.menus.helpers.MenuSwitchType;
 import net.crashcraft.whipclaim.menus.player.PlayerContainerPermissionMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermissionMenu;
@@ -18,79 +20,46 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
-public class SubPlayerAdminPermissions extends GUI {
+public class SubPlayerAdminPermissions extends MenuListHelper {
     private UUID target;
     private PlayerPermissionSet permissionSet;
     private PermissionGroup group;
-    private PermissionHelper helper;
 
     public SubPlayerAdminPermissions(Player player, PermissionGroup group, UUID target) {
         super(player, "Admin Permissions", 54);
         this.target = target;
         this.group = group;
         this.permissionSet = group.getPlayerPermissionSet(target);
-        this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
     @Override
-    public void initialize() {
-
+    public void invalidPermissions() {
+        player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+        forceClose();
     }
 
     @Override
-    public void loadItems() {
-        inv.clear();
+    public void setPermission(PermissionRoute route, int value) {
+        group.setPlayerPermission(target, route, value);
+    }
 
-        inv.setItem(11, createGuiItem(ChatColor.GOLD + "Modify Permissions", Material.CRAFTING_TABLE));
-        inv.setItem(12, createGuiItem(ChatColor.GOLD + "Modify Claim", Material.OAK_FENCE_GATE));
+    @Override
+    public void initialize() {
+        LinkedHashMap<PermissionRoute, MenuSwitchType> menuList = new LinkedHashMap<>();
 
-        switch (PermissionRoute.MODIFY_PERMISSIONS.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(20, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(29, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(38, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
+        menuList.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.TRIPLE);
+        menuList.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.TRIPLE);
 
-        switch (PermissionRoute.MODIFY_CLAIM.getPerm(permissionSet)){
-            case 1:
-                inv.setItem(21, createGuiItem(ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
-                break;
-            case 2:
-                inv.setItem(30, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
-                break;
-            case 0:
-                inv.setItem(39, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
-                break;
-        }
+        setup(menuList, permissionSet, player.getUniqueId(), group);
+    }
 
-        for (int start = 20; start < 22; start++){
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.DARK_GREEN + "Enable", Material.GREEN_STAINED_GLASS));
-            }
-        }
-
-        for (int start = 29; start < 31; start++){
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.DARK_GRAY + "Neutral", Material.GRAY_STAINED_GLASS));
-            }
-        }
-
-        for (int start = 38; start < 40; start++){
-            ItemStack itemStack = inv.getItem(start);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(start, createGuiItem(ChatColor.DARK_RED + "Disable", Material.RED_STAINED_GLASS));
-            }
-        }
+    @Override
+    public void loadItems(){
+        super.loadItems();
 
         inv.setItem(16, createPlayerHead(target, new ArrayList<>(Arrays.asList(ChatColor.GREEN + "You are currently editing",
                 ChatColor.GREEN + "this players permissions."))));
@@ -109,17 +78,7 @@ public class SubPlayerAdminPermissions extends GUI {
 
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
-        int slot = event.getSlot();
-        if (slot >= 19 && slot <= 23){
-            clickPermOption(getRoute(slot - 19), PermState.ENABLED);
-            return;
-        } else if (slot >= 28 && slot <= 32){
-            clickPermOption(getRoute(slot - 28), PermState.NEUTRAL);
-            return;
-        } else if (slot >= 37 && slot <= 41){
-            clickPermOption(getRoute(slot - 37), PermState.DISABLE);
-            return;
-        }
+        super.onClick(event, rawItemName);
 
         switch (rawItemName){
             case "general permissions":
@@ -139,29 +98,5 @@ public class SubPlayerAdminPermissions extends GUI {
                 new PlayerPermListMenu(group.getOwner(), getPlayer(), menu);
                 break;
         }
-    }
-
-    private PermissionRoute getRoute(int slot){
-        switch (slot){
-            case 1:
-                return PermissionRoute.MODIFY_PERMISSIONS;
-            case 2:
-                return PermissionRoute.MODIFY_CLAIM;
-        }
-        return null;
-    }
-
-    private void clickPermOption(PermissionRoute route, int value) {
-        if (route == null)
-            return;
-
-        if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
-            player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
-            forceClose();
-            return;
-        }
-
-        group.setPlayerPermission(target, route, value);
-        loadItems();
     }
 }

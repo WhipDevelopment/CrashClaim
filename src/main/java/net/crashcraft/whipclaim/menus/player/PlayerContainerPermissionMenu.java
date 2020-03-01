@@ -70,31 +70,36 @@ public class PlayerContainerPermissionMenu extends GUI {
 
             trackingMap.put(x, material);
 
+            boolean allow = helper.hasPermission(group.getOwner(), player.getUniqueId(), material);
+
             switch (PermissionRoute.CONTAINERS.getPerm(set, material)){
                 case 0:
-                    inv.setItem(itemOffset + x + 27, createGuiItem(ChatColor.RED + "Disabled", Material.RED_CONCRETE));
+                    inv.setItem(x + itemOffset + 27, createGuiItem(ChatColor.RED + "Disabled",
+                            allow ? Material.RED_CONCRETE : Material.GRAY_CONCRETE));
+
+                    inv.setItem(x + itemOffset + 9, createGuiItem(ChatColor.DARK_GREEN + "Enable",
+                            allow ? Material.GREEN_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                    inv.setItem(x + itemOffset + 18, createGuiItem(ChatColor.DARK_GRAY + "Neutral",
+                            allow ?  Material.GRAY_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
                     break;
                 case 1:
-                    inv.setItem(itemOffset + x + 9, createGuiItem(  ChatColor.GREEN + "Enabled", Material.GREEN_CONCRETE));
+                    inv.setItem(x + itemOffset + 9, createGuiItem(ChatColor.GREEN + "Enabled",
+                            allow ? Material.GREEN_CONCRETE : Material.GRAY_CONCRETE));
+
+                    inv.setItem(x + itemOffset + 18, createGuiItem(ChatColor.DARK_GRAY + "Neutral",
+                            allow ? Material.GRAY_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                    inv.setItem(x + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
+                            allow ? Material.RED_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
                     break;
                 case 2:
-                    inv.setItem(itemOffset + x + 18, createGuiItem(ChatColor.GRAY + "Neutral", Material.GRAY_CONCRETE));
+                    inv.setItem(x + itemOffset + 18, createGuiItem(ChatColor.GRAY + "Neutral",
+                            Material.GRAY_CONCRETE));
+
+                    inv.setItem(x + itemOffset + 9, createGuiItem(ChatColor.DARK_GREEN + "Enable",
+                            allow ? Material.GREEN_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                    inv.setItem(x + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
+                            allow ? Material.RED_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
                     break;
-            }
-
-            ItemStack itemStack = inv.getItem(itemOffset + x + 9);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(itemOffset + x + 9, createGuiItem(ChatColor.GREEN + "Enable", Material.GREEN_STAINED_GLASS));
-            }
-
-            itemStack = inv.getItem(itemOffset + x + 18);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(itemOffset + x + 18, createGuiItem(ChatColor.GREEN + "Neutral", Material.GRAY_STAINED_GLASS));
-            }
-
-            itemStack = inv.getItem(itemOffset + x + 27);
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)){
-                inv.setItem(itemOffset + x + 27, createGuiItem(ChatColor.GREEN + "Disable", Material.RED_STAINED_GLASS));
             }
         }
 
@@ -175,6 +180,10 @@ public class PlayerContainerPermissionMenu extends GUI {
     private void clickPermOption(Material material, int value) {
         if (material == null)
             return;
+
+        if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), material)){
+            return;
+        }
 
         if (!helper.hasPermission(group.getOwner(), player.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
             player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");

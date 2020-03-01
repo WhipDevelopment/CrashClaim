@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import java.util.ArrayList;
 import java.util.UUID;
 
+@SuppressWarnings("Duplicates")
 public class PermissionHelper {
     private static PermissionHelper helper;
 
@@ -21,14 +22,32 @@ public class PermissionHelper {
         helper = this;
 
         this.manager = manager;
+        this.bypassManager = bypassManager;
     }
 
     public boolean hasPermission(BaseClaim claim, UUID player, PermissionRoute route){
+        if (bypassManager.isBypass(player)){
+            return true;
+        }
+
         PlayerPermissionSet set = claim.getPerms().getPlayerPermissionSet(player);
         return set != null && route.getPerm(set) == PermState.ENABLED;
     }
 
+    public boolean hasPermission(BaseClaim claim, UUID player, Material material){
+        if (bypassManager.isBypass(player)){
+            return true;
+        }
+
+        PlayerPermissionSet set = claim.getPerms().getPlayerPermissionSet(player);
+        return set != null && PermissionRoute.CONTAINERS.getPerm(set, material) == PermState.ENABLED;
+    }
+
     public boolean hasPermission(UUID player, Location location, Material material){
+        if (bypassManager.isBypass(player)){
+            return true;
+        }
+
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim == null){
             return true;
@@ -38,6 +57,10 @@ public class PermissionHelper {
     }
 
     public boolean hasPermission(UUID player, Location location, PermissionRoute route){
+        if (bypassManager.isBypass(player)){
+            return true;
+        }
+
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim == null){
             return true;
@@ -62,6 +85,10 @@ public class PermissionHelper {
         } else {
             return claim.hasPermission(location, route);
         }
+    }
+
+    public BypassManager getBypassManager() {
+        return bypassManager;
     }
 
     public static PermissionHelper getPermissionHelper(){

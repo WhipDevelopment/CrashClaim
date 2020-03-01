@@ -30,13 +30,13 @@ public class ParentPermissionGroup extends PermissionGroup {
     @Override
     public PlayerPermissionSet createPlayerPermissionSet() {
         return new PlayerPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
-                new HashMap<>(), PermState.DISABLE, PermState.DISABLE);
+                new HashMap<>(), PermState.NEUTRAL, PermState.DISABLE, PermState.DISABLE);
     }
 
     @Override
     public GlobalPermissionSet createGlobalPermissionSet() {
         return new GlobalPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE,
-                new HashMap<>(), PermState.DISABLE, PermState.DISABLE);
+                new HashMap<>(), PermState.DISABLE, PermState.DISABLE, PermState.DISABLE);
     }
 
     @Override
@@ -53,7 +53,6 @@ public class ParentPermissionGroup extends PermissionGroup {
         switch (route){
             case MODIFY_CLAIM:
             case MODIFY_PERMISSIONS:
-            case VIEW_SUB_CLAIMS:
                 if (value == PermState.NEUTRAL) {
                     return PermState.DISABLE;
                 } else {

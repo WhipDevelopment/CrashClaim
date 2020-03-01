@@ -615,7 +615,7 @@ public class ClaimDataManager implements Listener {
     }
 
     public void saveClaim(Claim claim){
-        File file = new File(Paths.get(dataPath.toString(), Integer.toString(claim.getId())).toUri());
+        File file = new File(Paths.get(dataPath.toString(), claim.getId() + ".json").toUri());
         try {
             writeClaim(file, claim);
 

@@ -29,12 +29,13 @@ public abstract class PermissionSet implements Cloneable{
     private int viewSubClaims;
 
     private HashMap<Material, Integer> containers;
+    private int defaultContainerValue;
 
     public PermissionSet(){
 
     }
 
-    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers) {
+    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue) {
         this.build = build;
         this.interactions = interactions;
         this.entities = entities;
@@ -42,6 +43,7 @@ public abstract class PermissionSet implements Cloneable{
         this.teleportation = teleportation;
         this.viewSubClaims = viewSubClaims;
         this.containers = containers;
+        this.defaultContainerValue = defaultContainerValue;
     }
 
     public int getBuild() {
@@ -107,6 +109,14 @@ public abstract class PermissionSet implements Cloneable{
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int getDefaultConatinerValue() {
+        return defaultContainerValue;
+    }
+
+    public void setDefaultConatinerValue(int defaultContainerValue) {
+        this.defaultContainerValue = defaultContainerValue;
     }
 
     //JSON needs this

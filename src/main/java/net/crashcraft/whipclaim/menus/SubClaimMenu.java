@@ -1,7 +1,7 @@
 package net.crashcraft.whipclaim.menus;
 
 import dev.whip.crashutils.menusystem.GUI;
-import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
+import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
@@ -173,7 +173,7 @@ public class SubClaimMenu extends GUI {
                                     ChatColor.RED + "the contributing parties")),
                             material,
                             (player, aBoolean) -> {
-                                if (aBoolean.equals(true)) {
+                                if (aBoolean) {
                                     if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
                                         WhipClaim.getPlugin().getDataManager().deleteSubClaim(claim);
                                     } else {

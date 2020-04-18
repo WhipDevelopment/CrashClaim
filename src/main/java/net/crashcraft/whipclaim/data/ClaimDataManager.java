@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.whip.crashutils.Payment.TransactionRecipe;
 import dev.whip.crashutils.Payment.TransactionResponse;
 import dev.whip.crashutils.Payment.TransactionType;
+import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
@@ -109,7 +109,7 @@ public class ClaimDataManager implements Listener {
             if (files != null) {
                 for (File file : files) {
                     try {
-                        int temp = Integer.valueOf(file.getName());
+                        int temp = Integer.valueOf(file.getName().substring(0, file.getName().length() - (".json".length())));
                         if (temp > idCounter) {
                             idCounter = temp;
                         }
@@ -197,7 +197,7 @@ public class ClaimDataManager implements Listener {
                     .loaderThreadCount(3)
                     .disableStatistics(true)
                     .loader((id) -> {
-                        File file = new File(Paths.get(dataPath.toString(), id.toString()).toUri());
+                        File file = new File(Paths.get(dataPath.toString(), id.toString() + ".json").toUri());
                         if (file.exists()){
                             FileInputStream stream = new FileInputStream(file);
                             Claim claim = readClaim(stream);
@@ -599,7 +599,7 @@ public class ClaimDataManager implements Listener {
         mapper.writer().writeValue(file, toWrite);
     }
 
-    public Claim getClaim(int id){
+    public Claim getClaim(Integer id){
         return claimLookup.get(id);
     }
 

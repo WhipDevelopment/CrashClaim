@@ -150,10 +150,12 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        for (Block block : blocks){
-            Block pushingBlock = block.getRelative(direction);
+        if (checkToCancel(pistonBlock, pistonBlock.getRelative(direction))){
+            return true;
+        }
 
-            if (checkToCancel(block, pushingBlock)){
+        for (Block block : blocks){
+            if (checkToCancel(block, block.getRelative(direction))){
                 return true;
             }
         }

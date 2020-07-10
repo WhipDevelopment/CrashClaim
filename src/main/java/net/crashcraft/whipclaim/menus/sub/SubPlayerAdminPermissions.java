@@ -93,7 +93,7 @@ public class SubPlayerAdminPermissions extends MenuListHelper {
                 if (temp instanceof SubClaim){
                     menu = new SubClaimMenu(getPlayer(), (SubClaim) temp);
                 } else if (temp instanceof Claim){
-                    menu = new ClaimMenu(getPlayer(), (Claim) temp);
+                    menu = new ClaimMenu(getPlayer(), (Claim) temp, null);
                 }
                 new PlayerPermListMenu(group.getOwner(), getPlayer(), menu);
                 break;

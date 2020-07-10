@@ -4,11 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import net.crashcraft.whipclaim.claimobjects.Claim;
-import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import org.bukkit.Material;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
@@ -24,7 +21,6 @@ public abstract class PermissionSet implements Cloneable{
     private int build;
     private int interactions;
     private int entities;
-    private int explosions;
     private int teleportation;
     private int viewSubClaims;
 
@@ -35,11 +31,10 @@ public abstract class PermissionSet implements Cloneable{
 
     }
 
-    public PermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue) {
+    public PermissionSet(int build, int interactions, int entities, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue) {
         this.build = build;
         this.interactions = interactions;
         this.entities = entities;
-        this.explosions = explosions;
         this.teleportation = teleportation;
         this.viewSubClaims = viewSubClaims;
         this.containers = containers;
@@ -68,14 +63,6 @@ public abstract class PermissionSet implements Cloneable{
 
     public void setEntities(int entities) {
         this.entities = entities;
-    }
-
-    public int getExplosions() {
-        return explosions;
-    }
-
-    public void setExplosions(int explosions) {
-        this.explosions = explosions;
     }
 
     public int getTeleportation() {

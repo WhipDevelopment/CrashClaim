@@ -14,7 +14,7 @@ import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.child.SubPermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.permission.parent.ParentPermissionGroup;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
@@ -73,7 +73,6 @@ public class ClaimDataManager implements Listener {
 /*
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder().build();
         mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS); // default to using DefaultTyping.OBJECT_AND_NON_CONCRETE
-
  */
 
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -164,8 +163,8 @@ public class ClaimDataManager implements Listener {
                         logger.info("Loaded claims into admin and owner map for claim id: " + claim.getId());
 
                         //ValueConfig check to make sure no dinky plugins loaded worlds
-                        if (!ValueConfig.MENU_VISUAL_CLAIM_ITEMS.containsKey(claim.getWorld())){
-                            ValueConfig.MENU_VISUAL_CLAIM_ITEMS.put(claim.getWorld(), Material.OAK_FENCE);
+                        if (!GlobalConfig.visual_menu_items.containsKey(claim.getWorld())){
+                            GlobalConfig.visual_menu_items.put(claim.getWorld(), Material.OAK_FENCE);
                         }
                     } catch (NumberFormatException e){
                         logger.warning("Claim file[" + file.getName() + "] had an invalid filename, continuing however that claim will not be loaded.");
@@ -259,7 +258,7 @@ public class ClaimDataManager implements Listener {
         for (SubClaim subClaim : claim.getSubClaims()){
             if (!MathUtils.containedInside(newMinX, newMinZ, newMaxX, newMaxZ,
                     subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ())){
-                return ErrorType.OVERLAP_EXISITNG;
+                return ErrorType.OVERLAP_EXISTING;
             }
         }
 
@@ -274,7 +273,7 @@ public class ClaimDataManager implements Listener {
             int difference = area - originalArea;
 
             if (difference > 0) {
-                int price = (int) Math.ceil(difference * ValueConfig.MONEY_PER_BLOCK);
+                int price = (int) Math.ceil(difference * GlobalConfig.money_per_block);
                 //Check price with player
                 new ConfirmationMenu(resizer,
                         "Confirm Claim Resize",
@@ -283,24 +282,24 @@ public class ClaimDataManager implements Listener {
                         Material.EMERALD,
                         (player, aBoolean) -> {
                             if (aBoolean) {
-                                TransactionRecipe response = WhipClaim.getPlugin().getPayment().makeTransaction(resizer.getUniqueId(), TransactionType.WITHDRAW, "Claim Resize Up", price);
-                                if (response.getTransactionStatus() == TransactionResponse.SUCCESS) {
-                                    ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking
-                                    resizeClaimCall(claim, newMinX, newMinZ, newMaxX, newMaxZ);
+                                WhipClaim.getPlugin().getPayment().makeTransaction(resizer.getUniqueId(), TransactionType.WITHDRAW, "Claim Resize Up", price, (response) -> {
+                                    if (response.getTransactionStatus() == TransactionResponse.SUCCESS) {
+                                        ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking
+                                        resizeClaimCall(claim, newMinX, newMinZ, newMaxX, newMaxZ);
 
-                                    consumer.accept(true);
-                                } else {
-                                    //Didnt have enough money or something
-                                    player.sendMessage(ChatColor.RED + response.getTransactionError());
+                                        consumer.accept(true);
+                                        return;
+                                    } else {
+                                        //Didnt have enough money or something
+                                        player.sendMessage(ChatColor.RED + response.getTransactionError());
+                                    }
                                     consumer.accept(false);
-                                }
+                                });
                             }
                             return "";
                         },
-                        player -> {
-                            consumer.accept(false);
-                            return "";
-                        }).open();
+                        player -> ""
+                        ).open();
             }
 
             return ErrorType.NONE;
@@ -505,7 +504,7 @@ public class ClaimDataManager implements Listener {
     private void loadChunksForClaim(Claim claim){
         Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(claim.getWorld());
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
-            map.computeIfAbsent(entry.getKey(), (id) -> new ArrayList<>());
+            map.putIfAbsent(entry.getKey(), new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());
             integers.add(claim.getId());
         }
@@ -514,7 +513,7 @@ public class ClaimDataManager implements Listener {
     private void removeChunksForClaim(Claim claim){
         Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(claim.getWorld());
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
-            map.computeIfAbsent(entry.getKey(), (id) -> new ArrayList<>());
+            map.putIfAbsent(entry.getKey(), new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());
             integers.remove(Integer.valueOf(claim.getId()));
         }
@@ -532,7 +531,7 @@ public class ClaimDataManager implements Listener {
             for (long xs = NWChunkX; xs <= SEChunkX; xs++) {
                 long identifier = getChunkHash(xs, zs);
 
-                chunks.computeIfAbsent(identifier, c -> chunks.put(identifier, new ArrayList<>()));
+                chunks.putIfAbsent(identifier, new ArrayList<>());
 
                 chunks.get(identifier).add(claim.getId());
             }
@@ -557,7 +556,7 @@ public class ClaimDataManager implements Listener {
         for (SubClaim subClaim : claim.getSubClaims()){
             if (MathUtils.doOverlap(subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ(),
                     min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ())){
-                return new ClaimResponse(false, ErrorType.OVERLAP_EXISITNG);
+                return new ClaimResponse(false, ErrorType.OVERLAP_EXISTING);
             }
         }
 
@@ -709,7 +708,7 @@ public class ClaimDataManager implements Listener {
     }
 
     public void addOwnedClaim(UUID uuid, Claim claim){
-        ownedClaims.computeIfAbsent(uuid, (u) -> new HashSet<>());
+        ownedClaims.putIfAbsent(uuid, new HashSet<>());
         Set<Integer> set = ownedClaims.get(uuid);
         set.add(claim.getId());
     }
@@ -721,7 +720,7 @@ public class ClaimDataManager implements Listener {
     }
 
     public void addOwnedSubClaim(UUID uuid, SubClaim claim){
-        ownedSubClaims.computeIfAbsent(uuid, (u) -> new HashSet<>());
+        ownedSubClaims.putIfAbsent(uuid, new HashSet<>());
         Set<Integer> set = ownedSubClaims.get(uuid);
         set.add(claim.getId());
     }

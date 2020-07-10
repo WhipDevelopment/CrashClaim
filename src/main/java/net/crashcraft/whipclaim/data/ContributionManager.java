@@ -4,7 +4,11 @@ import dev.whip.crashutils.Payment.PaymentProcessor;
 import dev.whip.crashutils.Payment.TransactionType;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.UUID;
@@ -28,10 +32,19 @@ public class ContributionManager {
         } else {
             PaymentProcessor processor = WhipClaim.getPlugin().getPayment();  //refund
 
-            int value = (int) Math.floor(Math.floor(difference * ValueConfig.MONEY_PER_BLOCK) / claim.getContribution().size());
+            int value = (int) Math.floor(Math.floor(difference * GlobalConfig.money_per_block) / claim.getContribution().size());
 
             for (Map.Entry<UUID, Integer> entry : claim.getContribution().entrySet()){
-                processor.makeTransaction(entry.getKey(), TransactionType.DEPOSIT, "Claim Refund", value);
+                processor.makeTransaction(entry.getKey(), TransactionType.DEPOSIT, "Claim Refund", value, (transaction) -> {
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(transaction.getOwner());
+                    if (offlinePlayer.isOnline()){
+                        Player p = offlinePlayer.getPlayer();
+                        if (p != null) {
+                            p.sendMessage(ChatColor.GREEN + "You have received " + ChatColor.GOLD + transaction.getAmount()
+                                    + ChatColor.GREEN + " for a refunded contribution to a claim.");
+                        }
+                    }
+                });
             }
         }
     }

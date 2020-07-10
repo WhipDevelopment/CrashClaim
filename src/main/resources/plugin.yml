@@ -2,5 +2,6 @@ name: WhipClaim
 version: 1.0
 description: A modern advanced user oriented claiming system
 author: Chasewhip
+softdepend: [Vault]
 main: net.crashcraft.whipclaim.WhipClaim
-api-version: 1.14
+api-version: 1.15

@@ -5,13 +5,17 @@ import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
 import dev.whip.crashutils.Payment.PaymentProcessor;
 import dev.whip.crashutils.Payment.ProcessorManager;
+import dev.whip.crashutils.Payment.ProviderInitializationException;
+import dev.whip.crashutils.Payment.providers.FakePaymentProvider;
+import io.papermc.lib.PaperLib;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.ConfigManager;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.MaterialName;
-import net.crashcraft.whipclaim.events.PlayerListener;
-import net.crashcraft.whipclaim.events.WorldListener;
+import net.crashcraft.whipclaim.listeners.PaperListener;
+import net.crashcraft.whipclaim.listeners.PlayerListener;
+import net.crashcraft.whipclaim.listeners.WorldListener;
 import net.crashcraft.whipclaim.permissions.BypassManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
@@ -45,15 +49,10 @@ public class WhipClaim extends JavaPlugin {
             getLogger().info("Created plugin directory");
         }
 
-        saveResource("localization.yml", false);
-        saveResource("lookup.yml", false);
+        new ConfigManager(this);
 
-        saveDefaultConfig();
-
-        reloadConfig(); //Needed for some reason
-        ValueConfig.writeDefault(getConfig(), this);
-        ValueConfig.loadConfig(getConfig(), this);
-        saveConfig();
+        payment = crashUtils.setupPaymentProvider().getProcessor();
+        crashUtils.setupMenuSubSystem();
 
         visualizationManager = new VisualizationManager(this, protocolManager);
         manager = new ClaimDataManager(this);
@@ -71,12 +70,16 @@ public class WhipClaim extends JavaPlugin {
         commandManager.registerCommand(new BypassCommand(bypassManager));
 
         Bukkit.getPluginManager().registerEvents(manager, this);
-
-        crashUtils.setupMenuSubSystem();
-        payment = new ProcessorManager(this, null).getProcessor();
-
         Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
+
+        if (PaperLib.isPaper()){
+            getLogger().info("Using extra protections provided by the paper api");
+            Bukkit.getPluginManager().registerEvents(new PaperListener(manager, visualizationManager), this);
+        } else {
+            getLogger().info("Looks like your not running paper, some protections will be disabled.");
+            PaperLib.suggestPaper(this);
+        }
     }
 
     @Override

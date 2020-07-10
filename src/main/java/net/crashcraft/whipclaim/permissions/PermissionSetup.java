@@ -64,8 +64,9 @@ public class PermissionSetup {
         }
 
         for (String name : lookup.getStringList("untracked-blocks")){
-            if (name.equals(""))
+            if (name.equals("")) {
                 continue;
+            }
 
             Material material = Material.getMaterial(name);
 
@@ -75,13 +76,14 @@ public class PermissionSetup {
                 extraInteractables.remove(material);
             } else {
                 logger.warning("Material was not found whole parsing lookup.yml -> untracked-blocks: " + name +
-                        "\n Make sure to be using the Bukkit Material names.");
+                        "\nMake sure to be using the Bukkit Material names.");
             }
         }
 
         for (String name : lookup.getStringList("tracked-heldItemInteraction")){
-            if (name.equals(""))
+            if (name.equals("")) {
                 continue;
+            }
 
             Material material = Material.getMaterial(name);
 

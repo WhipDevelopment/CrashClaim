@@ -90,7 +90,7 @@ public class GlobalPermissionMenu extends MenuListHelper {
                 new GlobalAdvancedPermissions(getPlayer(), claim.getPerms()).open();
                 break;
             case "back":
-                new ClaimMenu(getPlayer(), claim).open();
+                new ClaimMenu(getPlayer(), claim, null).open();
                 break;
         }
     }

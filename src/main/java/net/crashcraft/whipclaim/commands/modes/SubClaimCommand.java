@@ -188,7 +188,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
                 case OUT_OF_BOUNDS:
                     player.sendMessage(ChatColor.RED + "You cannot form a sub claim outside of a parent claim.");
                     break;
-                case OVERLAP_EXISITNG:
+                case OVERLAP_EXISTING:
                     player.sendMessage(ChatColor.RED + "You cannot overlap an existing sub claim.");
                     break;
                 case GENERIC:

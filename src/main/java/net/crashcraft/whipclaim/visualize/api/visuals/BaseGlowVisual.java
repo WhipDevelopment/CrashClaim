@@ -14,10 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class BaseGlowVisual extends BaseVisual {
     private static WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
@@ -63,6 +60,23 @@ public abstract class BaseGlowVisual extends BaseVisual {
         }
     }
 
+    public void colorEntities(Player player, VisualColor color, ArrayList<String> uuids){
+        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
+
+        packet.getStrings()
+                .write(0, color.toString());   //Team name
+        packet.getIntegers().write(0, 3);   //Packet option - 3: update team
+
+        packet.getSpecificModifier(Collection.class)
+                .write(0, uuids);
+
+        try {
+            protocolManager.sendServerPacket(player, packet);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void spawnEntity(Player player, int x, int z, int y, int id, UUID uuid){
         double dx;
         double dz;
@@ -70,16 +84,11 @@ public abstract class BaseGlowVisual extends BaseVisual {
         dx = x + 0.5;
         dz = z + 0.5;
 
-        WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-        watcher.setObject(0, byteSerializer, (byte) (0x20 | 0x40)); // Glowing Invisible
-        watcher.setObject(14, integerSerializer, 2); //Slime size : 12
-
         PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
 
         packet.getIntegers()
                 .write(0, id)
-                .write(1, 40);//38  //Entity id
+                .write(1, 41);//38  //Entity id //1.14: 40
         packet.getUUIDs()
                 .write(0, uuid);
         packet.getDoubles() //Cords
@@ -87,10 +96,22 @@ public abstract class BaseGlowVisual extends BaseVisual {
                 .write(1, (double) y)
                 .write(2, dz);
 
-        packet.getDataWatcherModifier().write(0, watcher);
+        PacketContainer metaDataPacket = protocolManager.createPacket(PacketType.Play.Server.ENTITY_METADATA, true);
+
+        WrappedDataWatcher watcher = new WrappedDataWatcher();
+
+        watcher.setObject(0, byteSerializer, (byte) (0x20 | 0x40)); // Glowing Invisible
+        watcher.setObject(15, integerSerializer, 2); //Slime size : 12
+
+        metaDataPacket.getIntegers()
+                .write(0, id);
+        metaDataPacket.getWatchableCollectionModifier()
+                .write(0, watcher.getWatchableObjects());
 
         try {
             protocolManager.sendServerPacket(player, packet);
+            protocolManager.sendServerPacket(player, metaDataPacket);
+
             fakeEntities.put(id, uuid.toString());
             entityLocations.put(id, new Location(player.getWorld(), dx, y, dz));
         } catch (InvocationTargetException e) {

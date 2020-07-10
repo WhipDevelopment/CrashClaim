@@ -5,6 +5,7 @@ import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.menus.list.SubClaimListMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
 import net.crashcraft.whipclaim.menus.sub.GlobalSubClaimPermissionsMenu;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
@@ -92,7 +93,6 @@ public class SubClaimMenu extends GUI {
             inv.setItem(49, createGuiItem(ChatColor.GRAY + "Delete Claim",
                     new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Delete your claim permanently")), Material.GRAY_CONCRETE));
         }
-
 
         inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
@@ -189,14 +189,7 @@ public class SubClaimMenu extends GUI {
                 break;
             case "back":
                 Claim main = claim.getParent();
-                //Perms are checked when menu is opened
-                new RealClaimListMenu(getPlayer(), new ClaimMenu(getPlayer(), main), "Sub Claims", Material.PAPER, main.getSubClaims(), (p, c) -> {
-                    if (c instanceof SubClaim) {
-                        SubClaim claim = (SubClaim) c;
-                        new SubClaimMenu(getPlayer(), claim).open();
-                    }
-                    return null;
-                }).open();
+                new SubClaimListMenu(getPlayer(), new ClaimMenu(getPlayer(), main, null), main).open();
                 break;
         }
     }

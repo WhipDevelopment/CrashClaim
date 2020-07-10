@@ -2,7 +2,7 @@ package net.crashcraft.whipclaim.data;
 
 public enum ErrorType {
     NONE,
-    OVERLAP_EXISITNG,
+    OVERLAP_EXISTING,
     TOO_SMALL,
     CANNOT_FLIP_ON_RESIZE,
     CLAIM_LOCATIONS_WERE_NULL,

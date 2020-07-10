@@ -1,6 +1,6 @@
-package net.crashcraft.whipclaim.events;
+package net.crashcraft.whipclaim.listeners;
 
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
@@ -11,20 +11,19 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WorldListener implements Listener {
-     private PermissionHelper helper;
-     private PermissionSetup perms;
-     private VisualizationManager visuals;
+     private final PermissionHelper helper;
+     private final PermissionSetup perms;
+     private final VisualizationManager visuals;
 
     public WorldListener(ClaimDataManager manager, VisualizationManager visuals){
         this.perms = manager.getPermissionSetup();
@@ -34,7 +33,7 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onProjectileHitEvent(EntityInteractEvent e){
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
         }
 
@@ -61,7 +60,7 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onEntityChangeBlockEvent(EntityChangeBlockEvent e) {
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
         }
 
@@ -100,7 +99,7 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onBlockIgniteEvent(BlockIgniteEvent e){
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
         }
 
@@ -117,7 +116,7 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onBlockExplodeEvent(BlockExplodeEvent e){
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
         }
 
@@ -126,7 +125,7 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onBlockExplodeEvent(EntityExplodeEvent e){
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getLocation().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getLocation().getWorld().getUID())){
             return;
         }
 

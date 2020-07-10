@@ -143,7 +143,7 @@ public class GlobalContainerMenu extends GUI {
                 new GlobalAdvancedPermissions(getPlayer(), group).open();
                 break;
             case "back":
-                new ClaimMenu(getPlayer(), (Claim) group.getOwner()).open();
+                new ClaimMenu(getPlayer(), (Claim) group.getOwner(), null).open();
                 break;
         }
     }

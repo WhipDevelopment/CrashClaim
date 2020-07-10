@@ -1,9 +1,9 @@
 package net.crashcraft.whipclaim.commands.modes;
 
-import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
+import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
@@ -77,7 +77,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
             throw new RuntimeException("World was null on claim mode manager click");
         }
 
-        if (ValueConfig.DISABLED_WORLDS.contains(world.getUID())){
+        if (GlobalConfig.disabled_worlds.contains(world.getUID())){
             player.sendMessage(ChatColor.RED + "You are unable to claim in this world");
             return;
         }
@@ -126,7 +126,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
 
         int area = ContributionManager.getArea(min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ());
 
-        int price = (int) Math.ceil(area * ValueConfig.MONEY_PER_BLOCK);
+        int price = (int) Math.ceil(area * GlobalConfig.money_per_block);
         //Check price with player
         new ConfirmationMenu(player,
                 "Confirm Claim Creation",
@@ -196,7 +196,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                     player.sendMessage(ChatColor.RED + "Claims cannot be flipped, please retry and grab the other edge to expand in this direction");
                     cleanup(player.getUniqueId(), true);
                     return;
-                case OVERLAP_EXISITNG:
+                case OVERLAP_EXISTING:
                     player.sendMessage(ChatColor.RED + "Sub claims need to stay inside of the claim when resizing,\n Delete or resize sub claims and try again.");
                     cleanup(uuid, true);
                     return;

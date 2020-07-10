@@ -7,10 +7,10 @@ import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.menus.AllClaimListMenu;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.list.ClaimListMenu;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
@@ -30,7 +30,7 @@ public class MenuCommand extends BaseCommand {
     @CommandAlias("claims")
     @CommandPermission("crashclaim.user.claims")
     public void onClaimMenu(Player player){
-        new AllClaimListMenu(player, null);
+        new ClaimListMenu(player, null);
     }
 
     @CommandAlias("claimsettings")
@@ -39,7 +39,7 @@ public class MenuCommand extends BaseCommand {
         Location location = player.getLocation();
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim != null){
-            new ClaimMenu(player, claim).open();
+            new ClaimMenu(player, claim, null).open();
         } else {
             player.sendMessage(ChatColor.RED + "There is no claim where you are standing.");
         }
@@ -55,7 +55,7 @@ public class MenuCommand extends BaseCommand {
                     ChatColor.DARK_RED + "Permanently Delete this claim?",
                     new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
                             ChatColor.RED + "the contributing parties")),
-                    ValueConfig.MENU_VISUAL_CLAIM_ITEMS.get(claim.getWorld()),
+                    GlobalConfig.visual_menu_items.get(claim.getWorld()),
                     (p, aBoolean) -> {
                         if (aBoolean) {
                             if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
@@ -81,7 +81,7 @@ public class MenuCommand extends BaseCommand {
                     ChatColor.DARK_RED + "Permanently Delete this claim?",
                     new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
                             ChatColor.RED + "the contributing parties")),
-                    ValueConfig.MENU_VISUAL_CLAIM_ITEMS.get(claim.getWorld()),
+                    GlobalConfig.visual_menu_items.get(claim.getWorld()),
                     (p, aBoolean) -> {
                         if (aBoolean) {
                             if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {

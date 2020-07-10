@@ -1,13 +1,13 @@
 package net.crashcraft.whipclaim.menus;
 
 import dev.whip.crashutils.menusystem.GUI;
-import net.crashcraft.menu.defaultmenus.ConfirmationMenu;
+import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
-import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
+import net.crashcraft.whipclaim.menus.list.SubClaimListMenu;
 import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
@@ -25,19 +25,20 @@ public class ClaimMenu extends GUI {
     private Claim claim;
     private Material material;
     private PermissionHelper helper;
+    private GUI previousMenu;
 
-    public ClaimMenu(Player player, Claim claim) {
+    public ClaimMenu(Player player, Claim claim, GUI previousMenu) {
         super(player, "Claim Menu", 54);
         this.claim = claim;
+        this.previousMenu = previousMenu;
         this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();
     }
 
     @Override
     public void initialize() {
-        material = ValueConfig.MENU_VISUAL_CLAIM_ITEMS.get(claim.getWorld());
+        material = GlobalConfig.visual_menu_items.get(claim.getWorld());
     }
-
 
     @Override
     public void loadItems() {
@@ -101,7 +102,9 @@ public class ClaimMenu extends GUI {
                     new ArrayList<>(Collections.singleton(ChatColor.DARK_GRAY + "Delete your claim permanently")), Material.GRAY_CONCRETE));
         }
 
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+        if (previousMenu != null){
+            inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+        }
     }
 
     @Override
@@ -132,14 +135,7 @@ public class ClaimMenu extends GUI {
                 }
                 break;
             case "sub claims":
-                // Perm checks are done inside of this menu
-                new RealClaimListMenu(getPlayer(), this,  "Sub Claims", Material.PAPER, claim.getSubClaims(), (p, c) -> {
-                    if (c instanceof SubClaim) {
-                        SubClaim claim = (SubClaim) c;
-                        new SubClaimMenu(getPlayer(), claim).open();
-                    }
-                    return null;
-                }).open();
+                new SubClaimListMenu(getPlayer(), this, claim).open();
                 break;
             case "rename claim":
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
@@ -206,8 +202,15 @@ public class ClaimMenu extends GUI {
                 }
                 break;
             case "back":
-
+                if (previousMenu == null){
+                    return;
+                }
+                previousMenu.open();
                 break;
         }
+    }
+
+    public GUI getPreviousMenu() {
+        return previousMenu;
     }
 }

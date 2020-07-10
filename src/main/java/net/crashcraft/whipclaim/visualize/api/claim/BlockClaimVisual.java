@@ -2,7 +2,7 @@ package net.crashcraft.whipclaim.visualize.api.claim;
 
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.visualize.api.VisualGroup;
@@ -64,7 +64,7 @@ public class BlockClaimVisual extends BaseBlockVisual {
     }
 
     private int calcY(int x, int z, World world){
-        if (ValueConfig.VISUALIZE_VISUAL_USE_HIGHEST_BLOCK){
+        if (GlobalConfig.visual_use_highest_block){
             return world.getHighestBlockYAt(x, z);
         }
         return getY();

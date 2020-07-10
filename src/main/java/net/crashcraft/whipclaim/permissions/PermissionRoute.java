@@ -88,14 +88,12 @@ public enum  PermissionRoute {
     EXPLOSIONS{
         @Override
         public int getPerm(PlayerPermissionSet set) {
-            if (set == null)
-                return -1;
-            return set.getExplosions();
+            return PermState.ENABLED; //Enabled so we cant set it as players
         }
 
         @Override
         public void setPerm(PlayerPermissionSet set, int value) {
-            set.setExplosions(value);
+            throw new RuntimeException("Unsupported operation in permission class");
         }
 
         @Override
@@ -138,7 +136,7 @@ public enum  PermissionRoute {
     PISTONS{
         @Override
         public int getPerm(PlayerPermissionSet set) {
-            return PermState.ENABLED; //Enabled so we can set it as players
+            return PermState.ENABLED; //Enabled so we cant set it as players
         }
 
         @Override

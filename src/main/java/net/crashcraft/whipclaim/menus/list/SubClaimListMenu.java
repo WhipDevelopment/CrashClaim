@@ -1,40 +1,39 @@
-package net.crashcraft.whipclaim.menus;
+package net.crashcraft.whipclaim.menus.list;
 
 import dev.whip.crashutils.menusystem.GUI;
-import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
+import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
+import net.crashcraft.whipclaim.menus.SubClaimMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class RealClaimListMenu extends GUI{
+public class SubClaimListMenu extends GUI {
+    private final GUI previousMenu;
+    private final Claim claim;
+
     private int page = 1;
-    private GUI previousMenu;
-    private ArrayList<? extends BaseClaim> claims;
-    private BiFunction<Player, BaseClaim, String> function;
-    private Material material;
+    private ArrayList<SubClaim> claims;
+    private ArrayList<SubClaim> currentPageItems;
 
-    private ArrayList<BaseClaim> currentPageItems;
-
-    public RealClaimListMenu(Player player, GUI previousMenu, String name, Material material, ArrayList<? extends BaseClaim> claims, BiFunction<Player, BaseClaim, String> function){
-        super(player,name, 54);
+    public SubClaimListMenu(Player player, GUI previousMenu, Claim claim) {
+        super(player, "Sub Claims", 54);
         this.previousMenu = previousMenu;
-        this.claims = claims;
-        this.function = function;
-        this.material = material;
+        this.claim = claim;
+
         setupGUI();
     }
 
     @Override
     public void initialize() {
-
+        claims = claim.getSubClaims();
     }
 
     @Override
@@ -44,8 +43,8 @@ public class RealClaimListMenu extends GUI{
         currentPageItems = getPageFromArray();
 
         int slot = 10;
-        for (BaseClaim item : currentPageItems){
-            while ((slot%9)<1 || (slot%9)>7){
+        for (BaseClaim item : currentPageItems) {
+            while ((slot % 9) < 1 || (slot % 9) > 7) {
                 slot++;
             }
 
@@ -57,14 +56,14 @@ public class RealClaimListMenu extends GUI{
                     ChatColor.GREEN + "World: " + ChatColor.YELLOW + Bukkit.getWorld(item.getWorld()).getName()
             ));
 
-            if (item instanceof SubClaim){
+            if (item instanceof SubClaim) {
                 SubClaim subClaim = (SubClaim) item;
-                if (!subClaim.getParent().getOwner().equals(getPlayer().getUniqueId())){
+                if (!subClaim.getParent().getOwner().equals(getPlayer().getUniqueId())) {
                     desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()).getName());
                 }
             }
 
-            inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, material != null ? material : ValueConfig.MENU_VISUAL_CLAIM_ITEMS.get(item.getWorld())));
+            inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, GlobalConfig.visual_menu_items.get(item.getWorld())));
 
             slot++;
         }
@@ -74,14 +73,16 @@ public class RealClaimListMenu extends GUI{
             inv.setItem(48, createGuiItem(ChatColor.GOLD + "Page Down", Material.ARROW));
         }
 
-        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Page " + page + " / " + (int)Math.ceil((float) claims.size() / 21),
+        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Page " + page + " / " + (int) Math.ceil((float) claims.size() / 21),
                 Material.ARROW));
 
         if (claims.size() > page * 21) {
             inv.setItem(50, createGuiItem(ChatColor.GOLD + "Page Up", Material.ARROW));
         }
 
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+        if (previousMenu != null) {
+            inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+        }
     }
 
     @Override
@@ -103,19 +104,21 @@ public class RealClaimListMenu extends GUI{
                 loadItems();
                 break;
             case "back":
+                if (previousMenu == null) {
+                    return;
+                }
                 previousMenu.open();
                 break;
             default:
-                function.apply(getPlayer(), currentPageItems.get(e.getSlot() - 10));
-                //Checking perms at menu
+                new SubClaimMenu(player, currentPageItems.get(e.getSlot() - 10)).open();
                 break;
         }
     }
 
-    private ArrayList<BaseClaim> getPageFromArray(){
-        ArrayList<BaseClaim> pageItems = new ArrayList<>();
+    private ArrayList<SubClaim> getPageFromArray() {
+        ArrayList<SubClaim> pageItems = new ArrayList<>();
 
-        for (int x = 21 * (page - 1); x < 21 * page && x < claims.size(); x++){
+        for (int x = 21 * (page - 1); x < 21 * page && x < claims.size(); x++) {
             pageItems.add(claims.get(x));
         }
 

@@ -30,7 +30,7 @@ public class GlowMarketVisual extends BaseGlowVisual {
                 getParent().generateUiniqueID(),
                 getParent().generateUiniqueUUID());
 
-        getParent().getManager().colorEntities(getParent().getPlayer(), getColor(), getEntityUUIDs());
+        colorEntities(getParent().getPlayer(), getColor(), getEntityUUIDs());
     }
 
     @Override

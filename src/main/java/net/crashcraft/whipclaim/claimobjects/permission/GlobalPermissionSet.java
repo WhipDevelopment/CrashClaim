@@ -1,13 +1,10 @@
 package net.crashcraft.whipclaim.claimobjects.permission;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import net.crashcraft.whipclaim.claimobjects.PermState;
 import org.bukkit.Material;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
@@ -16,14 +13,16 @@ import java.util.HashMap;
 public class GlobalPermissionSet extends PermissionSet {
     private int pistons;
     private int fluids;
+    private int explosions;
 
     public GlobalPermissionSet() {
 
     }
 
     public GlobalPermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue, int pistons, int fluids) {
-        super(build, interactions, entities, explosions, teleportation, viewSubClaims, containers, defaultContainerValue);
+        super(build, interactions, entities, teleportation, viewSubClaims, containers, defaultContainerValue);
         this.pistons = pistons;
+        this.explosions = explosions;
         this.fluids = fluids;
     }
 
@@ -41,6 +40,14 @@ public class GlobalPermissionSet extends PermissionSet {
 
     public void setFluids(int fluids) {
         this.fluids = fluids;
+    }
+
+    public int getExplosions() {
+        return explosions;
+    }
+
+    public void setExplosions(int explosions) {
+        this.explosions = explosions;
     }
 
     @Override
@@ -61,11 +68,6 @@ public class GlobalPermissionSet extends PermissionSet {
     @Override
     public void setEntities(int entities) {
         super.setEntities(entities);
-    }
-
-    @Override
-    public void setExplosions(int explosions) {
-        super.setExplosions(explosions);
     }
 
     @Override

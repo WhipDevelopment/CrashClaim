@@ -1,12 +1,6 @@
 package net.crashcraft.whipclaim.data;
 
 public class MathUtils {
-
-
-
-
-
-
     public static boolean iskPointCollide(int minX, int minZ, int maxX, int maxZ, int x, int z) {
         return (z >= minZ && z <= maxZ) && (x >= minX && x <= maxX);
     }

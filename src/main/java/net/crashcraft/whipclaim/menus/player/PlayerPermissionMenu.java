@@ -50,7 +50,6 @@ public class PlayerPermissionMenu extends MenuListHelper {
         menuList.put(PermissionRoute.BUILD, MenuSwitchType.TRIPLE);
         menuList.put(PermissionRoute.ENTITIES, MenuSwitchType.TRIPLE);
         menuList.put(PermissionRoute.INTERACTIONS, MenuSwitchType.TRIPLE);
-        menuList.put(PermissionRoute.EXPLOSIONS, MenuSwitchType.TRIPLE);
         menuList.put(PermissionRoute.TELEPORTATION, MenuSwitchType.TRIPLE);
 
         setup(menuList, permissionSet, player.getUniqueId(), group);
@@ -98,7 +97,7 @@ public class PlayerPermissionMenu extends MenuListHelper {
                 if (temp instanceof SubClaim){
                     menu = new SubClaimMenu(getPlayer(), (SubClaim) temp);
                 } else if (temp instanceof Claim){
-                    menu = new ClaimMenu(getPlayer(), (Claim) temp);
+                    menu = new ClaimMenu(getPlayer(), (Claim) temp, null);
                 }
                 new PlayerPermListMenu(group.getOwner(), getPlayer(), menu);
                 break;

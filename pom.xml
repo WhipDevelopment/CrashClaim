@@ -8,6 +8,10 @@
     <artifactId>WhipClaim</artifactId>
     <version>1.0</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>clean install</defaultGoal>
@@ -89,7 +93,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
                 <configuration>
-                    <outputDirectory>../Server-1.14/plugins</outputDirectory>
+                    <outputDirectory>../../Server/plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
@@ -114,11 +118,7 @@
         </repository>
         <repository>
             <id>jcenter</id>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
-        <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+            <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
@@ -136,6 +136,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>fastutil-lite</artifactId>
             <version>1.0</version>
@@ -144,7 +150,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14-R0.1-SNAPSHOT</version>
+            <version>1.15-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -153,9 +159,10 @@
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>net.wesjd</groupId>
+            <groupId>com.github.WesJD.AnvilGUI</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>1.2.1-SNAPSHOT</version>
+            <version>master-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.papermc</groupId>

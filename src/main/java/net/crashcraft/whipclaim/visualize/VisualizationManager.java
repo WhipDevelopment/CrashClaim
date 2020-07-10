@@ -3,13 +3,12 @@ package net.crashcraft.whipclaim.visualize;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.StaticClaimLogic;
 import net.crashcraft.whipclaim.visualize.api.*;
@@ -18,9 +17,6 @@ import net.crashcraft.whipclaim.visualize.api.providers.GlowVisualProvider;
 import net.crashcraft.whipclaim.visualize.api.visuals.BaseGlowVisual;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -40,10 +36,10 @@ public class VisualizationManager {
     public VisualizationManager(WhipClaim whipClaim, ProtocolManager protocolManager){
         this.protocolManager = protocolManager;
 
-        visualHashMap = new HashMap<>();
-        timeMap = new HashMap<>();
+        this.visualHashMap = new HashMap<>();
+        this.timeMap = new HashMap<>();
 
-        if (ValueConfig.VISUALIZE_VISUAL_TYPE.equals("glow")){
+        if (GlobalConfig.visual_type.equals("glow")){
             provider = new GlowVisualProvider();
         } else {
             provider = new BlockVisualProvider();
@@ -51,8 +47,9 @@ public class VisualizationManager {
 
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
 
-        if (scoreboardManager == null)
+        if (scoreboardManager == null) {
             throw new RuntimeException("Scoreboard manager was null.");
+        }
 
         Scoreboard scoreboard = scoreboardManager.getMainScoreboard();
 
@@ -80,36 +77,17 @@ public class VisualizationManager {
             }
         },0,20L);
 
-        String key = "visualization.visual-colors.";
-        FileConfiguration configuration = whipClaim.getConfig();
-        for (VisualColor color : VisualColor.values()){
-            String material = configuration.getString(key + color.name());
-            if (material == null){
-                configuration.set(key + color.name(), Material.ORANGE_CONCRETE.name());
-                color.setMaterial(Material.ORANGE_CONCRETE);
-                continue;
-            }
-            Material mat = Material.getMaterial(material);
-            if (mat == null){
-                configuration.set(key + color.name(), Material.ORANGE_CONCRETE.name());
-                whipClaim.getLogger().warning(key + color.name() + ", is not a valid material, defaulting to ORANGE_CONCRETE");
-                color.setMaterial(Material.ORANGE_CONCRETE);
-                continue;
-            }
-            color.setMaterial(mat);
-        }
-
         whipClaim.saveConfig();
     }
 
     public void sendAlert(Player player, String message){
         PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.TITLE);
 
-        packet.getTitleActions().write(0, ValueConfig.VISUALIZE_ALERT_TYPE);
+        packet.getTitleActions().write(0, GlobalConfig.visual_alert_type);
         packet.getChatComponents().write(0, WrappedChatComponent.fromText(ChatColor.translateAlternateColorCodes('&', message)));
-        packet.getIntegers().write(0, ValueConfig.VISUALIZE_ALERT_FADE_IN);
-        packet.getIntegers().write(1, ValueConfig.VISUALIZE_ALERT_DURATION);
-        packet.getIntegers().write(2, ValueConfig.VISUALIZE_ALERT_FADE_OUT);
+        packet.getIntegers().write(0, GlobalConfig.visual_alert_fade_in);
+        packet.getIntegers().write(1, GlobalConfig.visual_alert_duration);
+        packet.getIntegers().write(2, GlobalConfig.visual_alert_fade_out);
 
         try {
             protocolManager.sendServerPacket(player, packet);
@@ -137,23 +115,6 @@ public class VisualizationManager {
         timeMap.put(visual, System.currentTimeMillis() + (seconds * 1000));
     }
 
-    public void colorEntities(Player player, VisualColor color, ArrayList<String> uuids){
-        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-
-        packet.getStrings()
-                .write(0, color.toString());
-        packet.getIntegers().write(0, 3);
-
-        packet.getSpecificModifier(Collection.class)
-                .write(0, uuids);
-
-        try {
-            protocolManager.sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void visualizeSuroudningClaims(Player player, ClaimDataManager claimDataManager){
         long chunkx = player.getLocation().getChunk().getX();
         long chunkz = player.getLocation().getChunk().getZ();
@@ -166,12 +127,14 @@ public class VisualizationManager {
             for (long z = chunkz + 6; z >= chunkz - 6; z--){
                 ArrayList<Integer> chu = chunks.get(StaticClaimLogic.getChunkHash(x, z));
 
-                if (chu == null)
+                if (chu == null) {
                     continue;
+                }
 
                 for (Integer integer : chu){
-                    if (!tempClaims.contains(integer))
+                    if (!tempClaims.contains(integer)) {
                         tempClaims.add(integer);
+                    }
                 }
             }
         }
@@ -221,7 +184,6 @@ public class VisualizationManager {
             subClaimVisual.color(null);
         }
     }
-
  */
     public void cleanup(Player player) {
         VisualGroup group = fetchVisualGroup(player, false);

@@ -1,7 +1,0 @@
-visualization:
-  # blocks - Use fake blocks to show the outline of the claim, uses solid line
-  # glow - Use fake entities to show a glowing outline of the block, uses corners and side markings to reduce client entity lag.
-  visual-type: "glow"
-  visual-block-type: "GREEN_CONCRETE"
-  visual-use-highest-block: false
-  visual-colors:

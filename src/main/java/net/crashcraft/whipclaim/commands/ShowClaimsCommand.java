@@ -9,6 +9,7 @@ import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
+import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
 import net.crashcraft.whipclaim.visualize.*;
@@ -41,7 +42,7 @@ public class ShowClaimsCommand extends BaseCommand {
         Location location = player.getLocation();
         Claim claim = claimDataManager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());
         if (claim != null) {
-            if (PermissionRouter.getLayeredPermission(claim, null, player.getUniqueId(), PermissionRoute.VIEW_SUB_CLAIMS) != PermState.ENABLED){
+            if (!PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.VIEW_SUB_CLAIMS)){
                 player.sendMessage(ChatColor.RED + "You need permission to view sub claims.");
                 return;
             }

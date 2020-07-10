@@ -1,17 +1,15 @@
-package net.crashcraft.whipclaim.events;
+package net.crashcraft.whipclaim.listeners;
 
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
-import net.crashcraft.whipclaim.config.ValueConfig;
+import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -23,27 +21,44 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
-import sun.security.krb5.Config;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
-    private PermissionHelper helper;
-    private PermissionSetup perms;
-    private VisualizationManager visuals;
-    private ClaimDataManager manager;
+    private final PermissionHelper helper;
+    private final PermissionSetup perms;
+    private final VisualizationManager visuals;
+    private final ClaimDataManager manager;
 
     public PlayerListener(ClaimDataManager manager, VisualizationManager visuals){
         this.manager = manager;
         this.perms = manager.getPermissionSetup();
         this.visuals = visuals;
         this.helper = PermissionHelper.getPermissionHelper();
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onHangingPlaceEvent(HangingPlaceEvent e){
+        if (GlobalConfig.disabled_worlds.contains(e.getEntity().getWorld().getUID())){
+            return;
+        }
+
+        Player player = e.getPlayer();
+
+        if (player == null){
+            return;
+        }
+
+        if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.BUILD)) {
+            e.setCancelled(true);
+            visuals.sendAlert(player, "You do not have permission to build in this claim");
+        }
     }
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -54,7 +69,7 @@ public class PlayerListener implements Listener {
         Player player = e.getPlayer();
         Location location = e.getClickedBlock().getLocation();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(location.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(location.getWorld().getUID())){
             return;
         }
 
@@ -86,7 +101,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockFromTo(BlockFromToEvent event) {
-        if (ValueConfig.DISABLED_WORLDS.contains(event.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(event.getBlock().getWorld().getUID())){
             return;
         }
 
@@ -102,7 +117,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPistonEvent(BlockPistonExtendEvent event){
-        if (ValueConfig.DISABLED_WORLDS.contains(event.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(event.getBlock().getWorld().getUID())){
             return;
         }
 
@@ -113,7 +128,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPistonEvent(BlockPistonRetractEvent event){
-        if (ValueConfig.DISABLED_WORLDS.contains(event.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(event.getBlock().getWorld().getUID())){
             return;
         }
 
@@ -164,12 +179,12 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTeleportEvent(PlayerTeleportEvent event){
-        if (ValueConfig.DISABLED_WORLDS.contains(event.getTo().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(event.getTo().getWorld().getUID())){
             return;
         }
 
         Location location = event.getTo();
-        switch (ValueConfig.EVENTS_TELEPORT.get(event.getCause())){
+        switch (GlobalConfig.teleportCause.get(event.getCause())){
             case 0: //Disable
                 return;
             case 1: //Block
@@ -202,15 +217,10 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @SuppressWarnings("Duplicates")
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerMoveEvent(PlayerMoveEvent e){
         final int fromX = e.getFrom().getBlockX();
         final int fromZ = e.getFrom().getBlockZ();
-
-        if (e.getTo() == null)
-            return;
-
         final int toX = e.getTo().getBlockX();
         final int toZ = e.getTo().getBlockZ();
         final UUID world = e.getTo().getWorld().getUID();
@@ -220,7 +230,7 @@ public class PlayerListener implements Listener {
                 !player.isFlying() &&
                 (fromX != toX || fromZ != toZ)) {
 
-            if (ValueConfig.DISABLED_WORLDS.contains(world)){
+            if (GlobalConfig.disabled_worlds.contains(world)){
                 return;
             }
 
@@ -233,7 +243,6 @@ public class PlayerListener implements Listener {
                 Parent claim needs to have entry null to play sub claim exit on enter to parent claim
              */
 
-
             Claim toClaim = manager.getClaim(toX, toZ, world);
             Claim fromClaim = manager.getClaim(fromX, fromZ, world);
 
@@ -242,28 +251,12 @@ public class PlayerListener implements Listener {
 
             if (toClaim != null) {
                 SubClaim toSubClaim = toClaim.getSubClaim(toX, toZ);
-                if (toSubClaim != null) {
-                    if (toSubClaim.getEntryMessage() != null || toSubClaim.getExitMessage() != null) {
-                        to = toSubClaim;
-                    } else {
-                        to = toClaim;
-                    }
-                } else {
-                    to = toClaim;
-                }
+                to = check(toClaim, toSubClaim);
             }
 
             if (fromClaim != null) {
                 SubClaim fromSubClaim = fromClaim.getSubClaim(fromX, fromZ);
-                if (fromSubClaim != null) {
-                    if (fromSubClaim.getEntryMessage() != null || fromSubClaim.getExitMessage() != null) {
-                        from = fromSubClaim;
-                    } else {
-                        from = fromClaim;
-                    }
-                } else {
-                    from = fromClaim;
-                }
+                from = check(fromClaim, fromSubClaim);
             }
 
             if (to != null){
@@ -292,12 +285,24 @@ public class PlayerListener implements Listener {
         }
     }
 
+    private BaseClaim check(Claim claim, SubClaim subClaim){
+        if (subClaim != null) {
+            if (subClaim.getEntryMessage() != null || subClaim.getExitMessage() != null) {
+                return subClaim;
+            } else {
+                return claim;
+            }
+        } else {
+            return claim;
+        }
+    }
+
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e){
         if (e.getEntity() instanceof Player)
             return;
 
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getEntity().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getEntity().getWorld().getUID())){
             return;
         }
 
@@ -335,7 +340,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onHangingBreak(HangingBreakEvent event) {
-        if (ValueConfig.DISABLED_WORLDS.contains(event.getEntity().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(event.getEntity().getWorld().getUID())){
             return;
         }
 
@@ -348,7 +353,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVehicleDestroyEvent(VehicleDamageEvent e){
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getAttacker().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getAttacker().getWorld().getUID())){
             return;
         }
 
@@ -373,7 +378,7 @@ public class PlayerListener implements Listener {
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e){
         Player player = e.getPlayer();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(player.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
             return;
         }
 
@@ -387,7 +392,7 @@ public class PlayerListener implements Listener {
     public void onPlayerArmorStandManipulateEvent(PlayerArmorStandManipulateEvent e){
         Player player = e.getPlayer();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(player.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
             return;
         }
 
@@ -401,7 +406,7 @@ public class PlayerListener implements Listener {
     public void onPlayerPickupArrowEvent(PlayerPickupArrowEvent e){
         Player player = e.getPlayer();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(player.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
             return;
         }
 
@@ -415,7 +420,7 @@ public class PlayerListener implements Listener {
     public void onBlockBreakEvent(BlockBreakEvent e){
         Player player = e.getPlayer();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(player.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
             return;
         }
 
@@ -429,7 +434,7 @@ public class PlayerListener implements Listener {
     public void onBlockPlaceEvent(BlockPlaceEvent e){
         Player player = e.getPlayer();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(player.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
             return;
         }
 
@@ -443,7 +448,7 @@ public class PlayerListener implements Listener {
     public void onPlayerBucketEmptyEvent(PlayerBucketEmptyEvent e){
         Player player = e.getPlayer();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(player.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
             return;
         }
 
@@ -457,7 +462,7 @@ public class PlayerListener implements Listener {
     public void onPlayerBucketFillEvent(PlayerBucketFillEvent e){
         Player player = e.getPlayer();
 
-        if (ValueConfig.DISABLED_WORLDS.contains(player.getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
             return;
         }
 
@@ -469,7 +474,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockIgniteEvent(BlockIgniteEvent e){
-        if (ValueConfig.DISABLED_WORLDS.contains(e.getBlock().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
         }
 

@@ -45,17 +45,17 @@ public class ClaimDataManager implements Listener {
     private final Path dataPath;
     private final Logger logger;
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    private PermissionSetup permissionSetup;
+    private final PermissionSetup permissionSetup;
 
-    private HashMap<UUID, Set<Integer>> ownedClaims;   // ids of claims t  hat the user has permission to modify - used for menu lookups
-    private HashMap<UUID, Set<Integer>> ownedSubClaims;
+    private final HashMap<UUID, Set<Integer>> ownedClaims;   // ids of claims t  hat the user has permission to modify - used for menu lookups
+    private final HashMap<UUID, Set<Integer>> ownedSubClaims;
 
-    private HashMap<Integer, Integer> subClaimLookupParent;
+    private final HashMap<Integer, Integer> subClaimLookupParent;
 
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
-    private HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
+    private final HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
 
     private int idCounter;
 

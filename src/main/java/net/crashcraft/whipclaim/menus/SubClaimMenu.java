@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class SubClaimMenu extends GUI {
-    private SubClaim claim;
+    private final SubClaim claim;
     private Material material;
-    private PermissionHelper helper;
+    private final PermissionHelper helper;
 
     public SubClaimMenu(Player player, SubClaim claim) {
         super(player, "Claim Menu", 54);

@@ -3,11 +3,10 @@ package net.crashcraft.whipclaim;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
-import dev.whip.crashutils.Payment.PaymentProcessor;
-import dev.whip.crashutils.Payment.ProcessorManager;
-import dev.whip.crashutils.Payment.ProviderInitializationException;
-import dev.whip.crashutils.Payment.providers.FakePaymentProvider;
+import net.crashcraft.crashpayment.CrashPayment;
+import net.crashcraft.crashpayment.Payment.PaymentProcessor;
 import io.papermc.lib.PaperLib;
+import net.crashcraft.whipclaim.api.WhipClaimAPI;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
 import net.crashcraft.whipclaim.config.ConfigManager;
@@ -26,6 +25,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class WhipClaim extends JavaPlugin {
     private static WhipClaim plugin;
 
+    private WhipClaimAPI api;
+
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
     private ProtocolManager protocolManager;
@@ -35,12 +36,21 @@ public class WhipClaim extends JavaPlugin {
 
     private PaymentProcessor payment;
 
+    private CrashPayment paymentPlugin;
+
     @Override
     public void onLoad() {
         plugin = this;
         protocolManager = ProtocolLibrary.getProtocolManager();
 
+        paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
+        if (paymentPlugin == null){
+            getLogger().severe("Payment plugin not found");
+        }
+
         this.crashUtils = new CrashUtils(this);
+
+        this.api = new WhipClaimAPI();
     }
 
     @Override
@@ -51,8 +61,13 @@ public class WhipClaim extends JavaPlugin {
 
         new ConfigManager(this);
 
-        payment = crashUtils.setupPaymentProvider().getProcessor();
         crashUtils.setupMenuSubSystem();
+
+        if (paymentPlugin != null) {
+            payment = paymentPlugin.setupPaymentProvider(this).getProcessor();
+        } else {
+            getLogger().severe("Payment plugin not found");
+        }
 
         visualizationManager = new VisualizationManager(this, protocolManager);
         manager = new ClaimDataManager(this);
@@ -66,7 +81,7 @@ public class WhipClaim extends JavaPlugin {
         commandManager.registerCommand(new ShowClaimsCommand(visualizationManager, manager));
         commandManager.registerCommand(new HideClaimsCommand(visualizationManager));
         commandManager.registerCommand(new ModeCommand(this, protocolManager));
-        commandManager.registerCommand(new MenuCommand(manager));
+        commandManager.registerCommand(new MenuCommand(manager, visualizationManager));
         commandManager.registerCommand(new BypassCommand(bypassManager));
 
         Bukkit.getPluginManager().registerEvents(manager, this);
@@ -109,5 +124,9 @@ public class WhipClaim extends JavaPlugin {
 
     public MaterialName getMaterialName() {
         return materialName;
+    }
+
+    public WhipClaimAPI getApi() {
+        return api;
     }
 }

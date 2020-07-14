@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 
 public class ClaimListMenu extends GUI {
@@ -23,12 +24,13 @@ public class ClaimListMenu extends GUI {
 
     private int page = 1;
     private final ArrayList<Claim> claims;
-    private ArrayList<Claim> currentPageItems;
+    private final HashMap<Integer, Claim> pageItemsDisplay;
 
     public ClaimListMenu(Player player, GUI previousMenu) {
-        super(player, "Sub Claims", 54);
+        super(player, "Claims", 54);
         this.previousMenu = previousMenu;
         this.claims = new ArrayList<>();
+        this.pageItemsDisplay = new HashMap<>();
 
         setupGUI();
     }
@@ -64,10 +66,11 @@ public class ClaimListMenu extends GUI {
     public void loadItems() {
         inv.clear();
 
-        currentPageItems = getPageFromArray();
+        ArrayList<Claim> currentPageItems = getPageFromArray();
+        pageItemsDisplay.clear();
 
         int slot = 10;
-        for (BaseClaim item : currentPageItems) {
+        for (Claim item : currentPageItems) {
             while ((slot % 9) < 1 || (slot % 9) > 7) {
                 slot++;
             }
@@ -80,12 +83,7 @@ public class ClaimListMenu extends GUI {
                     ChatColor.GREEN + "World: " + ChatColor.YELLOW + Bukkit.getWorld(item.getWorld()).getName()
             ));
 
-            if (item instanceof SubClaim) {
-                SubClaim subClaim = (SubClaim) item;
-                if (!subClaim.getParent().getOwner().equals(getPlayer().getUniqueId())) {
-                    desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()).getName());
-                }
-            }
+            pageItemsDisplay.put(slot, item);
 
             inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, GlobalConfig.visual_menu_items.get(item.getWorld())));
 
@@ -134,7 +132,11 @@ public class ClaimListMenu extends GUI {
                 previousMenu.open();
                 break;
             default:
-                new ClaimMenu(player, currentPageItems.get(e.getSlot() - 10), null).open();
+                Claim claim = pageItemsDisplay.get(e.getSlot());
+                if (claim == null){
+                    return;
+                }
+                new ClaimMenu(player, claim, this).open();
                 break;
         }
     }
@@ -143,7 +145,8 @@ public class ClaimListMenu extends GUI {
         ArrayList<Claim> pageItems = new ArrayList<>();
 
         for (int x = 21 * (page - 1); x < 21 * page && x < claims.size(); x++) {
-            pageItems.add(claims.get(x));
+            Claim claim = claims.get(x);
+            pageItems.add(claim);
         }
 
         return pageItems;

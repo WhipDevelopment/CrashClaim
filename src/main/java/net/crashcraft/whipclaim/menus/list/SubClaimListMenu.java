@@ -14,19 +14,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class SubClaimListMenu extends GUI {
     private final GUI previousMenu;
     private final Claim claim;
+    private final HashMap<Integer, SubClaim> pageItemsDisplay;
 
     private int page = 1;
     private ArrayList<SubClaim> claims;
-    private ArrayList<SubClaim> currentPageItems;
 
     public SubClaimListMenu(Player player, GUI previousMenu, Claim claim) {
         super(player, "Sub Claims", 54);
         this.previousMenu = previousMenu;
         this.claim = claim;
+        this.pageItemsDisplay = new HashMap<>();
 
         setupGUI();
     }
@@ -40,10 +42,11 @@ public class SubClaimListMenu extends GUI {
     public void loadItems() {
         inv.clear();
 
-        currentPageItems = getPageFromArray();
+        ArrayList<SubClaim>  currentPageItems = getPageFromArray();
+        pageItemsDisplay.clear();
 
         int slot = 10;
-        for (BaseClaim item : currentPageItems) {
+        for (SubClaim item : currentPageItems) {
             while ((slot % 9) < 1 || (slot % 9) > 7) {
                 slot++;
             }
@@ -56,11 +59,10 @@ public class SubClaimListMenu extends GUI {
                     ChatColor.GREEN + "World: " + ChatColor.YELLOW + Bukkit.getWorld(item.getWorld()).getName()
             ));
 
-            if (item instanceof SubClaim) {
-                SubClaim subClaim = (SubClaim) item;
-                if (!subClaim.getParent().getOwner().equals(getPlayer().getUniqueId())) {
-                    desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()).getName());
-                }
+            pageItemsDisplay.put(slot, item);
+
+            if (!item.getParent().getOwner().equals(getPlayer().getUniqueId())) {
+                desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(item.getParent().getOwner()).getName());
             }
 
             inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, GlobalConfig.visual_menu_items.get(item.getWorld())));
@@ -110,7 +112,11 @@ public class SubClaimListMenu extends GUI {
                 previousMenu.open();
                 break;
             default:
-                new SubClaimMenu(player, currentPageItems.get(e.getSlot() - 10)).open();
+                SubClaim claim = pageItemsDisplay.get(e.getSlot());
+                if (claim == null){
+                    return;
+                }
+                new SubClaimMenu(player, claim).open();
                 break;
         }
     }

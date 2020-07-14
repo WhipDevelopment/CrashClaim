@@ -1,6 +1,8 @@
 package net.crashcraft.whipclaim.commands.modes;
 
+import net.crashcraft.crashpayment.Payment.TransactionType;
 import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
+import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.config.GlobalConfig;
@@ -12,14 +14,12 @@ import net.crashcraft.whipclaim.visualize.api.BaseVisual;
 import net.crashcraft.whipclaim.visualize.api.VisualColor;
 import net.crashcraft.whipclaim.visualize.api.VisualGroup;
 import net.crashcraft.whipclaim.visualize.api.VisualType;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
@@ -61,6 +61,11 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
         if (enabledMode.contains(e.getPlayer().getUniqueId()) && e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND) && e.getClickedBlock() != null){
             click(e.getPlayer(), e.getClickedBlock().getLocation());
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e){
+        cleanup(e.getPlayer().getUniqueId(), true);
     }
 
     public void customEntityClick(Player player, Location location){
@@ -127,41 +132,52 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
         int area = ContributionManager.getArea(min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ());
 
         int price = (int) Math.ceil(area * GlobalConfig.money_per_block);
-        //Check price with player
-        new ConfirmationMenu(player,
-                "Confirm Claim Creation",
-                ChatColor.GREEN + "The claim creation will cost: " + ChatColor.YELLOW + price,
-                new ArrayList<>(Arrays.asList("Confirm or deny the creation.")),
-                Material.EMERALD,
-                (p, aBoolean) -> {
-                    if (aBoolean){
-                        ClaimResponse response = manager.createClaim(max, min, uuid);
 
-                        if (response.isStatus()) {
-                            ((Claim) response.getClaim()).addContribution(player.getUniqueId(), area); //Contribution tracking
+        WhipClaim.getPlugin().getPayment().makeTransaction(uuid, TransactionType.WITHDRAW, "Claim Purchase", price, (res) -> {
+            if (!res.transactionSuccess()){
+                player.sendMessage(ChatColor.RED + "You need " + price + " coins to claim that area.");
+                cleanup(player.getUniqueId(), true);
+                return;
+            }
 
-                            player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
+            Bukkit.getScheduler().runTask(WhipClaim.getPlugin(), () -> {
+                new ConfirmationMenu(player,
+                        "Confirm Claim Creation",
+                        ChatColor.GREEN + "The claim creation will cost: " + ChatColor.YELLOW + price,
+                        new ArrayList<>(Arrays.asList("Confirm or deny the creation.")),
+                        Material.EMERALD,
+                        (p, aBoolean) -> {
+                            if (aBoolean){
+                                ClaimResponse response = manager.createClaim(max, min, uuid);
 
-                            VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
-                            group.removeAllVisuals();
+                                if (response.isStatus()) {
+                                    ((Claim) response.getClaim()).addContribution(player.getUniqueId(), area); //Contribution tracking
 
-                            BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
-                            visual.spawn();
+                                    player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
 
-                            visualizationManager.despawnAfter(visual, 30);
+                                    VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
+                                    group.removeAllVisuals();
 
-                            cleanup(player.getUniqueId(), false);
-                        } else {
-                            player.sendMessage(ChatColor.RED + "Error creating claim");
+                                    BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
+                                    visual.spawn();
+
+                                    visualizationManager.despawnAfter(visual, 30);
+
+                                    cleanup(player.getUniqueId(), false);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "Error creating claim");
+                                    cleanup(player.getUniqueId(), true);
+                                }
+                            }
+                            return "";
+                        },
+                        p -> {
                             cleanup(player.getUniqueId(), true);
-                        }
-                    }
-                    return "";
-                },
-                p -> {
-                    cleanup(player.getUniqueId(), true);
-                    return "";
-                }).open();
+                            return "";
+                        }).open();
+            });
+            //Check price with player
+        });
     }
 
     public void clickedExistingClaim(Player player, Location location, Claim claim){

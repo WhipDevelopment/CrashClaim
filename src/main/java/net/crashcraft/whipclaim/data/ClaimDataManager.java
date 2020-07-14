@@ -3,9 +3,9 @@ package net.crashcraft.whipclaim.data;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import dev.whip.crashutils.Payment.TransactionRecipe;
-import dev.whip.crashutils.Payment.TransactionResponse;
-import dev.whip.crashutils.Payment.TransactionType;
+import net.crashcraft.crashpayment.Payment.TransactionRecipe;
+import net.crashcraft.crashpayment.Payment.TransactionResponse;
+import net.crashcraft.crashpayment.Payment.TransactionType;
 import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.whipclaim.WhipClaim;
@@ -452,7 +452,7 @@ public class ClaimDataManager implements Listener {
     }
 
     private boolean addClaim(Claim claim){ //Should not be called from anywhere else
-        File file = new File(Paths.get(dataPath.toString(), Integer.toString(claim.getId())).toUri());
+        File file = new File(Paths.get(dataPath.toString(), claim.getId()  + ".json").toUri());
 
         if (file.exists()){
             logger.warning("Claim file already exists for id: " + claim.getId() + ", aborting");
@@ -470,10 +470,10 @@ public class ClaimDataManager implements Listener {
     }
 
     public void deleteClaim(Claim claim){
-        //Claim Data
-        File file = new File(Paths.get(dataPath.toString(), Integer.toString(claim.getId())).toUri());
+        File file = new File(Paths.get(dataPath.toString(), claim.getId()  + ".json").toUri());
         file.delete();
 
+        //Claim Data
         for (Set<Integer> set : ownedClaims.values()){
             set.remove(claim.getId()); // remove from everyone
         }
@@ -486,19 +486,21 @@ public class ClaimDataManager implements Listener {
             chunkMap.removeAll(entry.getValue());   //Remove all of the existing claim chunk entries
         }
 
-        for (SubClaim subClaim : claim.getSubClaims()){
-            deleteSubClaim(subClaim);
-        }
+        claim.getSubClaims().iterator().forEachRemaining(this::deleteSubClaimWithoutRemove);
     }
 
-    public void deleteSubClaim(SubClaim subClaim){
-        subClaimLookupParent.remove(subClaim.getId());
+    public void deleteSubClaimWithoutRemove(SubClaim subClaim){
         for (Set<Integer> set : ownedSubClaims.values()){
             set.remove(subClaim.getId()); //remove from everyone
         }
 
         Claim parent = subClaim.getParent();
         parent.removeSubClaim(subClaim.getId());
+    }
+
+    public void deleteSubClaim(SubClaim subClaim){
+        subClaimLookupParent.remove(subClaim.getId());
+        deleteSubClaimWithoutRemove(subClaim);
     }
 
     private void loadChunksForClaim(Claim claim){

@@ -22,10 +22,10 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class ClaimMenu extends GUI {
-    private Claim claim;
+    private final Claim claim;
     private Material material;
-    private PermissionHelper helper;
-    private GUI previousMenu;
+    private final PermissionHelper helper;
+    private final GUI previousMenu;
 
     public ClaimMenu(Player player, Claim claim, GUI previousMenu) {
         super(player, "Claim Menu", 54);

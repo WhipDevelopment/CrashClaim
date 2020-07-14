@@ -1,7 +1,7 @@
 package net.crashcraft.whipclaim.data;
 
-import dev.whip.crashutils.Payment.PaymentProcessor;
-import dev.whip.crashutils.Payment.TransactionType;
+import net.crashcraft.crashpayment.Payment.PaymentProcessor;
+import net.crashcraft.crashpayment.Payment.TransactionType;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.config.GlobalConfig;

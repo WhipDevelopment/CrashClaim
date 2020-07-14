@@ -185,6 +185,9 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
             cleanup(player.getUniqueId(), false);
         } else {
             switch (response.getError()){
+                case TOO_SMALL:
+                    player.sendMessage(ChatColor.RED + "A sub claim needs to be at least a 5x5 area.");
+                    break;
                 case OUT_OF_BOUNDS:
                     player.sendMessage(ChatColor.RED + "You cannot form a sub claim outside of a parent claim.");
                     break;

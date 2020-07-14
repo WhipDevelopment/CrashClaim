@@ -88,7 +88,7 @@ public abstract class BaseGlowVisual extends BaseVisual {
 
         packet.getIntegers()
                 .write(0, id)
-                .write(1, 41);//38  //Entity id //1.14: 40
+                .write(1, 44);//38  //Entity id //1.14: 40 //1.15: 41
         packet.getUUIDs()
                 .write(0, uuid);
         packet.getDoubles() //Cords

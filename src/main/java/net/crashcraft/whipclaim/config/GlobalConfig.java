@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -23,21 +24,21 @@ public class GlobalConfig extends BaseConfig{
     public static int visual_alert_fade_out;
 
     private static void loadVisual(){
-        visual_type = config.getString("visualization.visual-type", "glow");
+        visual_type = getString("visualization.visual-type", "glow");
 
         visual_menu_items = new HashMap<>();
         for (World world : Bukkit.getWorlds()){
-            visual_menu_items.put(world.getUID(), Material.getMaterial(config.getString("visualize.visualize-claim-items." + world.getName(), Material.OAK_FENCE.name())));
+            visual_menu_items.put(world.getUID(), Material.getMaterial(getString("visualize.visualize-claim-items." + world.getName(), Material.OAK_FENCE.name())));
         }
 
-        visual_use_highest_block = config.getBoolean("visualization.visual-use-highest-block", false);
-        visual_alert_type = EnumWrappers.TitleAction.valueOf(config.getString("visualization.alert.type", EnumWrappers.TitleAction.ACTIONBAR.name()));
-        visual_alert_fade_in = config.getInt("visualization.alert.fade-in", 10);
-        visual_alert_duration = config.getInt("visualization.alert.duration", 1);
-        visual_alert_fade_out = config.getInt("visualization.alert.fade-out", 10);
+        visual_use_highest_block = getBoolean("visualization.visual-use-highest-block", false);
+        visual_alert_type = EnumWrappers.TitleAction.valueOf(getString("visualization.alert.type", EnumWrappers.TitleAction.ACTIONBAR.name()));
+        visual_alert_fade_in = getInt("visualization.alert.fade-in", 10);
+        visual_alert_duration = getInt("visualization.alert.duration", 1);
+        visual_alert_fade_out = getInt("visualization.alert.fade-out", 10);
 
         for (VisualColor color : VisualColor.values()){
-            Material material = Material.getMaterial(config.getString("visualization.visual-colors." + color.name(), Material.ORANGE_CONCRETE.name()));
+            Material material = Material.getMaterial(getString("visualization.visual-colors." + color.name(), Material.ORANGE_CONCRETE.name()));
 
             if (material == null){
                 log("Invalid material for visualization.visual-colors." + color.name());
@@ -54,7 +55,7 @@ public class GlobalConfig extends BaseConfig{
         // 0 | NONE  - diable, 1 | BLOCK - enable check with blocking, 2 | RELOCATE - enable check with relocating
         teleportCause = new HashMap<>();
         for (PlayerTeleportEvent.TeleportCause cause : PlayerTeleportEvent.TeleportCause.values()){
-            String value = config.getString("events.teleport." + cause.name(), "block");
+            String value = getString("events.teleport." + cause.name(), "block");
 
             switch (value.toLowerCase()){
                 case "none":
@@ -65,7 +66,7 @@ public class GlobalConfig extends BaseConfig{
                     teleportCause.put(cause, 2);
                 default:
                     //Bad value default to good one
-                    logError("Invalid value for events.teleport." + cause.name() + ", defaulting to `block`");
+                    log("Invalid value for events.teleport." + cause.name() + ", defaulting to `block`");
                     teleportCause.put(cause, 1);
             }
         }
@@ -75,9 +76,9 @@ public class GlobalConfig extends BaseConfig{
     public static ArrayList<UUID> disabled_worlds;
 
     private static void miscValues(){
-        money_per_block = config.getDouble("money-per-block", 0.01);
+        money_per_block = getDouble("money-per-block", 0.01);
         disabled_worlds = new ArrayList<>();
-        for (String s : config.getStringList("disabled-worlds")){
+        for (String s : getStringList("disabled-worlds", Collections.emptyList())){
             World world = Bukkit.getWorld(s);
             if (world == null){
                 logError("World name was invalid or the world was not loaded into memory");

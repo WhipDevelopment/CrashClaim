@@ -97,8 +97,9 @@ public class Claim extends BaseClaim {
             SubClaim subClaim = getSubClaim(location.getBlockX(), location.getBlockZ());
             if (subClaim != null){
                 return PermissionRouter.getLayeredPermission(this, subClaim, uuid, route);
+            } else {
+                return PermissionRouter.getLayeredPermission(this, null, uuid, route);
             }
-            return route.getPerm(getPerms().getGlobalPermissionSet());
         } else {
             return PermissionRouter.getLayeredPermission(this, null, uuid, route);
         }
@@ -112,8 +113,9 @@ public class Claim extends BaseClaim {
             SubClaim subClaim = getSubClaim(location.getBlockX(), location.getBlockZ());
             if (subClaim != null){
                 return PermissionRouter.getLayeredContainer(this, subClaim, uuid, material);
+            } else {
+                return PermissionRouter.getLayeredContainer(this, null, uuid, material);
             }
-            return PermissionRoute.CONTAINERS.getPerm(getPerms().getGlobalPermissionSet());
         } else {
             return PermissionRouter.getLayeredContainer(this, null, uuid, material);
         }
@@ -124,7 +126,7 @@ public class Claim extends BaseClaim {
         contribution.put(player, adder + area);
     }
 
-    public void removeContriubtion(UUID player, int area){
+    public void adjustContribution(UUID player, int area){
         int adder = (contribution.get(player) != null ? contribution.get(player) : 0) - area;
         if (adder <= 0){
             contribution.remove(player);

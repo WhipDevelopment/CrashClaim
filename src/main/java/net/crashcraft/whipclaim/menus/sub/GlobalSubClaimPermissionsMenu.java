@@ -55,6 +55,11 @@ public class GlobalSubClaimPermissionsMenu extends MenuListHelper {
     public void loadItems() {
         super.loadItems();
 
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+    }
+
+    @Override
+    public void setupSidebar() {
         SubClaim claim = (SubClaim) group.getOwner();
 
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
@@ -68,8 +73,6 @@ public class GlobalSubClaimPermissionsMenu extends MenuListHelper {
         inv.setItem(25, createGuiItem(ChatColor.GRAY + "General Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
         inv.setItem(43, createGuiItem(ChatColor.DARK_GRAY + "Advanced Permissions", Material.BLACK_STAINED_GLASS_PANE));
-
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override

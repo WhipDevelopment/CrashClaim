@@ -6,6 +6,7 @@ import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.menus.helpers.MenuSideBar;
 import net.crashcraft.whipclaim.menus.sub.SubPlayerAdminPermissions;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @SuppressWarnings("Duplicates")
-public class PlayerContainerPermissionMenu extends GUI {
+public class PlayerContainerPermissionMenu extends GUI implements MenuSideBar {
     private static final int itemOffset = 10;
 
     private ArrayList<Material> containers;
@@ -115,14 +116,19 @@ public class PlayerContainerPermissionMenu extends GUI {
             }
         }
 
+        setupSidebar();
+
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+    }
+
+    @Override
+    public void setupSidebar() {
         inv.setItem(16, createPlayerHead(target, new ArrayList<>(Arrays.asList(ChatColor.GREEN + "You are currently editing",
                 ChatColor.GREEN + "this players permissions."))));
 
         inv.setItem(25, createGuiItem(ChatColor.GREEN + "General Permissions", Material.CRAFTING_TABLE));
         inv.setItem(34, createGuiItem(ChatColor.GRAY + "Container Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Admin Permissions", Material.BEACON));
-
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override

@@ -42,7 +42,7 @@ import static net.crashcraft.whipclaim.data.StaticClaimLogic.getChunkHashFromLoc
 
 public class ClaimDataManager implements Listener {
     private final WhipClaim plugin;
-    private final Path dataPath;
+    private final File dataFolder;
     private final Logger logger;
 
     private final ObjectMapper mapper;
@@ -68,7 +68,7 @@ public class ClaimDataManager implements Listener {
         this.isSaving = false;
         this.subClaimLookupParent = new HashMap<>();
 
-        mapper = new ObjectMapper();
+        this.mapper = new ObjectMapper();
 
 /*
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder().build();
@@ -81,10 +81,9 @@ public class ClaimDataManager implements Listener {
         mapper.registerSubtypes(Claim.class, SubClaim.class, SubPermissionGroup.class, ParentPermissionGroup.class,
                 GlobalPermissionSet.class, PlayerPermissionSet.class);
 
+        this.dataFolder = new File(plugin.getDataFolder(), "ClaimData");
 
         permissionSetup = new PermissionSetup(plugin);
-
-        dataPath = Paths.get(plugin.getDataFolder().getAbsolutePath(), "ClaimData");
 
         chunkLookup = new HashMap<>();
         ownedClaims = new HashMap<>();
@@ -95,7 +94,6 @@ public class ClaimDataManager implements Listener {
             logger.info("Loaded " + world.getName() + " into chunk map");
         }
 
-        File dataFolder = dataPath.toFile();
         idCounter = 0;
 
         if (!dataFolder.exists()){
@@ -106,6 +104,7 @@ public class ClaimDataManager implements Listener {
 
             File[] files = dataFolder.listFiles();
             if (files != null) {
+                long start = System.currentTimeMillis();
                 for (File file : files) {
                     try {
                         int temp = Integer.valueOf(file.getName().substring(0, file.getName().length() - (".json".length())));
@@ -113,16 +112,8 @@ public class ClaimDataManager implements Listener {
                             idCounter = temp;
                         }
 
-                        logger.info("Loading claim filename: " + file.getName());
-
                         Claim claim = readClaim(new FileInputStream(file));
-
-                        logger.info("Loaded claim id: " + claim.getId());
-
                         loadChunksForClaim(claim);
-
-                        logger.info("Loaded chunks for claim id: " + claim.getId());
-
                         PermissionGroup permissionGroup = claim.getPerms();
                         ArrayList<SubClaim> subClaims = claim.getSubClaims();
 
@@ -160,8 +151,6 @@ public class ClaimDataManager implements Listener {
                             }
                         }
 
-                        logger.info("Loaded claims into admin and owner map for claim id: " + claim.getId());
-
                         //ValueConfig check to make sure no dinky plugins loaded worlds
                         if (!GlobalConfig.visual_menu_items.containsKey(claim.getWorld())){
                             GlobalConfig.visual_menu_items.put(claim.getWorld(), Material.OAK_FENCE);
@@ -186,6 +175,8 @@ public class ClaimDataManager implements Listener {
                     }
                      */
                 }
+
+                logger.info("Finished data load in " + ((System.currentTimeMillis() - start) / 1000));
             }
         }
 
@@ -196,7 +187,7 @@ public class ClaimDataManager implements Listener {
                     .loaderThreadCount(3)
                     .disableStatistics(true)
                     .loader((id) -> {
-                        File file = new File(Paths.get(dataPath.toString(), id.toString() + ".json").toUri());
+                        File file = new File(dataFolder, id.toString() + ".json");
                         if (file.exists()){
                             FileInputStream stream = new FileInputStream(file);
                             Claim claim = readClaim(stream);
@@ -452,7 +443,7 @@ public class ClaimDataManager implements Listener {
     }
 
     private boolean addClaim(Claim claim){ //Should not be called from anywhere else
-        File file = new File(Paths.get(dataPath.toString(), claim.getId()  + ".json").toUri());
+        File file = new File(dataFolder, claim.getId()  + ".json");
 
         if (file.exists()){
             logger.warning("Claim file already exists for id: " + claim.getId() + ", aborting");
@@ -470,7 +461,7 @@ public class ClaimDataManager implements Listener {
     }
 
     public void deleteClaim(Claim claim){
-        File file = new File(Paths.get(dataPath.toString(), claim.getId()  + ".json").toUri());
+        File file = new File(dataFolder, claim.getId() + ".json");
         file.delete();
 
         //Claim Data
@@ -487,6 +478,11 @@ public class ClaimDataManager implements Listener {
         }
 
         claim.getSubClaims().iterator().forEachRemaining(this::deleteSubClaimWithoutRemove);
+
+        claimLookup.remove(Integer.valueOf(claim.getId()));
+
+        //Refund
+        ContributionManager.refundContributors(claim);
     }
 
     public void deleteSubClaimWithoutRemove(SubClaim subClaim){
@@ -616,7 +612,7 @@ public class ClaimDataManager implements Listener {
     }
 
     public void saveClaim(Claim claim){
-        File file = new File(Paths.get(dataPath.toString(), claim.getId() + ".json").toUri());
+        File file = new File(dataFolder, claim.getId() + ".json");
         try {
             writeClaim(file, claim);
 

@@ -105,7 +105,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (isFullOfLiquid(event.getBlock()) && checkToCancel(event.getBlock(), event.getToBlock())){
+        if (isFullOfLiquid(event.getBlock()) && checkToCancelFluid(event.getBlock(), event.getToBlock())){
             event.setCancelled(true);
         }
     }
@@ -137,6 +137,22 @@ public class PlayerListener implements Listener {
         }
     }
 
+    private boolean checkToCancelFluid(Block block, Block pushingBlock){
+        Claim pistonClaim = manager.getClaim(block.getLocation());
+        Claim pushedClaim = manager.getClaim(pushingBlock.getLocation());
+
+        if (pistonClaim == pushedClaim)
+            return false;
+
+        //Check both claims if one has it disabled then the event is canceled
+        if (pistonClaim != null && !pistonClaim.hasGlobalPermission(PermissionRoute.FLUIDS)) {
+            return true;
+        }
+
+        // Could combine but this is easier to read
+        return pushedClaim != null && !pushedClaim.hasGlobalPermission(PermissionRoute.FLUIDS);
+    }
+
     private boolean checkToCancel(Block block, Block pushingBlock){
         Claim pistonClaim = manager.getClaim(block.getLocation());
         Claim pushedClaim = manager.getClaim(pushingBlock.getLocation());
@@ -154,18 +170,12 @@ public class PlayerListener implements Listener {
     }
 
     private boolean processPistonEvent(BlockFace direction, List<Block> blocks, Block pistonBlock){
-        if(blocks.size() == 0) {
-            Block pushed = pistonBlock.getRelative(direction);
-
+        Block pushed = pistonBlock.getRelative(direction);
+        if (blocks.size() == 0) {
             return checkToCancel(pistonBlock, pushed);
         }
 
-        Claim pistonClaim = manager.getClaim(pistonBlock.getLocation());
-        if (pistonClaim != null && !pistonClaim.hasGlobalPermission(PermissionRoute.PISTONS)) {
-            return true;
-        }
-
-        if (checkToCancel(pistonBlock, pistonBlock.getRelative(direction))){
+        if (checkToCancel(pistonBlock, pushed)){
             return true;
         }
 

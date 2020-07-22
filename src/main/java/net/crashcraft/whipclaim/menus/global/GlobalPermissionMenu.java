@@ -57,6 +57,11 @@ public class GlobalPermissionMenu extends MenuListHelper {
     public void loadItems() {
         super.loadItems();
 
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+    }
+
+    @Override
+    public void setupSidebar() {
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
                         ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getMinX() +
@@ -68,8 +73,6 @@ public class GlobalPermissionMenu extends MenuListHelper {
         inv.setItem(25, createGuiItem(ChatColor.GRAY + "General Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Advanced Permissions", Material.NETHER_STAR));
-
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override

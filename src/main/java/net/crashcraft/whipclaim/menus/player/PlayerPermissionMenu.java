@@ -60,14 +60,17 @@ public class PlayerPermissionMenu extends MenuListHelper {
     public void loadItems() {
         super.loadItems();
 
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+    }
+
+    @Override
+    public void setupSidebar() {
         inv.setItem(16, createPlayerHead(target, new ArrayList<>(Arrays.asList(ChatColor.GREEN + "You are currently editing",
                 ChatColor.GREEN + "this players permissions."))));
 
         inv.setItem(25, createGuiItem(ChatColor.GRAY + "General Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(34, createGuiItem(ChatColor.GREEN + "Container Permissions", Material.CHEST));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Admin Permissions", Material.BEACON));
-
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override

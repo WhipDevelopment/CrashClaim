@@ -30,22 +30,48 @@ public class ContributionManager {
         if (difference > 0){
             claim.addContribution(player, difference);  //add to contribution
         } else {
-            PaymentProcessor processor = WhipClaim.getPlugin().getPayment();  //refund
-
             int value = (int) Math.floor(Math.floor(difference * GlobalConfig.money_per_block) / claim.getContribution().size());
 
+            if (value == 0){
+                return;
+            }
+
             for (Map.Entry<UUID, Integer> entry : claim.getContribution().entrySet()){
-                processor.makeTransaction(entry.getKey(), TransactionType.DEPOSIT, "Claim Refund", value, (transaction) -> {
+                WhipClaim.getPlugin().getPayment().makeTransaction(entry.getKey(), TransactionType.DEPOSIT, "Claim Refund", value, (transaction) -> {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(transaction.getOwner());
                     if (offlinePlayer.isOnline()){
                         Player p = offlinePlayer.getPlayer();
                         if (p != null) {
-                            p.sendMessage(ChatColor.GREEN + "You have received " + ChatColor.GOLD + transaction.getAmount()
+                            p.sendMessage(ChatColor.GREEN + "You have received " + ChatColor.GOLD +
+                                    ((int) Math.floor(transaction.getAmount()))
                                     + ChatColor.GREEN + " for a refunded contribution to a claim.");
                         }
                     }
                 });
             }
+        }
+    }
+
+    public static void refundContributors(Claim claim){
+        int area = getArea(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ());
+        int value = (int) Math.floor(Math.floor(area * GlobalConfig.money_per_block) / claim.getContribution().size());
+
+        if (value == 0){
+            return;
+        }
+
+        for (Map.Entry<UUID, Integer> entry : claim.getContribution().entrySet()){
+            WhipClaim.getPlugin().getPayment().makeTransaction(entry.getKey(), TransactionType.DEPOSIT, "Claim Refund", value, (transaction) -> {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(transaction.getOwner());
+                if (offlinePlayer.isOnline()){
+                    Player p = offlinePlayer.getPlayer();
+                    if (p != null) {
+                        p.sendMessage(ChatColor.GREEN + "You have received " + ChatColor.GOLD +
+                                ((int) Math.floor(transaction.getAmount()))
+                                + ChatColor.GREEN + " for a refunded contribution to a claim.");
+                    }
+                }
+            });
         }
     }
 }

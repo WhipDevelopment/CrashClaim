@@ -5,6 +5,7 @@ import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.menus.ClaimMenu;
+import net.crashcraft.whipclaim.menus.helpers.MenuSideBar;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class GlobalContainerMenu extends GUI {
+public class GlobalContainerMenu extends GUI implements MenuSideBar {
     private static final int itemOffset = 10;
 
     private ArrayList<Material> containers;
@@ -48,8 +49,6 @@ public class GlobalContainerMenu extends GUI {
     public void loadItems() {
         inv.clear();
         trackingMap.clear();
-
-        BaseClaim claim = group.getOwner();
 
         int offset = (5 * page);
 
@@ -96,6 +95,15 @@ public class GlobalContainerMenu extends GUI {
             }
         }
 
+        setupSidebar();
+
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+    }
+
+    @Override
+    public void setupSidebar() {
+        BaseClaim claim = group.getOwner();
+
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
                         ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getMinX() +
@@ -107,8 +115,6 @@ public class GlobalContainerMenu extends GUI {
         inv.setItem(25, createGuiItem(ChatColor.GREEN + "General Permissions", Material.CRAFTING_TABLE));
         inv.setItem(34, createGuiItem(ChatColor.GRAY + "Container Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(43, createGuiItem(ChatColor.YELLOW + "Advanced Permissions", Material.NETHER_STAR));
-
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override

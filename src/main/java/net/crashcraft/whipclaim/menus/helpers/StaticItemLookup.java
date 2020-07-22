@@ -14,9 +14,9 @@ public class StaticItemLookup {
     private static HashMap<PermissionRoute, ItemStack> items = new HashMap<PermissionRoute, ItemStack>(){
         {
             put(PermissionRoute.PISTONS , GUI.createGuiItem(ChatColor.GOLD + "Allow Pistons",
-                    new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows pistons to cross into and out of claim")), Material.CRAFTING_TABLE));
+                    new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows pistons to cross into and out of claim")), Material.PISTON));
             put(PermissionRoute.FLUIDS, GUI.createGuiItem(ChatColor.GOLD + "Allow Fluids",
-                    new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows fluids to cross into and out of claim")), Material.OAK_FENCE_GATE));
+                    new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows fluids to cross into and out of claim")), Material.WATER_BUCKET));
             put(PermissionRoute.VIEW_SUB_CLAIMS, GUI.createGuiItem(ChatColor.GOLD + "View Sub Claims",
                     new ArrayList<>(Arrays.asList(ChatColor.GREEN + "Allows players to view the sub claims")), Material.SEA_LANTERN));
             put(PermissionRoute.BUILD, GUI.createGuiItem(ChatColor.GOLD + "Build", Material.GRASS_BLOCK));

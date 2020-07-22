@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
 
-public abstract class MenuListHelper extends GUI{
+public abstract class MenuListHelper extends GUI implements MenuSideBar{
     private static PermissionHelper helper = PermissionHelper.getPermissionHelper();
 
     private PermissionSet set;
@@ -49,6 +49,7 @@ public abstract class MenuListHelper extends GUI{
     public void loadItems() {
         inv.clear();
         setupInventory();
+        setupSidebar();
     }
 
     @Override
@@ -115,6 +116,8 @@ public abstract class MenuListHelper extends GUI{
         Not in conductor to allow class to have logic before init
      */
 
+    public abstract void setupSidebar();
+
     public abstract void invalidPermissions();
 
     public abstract void setPermission(PermissionRoute route, int value);
@@ -124,7 +127,7 @@ public abstract class MenuListHelper extends GUI{
 
         int itemOffset = 0;
 
-        for (int x = page * 5; x < (page * 5 + 5 < items.size() ? page * 5 + 5 : items.size()); x++){
+        for (int x = page * 5; x < (Math.min(page * 5 + 5, items.size())); x++){
             PermissionRoute route = items.get(x);
 
             if (route == null){

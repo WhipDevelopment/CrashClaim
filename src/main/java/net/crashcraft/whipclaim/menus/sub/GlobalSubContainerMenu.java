@@ -5,6 +5,7 @@ import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.*;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.menus.SubClaimMenu;
+import net.crashcraft.whipclaim.menus.helpers.MenuSideBar;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.ChatColor;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 @SuppressWarnings("Duplicates")
-public class GlobalSubContainerMenu extends GUI {
+public class GlobalSubContainerMenu extends GUI implements MenuSideBar {
     private static final int itemOffset = 10;
 
     private ArrayList<Material> containers;
@@ -50,8 +51,6 @@ public class GlobalSubContainerMenu extends GUI {
     public void loadItems() {
         inv.clear();
         trackingMap.clear();
-
-        SubClaim claim = (SubClaim) group.getOwner();
 
         int offset = (5 * page);
 
@@ -112,6 +111,15 @@ public class GlobalSubContainerMenu extends GUI {
             }
         }
 
+        setupSidebar();
+
+        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+    }
+
+    @Override
+    public void setupSidebar() {
+        SubClaim claim = (SubClaim) group.getOwner();
+
         inv.setItem(16, createGuiItem(ChatColor.GOLD + claim.getName(),
                 new ArrayList<>(Arrays.asList(
                         ChatColor.GREEN + "NW Corner: " + ChatColor.YELLOW + claim.getMinX() +
@@ -123,8 +131,6 @@ public class GlobalSubContainerMenu extends GUI {
         inv.setItem(25, createGuiItem(ChatColor.GREEN + "General Permissions", Material.CRAFTING_TABLE));
         inv.setItem(34, createGuiItem(ChatColor.GRAY + "Container Permissions", Material.GRAY_STAINED_GLASS_PANE));
         inv.setItem(43, createGuiItem(ChatColor.DARK_GRAY + "Advanced Permissions", Material.BLACK_STAINED_GLASS_PANE));
-
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
     }
 
     @Override

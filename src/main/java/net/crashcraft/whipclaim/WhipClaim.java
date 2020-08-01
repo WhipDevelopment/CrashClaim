@@ -15,6 +15,7 @@ import net.crashcraft.whipclaim.data.MaterialName;
 import net.crashcraft.whipclaim.listeners.PaperListener;
 import net.crashcraft.whipclaim.listeners.PlayerListener;
 import net.crashcraft.whipclaim.listeners.WorldListener;
+import net.crashcraft.whipclaim.menus.helpers.StaticItemLookup;
 import net.crashcraft.whipclaim.permissions.BypassManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
@@ -96,6 +97,8 @@ public class WhipClaim extends JavaPlugin {
             getLogger().info("Looks like your not running paper, some protections will be disabled.");
             PaperLib.suggestPaper(this);
         }
+
+        new StaticItemLookup();
     }
 
     @Override

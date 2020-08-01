@@ -1,15 +1,17 @@
-package net.crashcraft.whipclaim.menus.player;
+package net.crashcraft.whipclaim.menus.list;
 
 import dev.whip.crashutils.menusystem.GUI;
 import dev.whip.crashutils.menusystem.defaultmenus.PlayerListMenu;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
+import net.crashcraft.whipclaim.menus.permissions.SimplePermissionMenu;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -26,8 +28,13 @@ public class PlayerPermListMenu {
         ArrayList<UUID> uuids = new ArrayList<>(claim.getPerms().getPlayerPermissions().keySet());
 
         for (Player player : Bukkit.getOnlinePlayers()){
-            if (!uuids.contains(player.getUniqueId()))
+            if (isVanished(player)){
+                continue;
+            }
+
+            if (!uuids.contains(player.getUniqueId())) {
                 uuids.add(player.getUniqueId());
+            }
         }
 
         uuids.remove(viewer.getUniqueId());    //Cant modify perms of yourself
@@ -42,9 +49,16 @@ public class PlayerPermListMenu {
             throw new RuntimeException("Claim was not of known type.");
         }
 
-        new PlayerListMenu(viewer, previous, uuids, (player, uuid) -> {
-            new PlayerPermissionMenu(player, claim.getPerms(), uuid).open();
+        new PlayerListMenu(viewer, previous, uuids, (gui, uuid) -> {
+            new SimplePermissionMenu(viewer, claim, uuid, gui).open();
             return "";
         }).open();
+    }
+
+    private boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
+        }
+        return false;
     }
 }

@@ -6,9 +6,9 @@ import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.config.GlobalConfig;
-import net.crashcraft.whipclaim.menus.global.GlobalPermissionMenu;
 import net.crashcraft.whipclaim.menus.list.SubClaimListMenu;
-import net.crashcraft.whipclaim.menus.player.PlayerPermListMenu;
+import net.crashcraft.whipclaim.menus.list.PlayerPermListMenu;
+import net.crashcraft.whipclaim.menus.permissions.SimplePermissionMenu;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -128,7 +128,7 @@ public class ClaimMenu extends GUI {
                 break;
             case "global claim settings":
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
-                    new GlobalPermissionMenu(player, claim).open();
+                    new SimplePermissionMenu(player, claim, null, this).open();
                 } else {
                     player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
                     forceClose();

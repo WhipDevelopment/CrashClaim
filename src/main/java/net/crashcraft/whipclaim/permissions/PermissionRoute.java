@@ -261,7 +261,7 @@ public enum  PermissionRoute {
             }
         }
     },
-        VIEW_SUB_CLAIMS{
+    VIEW_SUB_CLAIMS{
         @Override
         public int getPerm(PlayerPermissionSet set) {
             if (set == null)
@@ -289,7 +289,20 @@ public enum  PermissionRoute {
     CONTAINERS{
         @Override
         public int getPerm(PlayerPermissionSet set) {
-            throw new RuntimeException("PermissionRoute was called with an invalid perm. (CONTAINERS called getPerm");
+            int old = 4;
+
+            for (Material material : WhipClaim.getPlugin().getDataManager().getPermissionSetup().getTrackedContainers()){
+                if (old == 4){
+                    old = CONTAINERS.getPerm(set, material);
+                    continue;
+                }
+
+                if (old != (CONTAINERS.getPerm(set, material))){
+                    return 4;
+                }
+            }
+
+            return old;
         }
 
         @Override
@@ -299,7 +312,20 @@ public enum  PermissionRoute {
 
         @Override
         public int getPerm(GlobalPermissionSet set) {
-            throw new RuntimeException("PermissionRoute was called with an invalid perm. (CONTAINERS called getPerm");
+            int old = 4;
+
+            for (Material material : WhipClaim.getPlugin().getDataManager().getPermissionSetup().getTrackedContainers()){
+                if (old == 4){
+                    old = CONTAINERS.getPerm(set, material);
+                    continue;
+                }
+
+                if (old != (CONTAINERS.getPerm(set, material))){
+                    return 4;
+                }
+            }
+
+            return old;
         }
 
         @Override
@@ -331,6 +357,60 @@ public enum  PermissionRoute {
             Integer integer = set.getContainers().get(material);
 
             return integer == null ? set.getDefaultConatinerValue() : integer;
+        }
+    },
+    /**
+     * Allow Pistons
+     * Allow Fluids
+     *
+     * Anything past this point can return a 4 to signify that getPermission could be completed but could not find a common value
+     */
+    MISC {
+        @Override
+        public int getPerm(PlayerPermissionSet set) {
+            return PermState.ENABLED;
+        }
+
+        @Override
+        public void setPerm(PlayerPermissionSet set, int value) {
+            throw new RuntimeException("PermissionRoute was called with an invalid perm. (MISC called setPerm");
+        }
+
+        @Override
+        public int getPerm(GlobalPermissionSet set) {
+            return set.getPistons() == set.getPistons() ? set.getPistons() : 4;
+        }
+
+        @Override
+        public void setPerm(GlobalPermissionSet set, int value) {
+            if (value == PermState.NEUTRAL){
+                throw new RuntimeException("PermissionRoute was called with an invalid perm. (MISC called setPerm with NUETRAL which is unsupported");
+            }
+
+            PISTONS.setPerm(set, value);
+            FLUIDS.setPerm(set, value);
+        }
+    },
+    ADMIN {
+        @Override
+        public int getPerm(PlayerPermissionSet set) {
+            return set.getModifyClaim() == set.getModifyPermissions() ? set.getModifyClaim() : 4;
+        }
+
+        @Override
+        public void setPerm(PlayerPermissionSet set, int value) {
+            MODIFY_CLAIM.setPerm(set, value);
+            MODIFY_PERMISSIONS.setPerm(set, value);
+        }
+
+        @Override
+        public int getPerm(GlobalPermissionSet set) {
+            throw new RuntimeException("PermissionRoute was called with an invalid perm. (ADMIN called setPerm");
+        }
+
+        @Override
+        public void setPerm(GlobalPermissionSet set, int value) {
+            throw new RuntimeException("PermissionRoute was called with an invalid perm. (ADMIN called setPerm");
         }
     };
 

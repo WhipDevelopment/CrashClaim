@@ -25,16 +25,24 @@ public class PermissionHelper {
         this.bypassManager = bypassManager;
     }
 
-    public boolean hasPermission(BaseClaim claim, UUID player, PermissionRoute route){
+    public Boolean hasPermission(BaseClaim claim, UUID player, PermissionRoute route){
         if (bypassManager.isBypass(player)){
             return true;
         }
 
         PlayerPermissionSet set = claim.getPerms().getPlayerPermissionSet(player);
-        return set != null && route.getPerm(set) == PermState.ENABLED;
+        if (set == null){
+            return false;
+        } else {
+            int value = route.getPerm(set);
+            if (value == 4){
+                return null;
+            }
+            return value == PermState.ENABLED;
+        }
     }
 
-    public boolean hasPermission(BaseClaim claim, UUID player, Material material){
+    public Boolean hasPermission(BaseClaim claim, UUID player, Material material){
         if (bypassManager.isBypass(player)){
             return true;
         }
@@ -43,7 +51,7 @@ public class PermissionHelper {
         return set != null && PermissionRoute.CONTAINERS.getPerm(set, material) == PermState.ENABLED;
     }
 
-    public boolean hasPermission(UUID player, Location location, Material material){
+    public Boolean hasPermission(UUID player, Location location, Material material){
         if (bypassManager.isBypass(player)){
             return true;
         }
@@ -56,7 +64,7 @@ public class PermissionHelper {
         }
     }
 
-    public boolean hasPermission(UUID player, Location location, PermissionRoute route){
+    public Boolean hasPermission(UUID player, Location location, PermissionRoute route){
         if (bypassManager.isBypass(player)){
             return true;
         }
@@ -69,7 +77,7 @@ public class PermissionHelper {
         }
     }
 
-    public boolean hasPermission(Location location, Material material){
+    public Boolean hasPermission(Location location, Material material){
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim == null){
             return true;
@@ -78,7 +86,7 @@ public class PermissionHelper {
         }
     }
 
-    public boolean hasPermission(Location location, PermissionRoute route) {
+    public Boolean hasPermission(Location location, PermissionRoute route) {
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim == null) {
             return true;

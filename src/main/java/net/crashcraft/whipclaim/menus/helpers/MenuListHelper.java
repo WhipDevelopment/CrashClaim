@@ -97,12 +97,12 @@ public abstract class MenuListHelper extends GUI {
     private void init(){
         BaseClaim claim = group.getOwner();
 
-        List<String> desc = Arrays.asList(
+        List<String> desc = new ArrayList<>(Arrays.asList(
                 ChatColor.GREEN + "Coordinates: " + ChatColor.YELLOW +
                         ChatColor.YELLOW + claim.getMinX() + ", " + claim.getMinZ()
                         + ChatColor.GOLD + ", " +
                         ChatColor.YELLOW + claim.getMaxX() + ", " + claim.getMaxZ()
-        );
+        ));
 
         if (group.getOwner() instanceof SubClaim){
             SubClaim subClaim = (SubClaim) group.getOwner();
@@ -272,7 +272,7 @@ public abstract class MenuListHelper extends GUI {
                     ChatColor.GOLD + WhipClaim.getPlugin().getMaterialName().getMaterialName(material), material
             ));
 
-            boolean allow = helper.hasPermission(group.getOwner(), player.getUniqueId(), material);
+            Boolean allow = helper.hasPermission(group.getOwner(), player.getUniqueId(), material);
 
             drawSwitch(switchType, getUniversalContainerPerm(material), x, allow);
         }
@@ -303,7 +303,7 @@ public abstract class MenuListHelper extends GUI {
 
             inv.setItem(startMenu + itemOffset, StaticItemLookup.getItem(route));
 
-            boolean allow = helper.hasPermission(group.getOwner(), setter, route);
+            Boolean allow = helper.hasPermission(group.getOwner(), setter, route);
 
             drawSwitch(itemDisplay.get(route), getUniversalPerm(route), itemOffset, allow);
 
@@ -311,9 +311,19 @@ public abstract class MenuListHelper extends GUI {
         }
     }
 
-    private void drawSwitch(MenuSwitchType type, int value, int itemOffset, boolean allow){
+    private void drawSwitch(MenuSwitchType type, int value, int itemOffset, Boolean allow){
         switch (type) {
             case TRIPLE:
+                if (allow == null){
+                    inv.setItem(startMenu + itemOffset + 9, createGuiItem(ChatColor.YELLOW + "Enabled",
+                           Material.YELLOW_STAINED_GLASS));
+                    inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.YELLOW + "Neutral",
+                            Material.YELLOW_STAINED_GLASS));
+                    inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.YELLOW + "Disable",
+                            Material.YELLOW_STAINED_GLASS));
+                    return;
+                }
+
                 switch (value) {
                     case 0:
                         inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.RED + "Disabled",
@@ -342,9 +352,25 @@ public abstract class MenuListHelper extends GUI {
                         inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
                                 allow ? Material.RED_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
                         break;
+                    case 4:
+                        inv.setItem(startMenu + itemOffset + 9, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
+                                Material.GREEN_STAINED_GLASS));
+                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.GRAY + "Neutral",
+                                Material.GRAY_STAINED_GLASS));
+                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
+                                Material.RED_STAINED_GLASS));
+                        break;
                 }
                 break;
             case DOUBLE:
+                if (allow == null){
+                    inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.YELLOW + "Enabled",
+                            Material.YELLOW_STAINED_GLASS));
+                    inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.YELLOW + "Disable",
+                            Material.YELLOW_STAINED_GLASS));
+                    return;
+                }
+
                 switch (value) {
                     case 0:
                         inv.setItem(startMenu + itemOffset+ 27, createGuiItem(ChatColor.GREEN + "Disable",
@@ -359,6 +385,34 @@ public abstract class MenuListHelper extends GUI {
 
                         inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disabled",
                                 allow ? Material.RED_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                        break;
+                    case 4:
+                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
+                                Material.GREEN_STAINED_GLASS));
+                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
+                                Material.RED_STAINED_GLASS));
+                        break;
+                }
+                break;
+            case DOUBLE_DISABLED:
+                switch (value) {
+                    case 0:
+                        inv.setItem(startMenu + itemOffset+ 27, createGuiItem(ChatColor.DARK_RED + "Disable",
+                                Material.GRAY_CONCRETE));
+                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
+                                Material.GRAY_STAINED_GLASS_PANE));
+                        break;
+                    case 1:
+                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
+                                Material.GRAY_CONCRETE));
+                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disabled",
+                                Material.GRAY_STAINED_GLASS_PANE));
+                        break;
+                    case 4:
+                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
+                                Material.GREEN_STAINED_GLASS));
+                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
+                                Material.RED_STAINED_GLASS));
                         break;
                 }
                 break;

@@ -73,8 +73,20 @@ public class AdvancedPermissionMenu extends MenuListHelper {
             case ADMIN:
                 LinkedHashMap<PermissionRoute, MenuSwitchType> list = new LinkedHashMap<>();
 
-                list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.DOUBLE);
-                list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE);
+                UUID owner = null;
+                if (claim instanceof SubClaim){
+                    owner = ((SubClaim) claim).getParent().getOwner();
+                } else if (claim instanceof Claim){
+                    owner = ((Claim) claim).getOwner();
+                }
+
+                if (player.getUniqueId().equals(owner)) {
+                    list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.DOUBLE);
+                    list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE);
+                } else {
+                    list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.DOUBLE_DISABLED);
+                    list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE_DISABLED);
+                }
 
                 setup(list, 5, permissionSet, player.getUniqueId(), claim.getPerms());
                 return;

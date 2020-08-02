@@ -49,14 +49,26 @@ public class SimplePermissionMenu extends MenuListHelper {
 
         if (isPlayerPermission){
             menuList.put(PermissionRoute.TELEPORTATION, type);
-            menuList.put(PermissionRoute.ADMIN, MenuSwitchType.DOUBLE);
+            UUID owner = null;
+            if (claim instanceof SubClaim){
+                owner = ((SubClaim) claim).getParent().getOwner();
+            } else if (claim instanceof Claim){
+                owner = ((Claim) claim).getOwner();
+            }
+
+            if (player.getUniqueId().equals(owner)) {
+                menuList.put(PermissionRoute.ADMIN, MenuSwitchType.DOUBLE);
+            } else {
+                menuList.put(PermissionRoute.ADMIN, MenuSwitchType.DOUBLE_DISABLED);
+            }
         } else {
             menuList.put(PermissionRoute.EXPLOSIONS, type);
-            menuList.put(PermissionRoute.TELEPORTATION, type);
-        }
 
-        if (claim instanceof Claim){
-            menuList.put(PermissionRoute.MISC, MenuSwitchType.DOUBLE);
+            if (claim instanceof Claim){
+                menuList.put(PermissionRoute.MISC, MenuSwitchType.DOUBLE);
+            } else if (claim instanceof SubClaim){
+                menuList.put(PermissionRoute.TELEPORTATION, MenuSwitchType.TRIPLE);
+            }
         }
 
         setup(menuList, 6, permissionSet, player.getUniqueId(), claim.getPerms());

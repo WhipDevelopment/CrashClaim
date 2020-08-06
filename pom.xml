@@ -72,6 +72,10 @@
                             <pattern>com.google.code.gson</pattern>
                             <shadedPattern>net.crashcraft.whipclaim.com.google.code.gson</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>co.aikar.taskchain</pattern>
+                            <shadedPattern>net.crashcraft.whipclaim.taskchain</shadedPattern> <!-- Replace this -->
+                        </relocation>
                     </relocations>
                     <artifactSet>
                         <includes>
@@ -135,6 +139,11 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>taskchain-bukkit</artifactId>
+            <version>3.7.2</version>
+        </dependency>
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>

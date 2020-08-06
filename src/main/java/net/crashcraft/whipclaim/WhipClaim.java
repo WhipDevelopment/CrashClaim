@@ -1,5 +1,8 @@
 package net.crashcraft.whipclaim;
 
+import co.aikar.taskchain.BukkitTaskChainFactory;
+import co.aikar.taskchain.TaskChain;
+import co.aikar.taskchain.TaskChainFactory;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
@@ -32,11 +35,8 @@ public class WhipClaim extends JavaPlugin {
     private VisualizationManager visualizationManager;
     private ProtocolManager protocolManager;
     private CrashUtils crashUtils;
-
     private MaterialName materialName;
-
     private PaymentProcessor payment;
-
     private CrashPayment paymentPlugin;
 
     @Override
@@ -56,6 +56,8 @@ public class WhipClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        taskChainFactory = BukkitTaskChainFactory.create(this);
+
         if (getDataFolder().mkdirs()){
             getLogger().info("Created plugin directory");
         }
@@ -104,6 +106,14 @@ public class WhipClaim extends JavaPlugin {
     @Override
     public void onDisable() {
         manager.saveClaimsSync();
+    }
+
+    private static TaskChainFactory taskChainFactory;
+    public static <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+    public static <T> TaskChain<T> newSharedChain(String name) {
+        return taskChainFactory.newSharedChain(name);
     }
 
     public static WhipClaim getPlugin() {

@@ -1,11 +1,5 @@
-<<<<<<< HEAD
-Server/
-target/
-CrashCore.iml
-.idea/
-=======
 .idea/
 CrashCore.iml
 Server/
 target/
->>>>>>> feature/Claiming
+/WhipClaim.iml

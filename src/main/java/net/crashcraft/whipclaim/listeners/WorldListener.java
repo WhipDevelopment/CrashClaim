@@ -77,8 +77,11 @@ public class WorldListener implements Listener {
                 visuals.sendAlert(player, "You do not have permission to interact in this claim.");
             }
         } else if ((e.getEntity() instanceof WitherSkull || e.getEntity() instanceof Wither)
-                && !helper.hasPermission(location, PermissionRoute.EXPLOSIONS)){
+                && !helper.hasPermission(location, PermissionRoute.EXPLOSIONS)) {
             e.setCancelled(true);
+        } else if (e.getEntity() instanceof Player){
+            e.setCancelled(true);
+            visuals.sendAlert((Player) e.getEntity(), "You do not have permission to interact in this claim.");
         } else {
             ArrayList<Player> players = new ArrayList<>();
             for (Entity entity : e.getEntity().getPassengers()) {

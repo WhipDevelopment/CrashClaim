@@ -214,12 +214,12 @@ public class PlayerListener implements Listener {
 
                         World world = location.getWorld();
                         if (distMax > distMin) {    //Find closest side
-                            event.setTo(new Location(world, claim.getMinX(),
-                                    world.getHighestBlockYAt(claim.getMinX(),
+                            event.setTo(new Location(world, claim.getMinX() - 1,
+                                    world.getHighestBlockYAt(claim.getMinX() - 1,
                                             location.getBlockZ()), location.getBlockZ()));
                         } else {
-                            event.setTo(new Location(world, claim.getMaxX(),
-                                    world.getHighestBlockYAt(claim.getMaxX(),
+                            event.setTo(new Location(world, claim.getMaxX() + 1,
+                                    world.getHighestBlockYAt(claim.getMaxX() + 1,
                                             location.getBlockZ()), location.getBlockZ()));
                         }
                     }

@@ -88,6 +88,7 @@ public class WhipClaim extends JavaPlugin {
         commandManager.registerCommand(new BypassCommand(bypassManager));
         commandManager.registerCommand(new ContainerizerCommand());
         commandManager.registerCommand(new ClaimInfoCommand(manager));
+        commandManager.registerCommand(new EjectCommand(manager));
 
         Bukkit.getPluginManager().registerEvents(manager, this);
         Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);

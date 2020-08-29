@@ -1,23 +1,24 @@
 package net.crashcraft.whipclaim.commands;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.menus.helpers.StaticItemLookup;
-import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.cache2k.CacheManager;
 
 import java.util.Map;
 
+@CommandAlias("claiminfo")
+@CommandPermission("crashclaim.admin.bypass")
 public class ClaimInfoCommand extends BaseCommand {
     private final ClaimDataManager manager;
 

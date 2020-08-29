@@ -28,7 +28,7 @@ public class EjectCommand extends BaseCommand {
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim != null){
             if (!PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), player.getLocation(), PermissionRoute.MODIFY_PERMISSIONS)){
-                player.sendMessage(ChatColor.RED + "You do not have the modify permission node.");
+                player.sendMessage(ChatColor.RED + "You do not have the modify permission ability inside this claim.");
                 return;
             }
 
@@ -41,7 +41,7 @@ public class EjectCommand extends BaseCommand {
             }
 
             if (PermissionHelper.getPermissionHelper().hasPermission(otherPlayer.getUniqueId(), otherPlayer.getLocation(), PermissionRoute.MODIFY_PERMISSIONS)){
-                player.sendMessage(ChatColor.RED + "That player has the modify permissions node and cannot be ejected.");
+                player.sendMessage(ChatColor.RED + "That player has the modify permissions ability inside this claim and cannot be ejected.");
                 return;
             }
 

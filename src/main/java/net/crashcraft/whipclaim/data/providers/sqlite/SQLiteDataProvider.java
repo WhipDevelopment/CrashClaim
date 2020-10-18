@@ -3,40 +3,29 @@ package net.crashcraft.whipclaim.data.providers.sqlite;
 import co.aikar.idb.*;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
 import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
-import net.crashcraft.whipclaim.claimobjects.permission.PermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.data.providers.DataProvider;
-import net.crashcraft.whipclaim.menus.helpers.StaticItemLookup;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.WorldInitEvent;
-import sun.security.x509.DNSName;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
+import java.util.*;
 
 public class SQLiteDataProvider implements DataProvider {
-    private Logger logger;
-
-    private DatabaseManager databaseManager;
-
     private HashMap<Material, Integer> containerIDMap;
 
     @Override
     public void init(WhipClaim plugin, ClaimDataManager manager) {
-        this.logger = plugin.getLogger();
         this.containerIDMap = new HashMap<>();
 
         plugin.getDataFolder().mkdirs();
@@ -62,8 +51,62 @@ public class SQLiteDataProvider implements DataProvider {
                 Material material = Material.getMaterial(row.getString("identifier"));
                 containerIDMap.put(material, row.getInt("id"));
             }
+
+            //Setup ID Counter
+            Integer maxClaimID = DB.getFirstColumn("SELECT max(id) FROM claims");
+            Integer maxSubClaimID = DB.getFirstColumn("SELECT max(id) FROM subclaims");
+            int idCount = maxClaimID != null ? maxClaimID : 0;
+            if (maxSubClaimID != null && maxSubClaimID > idCount){
+                idCount = maxSubClaimID;
+            }
+            idCount++;
+            manager.setIdCounter(idCount);
+
+            //Compute Owned Claims Maps for fast lookups
+            computeOwnedClaimData(
+                    DB.getResults("SELECT id, data FROM claims"),
+                    manager.getAllOwnedClaims()
+            );
+
+            computeOwnedClaimData(
+                    DB.getResults("SELECT id, data FROM subclaims"),
+                    manager.getAllOwnedSubClaims()
+            );
+
+            //Load chunks into compute map
+            for (DbRow row : DB.getResults("SELECT minX, minZ, maxX, maxZ, (SELECT uuid FROM claimworlds WHERE id = claim_data.world), (SELECT id FROM claims WHERE data = claim_data.id) FROM claim_data")){
+                manager.loadChunksForUnLoadedClaim(
+                        row.getInt("id"),
+                        row.getInt("minX"),
+                        row.getInt("minZ"),
+                        row.getInt("maxX"),
+                        row.getInt("maxZ"),
+                        UUID.fromString(row.get("uuid"))
+                );
+            }
         } catch (SQLException e){
             e.printStackTrace();
+        }
+    }
+
+    private void computeOwnedClaimData(List<DbRow> data, HashMap<UUID, Set<Integer>> map) throws SQLException{
+        for (DbRow row : data){
+            int claim_id = row.getInt("id");
+            int data_id = row.getInt("data");
+
+            List<String> uuids = DB.getFirstColumnResults("SELECT uuid FROM players WHERE id = " +
+                            "(SELECT players_id FROM permission_set WHERE data_id = ? AND (modifyClaim = ? OR modifyPermissions = ?))",
+                    data_id,
+                    PermState.ENABLED,
+                    PermState.ENABLED
+            );
+
+            for (String uuidString : uuids){
+                UUID uuid = UUID.fromString(uuidString);
+                map.computeIfAbsent(uuid, u -> new HashSet<>());
+                Set<Integer> ids = map.get(uuid);
+                ids.add(claim_id);
+            }
         }
     }
 

@@ -13,88 +13,83 @@ public class DataRev0 implements DataVersion {
 
     @Override
     public void executeUpgrade(int fromRevision) throws SQLException {
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS properties (" +
-                        "key TEXT NOT NULL," +
-                        "value TEXT NOT NULL," +
-                        "UNIQUE(value,key)" +
-                        ")"
-        );
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS players (" +
-                        "id INTEGER," +
-                        "uuid INTEGER NOT NULL," +
-                        "username TEXT," +
-                        "PRIMARY KEY(id AUTOINCREMENT)" +
-                        ")"
-        );
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS claimworld (" +
-                        "id INTEGER," +
-                        "world INTEGER NOT NULL UNIQUE," +
-                        "PRIMARY KEY(id AUTOINCREMENT)" +
-                        ")"
-        );
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS claim_data (" +
-                        "id INTEGER," +
-                        "minX INTEGER NOT NULL," +
-                        "minZ INTEGER NOT NULL," +
-                        "maxX INTEGER NOT NULL," +
-                        "maxZ INTEGER NOT NULL," +
-                        "world INTEGER NOT NULL," +
-                        "name TEXT," +
-                        "entryMessage TEXT," +
-                        "exitMessage TEXT," +
-                        "FOREIGN KEY(world) REFERENCES claimworld(id) ON DELETE CASCADE," +
-                        "PRIMARY KEY(id AUTOINCREMENT)" +
-                        ")"
-        );
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS permissioncontainers (" +
-                        "id INTEGER," +
-                        "identifier TEXT NOT NULL UNIQUE," +
-                        "PRIMARY KEY(id AUTOINCREMENT)" +
-                        ")"
-        );
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS permission_set (" +
-                        "claimdata_id INTEGER NOT NULL," +
-                        "players_id INTEGER," +
-                        "containers_id INTEGER NOT NULL," +
-                        "build INTEGER NOT NULL," +
-                        "interactions INTEGER NOT NULL," +
-                        "entities INTEGER NOT NULL," +
-                        "explosions INTEGER NOT NULL," +
-                        "teleportation INTEGER NOT NULL," +
-                        "viewSubClaims INTEGER NOT NULL," +
-                        "pistons INTEGER," +
-                        "fluids INTEGER," +
-                        "modifyPermissions INTEGER," +
-                        "modifyClaim INTEGER," +
-                        "FOREIGN KEY(containers_id) REFERENCES permissioncontainers(id) ON DELETE CASCADE," +
-                        "FOREIGN KEY(claimdata_id) REFERENCES claim_data(id) ON DELETE CASCADE," +
-                        "FOREIGN KEY(players_id) REFERENCES players(id) ON DELETE CASCADE" +
-                        ")"
-        );
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS claims (" +
-                        "id INTEGER NOT NULL," +
-                        "data INTEGER NOT NULL," +
-                        "players_id INTEGER NOT NULL," +
-                        "FOREIGN KEY(data) REFERENCES claim_data(id) ON DELETE CASCADE," +
-                        "FOREIGN KEY(players_id) REFERENCES players(id) ON DELETE CASCADE," +
-                        "PRIMARY KEY(id)" +
-                        ")"
-        );
-        DB.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS subclaims (" +
-                        "id INTEGER," +
-                        "data INTEGER NOT NULL," +
-                        "claim_id INTEGER NOT NULL," +
-                        "PRIMARY KEY(id AUTOINCREMENT)" +
-                        ")"
-        );
-
+        DB.executeUpdate("CREATE TABLE \"claim_data\" (\n" +
+                "\t\"id\"\tINTEGER,\n" +
+                "\t\"minX\"\tINTEGER NOT NULL,\n" +
+                "\t\"minZ\"\tINTEGER NOT NULL,\n" +
+                "\t\"maxX\"\tINTEGER NOT NULL,\n" +
+                "\t\"maxZ\"\tINTEGER NOT NULL,\n" +
+                "\t\"world\"\tINTEGER NOT NULL,\n" +
+                "\t\"name\"\tTEXT,\n" +
+                "\t\"entryMessage\"\tTEXT,\n" +
+                "\t\"exitMessage\"\tTEXT,\n" +
+                "\tFOREIGN KEY(\"world\") REFERENCES \"claimworlds\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tPRIMARY KEY(\"id\" AUTOINCREMENT)\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"claims\" (\n" +
+                "\t\"id\"\tINTEGER UNIQUE,\n" +
+                "\t\"data\"\tINTEGER NOT NULL,\n" +
+                "\t\"players_id\"\tINTEGER NOT NULL,\n" +
+                "\tPRIMARY KEY(\"id\"),\n" +
+                "\tFOREIGN KEY(\"data\") REFERENCES \"claim_data\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tFOREIGN KEY(\"players_id\") REFERENCES \"players\"(\"id\") ON DELETE CASCADE\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"claimworlds\" (\n" +
+                "\t\"id\"\tINTEGER,\n" +
+                "\t\"uuid\"\tTEXT NOT NULL UNIQUE,\n" +
+                "\t\"name\"\tINTEGER NOT NULL,\n" +
+                "\tPRIMARY KEY(\"id\" AUTOINCREMENT)\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"permission_containers\" (\n" +
+                "\t\"permission_id\"\tINTEGER NOT NULL,\n" +
+                "\t\"container\"\tINTEGER NOT NULL,\n" +
+                "\t\"value\"\tINTEGER NOT NULL,\n" +
+                "\tUNIQUE(\"permission_id\",\"container\",\"value\"),\n" +
+                "\tFOREIGN KEY(\"permission_id\") REFERENCES \"permission_set\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tFOREIGN KEY(\"container\") REFERENCES \"permissioncontainers\"(\"id\") ON DELETE CASCADE\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"permission_set\" (\n" +
+                "\t\"id\"\tINTEGER,\n" +
+                "\t\"data_id\"\tINTEGER NOT NULL,\n" +
+                "\t\"players_id\"\tINTEGER NOT NULL,\n" +
+                "\t\"build\"\tINTEGER NOT NULL,\n" +
+                "\t\"interactions\"\tINTEGER NOT NULL,\n" +
+                "\t\"entities\"\tINTEGER NOT NULL,\n" +
+                "\t\"teleportation\"\tINTEGER NOT NULL,\n" +
+                "\t\"viewSubClaims\"\tINTEGER NOT NULL,\n" +
+                "\t\"explosions\"\tINTEGER,\n" +
+                "\t\"pistons\"\tINTEGER,\n" +
+                "\t\"fluids\"\tINTEGER,\n" +
+                "\t\"modifyPermissions\"\tINTEGER,\n" +
+                "\t\"modifyClaim\"\tINTEGER,\n" +
+                "\tFOREIGN KEY(\"players_id\") REFERENCES \"players\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tFOREIGN KEY(\"data_id\") REFERENCES \"claim_data\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tPRIMARY KEY(\"id\" AUTOINCREMENT),\n" +
+                "\tUNIQUE(\"data_id\",\"players_id\")\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"permissioncontainers\" (\n" +
+                "\t\"id\"\tINTEGER,\n" +
+                "\t\"identifier\"\tTEXT NOT NULL UNIQUE,\n" +
+                "\tPRIMARY KEY(\"id\" AUTOINCREMENT)\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"players\" (\n" +
+                "\t\"id\"\tINTEGER,\n" +
+                "\t\"uuid\"\tINTEGER NOT NULL,\n" +
+                "\t\"username\"\tTEXT,\n" +
+                "\tPRIMARY KEY(\"id\" AUTOINCREMENT)\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"properties\" (\n" +
+                "\t\"key\"\tTEXT NOT NULL,\n" +
+                "\t\"value\"\tTEXT NOT NULL,\n" +
+                "\tUNIQUE(\"value\",\"key\")\n" +
+                ")");
+        DB.executeUpdate("CREATE TABLE \"subclaims\" (\n" +
+                "\t\"id\"\tINTEGER,\n" +
+                "\t\"data\"\tINTEGER NOT NULL,\n" +
+                "\t\"claim_id\"\tINTEGER NOT NULL,\n" +
+                "\tPRIMARY KEY(\"id\"),\n" +
+                "\tFOREIGN KEY(\"data\") REFERENCES \"claim_data\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tFOREIGN KEY(\"claim_id\") REFERENCES \"claims\"(\"id\") ON DELETE CASCADE\n" +
+                ")");
     }
 }

@@ -399,6 +399,15 @@ public class ClaimDataManager implements Listener {
         }
     }
 
+    public void loadChunksForUnLoadedClaim(int claim_id, int minX, int minZ, int maxX, int maxZ, UUID world){
+        Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(world);
+        for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForUnLoadedClaim(minX, minZ, maxX, maxZ, claim_id).entrySet()){
+            map.putIfAbsent(entry.getKey(), new ArrayList<>());
+            ArrayList<Integer> integers = map.get(entry.getKey().longValue());
+            integers.add(claim_id);
+        }
+    }
+
     private void removeChunksForClaim(Claim claim){
         Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(claim.getWorld());
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
@@ -409,12 +418,16 @@ public class ClaimDataManager implements Listener {
     }
 
     private HashMap<Long, ArrayList<Integer>> getChunksForClaim(Claim claim){
+        return getChunksForUnLoadedClaim(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ(), claim.getId());
+    }
+
+    private HashMap<Long, ArrayList<Integer>> getChunksForUnLoadedClaim(int minX, int minZ, int maxX, int maxZ, int claim_id){
         HashMap<Long, ArrayList<Integer>> chunks = new HashMap<>();
 
-        long NWChunkX = claim.getMinX() >> 4;
-        long NWChunkZ = claim.getMinZ() >> 4;
-        long SEChunkX = claim.getMaxX() >> 4;
-        long SEChunkZ = claim.getMaxZ() >> 4;
+        long NWChunkX = minX >> 4;
+        long NWChunkZ = minZ >> 4;
+        long SEChunkX = maxX >> 4;
+        long SEChunkZ = maxZ >> 4;
 
         for (long zs = NWChunkZ; zs <= SEChunkZ; zs++) {
             for (long xs = NWChunkX; xs <= SEChunkX; xs++) {
@@ -422,7 +435,7 @@ public class ClaimDataManager implements Listener {
 
                 chunks.putIfAbsent(identifier, new ArrayList<>());
 
-                chunks.get(identifier).add(claim.getId());
+                chunks.get(identifier).add(claim_id);
             }
         }
 

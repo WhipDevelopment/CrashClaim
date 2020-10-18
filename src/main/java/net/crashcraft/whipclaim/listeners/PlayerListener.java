@@ -348,7 +348,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onHangingBreak(HangingBreakEvent event) {
         if (GlobalConfig.disabled_worlds.contains(event.getEntity().getWorld().getUID())){
             return;
@@ -358,6 +358,22 @@ public class PlayerListener implements Listener {
             if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onBlockFertilizeEvent(BlockFertilizeEvent event){
+        if (GlobalConfig.disabled_worlds.contains(event.getBlock().getWorld().getUID())){
+            return;
+        }
+
+        if (event.getPlayer() == null){
+            if (!helper.hasPermission(event.getBlock().getLocation(), PermissionRoute.INTERACTIONS)){
+                event.setCancelled(true);
+            }
+        } else if (!helper.hasPermission(event.getPlayer().getUniqueId(), event.getBlock().getLocation(), PermissionRoute.INTERACTIONS)){
+            event.setCancelled(true);
+            visuals.sendAlert(event.getPlayer(), "You do not have permission to interact in this claim.");
         }
     }
 

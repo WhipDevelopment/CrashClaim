@@ -46,7 +46,7 @@ public class WhipClaim extends JavaPlugin {
 
         paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
         if (paymentPlugin == null){
-            getLogger().severe("Payment plugin not found");
+            disablePlugin("Payment plugin not found, disabling plugin");
         }
 
         this.crashUtils = new CrashUtils(this);
@@ -65,11 +65,10 @@ public class WhipClaim extends JavaPlugin {
         new ConfigManager(this);
 
         crashUtils.setupMenuSubSystem();
+        crashUtils.setupTextureCache();
 
         if (paymentPlugin != null) {
             payment = paymentPlugin.setupPaymentProvider(this).getProcessor();
-        } else {
-            getLogger().severe("Payment plugin not found");
         }
 
         visualizationManager = new VisualizationManager(this, protocolManager);
@@ -108,6 +107,11 @@ public class WhipClaim extends JavaPlugin {
     @Override
     public void onDisable() {
         manager.saveClaimsSync();
+    }
+
+    public void disablePlugin(String error){
+        getLogger().severe(error);
+        Bukkit.getPluginManager().disablePlugin(this);
     }
 
     private static TaskChainFactory taskChainFactory;

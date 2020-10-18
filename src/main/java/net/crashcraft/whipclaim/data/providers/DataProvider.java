@@ -3,8 +3,9 @@ package net.crashcraft.whipclaim.data.providers;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
+import org.bukkit.event.Listener;
 
-public interface DataProvider {
+public interface DataProvider extends Listener {
     void init(WhipClaim plugin, ClaimDataManager manager);
 
     boolean preInitialSave(Claim claim);

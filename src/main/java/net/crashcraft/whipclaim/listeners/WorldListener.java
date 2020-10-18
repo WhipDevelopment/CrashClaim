@@ -52,7 +52,7 @@ public class WorldListener implements Listener {
                         visuals.sendAlert(player, "You do not have permission to interact in this claim.");
                     }
                 }
-            } else if (helper.hasPermission(location, PermissionRoute.INTERACTIONS)){
+            } else if (!helper.hasPermission(location, PermissionRoute.INTERACTIONS)){
                 e.setCancelled(true);
             }
         }
@@ -112,7 +112,7 @@ public class WorldListener implements Listener {
                 e.setCancelled(true);
                 visuals.sendAlert(e.getPlayer(), "You do not have permission to build in this claim.");
             }
-        } else if (helper.hasPermission(location, PermissionRoute.BUILD)){
+        } else if (!helper.hasPermission(location, PermissionRoute.BUILD)){
             e.setCancelled(true);
         }
     }

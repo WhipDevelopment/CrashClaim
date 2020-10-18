@@ -81,6 +81,7 @@ public class ClaimDataManager implements Listener {
 
         this.provider = new JsonDataProvider(); //TODO make config for this and other providers
         provider.init(plugin, this);
+        Bukkit.getPluginManager().registerEvents(provider, plugin);
 
         try {
             claimLookup = new Cache2kBuilder<Integer, Claim>() {}

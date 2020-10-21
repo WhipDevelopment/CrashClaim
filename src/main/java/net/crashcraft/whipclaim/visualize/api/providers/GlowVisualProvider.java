@@ -1,11 +1,13 @@
 package net.crashcraft.whipclaim.visualize.api.providers;
 
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
-import net.crashcraft.whipclaim.visualize.api.*;
+import net.crashcraft.whipclaim.visualize.api.BaseVisual;
+import net.crashcraft.whipclaim.visualize.api.VisualColor;
+import net.crashcraft.whipclaim.visualize.api.VisualGroup;
+import net.crashcraft.whipclaim.visualize.api.VisualProvider;
 import net.crashcraft.whipclaim.visualize.api.claim.GlowClaimVisual;
 import net.crashcraft.whipclaim.visualize.api.marker.GlowMarketVisual;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 public class GlowVisualProvider implements VisualProvider {
     @Override

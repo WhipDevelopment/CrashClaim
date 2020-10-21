@@ -8,7 +8,6 @@ import net.crashcraft.whipclaim.data.ClaimDataManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 @SuppressWarnings("Duplicates")

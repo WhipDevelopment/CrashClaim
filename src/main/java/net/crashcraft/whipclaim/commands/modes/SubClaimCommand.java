@@ -5,7 +5,7 @@ import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
-import net.crashcraft.whipclaim.visualize.*;
+import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import net.crashcraft.whipclaim.visualize.api.BaseVisual;
 import net.crashcraft.whipclaim.visualize.api.VisualColor;
 import net.crashcraft.whipclaim.visualize.api.VisualGroup;

@@ -23,8 +23,9 @@ public class DataRev0 implements DataVersion {
                 "\t\"name\"\tTEXT,\n" +
                 "\t\"entryMessage\"\tTEXT,\n" +
                 "\t\"exitMessage\"\tTEXT,\n" +
-                "\tFOREIGN KEY(\"world\") REFERENCES \"claimworlds\"(\"id\") ON DELETE CASCADE,\n" +
-                "\tPRIMARY KEY(\"id\" AUTOINCREMENT)\n" +
+                "\tUNIQUE(\"minX\",\"minZ\",\"maxX\",\"maxZ\",\"world\"),\n" +
+                "\tPRIMARY KEY(\"id\" AUTOINCREMENT),\n" +
+                "\tFOREIGN KEY(\"world\") REFERENCES \"claimworlds\"(\"id\") ON DELETE CASCADE\n" +
                 ")");
         DB.executeUpdate("CREATE TABLE \"claims\" (\n" +
                 "\t\"id\"\tINTEGER UNIQUE,\n" +
@@ -41,15 +42,16 @@ public class DataRev0 implements DataVersion {
                 "\tPRIMARY KEY(\"id\" AUTOINCREMENT)\n" +
                 ")");
         DB.executeUpdate("CREATE TABLE \"permission_containers\" (\n" +
-                "\t\"permission_id\"\tINTEGER NOT NULL,\n" +
+                "\t\"data_id\"\tINTEGER NOT NULL,\n" +
+                "\t\"player_id\"\tINTEGER NOT NULL,\n" +
                 "\t\"container\"\tINTEGER NOT NULL,\n" +
                 "\t\"value\"\tINTEGER NOT NULL,\n" +
-                "\tUNIQUE(\"permission_id\",\"container\",\"value\"),\n" +
-                "\tFOREIGN KEY(\"permission_id\") REFERENCES \"permission_set\"(\"id\") ON DELETE CASCADE,\n" +
-                "\tFOREIGN KEY(\"container\") REFERENCES \"permissioncontainers\"(\"id\") ON DELETE CASCADE\n" +
+                "\tPRIMARY KEY(\"data_id\",\"player_id\",\"container\"),\n" +
+                "\tFOREIGN KEY(\"player_id\") REFERENCES \"players\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tFOREIGN KEY(\"container\") REFERENCES \"permissioncontainers\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tFOREIGN KEY(\"data_id\") REFERENCES \"claim_data\"(\"id\") ON DELETE CASCADE\n" +
                 ")");
         DB.executeUpdate("CREATE TABLE \"permission_set\" (\n" +
-                "\t\"id\"\tINTEGER,\n" +
                 "\t\"data_id\"\tINTEGER NOT NULL,\n" +
                 "\t\"players_id\"\tINTEGER NOT NULL,\n" +
                 "\t\"build\"\tINTEGER NOT NULL,\n" +
@@ -62,10 +64,9 @@ public class DataRev0 implements DataVersion {
                 "\t\"fluids\"\tINTEGER,\n" +
                 "\t\"modifyPermissions\"\tINTEGER,\n" +
                 "\t\"modifyClaim\"\tINTEGER,\n" +
-                "\tFOREIGN KEY(\"players_id\") REFERENCES \"players\"(\"id\") ON DELETE CASCADE,\n" +
                 "\tFOREIGN KEY(\"data_id\") REFERENCES \"claim_data\"(\"id\") ON DELETE CASCADE,\n" +
-                "\tPRIMARY KEY(\"id\" AUTOINCREMENT),\n" +
-                "\tUNIQUE(\"data_id\",\"players_id\")\n" +
+                "\tFOREIGN KEY(\"players_id\") REFERENCES \"players\"(\"id\") ON DELETE CASCADE,\n" +
+                "\tPRIMARY KEY(\"data_id\",\"players_id\")\n" +
                 ")");
         DB.executeUpdate("CREATE TABLE \"permissioncontainers\" (\n" +
                 "\t\"id\"\tINTEGER,\n" +
@@ -76,10 +77,11 @@ public class DataRev0 implements DataVersion {
                 "\t\"id\"\tINTEGER,\n" +
                 "\t\"uuid\"\tINTEGER NOT NULL,\n" +
                 "\t\"username\"\tTEXT,\n" +
+                "\tUNIQUE(\"id\",\"uuid\"),\n" +
                 "\tPRIMARY KEY(\"id\" AUTOINCREMENT)\n" +
                 ")");
         DB.executeUpdate("CREATE TABLE \"properties\" (\n" +
-                "\t\"key\"\tTEXT NOT NULL,\n" +
+                "\t\"key\"\tTEXT UNIQUE NOT NULL,\n" +
                 "\t\"value\"\tTEXT NOT NULL,\n" +
                 "\tUNIQUE(\"value\",\"key\")\n" +
                 ")");

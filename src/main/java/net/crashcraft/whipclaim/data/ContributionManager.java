@@ -1,6 +1,5 @@
 package net.crashcraft.whipclaim.data;
 
-import net.crashcraft.crashpayment.Payment.PaymentProcessor;
 import net.crashcraft.crashpayment.Payment.TransactionType;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;

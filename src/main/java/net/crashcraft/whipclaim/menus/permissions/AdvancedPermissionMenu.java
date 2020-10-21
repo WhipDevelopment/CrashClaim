@@ -11,7 +11,6 @@ import net.crashcraft.whipclaim.menus.helpers.MenuListHelper;
 import net.crashcraft.whipclaim.menus.helpers.MenuSwitchType;
 import net.crashcraft.whipclaim.menus.helpers.StaticItemLookup;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

@@ -1,24 +1,18 @@
 package net.crashcraft.whipclaim.data;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import net.crashcraft.crashpayment.Payment.TransactionRecipe;
-import net.crashcraft.crashpayment.Payment.TransactionResponse;
-import net.crashcraft.crashpayment.Payment.TransactionType;
 import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.crashcraft.crashpayment.Payment.TransactionResponse;
+import net.crashcraft.crashpayment.Payment.TransactionType;
 import net.crashcraft.whipclaim.WhipClaim;
-import net.crashcraft.whipclaim.claimobjects.*;
-import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
-import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
+import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
+import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.claimobjects.permission.child.SubPermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.permission.parent.ParentPermissionGroup;
 import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.data.providers.DataProvider;
-import net.crashcraft.whipclaim.data.providers.JsonDataProvider;
-import net.crashcraft.whipclaim.permissions.PermissionRoute;
-import net.crashcraft.whipclaim.permissions.PermissionRouter;
+import net.crashcraft.whipclaim.data.providers.sqlite.SQLiteDataProvider;
 import net.crashcraft.whipclaim.permissions.PermissionSetup;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -31,9 +25,6 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.cache2k.Cache2kBuilder;
 import org.cache2k.IntCache;
 
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
@@ -79,7 +70,7 @@ public class ClaimDataManager implements Listener {
             logger.info("Loaded " + world.getName() + " into chunk map");
         }
 
-        this.provider = new JsonDataProvider(); //TODO make config for this and other providers
+        this.provider = new SQLiteDataProvider();
         provider.init(plugin, this);
         Bukkit.getPluginManager().registerEvents(provider, plugin);
 

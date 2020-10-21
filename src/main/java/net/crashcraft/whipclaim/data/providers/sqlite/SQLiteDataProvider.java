@@ -37,14 +37,20 @@ public class SQLiteDataProvider implements DataProvider {
 
         new DatabaseManager(plugin); // Initialize and get data schema up to date
         try {
-            DB.executeUpdate("REPLACE INTO players(id, uuid) VALUES (?, ?)", -1, "00000000-0000-0000-0000-000000000000"); // Add fake user to use as global user for unique checks
+            Integer playerID = DB.getFirstColumn("SELECT id FROM players WHERE uuid = ?", "00000000-0000-0000-0000-000000000000");
+            if (playerID == null) {
+                DB.executeUpdate("INSERT OR IGNORE INTO players(id, uuid) VALUES (?, ?);", -1, "00000000-0000-0000-0000-000000000000"); // Add fake user to use as global user for unique checks
+            }
 
             for (World world : Bukkit.getWorlds()){
                 addWorld(world);
             }
 
             for (Material material : manager.getPermissionSetup().getTrackedContainers()){
-                DB.executeUpdateAsync("INSERT OR IGNORE INTO permissioncontainers(identifier) VALUES (?)", material.name());
+                Integer id = DB.getFirstColumn("SELECT id FROM permissioncontainers WHERE identifier = ?", material.name());
+                if (id == null) {
+                    DB.executeUpdate("INSERT OR IGNORE INTO permissioncontainers(identifier) VALUES (?)", material.name());
+                }
             }
 
             for (DbRow row : DB.getResults("SELECT id, identifier FROM permissioncontainers")){
@@ -112,11 +118,20 @@ public class SQLiteDataProvider implements DataProvider {
 
     @EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldAdd(WorldInitEvent e){
-        addWorld(e.getWorld());
+        try {
+            addWorld(e.getWorld());
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
     }
 
-    private void addWorld(World world){
-        DB.executeUpdateAsync("REPLACE INTO claimworlds(uuid, name) VALUES (?, ?)", world.getUID().toString(), world.getName());
+    private void addWorld(World world) throws SQLException{
+        DbRow row = DB.getFirstRow("SELECT name FROM claimworlds WHERE uuid = ?", world.getUID().toString());
+        if (row == null || !row.getString("name").equals(world.getName())){
+            DB.executeUpdateAsync("INSERT INTO claimworlds(uuid, name) VALUES (?, ?) ON CONFLICT(uuid) DO UPDATE SET name = ?;",
+                    world.getUID().toString(),
+                    world.getName(), world.getName());
+        }
     }
 
     @Override
@@ -129,8 +144,15 @@ public class SQLiteDataProvider implements DataProvider {
         try {
             addPlayer(claim.getOwner()); //Make sure owner is in db
 
+            Integer claimData_id = DB.getFirstColumn("SELECT data FROM claims WHERE id = ?", claim.getId());
+
+            if (claimData_id == null){
+                claimData_id = -1;
+            }
+
             //Claim Data
             addClaimData(
+                    claimData_id,
                     claim.getMinX(),
                     claim.getMinZ(),
                     claim.getMaxX(),
@@ -142,7 +164,7 @@ public class SQLiteDataProvider implements DataProvider {
             );
 
             //Claim
-            DB.executeUpdate("REPLACE INTO claims(id, data, players_id) VALUES (?, " +
+            DB.executeUpdate("INSERT OR IGNORE INTO claims(id, data, players_id) VALUES (?, " +
                             "(SELECT id FROM claim_data WHERE minX = ? AND minZ = ? AND maxX = ? AND maxZ = ? AND world = ?)," +
                             "(SELECT id FROM players WHERE uuid = ?))",
                     claim.getId(),
@@ -151,12 +173,21 @@ public class SQLiteDataProvider implements DataProvider {
             );
 
             //Claim permissions
-            int claimData_id = DB.getFirstColumn("SELECT data FROM claims WHERE claims.id = ?", claim.getId());
+            if (claimData_id == -1) {
+                claimData_id = DB.getFirstColumn("SELECT data FROM claims WHERE claims.id = ?", claim.getId());
+            }
             savePermissions(claimData_id, claim.getPerms());
 
             //Sub Claim
             for (SubClaim subClaim : claim.getSubClaims()) {
+                Integer subClaimData_id = DB.getFirstColumn("SELECT data FROM subclaims WHERE subclaims.id = ?", subClaim.getId());
+
+                if (subClaimData_id == null){
+                    subClaimData_id = -1;
+                }
+
                 addClaimData(
+                        subClaimData_id,
                         subClaim.getMinX(),
                         subClaim.getMinZ(),
                         subClaim.getMaxX(),
@@ -167,7 +198,7 @@ public class SQLiteDataProvider implements DataProvider {
                         subClaim.getExitMessage()
                 );
 
-                DB.executeUpdate("REPLACE INTO subclaims(id, data, claim_id) VALUES (?, " +
+                DB.executeUpdate("INSERT OR IGNORE INTO subclaims(id, data, claim_id) VALUES (?, " +
                                 "(SELECT id FROM claim_data WHERE minX = ? AND minZ = ? AND maxX = ? AND maxZ = ? AND world = ?)," +
                                 "?)",
                         subClaim.getId(),
@@ -175,7 +206,9 @@ public class SQLiteDataProvider implements DataProvider {
                         subClaim.getParent().getId()
                 );
 
-                int subClaimData_id = DB.getFirstColumn("SELECT data FROM subclaims WHERE subclaims.id = ?", subClaim.getId());
+                if (subClaimData_id == -1) {
+                    subClaimData_id = DB.getFirstColumn("SELECT data FROM subclaims WHERE subclaims.id = ?", subClaim.getId());
+                }
                 savePermissions(subClaimData_id, subClaim.getPerms());
             }
 
@@ -197,10 +230,20 @@ public class SQLiteDataProvider implements DataProvider {
     private void savePermissions(int data_id, PermissionGroup group) throws SQLException{
         GlobalPermissionSet global = group.getGlobalPermissionSet();
 
-        DB.executeUpdate("REPLACE INTO permission_set(data_id, players_id, build, interactions, entities, explosions, teleportation, viewSubClaims, pistons, fluids) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        DB.executeUpdate("INSERT INTO permission_set(data_id, players_id, build, interactions, entities, explosions, teleportation, viewSubClaims, pistons, fluids) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (data_id, players_id) DO UPDATE SET " +
+                        "build = ?, interactions = ?, entities = ?, explosions = ?, teleportation = ?, viewSubClaims = ?, pistons = ?, fluids = ?",
                 data_id,
                 -1,
+                global.getBuild(),
+                global.getInteractions(),
+                global.getEntities(),
+                global.getExplosions(),
+                global.getTeleportation(),
+                global.getViewSubClaims(),
+                global.getPistons(),
+                global.getFluids(),
+                //For replacing
                 global.getBuild(),
                 global.getInteractions(),
                 global.getEntities(),
@@ -221,10 +264,19 @@ public class SQLiteDataProvider implements DataProvider {
 
             int player_id = DB.getFirstColumn("SELECT id FROM players WHERE uuid = ?", uuid.toString());
 
-            DB.executeUpdate("REPLACE INTO permission_set(data_id, players_id, build, interactions, entities, teleportation, viewSubClaims, modifyPermissions, modifyClaim) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            DB.executeUpdate("INSERT INTO permission_set(data_id, players_id, build, interactions, entities, teleportation, viewSubClaims, modifyPermissions, modifyClaim) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (data_id, players_id) DO UPDATE SET " +
+                            "build = ?, interactions = ?, entities = ?, teleportation = ?, viewSubClaims = ?, modifyPermissions = ?, modifyClaim = ?",
                     data_id,
                     player_id,
+                    perms.getBuild(),
+                    perms.getInteractions(),
+                    perms.getEntities(),
+                    perms.getTeleportation(),
+                    perms.getViewSubClaims(),
+                    perms.getModifyPermissions(),
+                    perms.getModifyClaim(),
+                    //for replacing
                     perms.getBuild(),
                     perms.getInteractions(),
                     perms.getEntities(),
@@ -239,15 +291,24 @@ public class SQLiteDataProvider implements DataProvider {
     }
 
     private void addContainers(int data_id, int player_id, HashMap<Material, Integer> containers) throws SQLException{
-        int permission_id = DB.getFirstColumn("SELECT id FROM permission_set WHERE data_id = ? AND players_id = ?",  data_id, player_id);
-
-        DB.executeUpdate("DELETE FROM permission_containers WHERE permission_id = ?", permission_id); // Remove old containers as there is no constraint
-
-        for (Map.Entry<Material, Integer> entry : containers.entrySet()){
-            int material_id = containerIDMap.get(entry.getKey());
-
-            DB.executeInsert("REPLACE INTO permission_containers(permission_id, container, value) VALUES (?, ?, ?)",
-                    permission_id, material_id, entry.getValue());
+        for (Map.Entry<Material, Integer> entry : containerIDMap.entrySet()){
+            Material material = entry.getKey();
+            int container_id = entry.getValue();
+            Integer data = containers.get(material);
+            if (data == null){
+                DB.executeUpdate("DELETE FROM permission_containers WHERE data_id = ? AND player_id = ? AND container = ?",
+                        data_id,
+                        player_id,
+                        container_id); // Remove old containers as there is no constraint
+            } else {
+                DB.executeInsert("INSERT INTO permission_containers(data_id, player_id, container, value) VALUES (?, ?, ?, ?)" +
+                        "ON CONFLICT(data_id, player_id, container) DO UPDATE SET value = ?",
+                        data_id,
+                        player_id,
+                        container_id,
+                        data,
+                        data);
+            }
         }
     }
 
@@ -257,10 +318,18 @@ public class SQLiteDataProvider implements DataProvider {
         );
     }
 
-    private void addClaimData(int minX, int minZ, int maxX, int maxZ, UUID world, String name, String entryMessage, String exitMessage) throws SQLException{
-        DB.executeUpdate("REPLACE INTO claim_data(minX, minZ, maxX, maxZ, world, name, entryMessage, exitMessage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage
-        );
+    private void addClaimData(int data_id, int minX, int minZ, int maxX, int maxZ, UUID world, String name, String entryMessage, String exitMessage) throws SQLException{
+        if (data_id == -1) {
+            DB.executeUpdate("INSERT INTO claim_data(minX, minZ, maxX, maxZ, world, name, entryMessage, exitMessage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage
+            );
+        } else {
+            DB.executeUpdate("INSERT INTO claim_data(id, minX, minZ, maxX, maxZ, world, name, entryMessage, exitMessage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" +
+                            "ON CONFLICT(id) DO UPDATE SET minX = ?, minZ = ?, maxX = ?, maxZ = ?, world = ?, name = ?, entryMessage = ?, exitMessage = ?",
+                    data_id, minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage,
+                    minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage
+            );
+        }
     }
 
     @Override

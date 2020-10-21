@@ -1,9 +1,6 @@
 package net.crashcraft.whipclaim.data;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-
-import java.util.UUID;
 
 public class StaticClaimLogic {
     public static long getChunkHash(long chunkX, long chunkZ) {

@@ -1,7 +1,7 @@
 package net.crashcraft.whipclaim.visualize.api.marker;
 
-import net.crashcraft.whipclaim.visualize.api.VisualGroup;
 import net.crashcraft.whipclaim.visualize.api.VisualColor;
+import net.crashcraft.whipclaim.visualize.api.VisualGroup;
 import net.crashcraft.whipclaim.visualize.api.VisualType;
 import net.crashcraft.whipclaim.visualize.api.visuals.BaseBlockVisual;
 import org.bukkit.Location;

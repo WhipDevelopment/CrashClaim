@@ -1,7 +1,6 @@
 package net.crashcraft.whipclaim.data;
 
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
-import net.crashcraft.whipclaim.claimobjects.Claim;
 
 public class ClaimResponse {
     private boolean status;

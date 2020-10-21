@@ -1,6 +1,9 @@
 package net.crashcraft.whipclaim.permissions;
 
-import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.claimobjects.Claim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
+import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
+import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import org.bukkit.Material;

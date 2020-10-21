@@ -1,7 +1,6 @@
 package net.crashcraft.whipclaim.claimobjects.permission.child;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
@@ -11,7 +10,6 @@ import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 

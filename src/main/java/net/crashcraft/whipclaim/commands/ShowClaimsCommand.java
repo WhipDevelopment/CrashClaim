@@ -6,18 +6,13 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import net.crashcraft.whipclaim.claimobjects.Claim;
-import net.crashcraft.whipclaim.claimobjects.PermState;
-import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
-import net.crashcraft.whipclaim.permissions.PermissionRouter;
-import net.crashcraft.whipclaim.visualize.*;
+import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 @CommandAlias("show")
 public class ShowClaimsCommand extends BaseCommand {

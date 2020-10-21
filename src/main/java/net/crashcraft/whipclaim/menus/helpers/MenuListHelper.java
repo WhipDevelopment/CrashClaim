@@ -3,7 +3,6 @@ package net.crashcraft.whipclaim.menus.helpers;
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
-import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
 import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.claimobjects.permission.GlobalPermissionSet;

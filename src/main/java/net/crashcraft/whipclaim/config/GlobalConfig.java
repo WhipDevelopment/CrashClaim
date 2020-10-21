@@ -2,7 +2,6 @@ package net.crashcraft.whipclaim.config;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.crashcraft.whipclaim.visualize.api.VisualColor;
-import net.crashcraft.whipclaim.visualize.api.VisualType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -66,7 +65,6 @@ public class GlobalConfig extends BaseConfig{
                     teleportCause.put(cause, 2);
                 default:
                     //Bad value default to good one
-                    log("Invalid value for events.teleport." + cause.name() + ", defaulting to `block`");
                     teleportCause.put(cause, 1);
             }
         }

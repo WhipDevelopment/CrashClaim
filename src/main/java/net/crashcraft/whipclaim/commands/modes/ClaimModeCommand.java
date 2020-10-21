@@ -1,7 +1,7 @@
 package net.crashcraft.whipclaim.commands.modes;
 
-import net.crashcraft.crashpayment.Payment.TransactionType;
 import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
+import net.crashcraft.crashpayment.Payment.TransactionType;
 import net.crashcraft.whipclaim.WhipClaim;
 import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.claimobjects.PermState;
@@ -9,7 +9,7 @@ import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.data.*;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
-import net.crashcraft.whipclaim.visualize.*;
+import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import net.crashcraft.whipclaim.visualize.api.BaseVisual;
 import net.crashcraft.whipclaim.visualize.api.VisualColor;
 import net.crashcraft.whipclaim.visualize.api.VisualGroup;

@@ -6,9 +6,9 @@ import co.aikar.taskchain.TaskChainFactory;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
+import io.papermc.lib.PaperLib;
 import net.crashcraft.crashpayment.CrashPayment;
 import net.crashcraft.crashpayment.Payment.PaymentProcessor;
-import io.papermc.lib.PaperLib;
 import net.crashcraft.whipclaim.api.WhipClaimAPI;
 import net.crashcraft.whipclaim.commands.*;
 import net.crashcraft.whipclaim.commands.modes.ModeCommand;
@@ -23,11 +23,12 @@ import net.crashcraft.whipclaim.permissions.BypassManager;
 import net.crashcraft.whipclaim.permissions.PermissionHelper;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WhipClaim extends JavaPlugin {
     private static WhipClaim plugin;
+
+    private boolean dataLoaded = false;
 
     private WhipClaimAPI api;
 
@@ -73,6 +74,9 @@ public class WhipClaim extends JavaPlugin {
 
         visualizationManager = new VisualizationManager(this, protocolManager);
         manager = new ClaimDataManager(this);
+
+        dataLoaded = true;
+
         materialName = new MaterialName();
 
         BypassManager bypassManager = new BypassManager();
@@ -106,7 +110,9 @@ public class WhipClaim extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        manager.saveClaimsSync();
+        if (dataLoaded) {
+            manager.saveClaimsSync();
+        }
     }
 
     public void disablePlugin(String error){

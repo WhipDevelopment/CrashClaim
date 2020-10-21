@@ -2,8 +2,8 @@ package net.crashcraft.whipclaim.visualize.api.visuals;
 
 import net.crashcraft.whipclaim.claimobjects.BaseClaim;
 import net.crashcraft.whipclaim.visualize.api.BaseVisual;
-import net.crashcraft.whipclaim.visualize.api.VisualGroup;
 import net.crashcraft.whipclaim.visualize.api.VisualColor;
+import net.crashcraft.whipclaim.visualize.api.VisualGroup;
 import net.crashcraft.whipclaim.visualize.api.VisualType;
 import org.bukkit.Location;
 import org.bukkit.Material;

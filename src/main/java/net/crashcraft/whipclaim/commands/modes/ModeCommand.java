@@ -5,17 +5,13 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.whipclaim.WhipClaim;
-import net.crashcraft.whipclaim.claimobjects.Claim;
 import net.crashcraft.whipclaim.data.ClaimDataManager;
-import net.crashcraft.whipclaim.data.StaticClaimLogic;
 import net.crashcraft.whipclaim.listeners.ProtocalListener;
 import net.crashcraft.whipclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 

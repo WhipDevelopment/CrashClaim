@@ -1,10 +1,9 @@
 package net.crashcraft.whipclaim.claimobjects;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import java.io.Serializable;
 import java.util.UUID;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,

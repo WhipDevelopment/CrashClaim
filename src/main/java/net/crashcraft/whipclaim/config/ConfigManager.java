@@ -22,9 +22,12 @@ public class ConfigManager {
 
         try {
             logger.info("Loading configs");
-            plugin.saveResource("localization.yml", false);
-            plugin.saveResource("lookup.yml", false);
-
+            if (!new File(dataFolder, "localization.yml").exists()) {
+                plugin.saveResource("localization.yml", false);
+            }
+            if (!new File(dataFolder, "lookup.yml").exists()) {
+                plugin.saveResource("lookup.yml", false);
+            }
             initConfig(new File(dataFolder, "config.yml"), GlobalConfig.class);
             logger.info("Finished loading base configs");
         } catch (Exception ex){

@@ -1,11 +1,17 @@
 package net.crashcraft.whipclaim.visualize.api.claim;
 
-import net.crashcraft.whipclaim.claimobjects.*;
+import net.crashcraft.whipclaim.claimobjects.BaseClaim;
+import net.crashcraft.whipclaim.claimobjects.PermState;
+import net.crashcraft.whipclaim.claimobjects.PermissionGroup;
+import net.crashcraft.whipclaim.claimobjects.SubClaim;
 import net.crashcraft.whipclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.whipclaim.config.GlobalConfig;
 import net.crashcraft.whipclaim.permissions.PermissionRoute;
 import net.crashcraft.whipclaim.permissions.PermissionRouter;
-import net.crashcraft.whipclaim.visualize.api.*;
+import net.crashcraft.whipclaim.visualize.api.VisualColor;
+import net.crashcraft.whipclaim.visualize.api.VisualGroup;
+import net.crashcraft.whipclaim.visualize.api.VisualType;
+import net.crashcraft.whipclaim.visualize.api.VisualUtils;
 import net.crashcraft.whipclaim.visualize.api.visuals.BaseGlowVisual;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

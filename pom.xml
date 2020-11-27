@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.crashcraft</groupId>
-    <artifactId>WhipClaim</artifactId>
+    <artifactId>CrashClaim</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -58,23 +58,23 @@
                     <relocations>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
-                            <shadedPattern>net.crashcraft.whipclaim.acf</shadedPattern>
+                            <shadedPattern>net.crashcraft.crashclaim.acf</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.idb</pattern>
-                            <shadedPattern>net.crashcraft.whipclaim.idb</shadedPattern>
+                            <shadedPattern>net.crashcraft.crashclaim.idb</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>dev.whip.crashutils</pattern>
-                            <shadedPattern>net.crashcraft.whipclaim.crashutils</shadedPattern>
+                            <shadedPattern>net.crashcraft.crashclaim.crashutils</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.google.code.gson</pattern>
-                            <shadedPattern>net.crashcraft.whipclaim.com.google.code.gson</shadedPattern>
+                            <shadedPattern>net.crashcraft.crashclaim.com.google.code.gson</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.taskchain</pattern>
-                            <shadedPattern>net.crashcraft.whipclaim.taskchain</shadedPattern> <!-- Replace this -->
+                            <shadedPattern>net.crashcraft.crashclaim.taskchain</shadedPattern> <!-- Replace this -->
                         </relocation>
                     </relocations>
                     <artifactSet>
@@ -140,44 +140,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>taskchain-bukkit</artifactId>
-            <version>3.7.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>fastutil-lite</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>acf-paper</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.WesJD.AnvilGUI</groupId>
-            <artifactId>anvilgui</artifactId>
-            <version>master-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -198,46 +164,84 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.cache2k</groupId>
-            <artifactId>cache2k-base-bom</artifactId>
-            <version>1.2.2.Final</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>dev.whip</groupId>
-            <artifactId>CrashUtils</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.10.2</version>
-        </dependency>
-        <dependency>
             <groupId>net.crashcraft</groupId>
             <artifactId>CrashPayment</artifactId>
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.cache2k</groupId>
+            <artifactId>cache2k-base-bom</artifactId>
+            <version>1.2.2.Final</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>taskchain-bukkit</artifactId>
+            <version>3.7.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>fastutil-lite</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-paper</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.WesJD.AnvilGUI</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.whip</groupId>
+            <artifactId>CrashUtils</artifactId>
+            <version>1.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.2</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>idb-core</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>2.4.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

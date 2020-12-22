@@ -13,7 +13,7 @@ Downalod or build the latest compatible version for your server.
 Make sure to download and install [CrashPayment](https://discord.gg/6FU9eCjcrA), our compatability layer for Vault based payment systems while providing better compatability and a nicer api.
 
 ## Building
-All artifacts will be moved into `../Server116/plugins` automaticly.
+All artifacts will be moved into `../Server116/plugins` automatically.
 
 **Requirements**
 - Java 8 JDK or newer

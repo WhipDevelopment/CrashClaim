@@ -3,14 +3,15 @@
 ***
 CrashClaim is a claiming plugin oriented towards improving the claiming experience for surival servers wanting to fofer a clean and comprehensive system for their players. 
 
-The latest downlaods can be found on our SpigotMC page here.
+The latest downlaods can be found on our SpigotMC page [here]().
 
-Check out our features [here](https://github.com/Chasewhip8/WhipClaim/wiki/Features).
+Check out our [features](https://github.com/Chasewhip8/WhipClaim/wiki/Features) or [commands](https://github.com/Chasewhip8/WhipClaim/wiki/Commands).
+
 
 ## Setup
 Downalod or build the latest compatible version for your server.
 
-Make sure to download and install [CrashPayment](https://discord.gg/6FU9eCjcrA), our compatability layer for Vault based payment systems while providing better compatability and a nicer api.
+Follow our isntalation and migration guide [here](https://github.com/Chasewhip8/WhipClaim/wiki/https://github.com/Chasewhip8/WhipClaim/wiki/Installation), or if you need help with your configuration click [here](https://github.com/Chasewhip8/WhipClaim/wiki/https://github.com/Chasewhip8/WhipClaim/wiki/Configuration).
 
 ## Building
 All artifacts will be moved into `../Server116/plugins` automatically.
@@ -33,11 +34,7 @@ mvn clean install
 ```
 
 **Compiling From Source**
-```
-git clone https://github.com/WhipDevelopment/CrashClaim.git
-cd CrashClaim/
-mvn clean install
-```
+If you are the right person to be compiling it yourself then you should not need any directions for this.
 
 ## Contirbute
 If you need a feature that you want to upstream, file a pull request and we will take a look. 

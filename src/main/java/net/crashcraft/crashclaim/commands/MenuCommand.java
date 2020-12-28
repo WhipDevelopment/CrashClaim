@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MenuCommand extends BaseCommand {
-    private ClaimDataManager manager;
-    private VisualizationManager visualizationManager;
+    private final ClaimDataManager manager;
+    private final VisualizationManager visualizationManager;
 
     public MenuCommand(ClaimDataManager manager, VisualizationManager visualizationManager){
         this.manager = manager;

@@ -27,7 +27,7 @@ public class GlobalConfig extends BaseConfig{
 
         visual_menu_items = new HashMap<>();
         for (World world : Bukkit.getWorlds()){
-            visual_menu_items.put(world.getUID(), Material.getMaterial(getString("visualize.visualize-claim-items." + world.getName(), Material.OAK_FENCE.name())));
+            visual_menu_items.put(world.getUID(), Material.getMaterial(getString("visualization.claim-items." + world.getName(), Material.OAK_FENCE.name())));
         }
 
         visual_use_highest_block = getBoolean("visualization.visual-use-highest-block", false);

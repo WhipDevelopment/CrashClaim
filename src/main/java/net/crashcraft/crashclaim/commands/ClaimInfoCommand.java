@@ -35,8 +35,8 @@ public class ClaimInfoCommand extends BaseCommand {
 
             GlobalPermissionSet set = claim.getPerms().getGlobalPermissionSet();
 
-            String enabled = ChatColor.DARK_GREEN + "Enabled";
-            String disabled = ChatColor.RED + "Disabled";
+            final String enabled = ChatColor.DARK_GREEN + "Enabled";
+            final String disabled = ChatColor.RED + "Disabled";
 
             sb.append(ChatColor.GOLD).append("Claim Info | ").append(ChatColor.YELLOW)
                     .append("[").append(claim.getMinX()).append(", ").append(claim.getMinZ())

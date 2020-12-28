@@ -132,7 +132,6 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
         int area = ContributionManager.getArea(min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ());
 
         int price = (int) Math.ceil(area * GlobalConfig.money_per_block);
-
         CrashClaim.getPlugin().getPayment().makeTransaction(uuid, TransactionType.WITHDRAW, "Claim Purchase", price, (res) -> {
             if (!res.transactionSuccess()){
                 player.sendMessage(ChatColor.RED + "You need " + price + " coins to claim that area.");

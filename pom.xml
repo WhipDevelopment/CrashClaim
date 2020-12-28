@@ -76,6 +76,10 @@
                             <pattern>co.aikar.taskchain</pattern>
                             <shadedPattern>net.crashcraft.crashclaim.taskchain</shadedPattern> <!-- Replace this -->
                         </relocation>
+                        <relocation>
+                            <pattern>io.papermc.lib</pattern>
+                            <shadedPattern>net.crashcraft.crashclaim.paperlib</shadedPattern> <!-- Replace this -->
+                        </relocation>
                     </relocations>
                     <artifactSet>
                         <includes>
@@ -242,6 +246,13 @@
             <artifactId>HikariCP</artifactId>
             <version>2.4.1</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.TechFortress</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>16.16.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

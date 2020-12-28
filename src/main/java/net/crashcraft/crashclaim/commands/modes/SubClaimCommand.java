@@ -21,13 +21,13 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class SubClaimCommand implements Listener, ClaimModeProvider {
-    private ClaimDataManager manager;
-    private VisualizationManager visualizationManager;
-    private ModeCommand command;
+    private final ClaimDataManager manager;
+    private final VisualizationManager visualizationManager;
+    private final ModeCommand command;
 
-    private HashMap<UUID, Claim> edditingMap;
-    private HashMap<UUID, Location> clickMap;
-    private HashMap<UUID, SubClaim> resizingMap;
+    private final HashMap<UUID, Claim> edditingMap;
+    private final HashMap<UUID, Location> clickMap;
+    private final HashMap<UUID, SubClaim> resizingMap;
 
     public SubClaimCommand(ClaimDataManager manager, VisualizationManager visualizationManager, ModeCommand command){
         this.manager = manager;

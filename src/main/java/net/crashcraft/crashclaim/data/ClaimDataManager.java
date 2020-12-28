@@ -38,10 +38,7 @@ public class ClaimDataManager implements Listener {
     private final Logger logger;
 
     private final DataProvider provider;
-
     private final PermissionSetup permissionSetup;
-
-    private final HashMap<Integer, Integer> subClaimLookupParent;
 
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
     private final HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
@@ -50,12 +47,13 @@ public class ClaimDataManager implements Listener {
 
     private boolean isSaving;
     private boolean reSave;
+    private boolean freezeSaving;
 
     public ClaimDataManager(CrashClaim plugin){
         this.plugin = plugin;
         this.logger = plugin.getLogger();
         this.isSaving = false;
-        this.subClaimLookupParent = new HashMap<>();
+        this.freezeSaving = false;
         this.idCounter = 0;
         this.permissionSetup = new PermissionSetup(plugin);
         this.chunkLookup = new HashMap<>();
@@ -88,6 +86,8 @@ public class ClaimDataManager implements Listener {
 
         logger.info("Starting claim saving routine");
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::saveClaims, 0, 1200);
+
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public int requestUniqueID(){
@@ -361,7 +361,6 @@ public class ClaimDataManager implements Listener {
     }
 
     public void deleteSubClaim(SubClaim subClaim){
-        subClaimLookupParent.remove(subClaim.getId());
         deleteSubClaimWithoutRemove(subClaim);
     }
 
@@ -459,9 +458,6 @@ public class ClaimDataManager implements Listener {
         permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
 
         claim.addSubClaim(subClaim);
-
-        subClaimLookupParent.put(subClaim.getId(), claim.getId());
-
         claim.setToSave(true);
 
         return new ClaimResponse(true, subClaim);
@@ -469,10 +465,6 @@ public class ClaimDataManager implements Listener {
 
     public Claim getClaim(Integer id){
         return claimLookup.get(id);
-    }
-
-    public Claim getParentClaim(int subID){
-        return claimLookup.get(subClaimLookupParent.get(subID));
     }
 
     public void preLoadChunk(UUID world, long seed){
@@ -483,6 +475,10 @@ public class ClaimDataManager implements Listener {
     }
 
     public void saveClaim(Claim claim){
+        if (freezeSaving){
+            return;
+        }
+
         provider.saveClaim(claim);
         claim.setToSave(false);
     }
@@ -570,6 +566,10 @@ public class ClaimDataManager implements Listener {
         group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet().clone());
     }
 
+    public void setFreezeSaving(boolean freezeSaving) {
+        this.freezeSaving = freezeSaving;
+    }
+
     public Set<Integer> getOwnedClaims(UUID uuid) {
         return provider.getPermittedClaims(uuid);
     }
@@ -596,10 +596,6 @@ public class ClaimDataManager implements Listener {
 
     public HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> temporaryTestGetChunkMap(){
         return chunkLookup;
-    }
-
-    public HashMap<Integer, Integer> getSubClaimLookupParent() {
-        return subClaimLookupParent;
     }
 
     public synchronized boolean isSaving() {

@@ -1,10 +1,12 @@
 package net.crashcraft.crashclaim.permissions;
 
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.PermState;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -17,11 +19,13 @@ public class PermissionHelper {
     private final ClaimDataManager manager;
     private final BypassManager bypassManager;
 
-    public PermissionHelper(ClaimDataManager manager, BypassManager bypassManager){
-        helper = this;
+    public PermissionHelper(ClaimDataManager manager){
+        helper =    this;
 
         this.manager = manager;
-        this.bypassManager = bypassManager;
+        this.bypassManager = new BypassManager();
+
+        Bukkit.getPluginManager().registerEvents(bypassManager, CrashClaim.getPlugin());
     }
 
     public Boolean hasPermission(BaseClaim claim, UUID player, PermissionRoute route){

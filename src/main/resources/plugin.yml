@@ -1,8 +1,8 @@
-name: WhipClaim
+name: CrashClaim
 version: 1.0
 description: A modern advanced user oriented claiming system
 author: Chasewhip
-depend: [CrashPayment]
-softdepend: [Vault]
+depend: [CrashPayment, ProtocolLib]
+softdepend: [Vault, GriefPrevention]
 main: net.crashcraft.crashclaim.CrashClaim
 api-version: 1.16

@@ -3,7 +3,6 @@ package net.crashcraft.crashclaim.commands.modes;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
-import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.listeners.ProtocalListener;
@@ -16,17 +15,12 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class ModeCommand extends BaseCommand {
-    private ClaimDataManager manager;
+    private final SubClaimCommand subClaimCommand;
+    private final ClaimModeCommand claimModeCommand;
 
-    private SubClaimCommand subClaimCommand;
-    private ClaimModeCommand claimModeCommand;
+    private final HashMap<UUID, ClaimModeProvider> modeState;
 
-    private HashMap<UUID, ClaimModeProvider> modeState;
-
-    public ModeCommand(CrashClaim crashClaim, ProtocolManager protocolManager){
-        manager = crashClaim.getDataManager();
-        VisualizationManager visualizationManager = crashClaim.getVisualizationManager();
-
+    public ModeCommand(CrashClaim crashClaim, ClaimDataManager manager, VisualizationManager visualizationManager){
         subClaimCommand = new SubClaimCommand(manager, visualizationManager, this);
         claimModeCommand = new ClaimModeCommand(manager, visualizationManager, this);
 
@@ -35,7 +29,7 @@ public class ModeCommand extends BaseCommand {
 
         modeState = new HashMap<>();
 
-        new ProtocalListener(protocolManager, crashClaim, claimModeCommand, subClaimCommand);
+        new ProtocalListener(visualizationManager.getProtocolManager(), crashClaim, claimModeCommand, subClaimCommand);
     }
 
     @CommandAlias("claim")

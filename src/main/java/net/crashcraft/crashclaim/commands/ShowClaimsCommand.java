@@ -16,8 +16,8 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("show")
 public class ShowClaimsCommand extends BaseCommand {
-    private VisualizationManager visualizationManager;
-    private ClaimDataManager claimDataManager;
+    private final VisualizationManager visualizationManager;
+    private final ClaimDataManager claimDataManager;
 
     public ShowClaimsCommand(VisualizationManager visualizationManager, ClaimDataManager claimDataManager){
         this.visualizationManager = visualizationManager;

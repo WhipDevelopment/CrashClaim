@@ -57,12 +57,6 @@ public class JsonDataProvider implements DataProvider{
                         manager.loadChunksForClaim(claim);
                         ArrayList<SubClaim> subClaims = claim.getSubClaims();
 
-                        if (subClaims != null) {
-                            for (SubClaim subClaim : claim.getSubClaims()) {
-                                manager.getSubClaimLookupParent().put(subClaim.getId(), claim.getId());
-                            }
-                        }
-
                         //ValueConfig check to make sure no dinky plugins loaded worlds
                         if (!GlobalConfig.visual_menu_items.containsKey(claim.getWorld())){
                             GlobalConfig.visual_menu_items.put(claim.getWorld(), Material.OAK_FENCE);

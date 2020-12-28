@@ -29,12 +29,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class VisualizationManager {
-    private ProtocolManager protocolManager;
-    private HashMap<UUID, VisualGroup> visualHashMap;
+    private final ProtocolManager protocolManager;
+    private final HashMap<UUID, VisualGroup> visualHashMap;
 
-    private HashMap<BaseVisual, Long> timeMap;
+    private final HashMap<BaseVisual, Long> timeMap;
 
-    private VisualProvider provider;
+    private final VisualProvider provider;
 
     public VisualizationManager(CrashClaim crashClaim, ProtocolManager protocolManager){
         this.protocolManager = protocolManager;
@@ -49,10 +49,6 @@ public class VisualizationManager {
         }
 
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-
-        if (scoreboardManager == null) {
-            throw new RuntimeException("Scoreboard manager was null.");
-        }
 
         Scoreboard scoreboard = scoreboardManager.getMainScoreboard();
 
@@ -201,5 +197,9 @@ public class VisualizationManager {
 
     public VisualProvider getProvider(){
         return provider;
+    }
+
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 }

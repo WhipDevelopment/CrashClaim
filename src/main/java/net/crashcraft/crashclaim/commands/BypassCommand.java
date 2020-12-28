@@ -8,7 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class BypassCommand extends BaseCommand {
-    private BypassManager manager;
+    private final BypassManager manager;
 
     public BypassCommand(BypassManager manager){
         this.manager = manager;

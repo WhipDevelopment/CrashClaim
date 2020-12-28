@@ -7,19 +7,17 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
 import io.papermc.lib.PaperLib;
+import net.crashcraft.crashclaim.migration.MigrationManager;
 import net.crashcraft.crashpayment.CrashPayment;
 import net.crashcraft.crashpayment.payment.PaymentProcessor;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
 import net.crashcraft.crashclaim.commands.*;
-import net.crashcraft.crashclaim.commands.modes.ModeCommand;
 import net.crashcraft.crashclaim.config.ConfigManager;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.MaterialName;
 import net.crashcraft.crashclaim.listeners.PaperListener;
 import net.crashcraft.crashclaim.listeners.PlayerListener;
 import net.crashcraft.crashclaim.listeners.WorldListener;
-import net.crashcraft.crashclaim.menus.helpers.StaticItemLookup;
-import net.crashcraft.crashclaim.permissions.BypassManager;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
@@ -39,13 +37,16 @@ public class CrashClaim extends JavaPlugin {
     private MaterialName materialName;
     private PaymentProcessor payment;
     private CrashPayment paymentPlugin;
+    private CommandManager commandManager;
+    private MigrationManager migrationManager;
 
     @Override
     public void onLoad() {
         plugin = this;
-        protocolManager = ProtocolLibrary.getProtocolManager();
 
-        paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
+        this.protocolManager = ProtocolLibrary.getProtocolManager();
+        this.paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
+
         if (paymentPlugin == null){
             disablePlugin("Payment plugin not found, disabling plugin");
         }
@@ -60,7 +61,7 @@ public class CrashClaim extends JavaPlugin {
         taskChainFactory = BukkitTaskChainFactory.create(this);
 
         if (getDataFolder().mkdirs()){
-            getLogger().info("Created plugin directory");
+            getLogger().info("Created data directory");
         }
 
         new ConfigManager(this);
@@ -72,31 +73,18 @@ public class CrashClaim extends JavaPlugin {
             payment = paymentPlugin.setupPaymentProvider(this).getProcessor();
         }
 
-        visualizationManager = new VisualizationManager(this, protocolManager);
-        manager = new ClaimDataManager(this);
+        this.visualizationManager = new VisualizationManager(this, protocolManager);
+        this.manager = new ClaimDataManager(this);
+        this.materialName = new MaterialName();
 
-        dataLoaded = true;
+        this.dataLoaded = true;
 
-        materialName = new MaterialName();
+        new PermissionHelper(manager);
 
-        BypassManager bypassManager = new BypassManager();
-        new PermissionHelper(manager, bypassManager);
+        this.migrationManager = new MigrationManager(this);
 
-        CommandManager commandManager = new CommandManager(this);
-
-        commandManager.registerCommand(new ShowClaimsCommand(visualizationManager, manager));
-        commandManager.registerCommand(new HideClaimsCommand(visualizationManager));
-        commandManager.registerCommand(new ModeCommand(this, protocolManager));
-        commandManager.registerCommand(new MenuCommand(manager, visualizationManager));
-        commandManager.registerCommand(new BypassCommand(bypassManager));
-        commandManager.registerCommand(new ClaimInfoCommand(manager));
-        commandManager.registerCommand(new EjectCommand(manager));
-
-        Bukkit.getPluginManager().registerEvents(manager, this);
-        Bukkit.getPluginManager().registerEvents(bypassManager, this);
         Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
-
 
         if (PaperLib.isPaper()){
             getLogger().info("Using extra protections provided by the paper api");
@@ -106,7 +94,7 @@ public class CrashClaim extends JavaPlugin {
             PaperLib.suggestPaper(this);
         }
 
-        new StaticItemLookup();
+        commandManager = new CommandManager(this);
     }
 
     @Override
@@ -155,5 +143,13 @@ public class CrashClaim extends JavaPlugin {
 
     public CrashClaimAPI getApi() {
         return api;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public MigrationManager getMigrationManager() {
+        return migrationManager;
     }
 }

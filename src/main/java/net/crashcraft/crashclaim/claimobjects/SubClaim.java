@@ -1,14 +1,7 @@
 package net.crashcraft.crashclaim.claimobjects;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import java.util.UUID;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
-        property = "@object_id")
-@JsonTypeName("SubClaim")
 public class SubClaim extends BaseClaim {
     private Claim parent;
 
@@ -43,11 +36,4 @@ public class SubClaim extends BaseClaim {
     public Claim getParent() {
         return parent;
     }
-
-    //JSON needs this
-
-    public void setParent(Claim parent) {
-        this.parent = parent;
-    }
-
 }

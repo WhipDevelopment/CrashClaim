@@ -1,28 +1,13 @@
 package net.crashcraft.crashclaim.claimobjects;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
-import net.crashcraft.crashclaim.claimobjects.permission.child.SubPermissionGroup;
-import net.crashcraft.crashclaim.claimobjects.permission.parent.ParentPermissionGroup;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.Material;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
-        property = "@object_id")
-@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="name")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value=ParentPermissionGroup.class, name="ParentPermissionGroup"),
-        @JsonSubTypes.Type(value=SubPermissionGroup.class, name="SubPermissionGroup"),
-})
 public abstract class PermissionGroup {
     /**
      * Base Claim will have all perms

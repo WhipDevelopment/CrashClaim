@@ -1,15 +1,9 @@
 package net.crashcraft.crashclaim.claimobjects.permission;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.bukkit.Material;
 
 import java.util.HashMap;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
-        property = "@object_id")
-@JsonTypeName("GlobalPermissionSet")
 public class GlobalPermissionSet extends PermissionSet {
     private int pistons;
     private int fluids;
@@ -79,8 +73,4 @@ public class GlobalPermissionSet extends PermissionSet {
     public void setViewSubClaims(int viewSubClaims) {
         super.setViewSubClaims(viewSubClaims);
     }
-
-    //JSON needs this
-
-
 }

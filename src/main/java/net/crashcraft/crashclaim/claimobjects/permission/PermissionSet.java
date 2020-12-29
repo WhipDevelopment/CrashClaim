@@ -1,22 +1,9 @@
 package net.crashcraft.crashclaim.claimobjects.permission;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.bukkit.Material;
 
 import java.util.HashMap;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
-        property = "@object_id")
-@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="name")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value= PlayerPermissionSet.class, name = "PlayerPermissionSet"),
-        @JsonSubTypes.Type(value= GlobalPermissionSet.class, name = "GlobalPermissionSet")
-})
 public abstract class PermissionSet implements Cloneable{
     private int build;
     private int interactions;
@@ -105,12 +92,4 @@ public abstract class PermissionSet implements Cloneable{
     public void setDefaultConatinerValue(int defaultContainerValue) {
         this.defaultContainerValue = defaultContainerValue;
     }
-
-    //JSON needs this
-
-    public void setContainers(HashMap<Material, Integer> containers) {
-        this.containers = containers;
-    }
-
-
 }

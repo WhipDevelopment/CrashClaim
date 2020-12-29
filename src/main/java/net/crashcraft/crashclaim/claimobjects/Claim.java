@@ -1,9 +1,5 @@
 package net.crashcraft.crashclaim.claimobjects;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.crashcraft.crashclaim.data.MathUtils;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionRouter;
@@ -14,11 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
-        property = "@object_id")
-@JsonTypeName("Claim")
 public class Claim extends BaseClaim {
-    @JsonIgnore
     private boolean toSave;
 
     private ArrayList<SubClaim> subClaims;

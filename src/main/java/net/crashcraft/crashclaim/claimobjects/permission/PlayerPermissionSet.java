@@ -1,15 +1,9 @@
 package net.crashcraft.crashclaim.claimobjects.permission;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.bukkit.Material;
 
 import java.util.HashMap;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class,
-        property = "@object_id")
-@JsonTypeName("PlayerPermissionSet")
 public class PlayerPermissionSet extends PermissionSet implements Cloneable {
     private int modifyPermissions;
     private int modifyClaim;
@@ -43,8 +37,4 @@ public class PlayerPermissionSet extends PermissionSet implements Cloneable {
     public PlayerPermissionSet clone() {
         return (PlayerPermissionSet) super.clone();
     }
-
-    //JSON needs this
-
-
 }

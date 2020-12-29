@@ -618,5 +618,10 @@ public class ClaimDataManager implements Listener {
         return claimLookup;
     }
 
+    public void cleanupAndClose() {
+        this.freezeSaving = true;
 
+        chunkLookup.clear();
+        claimLookup.clearAndClose();
+    }
 }

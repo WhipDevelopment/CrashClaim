@@ -6,6 +6,7 @@ import co.aikar.taskchain.TaskChainFactory;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
+import dev.whip.crashutils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.migration.MigrationManager;
 import net.crashcraft.crashpayment.CrashPayment;
@@ -21,6 +22,8 @@ import net.crashcraft.crashclaim.listeners.WorldListener;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CrashClaim extends JavaPlugin {
@@ -102,6 +105,31 @@ public class CrashClaim extends JavaPlugin {
         if (dataLoaded) {
             manager.saveClaimsSync();
         }
+
+        manager.cleanupAndClose(); // freezes claim saving and cleans up memory references to claims
+
+        //Unregister all user facing things
+        HandlerList.unregisterAll(this);
+        commandManager.getCommandManager().unregisterCommands();
+        for (Player player : Bukkit.getOnlinePlayers()){
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
+                player.closeInventory();
+            }
+        }
+
+        //Null all references just to be sure, manager will still hold them but this stops this class from being referenced for anything
+        dataLoaded = false;
+        plugin = null;
+        api = null;
+        manager = null;
+        visualizationManager = null;
+        protocolManager = null;
+        crashUtils = null;
+        materialName = null;
+        payment = null;
+        paymentPlugin = null;
+        commandManager = null;
+        migrationManager = null;
     }
 
     public void disablePlugin(String error){

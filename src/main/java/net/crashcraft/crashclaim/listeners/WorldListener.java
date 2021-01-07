@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
@@ -32,7 +33,7 @@ public class WorldListener implements Listener {
         this.helper = PermissionHelper.getPermissionHelper();
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onProjectileHitEvent(EntityInteractEvent e){
         if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
@@ -59,7 +60,7 @@ public class WorldListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityChangeBlockEvent(EntityChangeBlockEvent e) {
         if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
@@ -80,28 +81,25 @@ public class WorldListener implements Listener {
         } else if ((e.getEntity() instanceof WitherSkull || e.getEntity() instanceof Wither)
                 && !helper.hasPermission(location, PermissionRoute.EXPLOSIONS)) {
             e.setCancelled(true);
-        } else if (e.getEntity() instanceof Player){
+        } else if (e.getEntity() instanceof Player
+                && !helper.hasPermission(e.getEntity().getUniqueId(), location, PermissionRoute.INTERACTIONS)){
             e.setCancelled(true);
             visuals.sendAlert((Player) e.getEntity(), "You do not have permission to interact in this claim.");
         } else {
-            ArrayList<Player> players = new ArrayList<>();
             for (Entity entity : e.getEntity().getPassengers()) {
                 if (entity instanceof Player){
                     if (helper.hasPermission(entity.getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
                         return;
                     }
-                    players.add((Player) entity);
-                }
-            }
 
-            for (Player player : players){
-                e.setCancelled(true);
-                visuals.sendAlert(player, "You do not have permission to interact in this claim.");
+                    e.setCancelled(true);
+                    visuals.sendAlert((Player) entity, "You do not have permission to interact in this claim.");
+                }
             }
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockIgniteEvent(BlockIgniteEvent e){
         if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
@@ -118,7 +116,7 @@ public class WorldListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockExplodeEvent(BlockExplodeEvent e){
         if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
             return;
@@ -127,7 +125,7 @@ public class WorldListener implements Listener {
         e.blockList().removeAll(processExplosion(e.blockList()));
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockExplodeEvent(EntityExplodeEvent e){
         if (GlobalConfig.disabled_worlds.contains(e.getLocation().getWorld().getUID())){
             return;

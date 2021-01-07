@@ -195,6 +195,10 @@ public class PlayerListener implements Listener {
             return;
         }
 
+        if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.UNKNOWN)){
+            return;
+        }
+
         Location location = event.getTo();
         switch (GlobalConfig.teleportCause.get(event.getCause())){
             case 0: //Disable
@@ -381,7 +385,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVehicleDestroyEvent(VehicleDamageEvent e){
-        if (GlobalConfig.disabled_worlds.contains(e.getAttacker().getWorld().getUID())){
+        if (GlobalConfig.disabled_worlds.contains(e.getVehicle().getWorld().getUID())){
             return;
         }
 

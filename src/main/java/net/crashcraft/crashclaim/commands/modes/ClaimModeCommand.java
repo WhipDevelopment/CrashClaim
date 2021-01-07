@@ -203,15 +203,19 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                             player.sendMessage(ChatColor.GREEN + "Claim successfully resized");
                     });
             switch (error){
+                case OVERLAP_EXISTING:
+                    player.sendMessage(ChatColor.RED + "You cannot overlap other claims.");
+                    cleanup(uuid, true);
+                    return;
                 case TOO_SMALL:
                     player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
                     cleanup(uuid, true);
                     return;
                 case CANNOT_FLIP_ON_RESIZE:
                     player.sendMessage(ChatColor.RED + "Claims cannot be flipped, please retry and grab the other edge to expand in this direction");
-                    cleanup(player.getUniqueId(), true);
+                    cleanup(uuid, true);
                     return;
-                case OVERLAP_EXISTING:
+                case OVERLAP_EXISTING_SUBCLAIM:
                     player.sendMessage(ChatColor.RED + "Sub claims need to stay inside of the claim when resizing,\n Delete or resize sub claims and try again.");
                     cleanup(uuid, true);
                     return;
@@ -239,6 +243,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                 player.sendMessage(ChatColor.GREEN + "Click another location to resize the claim.");
             } else {
                 player.sendMessage(ChatColor.RED + "You do not have permission to modify this claim.");
+                cleanup(uuid, true);
             }
         } else {
            player.sendMessage(ChatColor.RED + "You need to click the border of the claim to resize it. Grabbing an edge will move it in that direction, grabbing a corner will move it in both directions relative to the corner.");
@@ -257,10 +262,7 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
         command.signalDisabled(uuid);
 
         if (visuals) {
-            VisualGroup group = visualizationManager.fetchExistingGroup(uuid);
-            if (group != null) {
-                group.removeAllVisuals();
-            }
+            cleanup(uuid);
         }
     }
 

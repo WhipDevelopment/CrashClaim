@@ -103,6 +103,10 @@ public class ClaimDataManager implements Listener {
             return new ClaimResponse(false, ErrorType.TOO_SMALL);
         }
 
+        if (checkOverLapSurroudningClaims(-1, maxCorner.getBlockX(), maxCorner.getBlockZ(), minCorner.getBlockX(), minCorner.getBlockZ(), maxCorner.getWorld().getUID())){
+            return new ClaimResponse(false, ErrorType.OVERLAP_EXISTING);
+        }
+
         Claim claim = new Claim(requestUniqueID(),
                 maxCorner.getBlockX(),
                 maxCorner.getBlockZ(),
@@ -128,10 +132,14 @@ public class ClaimDataManager implements Listener {
         int newMaxX = arr[1];
         int newMaxZ = arr[3];
 
+        if (checkOverLapSurroudningClaims(claim.getId(), newMaxX, newMaxZ, newMinX, newMinZ, claim.getWorld())){
+            return ErrorType.OVERLAP_EXISTING;
+        }
+
         for (SubClaim subClaim : claim.getSubClaims()){
             if (!MathUtils.containedInside(newMinX, newMinZ, newMaxX, newMaxZ,
                     subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ())){
-                return ErrorType.OVERLAP_EXISTING;
+                return ErrorType.OVERLAP_EXISTING_SUBCLAIM;
             }
         }
 
@@ -432,7 +440,7 @@ public class ClaimDataManager implements Listener {
         for (SubClaim subClaim : claim.getSubClaims()){
             if (MathUtils.doOverlap(subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ(),
                     min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ())){
-                return new ClaimResponse(false, ErrorType.OVERLAP_EXISTING);
+                return new ClaimResponse(false, ErrorType.OVERLAP_EXISTING_SUBCLAIM);
             }
         }
 

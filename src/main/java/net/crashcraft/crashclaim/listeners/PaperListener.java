@@ -8,6 +8,7 @@ import net.crashcraft.crashclaim.permissions.PermissionSetup;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class PaperListener implements Listener {
@@ -23,7 +24,7 @@ public class PaperListener implements Listener {
         this.helper = PermissionHelper.getPermissionHelper();
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onThrownEggHatchEvent(ThrownEggHatchEvent e){
         if (!e.isHatching()){
             return;

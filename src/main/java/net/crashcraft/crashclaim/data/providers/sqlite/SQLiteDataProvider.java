@@ -470,6 +470,8 @@ public class SQLiteDataProvider implements DataProvider {
                 claim.addSubClaim(subClaim);
             }
 
+            claim.setEditing(false);
+
             return claim;
         } catch (SQLException e){
             e.printStackTrace();

@@ -54,6 +54,10 @@ public class GlobalConfig extends BaseConfig{
         // 0 | NONE  - diable, 1 | BLOCK - enable check with blocking, 2 | RELOCATE - enable check with relocating
         teleportCause = new HashMap<>();
         for (PlayerTeleportEvent.TeleportCause cause : PlayerTeleportEvent.TeleportCause.values()){
+            if (cause.equals(PlayerTeleportEvent.TeleportCause.UNKNOWN)){
+                continue;
+            }
+
             String value = getString("events.teleport." + cause.name(), "block");
 
             switch (value.toLowerCase()){

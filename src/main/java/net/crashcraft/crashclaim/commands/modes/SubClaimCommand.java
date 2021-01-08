@@ -25,7 +25,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
     private final VisualizationManager visualizationManager;
     private final ModeCommand command;
 
-    private final HashMap<UUID, Claim> edditingMap;
+    private final HashMap<UUID, Claim> editingMap;
     private final HashMap<UUID, Location> clickMap;
     private final HashMap<UUID, SubClaim> resizingMap;
 
@@ -34,14 +34,14 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
         this.visualizationManager = visualizationManager;
         this.command = command;
 
-        edditingMap = new HashMap<>();
+        editingMap = new HashMap<>();
         clickMap = new HashMap<>();
         resizingMap = new HashMap<>();
     }
 
     public void subclaim(Player player){
         UUID uuid = player.getUniqueId();
-        if (edditingMap.containsKey(uuid)){
+        if (editingMap.containsKey(uuid)){
             player.sendMessage(ChatColor.RED + "Sub Claiming mode disabled.");
             cleanup(uuid, true);
         } else {
@@ -57,7 +57,7 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
                 PlayerPermissionSet main = group.getPlayerPermissionSet(uuid);
 
                 if (main != null && PermissionRouter.getLayeredPermission(group.getGlobalPermissionSet(), main, PermissionRoute.MODIFY_CLAIM) == PermState.ENABLED){
-                    edditingMap.put(uuid, claim);
+                    editingMap.put(uuid, claim);
 
                     claim.setEditing(true);
 
@@ -75,20 +75,20 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
 
     @EventHandler
     public void onClick(PlayerInteractEvent e){
-        if (edditingMap.containsKey(e.getPlayer().getUniqueId()) && e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND) && e.getClickedBlock() != null){
+        if (editingMap.containsKey(e.getPlayer().getUniqueId()) && e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND) && e.getClickedBlock() != null){
             click(e.getPlayer(), e.getClickedBlock().getLocation());
         }
     }
 
     public void clickFakeEntity(Player player, Location location){
-        if (edditingMap.containsKey(player.getUniqueId())){
+        if (editingMap.containsKey(player.getUniqueId())){
             click(player, location);
         }
     }
 
     private void click(Player player, Location location){
         UUID uuid = player.getUniqueId();
-        Claim claim = edditingMap.get(player.getUniqueId());
+        Claim claim = editingMap.get(player.getUniqueId());
 
         if (!MathUtils.iskPointCollide(claim.getMinX(), claim.getMinZ(),
                 claim.getMaxX(), claim.getMaxZ(), location.getBlockX(), location.getBlockZ())){
@@ -203,15 +203,15 @@ public class SubClaimCommand implements Listener, ClaimModeProvider {
     }
 
     private void cleanup(UUID uuid, boolean visuals){
-        if (edditingMap.containsKey(uuid)){
-            edditingMap.get(uuid).setEditing(false);
+        if (editingMap.containsKey(uuid)){
+            editingMap.get(uuid).setEditing(false);
         }
 
         if (resizingMap.containsKey(uuid)){
             resizingMap.get(uuid).getParent().setEditing(false);
         }
 
-        edditingMap.remove(uuid);
+        editingMap.remove(uuid);
         clickMap.remove(uuid);
         resizingMap.remove(uuid);
 

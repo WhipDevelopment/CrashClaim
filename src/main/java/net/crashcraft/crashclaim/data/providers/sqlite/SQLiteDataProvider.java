@@ -253,6 +253,12 @@ public class SQLiteDataProvider implements DataProvider {
             for (Integer removableSubClaim : list){
                 DB.executeUpdate("DELETE FROM claim_data WHERE id = (SELECT data FROM subclaims WHERE subclaims.id = ?)", removableSubClaim);
             }
+
+            //Contributions
+            for (Map.Entry<UUID, Integer> entry : claim.getContribution().entrySet()) {
+                DB.executeUpdate("INSERT INTO contributions(data_id, players_id, amount) VALUES (?, (SELECT id FROM players WHERE uuid = ?), ?) ON CONFLICT (data_id, players_id) DO UPDATE SET amount = ?",
+                        claimData_id, entry.getKey().toString(), entry.getValue(), entry.getValue());
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -426,6 +432,19 @@ public class SQLiteDataProvider implements DataProvider {
             claim.setExitMessage(claimDataRow.getString("exitMessage"));
 
             group.setOwner(claim);
+
+            //Contributions
+            for (DbRow row : DB.getResults("Select" +
+                    "    contributions.amount," +
+                    "    players.uuid " +
+                    "From" +
+                    "    contributions Inner Join" +
+                    "    players On players.id = contributions.players_id " +
+                    "Where" +
+                    "    contributions.data_id = ?", data_id)){
+                claim.addContribution(UUID.fromString(row.getString("uuid")),
+                        row.getInt("amount"));
+            }
 
             for (DbRow row : DB.getResults("Select" +
                     "    claim_data.minX," +

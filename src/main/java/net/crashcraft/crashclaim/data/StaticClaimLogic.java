@@ -23,8 +23,14 @@ public class StaticClaimLogic {
         return Start_x == NWCorner_x || Start_x == SECorner_x || Start_z == NWCorner_z || Start_z == SECorner_z;
     }
 
- */
+
     public static boolean isClaimBorder(int min_x, int max_x, int min_z, int max_z, int point_x, int point_z){
         return (point_x == min_x || point_x == max_x) && (point_z == min_z || point_z == max_z);
+    }
+ */
+
+    public static boolean isClaimBorder(int min_x, int max_x, int min_z, int max_z, int point_x, int point_z){
+        return ((point_x == min_x || point_x == max_x) && (point_z >= min_z && point_z <= max_z)) // Is on X border and falls in Z bounds
+                || ((point_z == min_z || point_z == max_z) && (point_x >= min_x && point_x <= max_x)); // Is on Z border and falls in X bounds
     }
 }

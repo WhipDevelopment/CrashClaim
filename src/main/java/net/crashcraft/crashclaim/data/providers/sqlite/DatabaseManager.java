@@ -3,6 +3,7 @@ package net.crashcraft.crashclaim.data.providers.sqlite;
 import co.aikar.idb.DB;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev0;
+import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev1;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,13 +36,14 @@ public class DatabaseManager {
     }
 
     private void updateDatabase(){
-        if (currentRevision == dataVersions.size() - 1){
+        int latestVersion = (dataVersions.get(dataVersions.size() - 1).getVersion());
+        if (currentRevision == latestVersion){
             return;
         }
 
-        logger.info("Database is converting: [" + currentRevision + " -> " + (dataVersions.size() - 1) + "]");
+        logger.info("Database is converting: [" + currentRevision + " -> " + latestVersion + "]");
 
-        for (int x = currentRevision == -1 ? 0 : currentRevision; x < dataVersions.size(); x++){
+        for (int x = currentRevision == -1 ? 0 : currentRevision + 1; x < dataVersions.size(); x++){
             DataVersion version = dataVersions.get(x);
             logger.info("Converting [" + currentRevision + " -> " + version.getVersion() + "]");
             try {
@@ -63,6 +65,7 @@ public class DatabaseManager {
 
     private void setupDataVersions(){
         registerDataVersion(new DataRev0());
+        registerDataVersion(new DataRev1());
     }
 
     private void validateDataVersions(){

@@ -29,7 +29,7 @@ public class ContributionManager {
         if (difference > 0){
             claim.addContribution(player, difference);  //add to contribution
         } else {
-            int value = (int) Math.floor(Math.floor(difference * GlobalConfig.money_per_block) / claim.getContribution().size());
+            int value = (int) Math.floor(Math.floor(Math.abs(difference) * GlobalConfig.money_per_block) / claim.getContribution().size());
 
             if (value == 0){
                 return;

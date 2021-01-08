@@ -29,7 +29,7 @@ public class ModeCommand extends BaseCommand {
 
         modeState = new HashMap<>();
 
-        new ProtocalListener(visualizationManager.getProtocolManager(), crashClaim, claimModeCommand, subClaimCommand);
+        //new ProtocalListener(visualizationManager.getProtocolManager(), crashClaim, claimModeCommand, subClaimCommand);
     }
 
     @CommandAlias("claim")

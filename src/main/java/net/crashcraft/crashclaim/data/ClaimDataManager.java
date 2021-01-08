@@ -2,6 +2,8 @@ package net.crashcraft.crashclaim.data;
 
 import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashpayment.payment.TransactionResponse;
 import net.crashcraft.crashpayment.payment.TransactionType;
 import net.crashcraft.crashclaim.CrashClaim;
@@ -163,26 +165,34 @@ public class ClaimDataManager implements Listener {
                         Material.EMERALD,
                         (player, aBoolean) -> {
                             if (aBoolean) {
-                                CrashClaim.getPlugin().getPayment().makeTransaction(resizer.getUniqueId(), TransactionType.WITHDRAW, "Claim Resize Up", price, (response) -> {
-                                    if (response.getTransactionStatus() == TransactionResponse.SUCCESS) {
-                                        ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking
-                                        resizeClaimCall(claim, newMinX, newMinZ, newMaxX, newMaxZ);
+                                if (PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                                    CrashClaim.getPlugin().getPayment().makeTransaction(resizer.getUniqueId(), TransactionType.WITHDRAW, "Claim Resize Up", price, (response) -> {
+                                        if (response.getTransactionStatus() == TransactionResponse.SUCCESS) {
+                                            ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking
+                                            resizeClaimCall(claim, newMinX, newMinZ, newMaxX, newMaxZ);
 
-                                        consumer.accept(true);
-                                        return;
-                                    } else {
-                                        //Didnt have enough money or something
-                                        player.sendMessage(ChatColor.RED + response.getTransactionError());
-                                    }
-                                    consumer.accept(false);
-                                });
+                                            consumer.accept(true);
+                                            return;
+                                        } else {
+                                            //Didnt have enough money or something
+                                            player.sendMessage(ChatColor.RED + response.getTransactionError());
+                                        }
+                                        consumer.accept(false);
+                                    });
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "You no longer have permission to resize the claim.");
+                                }
                             }
                             return "";
                         },
                         player -> ""
                         ).open();
+            } else {
+                //Need to issue a refund
+                ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking
+                resizeClaimCall(claim, newMinX, newMinZ, newMaxX, newMaxZ);
+                consumer.accept(true);
             }
-
             return ErrorType.NONE;
         } else {
             return ErrorType.CANNOT_FLIP_ON_RESIZE;
@@ -211,6 +221,17 @@ public class ClaimDataManager implements Listener {
 
         if (isTooSmall(newMaxX, newMaxZ, newMinX, newMinZ)){
             return ErrorType.TOO_SMALL;
+        }
+
+        for (SubClaim tempClaim : subClaim.getParent().getSubClaims()){
+            if (tempClaim.equals(subClaim)){
+                continue;
+            }
+
+            if (MathUtils.doOverlap(tempClaim.getMinX(), tempClaim.getMinZ(), tempClaim.getMaxX(), tempClaim.getMaxZ(),
+                    newMinX, newMinZ, newMaxX, newMaxZ)){
+                return ErrorType.OVERLAP_EXISTING_SUBCLAIM;
+            }
         }
 
         if (arr[4] == 1) {

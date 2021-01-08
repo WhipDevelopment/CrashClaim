@@ -11,9 +11,9 @@ import java.util.UUID;
 public class VisualGroup {
     private int uniqueID = 21346787;
 
-    private ArrayList<BaseVisual> activeVisuals;
-    private Player player;
-    private VisualizationManager manager;
+    private final ArrayList<BaseVisual> activeVisuals;
+    private final Player player;
+    private final VisualizationManager manager;
 
     public VisualGroup(Player player, VisualizationManager manager) {
         this.player = player;

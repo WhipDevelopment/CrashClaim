@@ -8,8 +8,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.crashcraft.crashclaim.CrashClaim;
-import net.crashcraft.crashclaim.commands.modes.ClaimModeCommand;
-import net.crashcraft.crashclaim.commands.modes.SubClaimCommand;
+import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.visuals.BaseGlowVisual;
@@ -17,7 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class ProtocalListener {
-    public ProtocalListener(ProtocolManager protocolManager, CrashClaim crashClaim, ClaimModeCommand command, SubClaimCommand subClaimCommand){
+    public ProtocalListener(ProtocolManager protocolManager, CrashClaim crashClaim, ClaimCommand command){
         protocolManager.addPacketListener(
                 new PacketAdapter(crashClaim, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
                     @Override
@@ -43,8 +42,7 @@ public class ProtocalListener {
 
                                     Location location = glowVisual.getEntityLocation(id);
                                     if (location != null) {
-                                        command.customEntityClick(player, location);
-                                        subClaimCommand.clickFakeEntity(player, location);
+                                        command.click(player, location);
                                         return;
                                     }
                                 }

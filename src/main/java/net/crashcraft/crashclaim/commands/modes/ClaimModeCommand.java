@@ -175,7 +175,6 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
                             return "";
                         }).open();
             });
-            //Check price with player
         });
     }
 
@@ -260,10 +259,6 @@ public class ClaimModeCommand implements Listener, ClaimModeProvider {
         }
 
         command.signalDisabled(uuid);
-
-        if (visuals) {
-            cleanup(uuid);
-        }
     }
 
     @Override

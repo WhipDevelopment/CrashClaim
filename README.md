@@ -34,6 +34,7 @@ mvn clean install
 ```
 
 **Compiling From Source**
+
 If you are the right person to be compiling it yourself then you should not need any directions for this.
 
 ## Contirbute

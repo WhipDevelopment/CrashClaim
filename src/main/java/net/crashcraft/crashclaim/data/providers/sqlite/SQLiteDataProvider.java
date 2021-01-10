@@ -119,7 +119,8 @@ public class SQLiteDataProvider implements DataProvider {
                             "    claim_data Inner Join" +
                             "    permission_set On claim_data.id = permission_set.data_id Inner Join" +
                             "    players On players.id = permission_set.players_id Inner Join" +
-                            "    subclaims On claim_data.id = subclaims.data " +
+                            "    subclaims On claim_data.id = subclaims.data" +
+                            "    inner join claims on claims.id = subclaims.claim_id " +
                             "Where" +
                             "    players.uuid = ? And" +
                             "    permission_set.modifyPermissions = 1 And" +
@@ -492,7 +493,8 @@ public class SQLiteDataProvider implements DataProvider {
             claim.setEditing(false);
 
             return claim;
-        } catch (SQLException e){
+        } catch (Exception e){
+            System.out.println("Error was on claim id: " + id);
             e.printStackTrace();
         }
 

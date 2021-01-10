@@ -161,7 +161,7 @@ public class ClaimDataManager implements Listener {
                 new ConfirmationMenu(resizer,
                         "Confirm Claim Resize",
                         ChatColor.GREEN + "The claim resize will cost: " + ChatColor.YELLOW + price,
-                        new ArrayList<>(Arrays.asList("Confirm or deny the resize.")),
+                        new ArrayList<>(Collections.singletonList(ChatColor.GOLD + "Confirm or deny the resize.")),
                         Material.EMERALD,
                         (player, aBoolean) -> {
                             if (aBoolean) {

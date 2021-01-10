@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
 public class NewClaimMode implements ClaimMode {
@@ -78,7 +79,7 @@ public class NewClaimMode implements ClaimMode {
         new ConfirmationMenu(player,
                 "Confirm Claim Creation",
                 ChatColor.GREEN + "The claim creation will cost: " + ChatColor.YELLOW + price,
-                new ArrayList<>(Arrays.asList("Confirm or deny the creation.")),
+                new ArrayList<>(Collections.singletonList(ChatColor.GOLD + "Confirm or deny the creation.")),
                 Material.EMERALD,
                 (p, aBoolean) -> {
                     if (aBoolean){

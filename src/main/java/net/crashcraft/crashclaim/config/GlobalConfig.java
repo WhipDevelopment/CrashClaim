@@ -48,6 +48,14 @@ public class GlobalConfig extends BaseConfig{
         }
     }
 
+    public static boolean useCommandInsteadOfEdgeEject;
+    public static String claimEjectCommand;
+
+    private static void loadEject(){
+        useCommandInsteadOfEdgeEject = getBoolean("eject.useCommandInstead", false);
+        claimEjectCommand = getString("eject.command", "home");
+    }
+
     public static HashMap<PlayerTeleportEvent.TeleportCause, Integer> teleportCause;
 
     private static void loadTeleport(){

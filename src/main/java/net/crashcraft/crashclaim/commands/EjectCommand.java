@@ -1,12 +1,10 @@
 package net.crashcraft.crashclaim.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Flags;
+import co.aikar.commands.annotation.*;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.claimobjects.Claim;
+import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
@@ -25,6 +23,7 @@ public class EjectCommand extends BaseCommand {
     }
 
     @Default
+    @CommandCompletion("@players @nothing")
     public void onDefault(Player player, @Flags("other") Player otherPlayer){
         Location location = player.getLocation();
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
@@ -47,20 +46,25 @@ public class EjectCommand extends BaseCommand {
                 return;
             }
 
-            int distMax = Math.abs(location.getBlockX() - claim.getMaxX());
-            int distMin = Math.abs(location.getBlockX() - claim.getMinX());
-
-            World world = location.getWorld();
-            if (distMax > distMin) {    //Find closest side
-                PaperLib.teleportAsync(otherPlayer, new Location(world, claim.getMinX() - 1,
-                        world.getHighestBlockYAt(claim.getMinX() - 1,
-                                location.getBlockZ()), location.getBlockZ()));
+            if (GlobalConfig.useCommandInsteadOfEdgeEject){
+                otherPlayer.performCommand(GlobalConfig.claimEjectCommand);
             } else {
-                PaperLib.teleportAsync(otherPlayer, new Location(world, claim.getMaxX() + 1,
-                        world.getHighestBlockYAt(claim.getMaxX() + 1,
-                                location.getBlockZ()), location.getBlockZ()));
+                int distMax = Math.abs(location.getBlockX() - claim.getMaxX());
+                int distMin = Math.abs(location.getBlockX() - claim.getMinX());
+
+                World world = location.getWorld();
+                if (distMax > distMin) {    //Find closest side
+                    PaperLib.teleportAsync(otherPlayer, new Location(world, claim.getMinX() - 1,
+                            world.getHighestBlockYAt(claim.getMinX() - 1,
+                                    location.getBlockZ()), location.getBlockZ()));
+                } else {
+                    PaperLib.teleportAsync(otherPlayer, new Location(world, claim.getMaxX() + 1,
+                            world.getHighestBlockYAt(claim.getMaxX() + 1,
+                                    location.getBlockZ()), location.getBlockZ()));
+                }
             }
 
+            otherPlayer.sendMessage(ChatColor.RED + "You have been ejected from the claim you were standing in by another player.");
             player.sendMessage(ChatColor.GREEN + "You have successfully ejected that player to the edge of the claim.");
         } else {
             player.sendMessage(ChatColor.RED + "There is no claim where you are standing.");

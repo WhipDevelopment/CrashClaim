@@ -3,7 +3,6 @@ package net.crashcraft.crashclaim.commands;
 import co.aikar.commands.PaperCommandManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
-import net.crashcraft.crashclaim.commands.modes.ModeCommand;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.migration.MigrationAdapter;
 import net.crashcraft.crashclaim.permissions.BypassManager;
@@ -34,7 +33,6 @@ public class CommandManager {
         commandManager.registerCommand(new HideClaimsCommand(visualizationManager));
 
         commandManager.registerCommand(new ClaimCommand(manager, visualizationManager));
-        //commandManager.registerCommand(new ModeCommand(plugin, manager, visualizationManager));
 
         commandManager.registerCommand(new MenuCommand(manager, visualizationManager));
         commandManager.registerCommand(new BypassCommand(bypassManager));

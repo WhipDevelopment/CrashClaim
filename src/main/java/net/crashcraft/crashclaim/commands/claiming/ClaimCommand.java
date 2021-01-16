@@ -71,7 +71,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
     public void subClaim(Player player){
         UUID uuid = player.getUniqueId();
 
-        if (stateMap.containsKey(uuid)) {
+        if (modeMap.containsKey(uuid)) {
             forceCleanup(uuid, true);
 
             visualizationManager.sendAlert(player, ChatColor.RED + "Sub Claiming mode " + ChatColor.BOLD + "disabled!");

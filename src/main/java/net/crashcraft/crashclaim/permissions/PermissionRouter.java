@@ -83,6 +83,39 @@ public class PermissionRouter {
          treat as neutral
      */
 
+
+    public static int getLayeredContainer(GlobalPermissionSet parent, PlayerPermissionSet secondary, Material material){
+        return secondary == null ? PermissionRoute.CONTAINERS.getPerm(parent, material) : processPerm(PermissionRoute.CONTAINERS.getPerm(parent, material),
+                PermissionRoute.CONTAINERS.getPerm(secondary, material));
+
+        // return processPerm(route.getPerm(global), main == null ? PermState.NEUTRAL : route.getPerm(main));
+    }
+
+    public static int getLayeredContainer(Claim parent, SubClaim subClaim, UUID uuid, Material material){
+        PermissionGroup parentPerms = parent.getPerms();
+        if (subClaim == null){
+            PlayerPermissionSet main = parentPerms.getPlayerPermissionSet(uuid);
+            if (main == null){
+                return PermissionRoute.CONTAINERS.getPerm(parentPerms.getGlobalPermissionSet(), material);
+            } else return getLayeredContainer(parentPerms.getGlobalPermissionSet(), main, material);
+        } else {
+            PermissionGroup subPerms = subClaim.getPerms();
+
+            PlayerPermissionSet parentMainSet = parentPerms.getPlayerPermissionSet(uuid);
+            PlayerPermissionSet subMainSet = subPerms.getPlayerPermissionSet(uuid);
+
+            return processPerm(
+                    getLayeredContainer(parentPerms.getGlobalPermissionSet(), parentMainSet, material),
+                    getLayeredContainer(subPerms.getGlobalPermissionSet(), subMainSet, material)
+            );
+        }
+    }
+
+
+/*
+
+
+
     public static int getLayeredContainer(Claim parent, SubClaim subClaim, UUID uuid, Material material){
         PermissionGroup parentPerms = parent.getPerms();
         if (subClaim == null){
@@ -108,5 +141,5 @@ public class PermissionRouter {
         return mainPerm == PermState.NEUTRAL ?
                         globalPerm : mainPerm;
     }
-
+ */
 }

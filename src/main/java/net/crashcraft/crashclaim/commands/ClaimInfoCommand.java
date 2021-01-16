@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 @CommandAlias("claiminfo")
-@CommandPermission("crashclaim.admin.bypass")
+@CommandPermission("crashclaim.admin.claiminfo")
 public class ClaimInfoCommand extends BaseCommand {
     private final ClaimDataManager manager;
 

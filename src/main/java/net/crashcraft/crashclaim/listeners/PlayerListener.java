@@ -484,7 +484,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (!helper.hasPermission(player.getUniqueId(), e.getBlockClicked().getLocation(), PermissionRoute.BUILD)){
+        if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
             visuals.sendAlert(player, "You do not have permission to build in this claim");
         }
@@ -498,7 +498,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (!helper.hasPermission(player.getUniqueId(), e.getBlockClicked().getLocation(), PermissionRoute.BUILD)){
+        if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
             visuals.sendAlert(player, "You do not have permission to build in this claim");
         }

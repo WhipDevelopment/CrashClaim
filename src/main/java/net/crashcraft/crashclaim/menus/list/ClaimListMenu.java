@@ -123,18 +123,18 @@ public class ClaimListMenu extends GUI {
 
     @Override
     public void onClick(InventoryClickEvent e, String rawItemName) {
-        switch (rawItemName) {
-            case "page down":
+        switch (e.getSlot()) {
+            case 48:
                 if (page > 1) {
                     page--;
                     loadItems();
                 }
                 break;
-            case "page up":
+            case 50:
                 page++;
                 loadItems();
                 break;
-            case "back":
+            case 45:
                 if (previousMenu == null) {
                     return;
                 }

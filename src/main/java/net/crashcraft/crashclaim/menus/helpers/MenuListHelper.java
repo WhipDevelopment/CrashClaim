@@ -384,7 +384,7 @@ public abstract class MenuListHelper extends GUI {
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem());
 
                         inv.setItem(startMenu + itemOffset + 18,
-                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem());
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;

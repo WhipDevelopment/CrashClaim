@@ -4,6 +4,8 @@ import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.config.BaseConfig;
 import net.crashcraft.crashclaim.config.ConfigManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -370,7 +372,7 @@ public enum Localization {
 
     ;
 
-    static class Utils {
+    private static class Utils {
         static ItemStack addItemShine(ItemStack itemStack){
             ItemStack item = itemStack.clone();
             item.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
@@ -379,18 +381,8 @@ public enum Localization {
         }
     }
 
-    static final MiniMessage parser;
-
-    static {
-        parser = MiniMessage.builder()
-                .parsingErrorMessageConsumer((s) -> CrashClaim.getPlugin().getLogger().warning("MiniMessage Parsing Error: " + s))
-                .build();
-
-        rebuildCachedMessages();
-    }
-
     public static BaseComponent[] parseRaw(String s){
-        return BungeeComponentSerializer.get().serialize(parser.parse(s));
+        return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(s));
     }
 
     public static void rebuildCachedMessages(){
@@ -426,7 +418,7 @@ public enum Localization {
                         localization.message = localization.getMessage(new String[0]);
                         break;
                     case MESSAGE_LIST:
-                        localization.setDefaultList((String[]) getStringList(parseToKey(localization.name()), Arrays.asList(localization.defList)).toArray());
+                        localization.setDefaultList(getStringList(parseToKey(localization.name()), Arrays.asList(localization.defList)).toArray(new String[0]));
                         localization.messageList = localization.getMessageList(new String[0]);
                         break;
                     case ITEM:
@@ -445,7 +437,7 @@ public enum Localization {
         }
 
         private static String parseToKey(String key){
-            return key.replaceAll("__", ".").replaceAll("_", "-");
+            return key.replaceAll("__", ".").replaceAll("_", "-").toLowerCase();
         }
 
         private static ItemStackTemplate createItemStack(String key, ItemStackTemplate template){
@@ -506,7 +498,7 @@ public enum Localization {
     }
 
     public BaseComponent[] getMessage(String... replace){
-        return BungeeComponentSerializer.get().serialize(parser.parse(def, replace));
+        return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(def, replace));
     }
 
     public List<BaseComponent[]> getMessageList() {
@@ -514,10 +506,10 @@ public enum Localization {
     }
 
     public List<BaseComponent[]> getMessageList(String... replace){
-        ArrayList<BaseComponent[]> arr = new ArrayList<>(getMessage().length);
+        ArrayList<BaseComponent[]> arr = new ArrayList<>(defList.length);
 
         for (String line : defList) {
-            Collections.addAll(arr, BungeeComponentSerializer.get().serialize(parser.parse(line, replace)));
+            Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(line, replace)));
         }
 
         return arr;
@@ -582,11 +574,13 @@ public enum Localization {
 
             ItemMeta iMeta = item.getItemMeta();
 
-            iMeta.setDisplayNameComponent(BungeeComponentSerializer.get().serialize(parser.parse(title, replace)));
+            iMeta.setDisplayNameComponent(BungeeComponentSerializer.get().serialize(
+                    Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(title, replace))));
 
             List<BaseComponent[]> components = new ArrayList<>(lore.size());
             for (String line : lore){
-                components.add(BungeeComponentSerializer.get().serialize(parser.parse(line, replace)));
+                components.add(BungeeComponentSerializer.get().serialize(
+                        Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(line, replace))));
             }
             iMeta.setLoreComponents(components);
 

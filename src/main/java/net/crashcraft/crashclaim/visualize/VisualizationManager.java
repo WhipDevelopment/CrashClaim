@@ -82,6 +82,10 @@ public class VisualizationManager {
     }
 
     public void sendAlert(Player player, BaseComponent[] message){
+        if (message == null || message.length < 1){
+            return;
+        }
+
         PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.TITLE);
 
         packet.getTitleActions().write(0, GlobalConfig.visual_alert_type);

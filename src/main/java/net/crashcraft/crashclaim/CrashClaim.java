@@ -8,6 +8,9 @@ import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
 import dev.whip.crashutils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
+import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.localization.Localization;
+import net.crashcraft.crashclaim.localization.LocalizationLoader;
 import net.crashcraft.crashclaim.migration.MigrationManager;
 import net.crashcraft.crashpayment.CrashPayment;
 import net.crashcraft.crashpayment.payment.PaymentProcessor;
@@ -26,6 +29,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.util.Locale;
 
 public class CrashClaim extends JavaPlugin {
     private static CrashClaim plugin;
@@ -64,14 +70,31 @@ public class CrashClaim extends JavaPlugin {
     @Override
     public void onEnable() {
         taskChainFactory = BukkitTaskChainFactory.create(this);
+        this.adventure = BukkitAudiences.create(this);
 
-        if (getDataFolder().mkdirs()){
+        File dataFolder = plugin.getDataFolder();
+
+        if (dataFolder.mkdirs()){
             getLogger().info("Created data directory");
         }
 
-        this.adventure = BukkitAudiences.create(this);
+        try {
+            getLogger().info("Loading configs");
+            if (!new File(dataFolder, "lookup.yml").exists()) {
+                plugin.saveResource("lookup.yml", false);
+            }
+            ConfigManager.initConfig(new File(dataFolder, "config.yml"), GlobalConfig.class);
 
-        new ConfigManager(this);
+            getLogger().info("Finished loading base configs");
+        } catch (Exception ex){
+            ex.printStackTrace();
+            getLogger().severe("Could not load configuration properly. Stopping server");
+            plugin.getServer().shutdown();
+        }
+
+        getLogger().info("Loading language file");
+        LocalizationLoader.initialize(); // Init and reload localization
+        getLogger().info("Finished loading language file");
 
         crashUtils.setupMenuSubSystem();
         crashUtils.setupTextureCache();

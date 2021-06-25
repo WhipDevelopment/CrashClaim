@@ -13,26 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConfigManager {
-    public ConfigManager(JavaPlugin plugin){
-        Logger logger = plugin.getLogger();
-
-        File dataFolder = plugin.getDataFolder();
-
-        try {
-            logger.info("Loading configs");
-            if (!new File(dataFolder, "lookup.yml").exists()) {
-                plugin.saveResource("lookup.yml", false);
-            }
-            initConfig(new File(dataFolder, "config.yml"), GlobalConfig.class);
-
-            logger.info("Finished loading base configs");
-        } catch (Exception ex){
-            ex.printStackTrace();
-            logger.severe("Could not load configuration properly. Stopping server");
-            plugin.getServer().shutdown();
-        }
-    }
-
     public static YamlConfiguration initConfig(File configFile, Class<? extends BaseConfig> clazz) throws Exception{
         return initConfig(configFile, clazz, null);
     }

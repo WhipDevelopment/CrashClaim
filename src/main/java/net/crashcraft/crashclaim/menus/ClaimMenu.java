@@ -143,7 +143,7 @@ public class ClaimMenu extends GUI {
                             .onComplete(((player, reply) -> {
                                 claim.setName(reply);
                                 player.sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage("name", reply));
-                                return null;
+                                return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
                 } else {
@@ -159,7 +159,7 @@ public class ClaimMenu extends GUI {
                             .onComplete(((player, reply) -> {
                                 claim.setEntryMessage(reply);
                                 player.sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage("entry_message", reply));
-                                return null;
+                                return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
                 } else {
@@ -175,8 +175,7 @@ public class ClaimMenu extends GUI {
                             .onComplete(((player, reply) -> {
                                 claim.setExitMessage(reply);
                                 player.sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage("exit_message", reply));
-
-                                return null;
+                                return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
                 } else {

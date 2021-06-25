@@ -3,8 +3,8 @@ package net.crashcraft.crashclaim.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.BypassManager;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class BypassCommand extends BaseCommand {
@@ -18,9 +18,9 @@ public class BypassCommand extends BaseCommand {
     @CommandPermission("crashclaim.admin.bypass")
     public void onByp(Player player){
         if (manager.toggleBypass(player.getUniqueId())){
-            player.sendMessage(ChatColor.GREEN + "Enabled claim bypass. You are now bypassing permissions");
+            player.sendMessage(Localization.BYPASS__ENABLED.getMessage());
         } else {
-            player.sendMessage(ChatColor.RED + "Disabled claim bypass.");
+            player.sendMessage(Localization.BYPASS__DISABLED.getMessage());
         }
     }
 }

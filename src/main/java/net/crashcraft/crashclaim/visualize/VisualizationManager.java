@@ -18,6 +18,8 @@ import net.crashcraft.crashclaim.visualize.api.VisualProvider;
 import net.crashcraft.crashclaim.visualize.api.providers.BlockVisualProvider;
 import net.crashcraft.crashclaim.visualize.api.providers.GlowVisualProvider;
 import net.crashcraft.crashclaim.visualize.api.visuals.BaseGlowVisual;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -79,11 +81,11 @@ public class VisualizationManager {
         crashClaim.saveConfig();
     }
 
-    public void sendAlert(Player player, String message){
+    public void sendAlert(Player player, BaseComponent[] message){
         PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.TITLE);
 
         packet.getTitleActions().write(0, GlobalConfig.visual_alert_type);
-        packet.getChatComponents().write(0, WrappedChatComponent.fromText(ChatColor.translateAlternateColorCodes('&', message)));
+        packet.getChatComponents().write(0, WrappedChatComponent.fromJson(ComponentSerializer.toString(message)));
         packet.getIntegers().write(0, GlobalConfig.visual_alert_fade_in);
         packet.getIntegers().write(1, GlobalConfig.visual_alert_duration);
         packet.getIntegers().write(2, GlobalConfig.visual_alert_fade_out);
@@ -110,8 +112,8 @@ public class VisualizationManager {
         return null;
     }
 
-    public void despawnAfter(BaseVisual visual, int seconds){
-        timeMap.put(visual, System.currentTimeMillis() + (seconds * 1000));
+    public void deSpawnAfter(BaseVisual visual, int seconds){
+        timeMap.put(visual, System.currentTimeMillis() + (seconds * 1000L));
     }
 
     public void visualizeSuroudningClaims(Player player, ClaimDataManager claimDataManager){

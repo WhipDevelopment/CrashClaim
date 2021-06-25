@@ -7,11 +7,10 @@ import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.helpers.MenuListHelper;
 import net.crashcraft.crashclaim.menus.helpers.MenuSwitchType;
-import net.crashcraft.crashclaim.menus.helpers.StaticItemLookup;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -85,13 +84,13 @@ public class SimplePermissionMenu extends MenuListHelper {
 
         inv.setItem(17, descItem);
 
-        inv.setItem(35, StaticItemLookup.SIMPLE_MENU_ITEM_GLOWING);
-        inv.setItem(44, StaticItemLookup.ADVANCED_MENU_ITEM);
+        inv.setItem(35, Localization.MENU__PERMISSION_OPTION__SIMPLE_GLOWING.getItem());
+        inv.setItem(44, Localization.MENU__PERMISSION_OPTION__ADVANCED.getItem());
     }
 
     @Override
     public void invalidPermissions() {
-        player.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+        player.sendMessage(Localization.MENU__SIMPLE_PERMISSIONS__NO_PERMISSION.getMessage());
         forceClose();
     }
 

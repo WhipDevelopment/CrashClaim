@@ -5,11 +5,11 @@ import dev.whip.crashutils.menusystem.defaultmenus.PlayerListMenu;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.permissions.SimplePermissionMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PlayerPermListMenu {
     public PlayerPermListMenu(BaseClaim claim, Player viewer, GUI previous){
         if (!PermissionHelper.getPermissionHelper().hasPermission(claim, viewer.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
-            viewer.sendMessage(ChatColor.RED + "You no longer have sufficient permissions to continue");
+            viewer.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
             //Try and close an inventory, want to close a loose end just in case
             viewer.closeInventory();
             return;

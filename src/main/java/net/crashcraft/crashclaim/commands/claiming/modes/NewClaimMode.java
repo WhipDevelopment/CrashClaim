@@ -10,6 +10,7 @@ import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.ClaimResponse;
 import net.crashcraft.crashclaim.data.ContributionManager;
 import net.crashcraft.crashclaim.data.StaticClaimLogic;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
@@ -17,14 +18,9 @@ import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualType;
 import net.crashcraft.crashpayment.payment.TransactionType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.UUID;
 
 public class NewClaimMode implements ClaimMode {
@@ -41,7 +37,7 @@ public class NewClaimMode implements ClaimMode {
         this.visualizationManager = commandManager.getVisualizationManager();
         this.manager = commandManager.getDataManager();
 
-        player.sendMessage(ChatColor.GREEN + "Click the an opposite corner to form a new claim.");
+        player.sendMessage(Localization.NEW_CLAIM__CLICK_CORNER.getMessage());
 
         VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
         group.removeAllVisualsOfType(VisualType.MARKER);
@@ -51,12 +47,12 @@ public class NewClaimMode implements ClaimMode {
 
     private boolean checkCanCreate(Location min, Location max){
         if ((max.getBlockX() - min.getBlockX()) < 4 || (max.getBlockZ() - min.getBlockZ()) < 4) {
-            player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
+            player.sendMessage(Localization.NEW_CLAIM__MIN_SIZE.getMessage());
             return false;
         }
 
         if (manager.checkOverLapSurroudningClaims(-1, max.getBlockX(), max.getBlockZ(), min.getBlockX(), min.getBlockZ(), min.getWorld().getUID())){
-            player.sendMessage(ChatColor.RED + "You cannot claim over an existing claim.");
+            player.sendMessage(Localization.NEW_CLAIM__OVERLAPPING.getMessage());
             return false;
         }
 
@@ -75,12 +71,13 @@ public class NewClaimMode implements ClaimMode {
         int area = ContributionManager.getArea(min.getBlockX(), min.getBlockZ(), max.getBlockX(), max.getBlockZ());
 
         int price = (int) Math.ceil(area * GlobalConfig.money_per_block);
+        String priceString = Integer.toString(price);
 
         new ConfirmationMenu(player,
-                "Confirm Claim Creation",
-                ChatColor.GREEN + "The claim creation will cost: " + ChatColor.YELLOW + price,
-                new ArrayList<>(Collections.singletonList(ChatColor.GOLD + "Confirm or deny the creation.")),
-                Material.EMERALD,
+                Localization.NEW_CLAIM__CREATE_MENU__TITLE.getMessage(),
+                Localization.NEW_CLAIM__CREATE_MENU__MESSAGE.getItem("price", priceString),
+                Localization.NEW_CLAIM__CREATE_MENU__ACCEPT.getItem("price", priceString),
+                Localization.NEW_CLAIM__CREATE_MENU__DENY.getItem("price", priceString),
                 (p, aBoolean) -> {
                     if (aBoolean){
                         if (!checkCanCreate(min, max)){
@@ -89,7 +86,7 @@ public class NewClaimMode implements ClaimMode {
 
                         CrashClaim.getPlugin().getPayment().makeTransaction(player.getUniqueId(), TransactionType.WITHDRAW, "Claim Purchase", price, (res) -> {
                             if (!res.transactionSuccess()){
-                                player.sendMessage(ChatColor.RED + "You need " + price + " coins to claim that area.");
+                                player.sendMessage(Localization.NEW_CLAIM__NOT_ENOUGH_BALANCE.getMessage("price", priceString));
                                 cleanup(player.getUniqueId(), true);
                                 return;
                             }
@@ -100,7 +97,7 @@ public class NewClaimMode implements ClaimMode {
                                 if (response.isStatus()) {
                                     ((Claim) response.getClaim()).addContribution(player.getUniqueId(), area); //Contribution tracking
 
-                                    player.sendMessage(ChatColor.GREEN + "Claim has been successfully created.");
+                                    player.sendMessage(Localization.NEW_CLAIM__SUCCESS.getMessage());
 
                                     VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
                                     group.removeAllVisuals();
@@ -108,11 +105,11 @@ public class NewClaimMode implements ClaimMode {
                                     BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
                                     visual.spawn();
 
-                                    visualizationManager.despawnAfter(visual, 5);
+                                    visualizationManager.deSpawnAfter(visual, 5);
 
                                     cleanup(player.getUniqueId(), false);
                                 } else {
-                                    player.sendMessage(ChatColor.RED + "Error creating claim");
+                                    player.sendMessage(Localization.NEW_CLAIM__ERROR.getMessage());
                                     cleanup(player.getUniqueId(), true);
                                 }
                             });

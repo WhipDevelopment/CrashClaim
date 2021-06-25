@@ -21,6 +21,7 @@ import net.crashcraft.crashclaim.listeners.PlayerListener;
 import net.crashcraft.crashclaim.listeners.WorldListener;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -42,6 +43,7 @@ public class CrashClaim extends JavaPlugin {
     private CrashPayment paymentPlugin;
     private CommandManager commandManager;
     private MigrationManager migrationManager;
+    private BukkitAudiences adventure;
 
     @Override
     public void onLoad() {
@@ -66,6 +68,8 @@ public class CrashClaim extends JavaPlugin {
         if (getDataFolder().mkdirs()){
             getLogger().info("Created data directory");
         }
+
+        this.adventure = BukkitAudiences.create(this);
 
         new ConfigManager(this);
 
@@ -130,6 +134,7 @@ public class CrashClaim extends JavaPlugin {
         paymentPlugin = null;
         commandManager = null;
         migrationManager = null;
+        adventure = null;
     }
 
     public void disablePlugin(String error){
@@ -179,5 +184,9 @@ public class CrashClaim extends JavaPlugin {
 
     public MigrationManager getMigrationManager() {
         return migrationManager;
+    }
+
+    public BukkitAudiences getAdventure() {
+        return adventure;
     }
 }

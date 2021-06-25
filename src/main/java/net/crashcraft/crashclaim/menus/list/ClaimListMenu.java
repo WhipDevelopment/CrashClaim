@@ -5,12 +5,14 @@ import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.ClaimMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -58,40 +60,59 @@ public class ClaimListMenu extends GUI {
         pageItemsDisplay.clear();
 
         int slot = 10;
-        for (Claim item : currentPageItems) {
+        for (Claim claim : currentPageItems) {
             while ((slot % 9) < 1 || (slot % 9) > 7) {
                 slot++;
             }
 
-            ArrayList<String> desc = new ArrayList<>(Arrays.asList(
-                    ChatColor.GREEN + "Coordinates: " + ChatColor.YELLOW +
-                            ChatColor.YELLOW + item.getMinX() + ", " + item.getMinZ()
-                            + ChatColor.GOLD + ", " +
-                            ChatColor.YELLOW + item.getMaxX() + ", " + item.getMaxZ(),
-                    ChatColor.GREEN + "World: " + ChatColor.YELLOW + Bukkit.getWorld(item.getWorld()).getName()
-            ));
+            pageItemsDisplay.put(slot, claim);
 
-            pageItemsDisplay.put(slot, item);
+            ItemStack descItem;
 
-            inv.setItem(slot, createGuiItem(ChatColor.GOLD + item.getName(), desc, GlobalConfig.visual_menu_items.get(item.getWorld())));
+            if (claim.getOwner().equals(getPlayer().getUniqueId())) {
+                descItem = Localization.MENU__GENERAL__CLAIM_ITEM_NO_OWNER.getItem(
+                        "name", claim.getName(),
+                        "min_x", Integer.toString(claim.getMinX()),
+                        "min_z", Integer.toString(claim.getMinZ()),
+                        "max_x", Integer.toString(claim.getMaxX()),
+                        "max_z", Integer.toString(claim.getMaxZ()),
+                        "world", Bukkit.getWorld(claim.getWorld()).getName()
+                );
+            } else {
+                descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(
+                        "name", claim.getName(),
+                        "min_x", Integer.toString(claim.getMinX()),
+                        "min_z", Integer.toString(claim.getMinZ()),
+                        "max_x", Integer.toString(claim.getMaxX()),
+                        "max_z", Integer.toString(claim.getMaxZ()),
+                        "world", Bukkit.getWorld(claim.getWorld()).getName(),
+                        "owner", Bukkit.getOfflinePlayer(claim.getOwner()).getName()
+                );
+            }
+
+            descItem.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+
+            inv.setItem(slot, descItem);
 
             slot++;
         }
 
         //Controls
         if (page > 1) {
-            inv.setItem(48, createGuiItem(ChatColor.GOLD + "Page Down", Material.ARROW));
+            inv.setItem(48, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem());
         }
 
-        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Page " + page + " / " + (int) Math.ceil((float) claims.size() / 21),
-                Material.ARROW));
+        inv.setItem(49, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(
+                "page", Integer.toString(page),
+                "page_total", Integer.toString((int) Math.ceil((float) claims.size() / 21))
+        ));
 
         if (claims.size() > page * 21) {
-            inv.setItem(50, createGuiItem(ChatColor.GOLD + "Page Up", Material.ARROW));
+            inv.setItem(50, Localization.MENU__GENERAL__NEXT_BUTTON.getItem());
         }
 
         if (previousMenu != null) {
-            inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+            inv.setItem(45, Localization.MENU__GENERAL__BACK_BUTTON.getItem());
         }
     }
 

@@ -13,6 +13,12 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class GlobalConfig extends BaseConfig{
+    public static String locale;
+
+    private static void loadLocale(){
+        locale = getString("language", "en_US");
+    }
+
     public static String visual_type;
     public static boolean visual_use_highest_block;
     public static HashMap<UUID, Material> visual_menu_items;
@@ -40,7 +46,7 @@ public class GlobalConfig extends BaseConfig{
             Material material = Material.getMaterial(getString("visualization.visual-colors." + color.name(), Material.ORANGE_CONCRETE.name()));
 
             if (material == null){
-                log("Invalid material for visualization.visual-colors." + color.name());
+                log("Invalid material for visualization.visual-colors." + color.name() + ", loading default value");
                 material = Material.ORANGE_CONCRETE;
             }
 

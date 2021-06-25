@@ -40,7 +40,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -136,6 +136,14 @@
             <id>wesjd-repo</id>
             <url>https://nexus.wesjd.net/repository/thirdparty/</url>
         </repository>
+        <repository>
+            <id>sonatype-oss-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -145,12 +153,7 @@
             <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>27.0.1-jre</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
@@ -196,9 +199,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.WesJD.AnvilGUI</groupId>
+            <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>1.5.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -210,7 +213,7 @@
         <dependency>
             <groupId>dev.whip</groupId>
             <artifactId>CrashUtils</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -231,6 +234,22 @@
             <artifactId>GriefPrevention</artifactId>
             <version>16.16.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bungeecord</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

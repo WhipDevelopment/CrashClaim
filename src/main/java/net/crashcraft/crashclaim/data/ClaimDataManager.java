@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.data;
 
 import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashpayment.payment.TransactionResponse;
@@ -157,12 +158,13 @@ public class ClaimDataManager implements Listener {
 
             if (difference > 0) {
                 int price = (int) Math.ceil(difference * GlobalConfig.money_per_block);
+                String priceString = Integer.toString(price);
                 //Check price with player
                 new ConfirmationMenu(resizer,
-                        "Confirm Claim Resize",
-                        ChatColor.GREEN + "The claim resize will cost: " + ChatColor.YELLOW + price,
-                        new ArrayList<>(Collections.singletonList(ChatColor.GOLD + "Confirm or deny the resize.")),
-                        Material.EMERALD,
+                        Localization.RESIZE__MENU__CONFIRMATION__TITLE.getMessage(),
+                        Localization.RESIZE__MENU__CONFIRMATION__MESSAGE.getItem("price", priceString),
+                        Localization.RESIZE__MENU__CONFIRMATION__ACCEPT.getItem("price", priceString),
+                        Localization.RESIZE__MENU__CONFIRMATION__DENY.getItem("price", priceString),
                         (player, aBoolean) -> {
                             if (aBoolean) {
                                 if (PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
@@ -175,12 +177,12 @@ public class ClaimDataManager implements Listener {
                                             return;
                                         } else {
                                             //Didnt have enough money or something
-                                            player.sendMessage(ChatColor.RED + response.getTransactionError());
+                                            player.sendMessage(Localization.RESIZE__TRANSACTION_ERROR.getMessage("error", response.getTransactionError()));
                                         }
                                         consumer.accept(false);
                                     });
                                 } else {
-                                    player.sendMessage(ChatColor.RED + "You no longer have permission to resize the claim.");
+                                    player.sendMessage(Localization.RESIZE__NO_LONGER_PERMISSION.getMessage());
                                 }
                             }
                             return "";

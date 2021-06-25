@@ -7,10 +7,10 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -38,17 +38,17 @@ public class ShowClaimsCommand extends BaseCommand {
         Claim claim = claimDataManager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());
         if (claim != null) {
             if (!PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.VIEW_SUB_CLAIMS)){
-                player.sendMessage(ChatColor.RED + "You need permission to view sub claims.");
+                player.sendMessage(Localization.SHOW__SUBCLAIM__NO_PERMISSION.getMessage());
                 return;
             }
 
             if (claim.getSubClaims().size() != 0){
                 visualizationManager.visualizeSuroudningSubClaims(claim, player);
             } else {
-                player.sendMessage(ChatColor.GREEN + "There are no sub claims to visualize");
+                player.sendMessage(Localization.SHOW__SUBCLAIM__NO_SUBCLAIMS.getMessage());
             }
         } else {
-            player.sendMessage(ChatColor.RED + "You need to stand in a claim to visualize its sub claims.");
+            player.sendMessage(Localization.SHOW__SUBCLAIM__STAND_INSIDE.getMessage());
         }
     }
 }

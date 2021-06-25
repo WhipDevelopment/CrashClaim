@@ -9,6 +9,7 @@ import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.ClaimMenu;
 import net.crashcraft.crashclaim.menus.list.ClaimListMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
@@ -17,12 +18,9 @@ import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.bukkit.inventory.ItemStack;
 
 public class MenuCommand extends BaseCommand {
     private final ClaimDataManager manager;
@@ -47,7 +45,7 @@ public class MenuCommand extends BaseCommand {
         if (claim != null){
             new ClaimMenu(player, claim, null).open();
         } else {
-            player.sendMessage(ChatColor.RED + "There is no claim where you are standing.");
+            player.sendMessage(Localization.CLAIM_SETTINGS__NO_CLAIM.getMessage());
         }
     }
 
@@ -56,12 +54,16 @@ public class MenuCommand extends BaseCommand {
     public void unClaim(Player player){
         Location location = player.getLocation();
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
+
         if (claim != null){
-            new ConfirmationMenu(player,"Confirm Delete Claim",
-                    ChatColor.DARK_RED + "Permanently Delete this claim?",
-                    new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
-                            ChatColor.RED + "the contributing parties")),
-                    GlobalConfig.visual_menu_items.get(claim.getWorld()),
+            ItemStack message = Localization.UN_CLAIM__MENU__CONFIRMATION__MESSAGE.getItem();
+            message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+
+            new ConfirmationMenu(player,
+                    Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(),
+                    message,
+                    Localization.UN_CLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
+                    Localization.UN_CLAIM__MENU__CONFIRMATION__DENY.getItem(),
                     (p, aBoolean) -> {
                         if (aBoolean) {
                             if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
@@ -71,13 +73,13 @@ public class MenuCommand extends BaseCommand {
                                     group.removeAllVisuals();
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + "You do not have permission to modify this claim.");
+                                player.sendMessage(Localization.UN_CLAIM__NO_PERMISSION.getMessage());
                             }
                         }
                         return "";
                     }, p -> "").open();
         } else {
-            player.sendMessage(ChatColor.RED + "There is no claim where you are standing.");
+            player.sendMessage(Localization.UN_CLAIM__NO_CLAIM.getMessage());
         }
     }
 
@@ -87,11 +89,14 @@ public class MenuCommand extends BaseCommand {
         Location location = player.getLocation();
         SubClaim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID()).getSubClaim(location.getBlockX(), location.getBlockZ());
         if (claim != null){
-            new ConfirmationMenu(player,"Confirm Delete Claim",
-                    ChatColor.DARK_RED + "Permanently Delete this claim?",
-                    new ArrayList<>(Arrays.asList(ChatColor.RED + "Claim Blocks will be restored to ",
-                            ChatColor.RED + "the contributing parties")),
-                    GlobalConfig.visual_menu_items.get(claim.getWorld()),
+            ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem();
+            message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+
+            new ConfirmationMenu(player,
+                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__TITLE.getMessage(),
+                    message,
+                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
+                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__DENY.getItem(),
                     (p, aBoolean) -> {
                         if (aBoolean) {
                             if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
@@ -104,16 +109,16 @@ public class MenuCommand extends BaseCommand {
                                     BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, claim.getParent(), player.getLocation().getBlockY() - 1);
                                     visual.spawn();
 
-                                    visualizationManager.despawnAfter(visual, 10);
+                                    visualizationManager.deSpawnAfter(visual, 10);
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + "You do not have permission to modify this sub claim.");
+                                player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_PERMISSION.getMessage());
                             }
                         }
                         return "";
                     }, p -> "").open();
         } else {
-            player.sendMessage(ChatColor.RED + "There is no sub claim where you are standing.");
+            player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_CLAIM.getMessage());
         }
     }
 }

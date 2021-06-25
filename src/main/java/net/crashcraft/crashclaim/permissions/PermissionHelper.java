@@ -20,7 +20,7 @@ public class PermissionHelper {
     private final BypassManager bypassManager;
 
     public PermissionHelper(ClaimDataManager manager){
-        helper =    this;
+        helper = this;
 
         this.manager = manager;
         this.bypassManager = new BypassManager();

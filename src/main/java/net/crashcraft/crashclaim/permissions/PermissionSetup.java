@@ -17,12 +17,12 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class PermissionSetup {
-    private ArrayList<Material> trackedContainers;
-    private ArrayList<Material> untrackedBlocks;
-    private ArrayList<Material> extraInteractables;
-    private ArrayList<Material> heldItemInteraction;
+    private final ArrayList<Material> trackedContainers;
+    private final ArrayList<Material> untrackedBlocks;
+    private final ArrayList<Material> extraInteractables;
+    private final ArrayList<Material> heldItemInteraction;
 
-    private PlayerPermissionSet ownerPermissionSet;
+    private final PlayerPermissionSet ownerPermissionSet;
 
     public PermissionSetup(CrashClaim claim){
         Logger logger = claim.getLogger();

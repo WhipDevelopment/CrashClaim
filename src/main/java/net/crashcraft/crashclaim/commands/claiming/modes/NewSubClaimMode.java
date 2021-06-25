@@ -1,19 +1,17 @@
 package net.crashcraft.crashclaim.commands.claiming.modes;
 
 import net.crashcraft.crashclaim.claimobjects.Claim;
-import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.commands.claiming.ClaimMode;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.ClaimResponse;
-import net.crashcraft.crashclaim.data.ErrorType;
 import net.crashcraft.crashclaim.data.MathUtils;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualType;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -38,14 +36,14 @@ public class NewSubClaimMode implements ClaimMode {
 
         visualizationManager.getProvider().spawnMarkerVisual(VisualColor.YELLOW, group, firstLocation.add(0, 1, 0)).spawn();
 
-        player.sendMessage(ChatColor.GREEN + "Click an opposite corner to form a sub claim");
+        player.sendMessage(Localization.NEW_SUBCLAIM__CLICK_CORNER.getMessage());
     }
 
     @Override
     public void click(Player player, Location click) {
         if (!MathUtils.iskPointCollide(claim.getMinX(), claim.getMinZ(),
                 claim.getMaxX(), claim.getMaxZ(), click.getBlockX(), click.getBlockZ())){
-            player.sendMessage(ChatColor.RED + "Sub claims can only be formed inside of a parent claim.");
+            player.sendMessage(Localization.NEW_SUBCLAIM__NOT_INSIDE_PARENT.getMessage());
             cleanup(player.getUniqueId(), true);
             return;
         }
@@ -60,25 +58,25 @@ public class NewSubClaimMode implements ClaimMode {
             visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
             for (BaseVisual visual : group.getActiveVisuals()){
-                visualizationManager.despawnAfter(visual, 5);
+                visualizationManager.deSpawnAfter(visual, 5);
             }
 
-            player.sendMessage(ChatColor.GREEN + "Successfully created sub claim.");
+            player.sendMessage(Localization.NEW_SUBCLAIM__SUCCESS.getMessage());
 
             cleanup(player.getUniqueId(), false);
         } else {
             switch (response.getError()) {
                 case TOO_SMALL:
-                    player.sendMessage(ChatColor.RED + "A sub claim needs to be at least a 5x5 area.");
+                    player.sendMessage(Localization.NEW_SUBCLAIM__MIN_AREA.getMessage());
                     break;
                 case OUT_OF_BOUNDS:
-                    player.sendMessage(ChatColor.RED + "You cannot form a sub claim outside of a parent claim.");
+                    player.sendMessage(Localization.NEW_SUBCLAIM__NEED_PARENT.getMessage());
                     break;
                 case OVERLAP_EXISTING_SUBCLAIM:
-                    player.sendMessage(ChatColor.RED + "You cannot overlap an existing sub claim.");
+                    player.sendMessage(Localization.NEW_SUBCLAIM__NO_OVERLAP.getMessage());
                     break;
                 case GENERIC:
-                    player.sendMessage(ChatColor.RED + "There was an error creating the sub claim.");
+                    player.sendMessage(Localization.NEW_SUBCLAIM__ERROR.getMessage());
                     break;
             }
             cleanup(player.getUniqueId(), true);

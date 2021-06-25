@@ -1,11 +1,11 @@
 package net.crashcraft.crashclaim.data;
 
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashpayment.payment.TransactionType;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -31,23 +31,7 @@ public class ContributionManager {
         } else {
             int value = (int) Math.floor(Math.floor(Math.abs(difference) * GlobalConfig.money_per_block) / claim.getContribution().size());
 
-            if (value == 0){
-                return;
-            }
-
-            for (Map.Entry<UUID, Integer> entry : claim.getContribution().entrySet()){
-                CrashClaim.getPlugin().getPayment().makeTransaction(entry.getKey(), TransactionType.DEPOSIT, "Claim Refund", value, (transaction) -> {
-                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(transaction.getOwner());
-                    if (offlinePlayer.isOnline()){
-                        Player p = offlinePlayer.getPlayer();
-                        if (p != null) {
-                            p.sendMessage(ChatColor.GREEN + "You have received " + ChatColor.GOLD +
-                                    ((int) Math.floor(transaction.getAmount()))
-                                    + ChatColor.GREEN + " for a refunded contribution to a claim.");
-                        }
-                    }
-                });
-            }
+            refund(claim, value);
         }
     }
 
@@ -55,6 +39,10 @@ public class ContributionManager {
         int area = getArea(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ());
         int value = (int) Math.floor(Math.floor(area * GlobalConfig.money_per_block) / claim.getContribution().size());
 
+        refund(claim, value);
+    }
+
+    private static void refund(Claim claim, int value) {
         if (value == 0){
             return;
         }
@@ -65,9 +53,7 @@ public class ContributionManager {
                 if (offlinePlayer.isOnline()){
                     Player p = offlinePlayer.getPlayer();
                     if (p != null) {
-                        p.sendMessage(ChatColor.GREEN + "You have received " + ChatColor.GOLD +
-                                ((int) Math.floor(transaction.getAmount()))
-                                + ChatColor.GREEN + " for a refunded contribution to a claim.");
+                        p.sendMessage(Localization.CONTRIBUTION_REFUND.getMessage("amount", Integer.toString((int) Math.floor(transaction.getAmount()))));
                     }
                 }
             });

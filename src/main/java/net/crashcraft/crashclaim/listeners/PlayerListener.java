@@ -5,6 +5,7 @@ import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionSetup;
@@ -59,7 +60,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.BUILD)) {
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
         }
     }
 
@@ -78,7 +79,7 @@ public class PlayerListener implements Listener {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && perms.getHeldItemInteraction().contains(e.getItem().getType())) {
             if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
             }
             return;
         }
@@ -94,10 +95,10 @@ public class PlayerListener implements Listener {
             }
 
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to open containers in this claim.");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__CONTAINERS.getMessage());
         } else if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to interact in this claim.");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
         }
     }
 
@@ -205,13 +206,13 @@ public class PlayerListener implements Listener {
                 return;
             case 1: //Block
                 if (!helper.hasPermission(event.getPlayer().getUniqueId(), location, PermissionRoute.TELEPORTATION)){
-                    visuals.sendAlert(event.getPlayer(), "You do not have permission to teleport to that claim.");
+                    visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__TELEPORT.getMessage());
                     event.setCancelled(true);
                 }
                 return;
             case 2: //Relocate
                 if (!helper.hasPermission(event.getPlayer().getUniqueId(), location, PermissionRoute.TELEPORTATION)){
-                    visuals.sendAlert(event.getPlayer(), "You do not have permission to teleport to that claim. You have been relocated outside of it.");
+                    visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__TELEPORT_RELOCATE.getMessage());
 
                     Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
                     if (claim != null) {
@@ -282,19 +283,19 @@ public class PlayerListener implements Listener {
                     }
 
                     if (to.getEntryMessage() != null){
-                        visuals.sendAlert(player, to.getEntryMessage());
+                        visuals.sendAlert(player, Localization.parseRaw(to.getEntryMessage()));
                     } else if (from.getEntryMessage() != null){
-                        visuals.sendAlert(player, from.getExitMessage());
+                        visuals.sendAlert(player, Localization.parseRaw(from.getExitMessage()));
                     }
                 } else {
                     if (to.getEntryMessage() != null){
-                        visuals.sendAlert(player, to.getEntryMessage());
+                        visuals.sendAlert(player, Localization.parseRaw(to.getEntryMessage()));
                     }
                 }
             } else {
                 if (from != null){
                     if (from.getExitMessage() != null){
-                        visuals.sendAlert(player, from.getExitMessage());
+                        visuals.sendAlert(player, Localization.parseRaw(from.getExitMessage()));
                     }
                 }
             }
@@ -330,7 +331,7 @@ public class PlayerListener implements Listener {
 
                 if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){
                     e.setCancelled(true);
-                    visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
+                    visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
                 }
             } else {
                 if (!helper.hasPermission(location, PermissionRoute.ENTITIES)){
@@ -341,7 +342,7 @@ public class PlayerListener implements Listener {
             Player player = (Player) e.getDamager();
             if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
             }
         } else if (e.getDamager() instanceof TNTPrimed){
             if (!helper.hasPermission(e.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
@@ -379,7 +380,7 @@ public class PlayerListener implements Listener {
             }
         } else if (!helper.hasPermission(event.getPlayer().getUniqueId(), event.getBlock().getLocation(), PermissionRoute.INTERACTIONS)){
             event.setCancelled(true);
-            visuals.sendAlert(event.getPlayer(), "You do not have permission to interact in this claim.");
+            visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
         }
     }
 
@@ -393,7 +394,7 @@ public class PlayerListener implements Listener {
             Player player = (Player) e.getAttacker();
             if (!helper.hasPermission(player.getUniqueId(), e.getVehicle().getLocation(), PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
             }
         } else if (e.getAttacker() instanceof TNTPrimed){
             if (!helper.hasPermission(e.getAttacker().getLocation(), PermissionRoute.EXPLOSIONS)){
@@ -416,7 +417,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
         }
     }
 
@@ -430,7 +431,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
         }
     }
 
@@ -444,7 +445,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getArrow().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to interact with entities in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
         }
     }
 
@@ -458,7 +459,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
         }
     }
 
@@ -472,7 +473,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
         }
     }
 
@@ -486,7 +487,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
         }
     }
 
@@ -500,7 +501,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, "You do not have permission to build in this claim");
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
         }
     }
 
@@ -513,7 +514,7 @@ public class PlayerListener implements Listener {
         if (e.getIgnitingEntity() instanceof Player &&
                 !helper.hasPermission(e.getPlayer().getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)) {
             e.setCancelled(true);
-            visuals.sendAlert(e.getPlayer(), "You do not have permission to build in this claim");
+            visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
         }
     }
 }

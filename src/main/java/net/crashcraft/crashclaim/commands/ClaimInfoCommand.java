@@ -9,8 +9,8 @@ import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.PermState;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
+import net.crashcraft.crashclaim.localization.Localization;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,36 +31,37 @@ public class ClaimInfoCommand extends BaseCommand {
         Location location = player.getLocation();
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim != null){
-            StringBuilder sb = new StringBuilder();
-
             GlobalPermissionSet set = claim.getPerms().getGlobalPermissionSet();
 
-            final String enabled = ChatColor.DARK_GREEN + "Enabled";
-            final String disabled = ChatColor.RED + "Disabled";
+            final String enabled = Localization.CLAIM_INFO__STATUS_ENABLED.getRawMessage();
+            final String disabled = Localization.CLAIM_INFO__STATUS_DISABLED.getRawMessage();
 
-            sb.append(ChatColor.GOLD).append("Claim Info | ").append(ChatColor.YELLOW)
-                    .append("[").append(claim.getMinX()).append(", ").append(claim.getMinZ())
-                    .append("], [").append(claim.getMaxX()).append(", ").append(claim.getMaxZ()).append("]\n")
-                    .append(ChatColor.GREEN).append("Owner: ").append(ChatColor.WHITE).append(Bukkit.getOfflinePlayer(claim.getOwner()).getName()).append("\n")
-                    .append(ChatColor.GOLD).append("Global Permissions\n")
-                    .append(ChatColor.GREEN).append("Build").append(set.getBuild() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GREEN).append("Entities").append(set.getEntities() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GREEN).append("Interactions").append(set.getInteractions() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GREEN).append("View Sub Claims").append(set.getViewSubClaims() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GREEN).append("Teleportations").append(set.getTeleportation() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GREEN).append("Explosions").append(set.getExplosions() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GREEN).append("Fluids").append(set.getFluids() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GREEN).append("Pistons").append(set.getPistons() == PermState.ENABLED ? enabled : disabled).append("\n")
-                    .append(ChatColor.GOLD).append("Global Container Permissions\n");
+            player.sendMessage(
+                    Localization.CLAIM_INFO__MESSAGE.getMessage(
+                            "min_x", Integer.toString(claim.getMinX()),
+                            "min_z", Integer.toString(claim.getMinZ()),
+                            "max_x", Integer.toString(claim.getMaxX()),
+                            "max_z", Integer.toString(claim.getMaxZ()),
+                            "owner", Bukkit.getOfflinePlayer(claim.getOwner()).getName(),
+                            "build_status", set.getBuild() == PermState.ENABLED ? enabled : disabled,
+                            "entities_status", set.getEntities() == PermState.ENABLED ? enabled : disabled,
+                            "interactions_status", set.getInteractions() == PermState.ENABLED ? enabled : disabled,
+                            "view_sub_claims_status", set.getViewSubClaims() == PermState.ENABLED ? enabled : disabled,
+                            "teleportation_status", set.getTeleportation() == PermState.ENABLED ? enabled : disabled,
+                            "explosions_status", set.getExplosions() == PermState.ENABLED ? enabled : disabled,
+                            "fluids_status", set.getFluids() == PermState.ENABLED ? enabled : disabled,
+                            "pistons_status", set.getPistons() == PermState.ENABLED ? enabled : disabled
+                    )
+            );
 
-            for (Map.Entry<Material, Integer> entry :set.getContainers().entrySet()){
-                sb.append(ChatColor.YELLOW).append(CrashClaim.getPlugin().getMaterialName().getMaterialName(entry.getKey())).append(": ")
-                        .append(entry.getValue() == PermState.ENABLED ? enabled : disabled).append("\n");
+            for (Map.Entry<Material, Integer> entry :set.getContainers().entrySet()) {
+                player.sendMessage(Localization.CLAIM_INFO__CONTAINER_MESSAGE.getMessage(
+                        "name", CrashClaim.getPlugin().getMaterialName().getMaterialName(entry.getKey()),
+                        "status", entry.getValue() == PermState.ENABLED ? enabled : disabled
+                ));
             }
-
-            player.sendMessage(sb.toString());
         } else {
-            player.sendMessage(ChatColor.RED + "There is no claim where you are standing.");
+            player.sendMessage(Localization.CLAIM_INFO__NO_CLAIM.getMessage());
         }
     }
 }

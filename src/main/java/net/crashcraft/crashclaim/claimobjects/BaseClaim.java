@@ -1,28 +1,28 @@
 package net.crashcraft.crashclaim.claimobjects;
 
+import net.crashcraft.crashclaim.localization.Localization;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+
 import java.util.UUID;
 
 public abstract class BaseClaim {
-    private int id;
+    private final int id;
 
     private int minCornerX;
     private int minCornerZ;
     private int maxCornerX;
     private int maxCornerZ;
 
-    private UUID world;
+    private final UUID world;
 
-    private PermissionGroup perms;
+    private final PermissionGroup perms;
 
     private String name;
     private String entryMessage;
     private String exitMessage;
 
     private boolean isEditing = false;
-
-    public BaseClaim(){
-
-    }
 
     public BaseClaim(int id, int maxCornerX, int maxCornerZ, int minCornerX, int minCornerZ, UUID world, PermissionGroup perms) {
         this.id = id;
@@ -79,7 +79,7 @@ public abstract class BaseClaim {
     }
 
     public String getName() {
-        return name == null ? Integer.toString(id) : name;
+        return name == null ? "<gold>" + id : name;
     }
 
     public String getEntryMessage() {

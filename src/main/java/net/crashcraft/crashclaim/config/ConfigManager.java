@@ -13,22 +13,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConfigManager {
-    private final Logger logger;
-
     public ConfigManager(JavaPlugin plugin){
-        this.logger = plugin.getLogger();
+        Logger logger = plugin.getLogger();
 
         File dataFolder = plugin.getDataFolder();
 
         try {
             logger.info("Loading configs");
-            if (!new File(dataFolder, "localization.yml").exists()) {
-                plugin.saveResource("localization.yml", false);
-            }
             if (!new File(dataFolder, "lookup.yml").exists()) {
                 plugin.saveResource("lookup.yml", false);
             }
             initConfig(new File(dataFolder, "config.yml"), GlobalConfig.class);
+
             logger.info("Finished loading base configs");
         } catch (Exception ex){
             ex.printStackTrace();

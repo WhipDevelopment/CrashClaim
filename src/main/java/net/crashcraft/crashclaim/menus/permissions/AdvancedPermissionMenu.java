@@ -7,9 +7,9 @@ import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.helpers.MenuListHelper;
 import net.crashcraft.crashclaim.menus.helpers.MenuSwitchType;
-import net.crashcraft.crashclaim.menus.helpers.StaticItemLookup;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -107,36 +107,36 @@ public class AdvancedPermissionMenu extends MenuListHelper {
     private void drawSidebar(){
         switch (submenu) {
             case GENERAL:
-                inv.setItem(24, StaticItemLookup.ADVANCED_SUBMENU_GENERAL_GLOWING);
-                inv.setItem(33, StaticItemLookup.ADVANCED_SUBMENU_CONTAINERS);
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL_GLOWING.getItem());
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem());
 
                 if (isPlayerPermission) {
-                    inv.setItem(42, StaticItemLookup.ADVANCED_SUBMENU_ADMIN);
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem());
                 } else {
-                    inv.setItem(42, StaticItemLookup.ADVANCED_SUBMENU_MISC);
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem());
                 }
                 return;
             case CONTAINERS:
-                inv.setItem(24, StaticItemLookup.ADVANCED_SUBMENU_GENERAL);
-                inv.setItem(33, StaticItemLookup.ADVANCED_SUBMENU_CONTAINERS_GLOWING);
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem());
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS_GLOWING.getItem());
 
                 if (isPlayerPermission) {
-                    inv.setItem(42, StaticItemLookup.ADVANCED_SUBMENU_ADMIN);
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem());
                 } else {
-                    inv.setItem(42, StaticItemLookup.ADVANCED_SUBMENU_MISC);
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem());
                 }
                 break;
             case ADMIN:
-                inv.setItem(24, StaticItemLookup.ADVANCED_SUBMENU_GENERAL);
-                inv.setItem(33, StaticItemLookup.ADVANCED_SUBMENU_CONTAINERS);
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem());
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem());
 
-                inv.setItem(42, StaticItemLookup.ADVANCED_SUBMENU_ADMIN_GLOWING);
+                inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN_GLOWING.getItem());
                 break;
             case MISC:
-                inv.setItem(24, StaticItemLookup.ADVANCED_SUBMENU_GENERAL);
-                inv.setItem(33, StaticItemLookup.ADVANCED_SUBMENU_CONTAINERS);
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem());
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem());
 
-                inv.setItem(42, StaticItemLookup.ADVANCED_SUBMENU_MISC_GLOWING);
+                inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC_GLOWING.getItem());
                 break;
         }
     }
@@ -149,8 +149,8 @@ public class AdvancedPermissionMenu extends MenuListHelper {
 
         inv.setItem(17, descItem);
 
-        inv.setItem(35, StaticItemLookup.SIMPLE_MENU_ITEM);
-        inv.setItem(44, StaticItemLookup.ADVANCED_MENU_ITEM_GLOWING);
+        inv.setItem(35, Localization.MENU__PERMISSION_OPTION__SIMPLE.getItem());
+        inv.setItem(44, Localization.MENU__PERMISSION_OPTION__ADVANCED_GLOWING.getItem());
     }
 
     @Override

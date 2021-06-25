@@ -6,9 +6,9 @@ import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ public class EjectCommand extends BaseCommand {
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim != null){
             if (!PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), player.getLocation(), PermissionRoute.MODIFY_PERMISSIONS)){
-                player.sendMessage(ChatColor.RED + "You do not have the modify permission ability inside this claim.");
+                player.sendMessage(Localization.EJECT__NO_PERMISSION.getMessage());
                 return;
             }
 
@@ -37,12 +37,12 @@ public class EjectCommand extends BaseCommand {
             Claim otherClaim = manager.getClaim(otherLocation.getBlockX(), otherLocation.getBlockZ(), otherLocation.getWorld().getUID());
 
             if (!claim.equals(otherClaim)){
-                player.sendMessage(ChatColor.RED + "That player is not standing in the same claim as you.");
+                player.sendMessage(Localization.EJECT__NOT_SAME_CLAIM.getMessage());
                 return;
             }
 
             if (PermissionHelper.getPermissionHelper().hasPermission(otherPlayer.getUniqueId(), otherPlayer.getLocation(), PermissionRoute.MODIFY_PERMISSIONS)){
-                player.sendMessage(ChatColor.RED + "That player has the modify permissions ability inside this claim and cannot be ejected.");
+                player.sendMessage(Localization.EJECT__HAS_PERMISSION.getMessage());
                 return;
             }
 
@@ -64,10 +64,10 @@ public class EjectCommand extends BaseCommand {
                 }
             }
 
-            otherPlayer.sendMessage(ChatColor.RED + "You have been ejected from the claim you were standing in by another player.");
-            player.sendMessage(ChatColor.GREEN + "You have successfully ejected that player to the edge of the claim.");
+            otherPlayer.sendMessage(Localization.EJECT__BEEN_EJECTED.getMessage());
+            player.sendMessage(Localization.EJECT__SUCCESS.getMessage());
         } else {
-            player.sendMessage(ChatColor.RED + "There is no claim where you are standing.");
+            player.sendMessage(Localization.GENERIC__NO_CLAIM_STANDING.getMessage());
         }
     }
 }

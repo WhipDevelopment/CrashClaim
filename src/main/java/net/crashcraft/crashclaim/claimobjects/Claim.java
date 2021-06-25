@@ -18,10 +18,6 @@ public class Claim extends BaseClaim {
 
     private HashMap<UUID, Integer> contribution;
 
-    public Claim(){
-
-    }
-
     public Claim(int id, int upperCornerX, int upperCornerZ, int lowerCornerX, int lowerCornerZ, UUID world, PermissionGroup perms, UUID owner) {
         super(id, upperCornerX, upperCornerZ, lowerCornerX, lowerCornerZ, world, perms);
         this.toSave = false;

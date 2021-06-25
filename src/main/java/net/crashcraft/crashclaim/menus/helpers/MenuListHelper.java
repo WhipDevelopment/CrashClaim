@@ -9,6 +9,7 @@ import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.Bukkit;
@@ -96,23 +97,35 @@ public abstract class MenuListHelper extends GUI {
     private void init(){
         BaseClaim claim = group.getOwner();
 
-        List<String> desc = new ArrayList<>(Arrays.asList(
-                ChatColor.GREEN + "Coordinates: " + ChatColor.YELLOW +
-                        ChatColor.YELLOW + claim.getMinX() + ", " + claim.getMinZ()
-                        + ChatColor.GOLD + ", " +
-                        ChatColor.YELLOW + claim.getMaxX() + ", " + claim.getMaxZ()
-        ));
-
         if (group.getOwner() instanceof SubClaim){
             SubClaim subClaim = (SubClaim) group.getOwner();
 
             if (!subClaim.getParent().getOwner().equals(getPlayer().getUniqueId())){
-                desc.add(ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()).getName());
+                descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(
+                        "name", claim.getName(),
+                        "min_x", Integer.toString(claim.getMinX()),
+                        "min_z", Integer.toString(claim.getMinZ()),
+                        "max_x", Integer.toString(claim.getMaxX()),
+                        "max_z", Integer.toString(claim.getMaxZ()),
+                        "world", Bukkit.getWorld(claim.getWorld()).getName(),
+                        "owner", Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()).getName()
+                );
+
+                descItem.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+                return;
             }
         }
 
-        descItem = createGuiItem(ChatColor.GOLD + claim.getName(),
-                desc, GlobalConfig.visual_menu_items.get(claim.getWorld()));
+        descItem = Localization.MENU__GENERAL__CLAIM_ITEM_NO_OWNER.getItem(
+                "name", claim.getName(),
+                "min_x", Integer.toString(claim.getMinX()),
+                "min_z", Integer.toString(claim.getMinZ()),
+                "max_x", Integer.toString(claim.getMaxX()),
+                "max_z", Integer.toString(claim.getMaxZ()),
+                "world", Bukkit.getWorld(claim.getWorld()).getName()
+        );
+
+        descItem.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
     }
 
     @Override
@@ -125,7 +138,7 @@ public abstract class MenuListHelper extends GUI {
         inv.clear();
 
         if (prevMenu != null){
-            inv.setItem(45, StaticItemLookup.BACK_ARROW);
+            inv.setItem(45, Localization.MENU__GENERAL__BACK_BUTTON.getItem());
         }
 
         if (isContainerList){
@@ -267,9 +280,9 @@ public abstract class MenuListHelper extends GUI {
 
             Material material = containers.get(x + offset);
 
-            inv.setItem(startMenu + x, createGuiItem(
-                    ChatColor.GOLD + CrashClaim.getPlugin().getMaterialName().getMaterialName(material), material
-            ));
+            ItemStack item = Localization.MENU__PERMISSIONS__CONTAINERS__DISPLAY.getItem("name", CrashClaim.getPlugin().getMaterialName().getMaterialName(material));
+            item.setType(material);
+            inv.setItem(startMenu + x, item);
 
             Boolean allow = helper.hasPermission(group.getOwner(), player.getUniqueId(), material);
 
@@ -278,13 +291,16 @@ public abstract class MenuListHelper extends GUI {
 
         if (containers.size() > numPerPage) {
             if ((offset - numPerPage) >= 0){
-                inv.setItem(controlOffset, StaticItemLookup.BACK_BUTTON);
+                inv.setItem(controlOffset, Localization.MENU__GENERAL__BACK_BUTTON.getItem());
             }
 
-            inv.setItem(controlOffset + 1, createGuiItem(ChatColor.GOLD + Integer.toString(page + 1) + " / " + (int) (Math.floor((float) containers.size() / numPerPage) + 1), Material.PAPER));
+            inv.setItem(controlOffset + 1, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(
+                    "page", Integer.toString(page + 1),
+                    "page_total", Integer.toString((int) (Math.floor((float) containers.size() / numPerPage) + 1))
+            ));
 
             if ((offset + numPerPage) < containers.size() - 1){
-                inv.setItem(controlOffset + 2, StaticItemLookup.NEXT_BUTTON);
+                inv.setItem(controlOffset + 2, Localization.MENU__GENERAL__NEXT_BUTTON.getItem());
             }
         }
     }
@@ -300,7 +316,7 @@ public abstract class MenuListHelper extends GUI {
                 continue;
             }
 
-            inv.setItem(startMenu + itemOffset, StaticItemLookup.getItem(route));
+            inv.setItem(startMenu + itemOffset, getItemForPermission(route));
 
             Boolean allow = helper.hasPermission(group.getOwner(), setter, route);
 
@@ -310,108 +326,128 @@ public abstract class MenuListHelper extends GUI {
         }
     }
 
+    private ItemStack getItemForPermission(PermissionRoute route){
+        switch (route){
+            case MISC:
+                return Localization.MENU__PERMISSIONS__MISC.getItem();
+            case ADMIN:
+                return Localization.MENU__PERMISSIONS__ADMIN.getItem();
+            case BUILD:
+                return Localization.MENU__PERMISSIONS__BUILD.getItem();
+            case FLUIDS:
+                return Localization.MENU__PERMISSIONS__FLUIDS.getItem();
+            case PISTONS:
+                return Localization.MENU__PERMISSIONS__PISTONS.getItem();
+            case ENTITIES:
+                return Localization.MENU__PERMISSIONS__ENTITIES.getItem();
+            case CONTAINERS:
+                return Localization.MENU__PERMISSIONS__CONTAINERS.getItem();
+            case EXPLOSIONS:
+                return Localization.MENU__PERMISSIONS__EXPLOSIONS.getItem();
+            case INTERACTIONS:
+                return Localization.MENU__PERMISSIONS__INTERACTIONS.getItem();
+            case MODIFY_CLAIM:
+                return Localization.MENU__PERMISSIONS__MODIFY_CLAIM.getItem();
+            case TELEPORTATION:
+                return Localization.MENU__PERMISSIONS__TELEPORTATION.getItem();
+            case VIEW_SUB_CLAIMS:
+                return Localization.MENU__PERMISSIONS__VIEW_SUB_CLAIMS.getItem();
+            case MODIFY_PERMISSIONS:
+                return Localization.MENU__PERMISSIONS__MODIFY_PERMISSIONS.getItem();
+            default:
+                return null; // Will never happen
+        }
+    }
+
     private void drawSwitch(MenuSwitchType type, int value, int itemOffset, Boolean allow){
         switch (type) {
             case TRIPLE:
-                if (allow == null){
-                    inv.setItem(startMenu + itemOffset + 9, createGuiItem(ChatColor.YELLOW + "Enabled",
-                           Material.YELLOW_STAINED_GLASS));
-                    inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.YELLOW + "Neutral",
-                            Material.YELLOW_STAINED_GLASS));
-                    inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.YELLOW + "Disable",
-                            Material.YELLOW_STAINED_GLASS));
+                if (allow == null){ // Overridden
+                    inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OVERRODE.getItem());
+                    inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OVERRODE.getItem());
+                    inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OVERRODE.getItem());
                     return;
                 }
 
                 switch (value) {
                     case 0:
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.RED + "Disabled",
-                                allow ? Material.RED_CONCRETE : Material.GRAY_CONCRETE));
+                        inv.setItem(startMenu + itemOffset + 27,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem());
 
-                        inv.setItem(startMenu + itemOffset + 9, createGuiItem(ChatColor.DARK_GREEN + "Enable",
-                                allow ? Material.GREEN_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GRAY + "Neutral",
-                                allow ?  Material.GRAY_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                        inv.setItem(startMenu + itemOffset + 9,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 18,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem());
                         break;
                     case 1:
-                        inv.setItem(startMenu + itemOffset + 9, createGuiItem(ChatColor.GREEN + "Enabled",
-                                allow ? Material.GREEN_CONCRETE : Material.GRAY_CONCRETE));
+                        inv.setItem(startMenu + itemOffset + 9,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem());
 
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GRAY + "Neutral",
-                                allow ? Material.GRAY_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
-                                allow ? Material.RED_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                        inv.setItem(startMenu + itemOffset + 18,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 27,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;
                     case 2:
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.GRAY + "Neutral",
-                                Material.GRAY_CONCRETE));
+                        inv.setItem(startMenu + itemOffset + 18,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__SELECTED.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__SELECTED_DISABLED.getItem());
 
-                        inv.setItem(startMenu + itemOffset + 9, createGuiItem(ChatColor.DARK_GREEN + "Enable",
-                                allow ? Material.GREEN_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
-                                allow ? Material.RED_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                        inv.setItem(startMenu + itemOffset + 9,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 27,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;
                     case 4:
-                        inv.setItem(startMenu + itemOffset + 9, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
-                                Material.GREEN_STAINED_GLASS));
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.GRAY + "Neutral",
-                                Material.GRAY_STAINED_GLASS));
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
-                                Material.RED_STAINED_GLASS));
+                        inv.setItem(startMenu + itemOffset + 9,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 18,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 27,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;
                 }
                 break;
             case DOUBLE:
                 if (allow == null){
-                    inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.YELLOW + "Enabled",
-                            Material.YELLOW_STAINED_GLASS));
-                    inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.YELLOW + "Disable",
-                            Material.YELLOW_STAINED_GLASS));
+                    inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OVERRODE.getItem());
+                    inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OVERRODE.getItem());
                     return;
                 }
 
                 switch (value) {
                     case 0:
-                        inv.setItem(startMenu + itemOffset+ 27, createGuiItem(ChatColor.GREEN + "Disable",
-                                allow ? Material.RED_CONCRETE : Material.GRAY_CONCRETE));
-
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
-                                allow ? Material.GREEN_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                        inv.setItem(startMenu + itemOffset+ 27,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 18,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
                         break;
                     case 1:
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.GREEN + "Enabled",
-                                allow ? Material.GREEN_CONCRETE : Material.GRAY_CONCRETE));
-
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disabled",
-                                allow ? Material.RED_STAINED_GLASS : Material.GRAY_STAINED_GLASS_PANE));
+                        inv.setItem(startMenu + itemOffset + 18,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 27,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;
                     case 4:
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
-                                Material.GREEN_STAINED_GLASS));
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
-                                Material.RED_STAINED_GLASS));
+                        inv.setItem(startMenu + itemOffset + 18,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 27,
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem() : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;
                 }
                 break;
             case DOUBLE_DISABLED:
                 switch (value) {
                     case 0:
-                        inv.setItem(startMenu + itemOffset+ 27, createGuiItem(ChatColor.DARK_RED + "Disable",
-                                Material.GRAY_CONCRETE));
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
-                                Material.GRAY_STAINED_GLASS_PANE));
+                        inv.setItem(startMenu + itemOffset+ 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
                         break;
                     case 1:
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
-                                Material.GRAY_CONCRETE));
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disabled",
-                                Material.GRAY_STAINED_GLASS_PANE));
+                        inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;
                     case 4:
-                        inv.setItem(startMenu + itemOffset + 18, createGuiItem(ChatColor.DARK_GREEN + "Enabled",
-                                Material.GREEN_STAINED_GLASS));
-                        inv.setItem(startMenu + itemOffset + 27, createGuiItem(ChatColor.DARK_RED + "Disable",
-                                Material.RED_STAINED_GLASS));
+                        inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem());
+                        inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem());
                         break;
                 }
                 break;

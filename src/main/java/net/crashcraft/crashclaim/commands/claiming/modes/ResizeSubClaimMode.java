@@ -9,11 +9,11 @@ import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.ErrorType;
 import net.crashcraft.crashclaim.data.MathUtils;
 import net.crashcraft.crashclaim.data.StaticClaimLogic;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -44,11 +44,11 @@ public class ResizeSubClaimMode implements ClaimMode {
         if (!StaticClaimLogic.isClaimBorder(subClaim.getMinX(), subClaim.getMaxX(), subClaim.getMinZ(), subClaim.getMaxZ(),
                 firstLocation.getBlockX(), firstLocation.getBlockZ())){
             firstLocation = null;
-            player.sendMessage(ChatColor.RED + "You need to click the border of the sub claim to resize it. Grabbing an edge will move it in that direction, grabbing a corner will move it in both directions relative to the corner.");
+            player.sendMessage(Localization.RESIZE_SUBCLAIM__INSTRUCTIONS.getMessage());
             return;
         }
 
-        player.sendMessage(ChatColor.GREEN + "Click another location to resize the claims. ");
+        player.sendMessage(Localization.RESIZE_SUBCLAIM__CLICK_ANOTHER_LOCATION.getMessage());
 
         VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
@@ -79,7 +79,7 @@ public class ResizeSubClaimMode implements ClaimMode {
 
         if (!MathUtils.iskPointCollide(claim.getMinX(), claim.getMinZ(),
                 claim.getMaxX(), claim.getMaxZ(), click.getBlockX(), click.getBlockZ())){
-            player.sendMessage(ChatColor.RED + "Sub claims can only be formed inside of a parent claim.");
+            player.sendMessage(Localization.RESIZE_SUBCLAIM__INSIDE_PARENT.getMessage());
             cleanup(player.getUniqueId(), true);
             return;
         }
@@ -88,26 +88,26 @@ public class ResizeSubClaimMode implements ClaimMode {
 
         switch (error){
             case OVERLAP_EXISTING_SUBCLAIM:
-                player.sendMessage(ChatColor.RED + "You cannot overlap other sub claims.");
+                player.sendMessage(Localization.RESIZE_SUBCLAIM__NO_OVERLAP.getMessage());
                 cleanup(player.getUniqueId(), true);
                 return;
             case TOO_SMALL:
-                player.sendMessage(ChatColor.RED + "A claim has to be at least a 5x5");
+                player.sendMessage(Localization.RESIZE_SUBCLAIM__MIN_SIZE.getMessage());
                 cleanup(player.getUniqueId(), true);
                 return;
             case CANNOT_FLIP_ON_RESIZE:
-                player.sendMessage(ChatColor.RED + "Claims cannot be flipped, please retry and grab the other edge to expand in this direction");
+                player.sendMessage(Localization.RESIZE_SUBCLAIM__CANNOT_FLIP.getMessage());
                 cleanup(player.getUniqueId(), true);
                 return;
             case NONE:
-                player.sendMessage(ChatColor.GREEN + "Claim has been successfully resized");
+                player.sendMessage(Localization.RESIZE_SUBCLAIM__SUCCESS.getMessage());
 
                 VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
                 visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
                 for (BaseVisual visual : group.getActiveVisuals()){
-                    visualizationManager.despawnAfter(visual, 5);
+                    visualizationManager.deSpawnAfter(visual, 5);
                 }
 
                 cleanup(player.getUniqueId(), false);

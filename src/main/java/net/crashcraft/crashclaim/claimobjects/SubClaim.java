@@ -3,11 +3,7 @@ package net.crashcraft.crashclaim.claimobjects;
 import java.util.UUID;
 
 public class SubClaim extends BaseClaim {
-    private Claim parent;
-
-    public SubClaim() {
-
-    }
+    private final Claim parent;
 
     public SubClaim(Claim parent, int id, int upperCornerX, int upperCornerY, int lowerCornerX, int lowerCornerY, UUID world, PermissionGroup perms) {
         super(id, upperCornerX, upperCornerY, lowerCornerX, lowerCornerY, world, perms);

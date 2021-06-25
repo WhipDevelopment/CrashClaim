@@ -15,6 +15,8 @@ import net.crashcraft.crashclaim.claimobjects.permission.parent.ParentPermission
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.providers.DataProvider;
+import net.md_5.bungee.chat.BaseComponentSerializer;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -182,6 +184,8 @@ public class SQLiteDataProvider implements DataProvider {
                 claimData_id = -1;
             }
 
+
+
             //Claim Data
             addClaimData(
                     claimData_id,
@@ -190,9 +194,9 @@ public class SQLiteDataProvider implements DataProvider {
                     claim.getMaxX(),
                     claim.getMaxZ(),
                     claim.getWorld(),
-                    claim.getName(),
-                    claim.getEntryMessage(),
-                    claim.getExitMessage()
+                    ComponentSerializer.toString(claim.getName()),
+                    ComponentSerializer.toString(claim.getEntryMessage()),
+                    ComponentSerializer.toString(claim.getExitMessage())
             );
 
             //Claim
@@ -225,9 +229,9 @@ public class SQLiteDataProvider implements DataProvider {
                         subClaim.getMaxX(),
                         subClaim.getMaxZ(),
                         subClaim.getWorld(),
-                        subClaim.getName(),
-                        subClaim.getEntryMessage(),
-                        subClaim.getExitMessage()
+                        ComponentSerializer.toString(subClaim.getName()),
+                        ComponentSerializer.toString(subClaim.getEntryMessage()),
+                        ComponentSerializer.toString(subClaim.getExitMessage())
                 );
 
                 DB.executeUpdate("INSERT OR IGNORE INTO subclaims(id, data, claim_id) VALUES (?, " +

@@ -4,23 +4,18 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.*;
-import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.crashclaim.commands.claiming.modes.NewClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.NewSubClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.ResizeClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.ResizeSubClaimMode;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
-import net.crashcraft.crashclaim.data.StaticClaimLogic;
 import net.crashcraft.crashclaim.listeners.ProtocalListener;
+import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
-import net.crashcraft.crashclaim.permissions.PermissionRouter;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
-import net.crashcraft.crashclaim.visualize.api.BaseVisual;
-import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,13 +52,13 @@ public class ClaimCommand extends BaseCommand implements Listener {
         if (modeMap.containsKey(uuid)) {
             forceCleanup(uuid, true);
 
-            visualizationManager.sendAlert(player, ChatColor.RED + "Claim mode " + ChatColor.BOLD + "disabled!");
+            visualizationManager.sendAlert(player, Localization.CLAIM__DISABLED.getMessage());
         } else {
             forceCleanup(uuid, true);
 
             modeMap.put(uuid, ClickState.CLAIM);
             visualizationManager.visualizeSuroudningClaims(player, dataManager);
-            visualizationManager.sendAlert(player, ChatColor.GREEN + "Claim mode " + ChatColor.BOLD + "enabled!");
+            visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage());
         }
     }
 
@@ -74,7 +69,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
         if (modeMap.containsKey(uuid)) {
             forceCleanup(uuid, true);
 
-            visualizationManager.sendAlert(player, ChatColor.RED + "Sub Claiming mode " + ChatColor.BOLD + "disabled!");
+            visualizationManager.sendAlert(player, Localization.SUBCLAIM__DISABLED.getMessage());
         } else {
             forceCleanup(uuid, true);
 
@@ -82,17 +77,17 @@ public class ClaimCommand extends BaseCommand implements Listener {
 
             Claim claim = dataManager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());
             if (claim == null) {
-                player.sendMessage(ChatColor.RED + "You need to be standing in a claim to enable sub claiming mode.");
+                player.sendMessage(Localization.SUBCLAIM__NO_CLAIM.getMessage());
                 return;
             }
 
             if (!PermissionHelper.getPermissionHelper().hasPermission(claim, uuid, PermissionRoute.MODIFY_CLAIM)) {
-                player.sendMessage(ChatColor.RED + "You need MODIFY_CLAIM to create sub claims.");
+                player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage());
                 return;
             }
 
             if (claim.isEditing()){
-                player.sendMessage(ChatColor.RED + "The claim your are attempting to resize is already being resized.");
+                player.sendMessage(Localization.SUBCLAIM__ALREADY_RESIZING.getMessage());
                 return;
             }
 
@@ -102,7 +97,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
             claim.setEditing(true);
             visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
-            visualizationManager.sendAlert(player, ChatColor.GREEN + "Sub Claiming mode " + ChatColor.BOLD + "enabled!");
+            visualizationManager.sendAlert(player, Localization.SUBCLAIM__ENABLED.getMessage());
         }
     }
 

@@ -8,22 +8,21 @@ import com.comphenix.protocol.ProtocolManager;
 import dev.whip.crashutils.CrashUtils;
 import dev.whip.crashutils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
-import net.crashcraft.crashclaim.config.GlobalConfig;
-import net.crashcraft.crashclaim.localization.Localization;
-import net.crashcraft.crashclaim.localization.LocalizationLoader;
-import net.crashcraft.crashclaim.migration.MigrationManager;
-import net.crashcraft.crashpayment.CrashPayment;
-import net.crashcraft.crashpayment.payment.PaymentProcessor;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
-import net.crashcraft.crashclaim.commands.*;
+import net.crashcraft.crashclaim.commands.CommandManager;
 import net.crashcraft.crashclaim.config.ConfigManager;
+import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.MaterialName;
 import net.crashcraft.crashclaim.listeners.PaperListener;
 import net.crashcraft.crashclaim.listeners.PlayerListener;
 import net.crashcraft.crashclaim.listeners.WorldListener;
+import net.crashcraft.crashclaim.localization.LocalizationLoader;
+import net.crashcraft.crashclaim.migration.MigrationManager;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
+import net.crashcraft.crashpayment.CrashPayment;
+import net.crashcraft.crashpayment.payment.PaymentProcessor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,7 +30,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.Locale;
 
 public class CrashClaim extends JavaPlugin {
     private static CrashClaim plugin;

@@ -1,9 +1,5 @@
 package net.crashcraft.crashclaim.claimobjects;
 
-import net.crashcraft.crashclaim.localization.Localization;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
-
 import java.util.UUID;
 
 public abstract class BaseClaim {

@@ -32,6 +32,10 @@ public class BypassManager implements Listener {
         bypassMode.remove(uuid);
     }
 
+    public void addBypass(UUID uuid){
+        bypassMode.add(uuid);
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
         bypassMode.remove(e.getPlayer().getUniqueId());

@@ -1,7 +1,6 @@
 package net.crashcraft.crashclaim.permissions;
 
 import net.crashcraft.crashclaim.claimobjects.Claim;
-import net.crashcraft.crashclaim.claimobjects.PermState;
 import net.crashcraft.crashclaim.claimobjects.PermissionGroup;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;

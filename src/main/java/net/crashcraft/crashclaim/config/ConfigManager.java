@@ -3,14 +3,12 @@ package net.crashcraft.crashclaim.config;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConfigManager {
     public static YamlConfiguration initConfig(File configFile, Class<? extends BaseConfig> clazz) throws Exception{

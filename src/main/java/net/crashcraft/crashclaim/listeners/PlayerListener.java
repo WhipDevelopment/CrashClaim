@@ -47,6 +47,13 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerJoinEvent(PlayerJoinEvent event){
+        if (event.getPlayer().hasPermission("crashclaim.admin.bypassonjoin")){
+            helper.getBypassManager().addBypass(event.getPlayer().getUniqueId()); // Enable on join
+        }
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onHangingPlaceEvent(HangingPlaceEvent e){
         if (GlobalConfig.disabled_worlds.contains(e.getEntity().getWorld().getUID())){
             return;

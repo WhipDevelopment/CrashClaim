@@ -1,10 +1,10 @@
 package net.crashcraft.crashclaim.data;
 
-import net.crashcraft.crashclaim.localization.Localization;
-import net.crashcraft.crashpayment.payment.TransactionType;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.localization.Localization;
+import net.crashcraft.crashpayment.payment.TransactionType;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

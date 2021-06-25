@@ -104,4 +104,10 @@ public class GlobalConfig extends BaseConfig{
             disabled_worlds.add(world.getUID());
         }
     }
+
+    public static boolean bypassModeBypassesMoney;
+
+    private static void onBypass(){
+        bypassModeBypassesMoney = getBoolean("bypass-mode-bypasses-payment", false);
+    }
 }

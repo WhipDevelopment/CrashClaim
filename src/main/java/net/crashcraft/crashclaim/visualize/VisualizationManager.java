@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
+import net.crashcraft.crashclaim.compatability.CompatabilityManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.StaticClaimLogic;
@@ -17,9 +18,7 @@ import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualProvider;
 import net.crashcraft.crashclaim.visualize.api.providers.BlockVisualProvider;
 import net.crashcraft.crashclaim.visualize.api.providers.GlowVisualProvider;
-import net.crashcraft.crashclaim.visualize.api.visuals.BaseGlowVisual;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -27,20 +26,14 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class VisualizationManager {
-    private final ProtocolManager protocolManager;
     private final HashMap<UUID, VisualGroup> visualHashMap;
-
     private final HashMap<BaseVisual, Long> timeMap;
-
     private final VisualProvider provider;
 
-    public VisualizationManager(CrashClaim crashClaim, ProtocolManager protocolManager){
-        this.protocolManager = protocolManager;
-
+    public VisualizationManager(CrashClaim crashClaim){
         this.visualHashMap = new HashMap<>();
         this.timeMap = new HashMap<>();
 
@@ -61,8 +54,6 @@ public class VisualizationManager {
                 team.setColor(ChatColor.valueOf(color.name()));
             }
         }
-
-        BaseGlowVisual.setProtocolManager(protocolManager);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(crashClaim, () -> {
             if (timeMap.size() != 0) {
@@ -86,19 +77,12 @@ public class VisualizationManager {
             return;
         }
 
-        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.TITLE);
-
-        packet.getTitleActions().write(0, GlobalConfig.visual_alert_type);
-        packet.getChatComponents().write(0, WrappedChatComponent.fromJson(ComponentSerializer.toString(message)));
-        packet.getIntegers().write(0, GlobalConfig.visual_alert_fade_in);
-        packet.getIntegers().write(1, GlobalConfig.visual_alert_duration);
-        packet.getIntegers().write(2, GlobalConfig.visual_alert_fade_out);
-
-        try {
-            protocolManager.sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CrashClaim.getPlugin().getWrapper().sendActionBarTitle(player,
+                message,
+                GlobalConfig.visual_alert_fade_in,
+                GlobalConfig.visual_alert_duration,
+                GlobalConfig.visual_alert_fade_out
+        );
     }
 
     public VisualGroup fetchExistingGroup(UUID uuid){
@@ -173,23 +157,7 @@ public class VisualizationManager {
             provider.spawnClaimVisual(null, group, subClaim, y).spawn();
         }
     }
-/*
-    public void visualizeSuroudningSubClaims(Player player, int y, ArrayList<SubClaim> claims){
-        VisualGroup group = fetchVisualGroup(player, true);
-        group.removeAllVisuals();
 
-        for (SubClaim subClaim : claims){
-            provider.spawnClaimVisual(null, )
-
-            SubClaimVisual subClaimVisual = new SubClaimVisual(subClaim, y);
-
-            group.addVisual(subClaimVisual);
-
-            subClaimVisual.spawn();
-            subClaimVisual.color(null);
-        }
-    }
- */
     public void cleanup(Player player) {
         VisualGroup group = fetchVisualGroup(player, false);
         if (group != null){
@@ -203,9 +171,5 @@ public class VisualizationManager {
 
     public VisualProvider getProvider(){
         return provider;
-    }
-
-    public ProtocolManager getProtocolManager() {
-        return protocolManager;
     }
 }

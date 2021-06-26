@@ -293,7 +293,7 @@ public abstract class MenuListHelper extends GUI {
 
         if (containers.size() > numPerPage) {
             if ((offset - numPerPage) >= 0){
-                inv.setItem(controlOffset, Localization.MENU__GENERAL__BACK_BUTTON.getItem());
+                inv.setItem(controlOffset, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem());
             }
 
             inv.setItem(controlOffset + 1, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(

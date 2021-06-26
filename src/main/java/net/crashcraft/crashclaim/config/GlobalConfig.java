@@ -23,7 +23,6 @@ public class GlobalConfig extends BaseConfig{
     public static boolean visual_use_highest_block;
     public static HashMap<UUID, Material> visual_menu_items;
 
-    public static EnumWrappers.TitleAction visual_alert_type;
     public static int visual_alert_fade_in;
     public static int visual_alert_duration;
     public static int visual_alert_fade_out;
@@ -37,7 +36,6 @@ public class GlobalConfig extends BaseConfig{
         }
 
         visual_use_highest_block = getBoolean("visualization.visual-use-highest-block", false);
-        visual_alert_type = EnumWrappers.TitleAction.valueOf(getString("visualization.alert.type", EnumWrappers.TitleAction.ACTIONBAR.name()));
         visual_alert_fade_in = getInt("visualization.alert.fade-in", 10);
         visual_alert_duration = getInt("visualization.alert.duration", 1);
         visual_alert_fade_out = getInt("visualization.alert.fade-out", 10);
@@ -90,6 +88,7 @@ public class GlobalConfig extends BaseConfig{
 
     public static double money_per_block;
     public static ArrayList<UUID> disabled_worlds;
+    public static String forcedVersionString;
 
     private static void miscValues(){
         money_per_block = getDouble("money-per-block", 0.01);
@@ -103,6 +102,8 @@ public class GlobalConfig extends BaseConfig{
 
             disabled_worlds.add(world.getUID());
         }
+
+        forcedVersionString = config.getString("use-this-version-instead");
     }
 
     public static boolean bypassModeBypassesMoney;

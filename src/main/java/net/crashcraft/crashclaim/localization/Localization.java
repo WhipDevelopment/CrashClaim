@@ -203,8 +203,8 @@ public enum Localization {
             "<green>Owner: <yellow><owner>"),
 
     MENU__GENERAL__PAGE_DISPLAY(Material.ARROW, 1, "<gold>Page <page> / <page_total>"),
-    MENU__GENERAL__NEXT_BUTTON(Material.OAK_BUTTON, 1, "<white>Next"),
-    MENU__GENERAL__PREVIOUS_BUTTON(Material.OAK_BUTTON, 1, "<white>Previous"),
+    MENU__GENERAL__NEXT_BUTTON(Material.OAK_BUTTON, 1, "<yellow>Next"),
+    MENU__GENERAL__PREVIOUS_BUTTON(Material.OAK_BUTTON, 1, "<yellow>Previous"),
     MENU__GENERAL__BACK_BUTTON(Material.ARROW, 1, "<gold>Back"),
 
     // Claim

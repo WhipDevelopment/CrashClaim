@@ -1,6 +1,7 @@
 package net.crashcraft.crashclaim.commands;
 
 import co.aikar.commands.PaperCommandManager;
+import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
@@ -28,11 +29,12 @@ public class CommandManager {
         ClaimDataManager manager = plugin.getDataManager();
         BypassManager bypassManager = PermissionHelper.getPermissionHelper().getBypassManager();
         VisualizationManager visualizationManager = plugin.getVisualizationManager();
+        ProtocolManager protocolManager = plugin.getProtocolManager();
 
         commandManager.registerCommand(new ShowClaimsCommand(visualizationManager, manager));
         commandManager.registerCommand(new HideClaimsCommand(visualizationManager));
 
-        commandManager.registerCommand(new ClaimCommand(manager, visualizationManager));
+        commandManager.registerCommand(new ClaimCommand(manager, visualizationManager, protocolManager));
 
         commandManager.registerCommand(new MenuCommand(manager, visualizationManager));
         commandManager.registerCommand(new BypassCommand(bypassManager));

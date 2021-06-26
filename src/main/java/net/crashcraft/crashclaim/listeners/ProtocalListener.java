@@ -9,9 +9,11 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
+import net.crashcraft.crashclaim.compatability.CompatabilityManager;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.visuals.BaseGlowVisual;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -22,8 +24,8 @@ public class ProtocalListener {
                     @Override
                     public void onPacketReceiving(PacketEvent event){
                         PacketContainer packet = event.getPacket();
-                        if (packet.getEntityUseActions().read(0).equals(EnumWrappers.EntityUseAction.INTERACT_AT) &&
-                                packet.getHands().read(0).equals(EnumWrappers.Hand.MAIN_HAND)){
+
+                        if (crashClaim.getWrapper().isInteractAndMainHand(packet)){
                             Player player = event.getPlayer();
 
                             if (player == null)
@@ -42,7 +44,7 @@ public class ProtocalListener {
 
                                     Location location = glowVisual.getEntityLocation(id);
                                     if (location != null) {
-                                        command.click(player, location);
+                                        Bukkit.getScheduler().runTask(plugin, () -> command.click(player, location));
                                         return;
                                     }
                                 }

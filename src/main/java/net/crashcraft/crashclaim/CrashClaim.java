@@ -10,6 +10,8 @@ import dev.whip.crashutils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
 import net.crashcraft.crashclaim.commands.CommandManager;
+import net.crashcraft.crashclaim.compatability.CompatabilityManager;
+import net.crashcraft.crashclaim.compatability.CompatabilityWrapper;
 import net.crashcraft.crashclaim.config.ConfigManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
@@ -37,6 +39,8 @@ public class CrashClaim extends JavaPlugin {
     private boolean dataLoaded = false;
 
     private CrashClaimAPI api;
+
+    private CompatabilityWrapper wrapper;
 
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
@@ -90,6 +94,8 @@ public class CrashClaim extends JavaPlugin {
             plugin.getServer().shutdown();
         }
 
+        wrapper = new CompatabilityManager(protocolManager).getWrapper(); // Find and fetch version wrapper
+
         getLogger().info("Loading language file");
         LocalizationLoader.initialize(); // Init and reload localization
         getLogger().info("Finished loading language file");
@@ -101,7 +107,7 @@ public class CrashClaim extends JavaPlugin {
             payment = paymentPlugin.setupPaymentProvider(this).getProcessor();
         }
 
-        this.visualizationManager = new VisualizationManager(this, protocolManager);
+        this.visualizationManager = new VisualizationManager(this);
         this.manager = new ClaimDataManager(this);
         this.materialName = new MaterialName();
 
@@ -209,5 +215,13 @@ public class CrashClaim extends JavaPlugin {
 
     public BukkitAudiences getAdventure() {
         return adventure;
+    }
+
+    public CompatabilityWrapper getWrapper() {
+        return wrapper;
+    }
+
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 }

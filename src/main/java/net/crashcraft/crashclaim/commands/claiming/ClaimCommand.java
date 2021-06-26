@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.commands.claiming;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
@@ -35,7 +36,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
     private final HashMap<UUID, ClaimMode> stateMap;
     private final HashMap<UUID, Claim> claimMap;
 
-    public ClaimCommand(ClaimDataManager dataManager, VisualizationManager visualizationManager){
+    public ClaimCommand(ClaimDataManager dataManager, VisualizationManager visualizationManager, ProtocolManager protocolManager){
         this.dataManager = dataManager;
         this.visualizationManager = visualizationManager;
         this.modeMap = new HashMap<>();
@@ -43,7 +44,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
         this.claimMap = new HashMap<>();
 
         Bukkit.getPluginManager().registerEvents(this, CrashClaim.getPlugin());
-        new ProtocalListener(visualizationManager.getProtocolManager(), CrashClaim.getPlugin(), this);
+        new ProtocalListener(protocolManager, CrashClaim.getPlugin(), this);
     }
 
     @CommandAlias("claim")

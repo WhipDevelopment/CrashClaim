@@ -22,6 +22,8 @@ import net.crashcraft.crashclaim.listeners.WorldListener;
 import net.crashcraft.crashclaim.localization.LocalizationLoader;
 import net.crashcraft.crashclaim.migration.MigrationManager;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
+import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashpayment.CrashPayment;
 import net.crashcraft.crashpayment.payment.PaymentProcessor;
@@ -41,6 +43,7 @@ public class CrashClaim extends JavaPlugin {
     private CrashClaimAPI api;
 
     private CompatabilityWrapper wrapper;
+    private PluginSupportManager pluginSupport;
 
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
@@ -65,8 +68,9 @@ public class CrashClaim extends JavaPlugin {
         }
 
         this.crashUtils = new CrashUtils(this);
-
         this.api = new CrashClaimAPI();
+
+        this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
     }
 
     @Override
@@ -223,5 +227,9 @@ public class CrashClaim extends JavaPlugin {
 
     public ProtocolManager getProtocolManager() {
         return protocolManager;
+    }
+
+    public PluginSupport getPluginSupport(){
+        return pluginSupport.getSupportDistributor();
     }
 }

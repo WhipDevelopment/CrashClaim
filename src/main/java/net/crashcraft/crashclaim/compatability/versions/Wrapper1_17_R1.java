@@ -11,6 +11,7 @@ import net.crashcraft.crashclaim.compatability.CompatabilityWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -132,5 +133,10 @@ public class Wrapper1_17_R1 implements CompatabilityWrapper {
         }
 
         return false;
+    }
+
+    @Override
+    public int getMinWorldHeight(World world) {
+        return world.getMinHeight();
     }
 }

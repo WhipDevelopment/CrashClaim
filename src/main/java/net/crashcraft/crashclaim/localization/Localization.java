@@ -118,11 +118,12 @@ public enum Localization {
     CLAIM_INFO__NO_CLAIM("<red>There is no claim where you are standing."),
 
     NEW_CLAIM__CLICK_CORNER("<green>Click the an opposite corner to form a new claim."),
-    NEW_CLAIM__MIN_SIZE("<red>A claim has to be at least a 5x5"),
+    NEW_CLAIM__MIN_SIZE("<red>A claim has to be at least a 5x5."),
     NEW_CLAIM__OVERLAPPING("<red>You cannot claim over an existing claim."),
+    NEW_CLAIM__OTHER_ERROR("<red>You cannot claim because of another region or plugin wont allow it."),
     NEW_CLAIM__NOT_ENOUGH_BALANCE("<red>You need <price> coins to claim that area."),
     NEW_CLAIM__SUCCESS("<green>Claim has been successfully created."),
-    NEW_CLAIM__ERROR("<red>Error creating claim"),
+    NEW_CLAIM__ERROR("<red>Error creating claim."),
 
     NEW_CLAIM__CREATE_MENU__TITLE("Confirm Claim Creation"),
     NEW_CLAIM__CREATE_MENU__MESSAGE(Material.EMERALD, 1,
@@ -156,6 +157,7 @@ public enum Localization {
     RESIZE__MIN_SIZE("<red>A claim has to be at least a 5x5"),
     RESIZE__CANNOT_FLIP("<red>Claims cannot be flipped, please retry and grab the other edge to expand in this direction"),
     RESIZE__OVERLAP_EXISTING("<red>Sub claims cannot overlap over existing sub claims."),
+    RESIZE__ERROR_OTHER("<red>Another region or plugin is preventing the claim from being resized."),
     RESIZE__TRANSACTION_ERROR("<red><error>"),
     RESIZE__NO_LONGER_PERMISSION("<red>You no longer have permission to resize the claim."),
 

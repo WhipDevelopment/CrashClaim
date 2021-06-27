@@ -10,6 +10,7 @@ import net.crashcraft.crashclaim.compatability.CompatabilityWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -111,5 +112,10 @@ public class Wrapper1_16_R1 implements CompatabilityWrapper {
     public boolean isInteractAndMainHand(PacketContainer packet) {
         return packet.getEntityUseActions().read(0).equals(EnumWrappers.EntityUseAction.INTERACT_AT) &&
                 packet.getHands().read(0).equals(EnumWrappers.Hand.MAIN_HAND);
+    }
+
+    @Override
+    public int getMinWorldHeight(World world) {
+        return 0;
     }
 }

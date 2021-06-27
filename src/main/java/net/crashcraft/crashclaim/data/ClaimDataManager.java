@@ -17,10 +17,7 @@ import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionSetup;
 import net.crashcraft.crashpayment.payment.TransactionResponse;
 import net.crashcraft.crashpayment.payment.TransactionType;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -113,6 +110,10 @@ public class ClaimDataManager implements Listener {
             return new ClaimResponse(false, ErrorType.OVERLAP_EXISTING);
         }
 
+        if (!plugin.getPluginSupport().canClaim(minCorner, maxCorner)){
+            return new ClaimResponse(false, ErrorType.OVERLAP_EXISTING_OTHER);
+        }
+
         Claim claim = new Claim(requestUniqueID(),
                 maxCorner.getBlockX(),
                 maxCorner.getBlockZ(),
@@ -154,6 +155,12 @@ public class ClaimDataManager implements Listener {
         }
 
         if (arr[4] == 1) {
+            if (!CrashClaim.getPlugin().getPluginSupport().canClaim(
+                    new Location(Bukkit.getWorld(claim.getWorld()), newMinX, 0, newMinZ),
+                    new Location(Bukkit.getWorld(claim.getWorld()), newMaxX, 0, newMaxZ))){ // TODO ugh create corners higher up and pass down, dirty fix for now
+                return ErrorType.OVERLAP_EXISTING_OTHER;
+            }
+
             int area = ContributionManager.getArea(newMinX, newMinZ, newMaxX, newMaxZ);
             int originalArea = ContributionManager.getArea(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ());
 

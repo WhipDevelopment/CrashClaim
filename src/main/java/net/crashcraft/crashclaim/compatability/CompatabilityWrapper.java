@@ -4,6 +4,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -21,4 +22,6 @@ public interface CompatabilityWrapper {
     void removeEntity(Player player, int[] entity_ids);
 
     void setEntityTeam(Player player, String team, List<String> uuids);
+
+    int getMinWorldHeight(World world);
 }

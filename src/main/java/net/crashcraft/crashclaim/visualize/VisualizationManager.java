@@ -1,14 +1,9 @@
 package net.crashcraft.crashclaim.visualize;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
-import net.crashcraft.crashclaim.compatability.CompatabilityManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.StaticClaimLogic;
@@ -67,7 +62,7 @@ public class VisualizationManager {
                     }
                 }
             }
-        },0,20L);
+        }, 0, 20L);
 
         crashClaim.saveConfig();
     }

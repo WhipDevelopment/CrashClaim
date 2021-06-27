@@ -6,10 +6,7 @@ import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.commands.claiming.ClaimMode;
 import net.crashcraft.crashclaim.config.GlobalConfig;
-import net.crashcraft.crashclaim.data.ClaimDataManager;
-import net.crashcraft.crashclaim.data.ClaimResponse;
-import net.crashcraft.crashclaim.data.ContributionManager;
-import net.crashcraft.crashclaim.data.StaticClaimLogic;
+import net.crashcraft.crashclaim.data.*;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
@@ -54,6 +51,11 @@ public class NewClaimMode implements ClaimMode {
 
         if (manager.checkOverLapSurroudningClaims(-1, max.getBlockX(), max.getBlockZ(), min.getBlockX(), min.getBlockZ(), min.getWorld().getUID())){
             player.sendMessage(Localization.NEW_CLAIM__OVERLAPPING.getMessage());
+            return false;
+        }
+
+        if (!CrashClaim.getPlugin().getPluginSupport().canClaim(min, max)){
+            player.sendMessage(Localization.NEW_CLAIM__OTHER_ERROR.getMessage());
             return false;
         }
 

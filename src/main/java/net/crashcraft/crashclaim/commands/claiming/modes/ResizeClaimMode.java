@@ -104,6 +104,8 @@ public class ResizeClaimMode implements ClaimMode {
                 player.sendMessage(Localization.RESIZE__OVERLAP_EXISTING.getMessage());
                 cleanup(uuid, true);
                 return;
+            case OVERLAP_EXISTING_OTHER:
+                player.sendMessage(Localization.RESIZE__ERROR_OTHER.getMessage());
             case NONE:
                 cleanup(uuid, false);
         }

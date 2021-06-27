@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class GlowMarketVisual extends BaseGlowVisual {
-    private Location location;
+    private final Location location;
 
     public GlowMarketVisual(VisualColor color, VisualGroup parent, Player player, Location location) {
         super(VisualType.MARKER, color, parent, player, location.getBlockY());

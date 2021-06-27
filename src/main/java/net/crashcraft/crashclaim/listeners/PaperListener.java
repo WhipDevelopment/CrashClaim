@@ -14,13 +14,9 @@ import org.bukkit.event.Listener;
 
 public class PaperListener implements Listener {
     private final PermissionHelper helper;
-    private final PermissionSetup perms;
     private final VisualizationManager visuals;
-    private final ClaimDataManager manager;
 
     public PaperListener(ClaimDataManager manager, VisualizationManager visuals){
-        this.manager = manager;
-        this.perms = manager.getPermissionSetup();
         this.visuals = visuals;
         this.helper = PermissionHelper.getPermissionHelper();
     }

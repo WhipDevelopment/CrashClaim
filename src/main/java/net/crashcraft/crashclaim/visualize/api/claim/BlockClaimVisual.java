@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 public class BlockClaimVisual extends BaseBlockVisual {
-    private ArrayList<Location> changedBlocks;
+    private final ArrayList<Location> changedBlocks;
 
     public BlockClaimVisual(VisualColor color, VisualGroup parent, Player player, int y, BaseClaim claim) {
         super(VisualType.CLAIM, color, parent, player, y, claim);

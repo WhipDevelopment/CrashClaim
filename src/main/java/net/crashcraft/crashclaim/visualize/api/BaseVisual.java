@@ -4,12 +4,12 @@ import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import org.bukkit.entity.Player;
 
 public abstract class BaseVisual {
-    private VisualColor color;
-    private VisualGroup parent;
-    private Player player;
-    private VisualType type;
+    private final VisualColor color;
+    private final VisualGroup parent;
+    private final Player player;
+    private final VisualType type;
     private BaseClaim claim;
-    private int y;
+    private final int y;
 
     public BaseVisual(VisualType type, VisualColor color, VisualGroup parent, Player player, int y) {
         this.color = color;

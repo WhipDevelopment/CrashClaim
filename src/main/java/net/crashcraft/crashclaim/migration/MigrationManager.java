@@ -31,7 +31,7 @@ public class MigrationManager {
         manager.setFreezeSaving(true);
 
         plugin.getLogger().info("Starting data migration with [" + adapter.getIdentifier() + "]");
-        String error = adapter.migrate(this);;
+        String error = adapter.migrate(this);
         if (error != null){
             plugin.getLogger().severe("Data migration failed with error: " + error);
 

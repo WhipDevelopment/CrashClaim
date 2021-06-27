@@ -1,7 +1,6 @@
 package net.crashcraft.crashclaim.compatability;
 
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;
 import org.bukkit.World;

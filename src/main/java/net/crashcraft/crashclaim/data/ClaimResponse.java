@@ -5,11 +5,12 @@ import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 public class ClaimResponse {
     private final boolean status;
     private final ErrorType error;
-    private BaseClaim claim;
+    private final BaseClaim claim;
 
     public ClaimResponse(boolean status, ErrorType error) {
         this.status = status;
         this.error = error;
+        this.claim = null;
     }
 
     public ClaimResponse(boolean status, BaseClaim claim) {

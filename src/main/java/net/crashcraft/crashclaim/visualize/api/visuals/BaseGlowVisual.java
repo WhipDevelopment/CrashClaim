@@ -10,7 +10,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
 
 public abstract class BaseGlowVisual extends BaseVisual {
     private final HashMap<Integer, String> fakeEntities; // id - uuid

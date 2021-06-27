@@ -15,7 +15,10 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("Duplicates")
 public class Wrapper1_17_R1 implements CompatabilityWrapper {

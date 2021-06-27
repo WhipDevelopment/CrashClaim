@@ -1,6 +1,5 @@
 package net.crashcraft.crashclaim.config;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

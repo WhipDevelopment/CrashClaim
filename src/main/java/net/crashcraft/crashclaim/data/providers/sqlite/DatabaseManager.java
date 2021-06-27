@@ -26,7 +26,7 @@ public class DatabaseManager {
         validateDataVersions();
 
         try {
-            String value = DB.getFirstColumn("SELECT value FROM properties WHERE key = ?", "dataVersion");
+            String value = DB.getFirstColumn("SELECT value FROM properties WHERE `key` = ?", "dataVersion");
             currentRevision = Integer.parseInt(value);
         } catch (SQLException e){ // Table does not exist so we assume database is fresh
             logger.info("No data version found, creating database schema");

@@ -20,7 +20,6 @@ import java.util.UUID;
 
 public class SimplePermissionMenu extends MenuListHelper {
     private final PermissionSet permissionSet;
-    private final boolean isPlayerPermission;
     private final BaseClaim claim;
     private final UUID uuid;
 
@@ -29,7 +28,7 @@ public class SimplePermissionMenu extends MenuListHelper {
 
         this.uuid = uuid;
         this.claim = claim;
-        this.isPlayerPermission = uuid != null;
+        boolean isPlayerPermission = uuid != null;
 
         if (isPlayerPermission){
             permissionSet = claim.getPerms().getPlayerPermissionSet(uuid);
@@ -71,11 +70,6 @@ public class SimplePermissionMenu extends MenuListHelper {
         }
 
         setup(menuList, 6, permissionSet, player.getUniqueId(), claim.getPerms());
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
     }
 
     @Override
@@ -121,10 +115,8 @@ public class SimplePermissionMenu extends MenuListHelper {
     public void onClick(InventoryClickEvent event, String rawItemName) {
         super.onClick(event, rawItemName);
 
-        switch (event.getSlot()){
-            case 44:
-                new AdvancedPermissionMenu(player, claim, uuid, prevMenu).open();
-                break;
+        if (event.getSlot() == 44) {
+            new AdvancedPermissionMenu(player, claim, uuid, prevMenu).open();
         }
     }
 }

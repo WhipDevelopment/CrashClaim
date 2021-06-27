@@ -39,14 +39,12 @@ public abstract class MenuListHelper extends GUI {
     private boolean isContainerList = false;
     private MenuSwitchType switchType;
 
-    private final int FIXED_CONTROL_OFFSET = 47;
-
     private int page;
     private int numPerPage;
     private int controlOffset;
 
     protected ItemStack descItem;
-    protected GUI prevMenu;
+    protected final GUI prevMenu;
 
     public MenuListHelper(Player player, String title, int slots, GUI prevMenu) {
         super(player, title, slots);
@@ -82,6 +80,7 @@ public abstract class MenuListHelper extends GUI {
         this.group = group;
         this.numPerPage = numPerPage;
         this.containers = CrashClaim.getPlugin().getDataManager().getPermissionSetup().getTrackedContainers();
+        int FIXED_CONTROL_OFFSET = 47;
         this.controlOffset = FIXED_CONTROL_OFFSET + controlOffset;
 
         if (set instanceof PlayerPermissionSet || group.getOwner() instanceof SubClaim){

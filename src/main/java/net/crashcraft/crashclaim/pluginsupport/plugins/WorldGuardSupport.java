@@ -2,9 +2,7 @@ package net.crashcraft.crashclaim.pluginsupport.plugins;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.World;
-import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -17,7 +15,6 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class WorldGuardSupport implements PluginSupport {

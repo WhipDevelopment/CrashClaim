@@ -3,9 +3,9 @@ package net.crashcraft.crashclaim.compatability;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import net.crashcraft.crashclaim.compatability.versions.Wrapper1_16_R1;
+import net.crashcraft.crashclaim.compatability.versions.Wrapper1_17_R1;
 import net.crashcraft.crashclaim.compatability.versions.inherits.Wrapper1_16_R2;
 import net.crashcraft.crashclaim.compatability.versions.inherits.Wrapper1_16_R3;
-import net.crashcraft.crashclaim.compatability.versions.Wrapper1_17_R1;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import org.bukkit.Bukkit;
 

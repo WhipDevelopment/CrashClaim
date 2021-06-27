@@ -109,36 +109,4 @@ public class PermissionRouter {
             );
         }
     }
-
-
-/*
-
-
-
-    public static int getLayeredContainer(Claim parent, SubClaim subClaim, UUID uuid, Material material){
-        PermissionGroup parentPerms = parent.getPerms();
-        if (subClaim == null){
-            return getLayeredContainer(parentPerms.getGlobalPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material);
-        } else {
-            PermissionGroup subPerms = parent.getPerms();
-            return processPerm(
-                    getLayeredContainer(parentPerms.getGlobalPermissionSet(), parentPerms.getPlayerPermissionSet(uuid), material),
-                    getLayeredContainer(subPerms.getGlobalPermissionSet(), subPerms.getPlayerPermissionSet(uuid), material)
-            );
-        }
-    }
-
-    public static int getLayeredContainer(GlobalPermissionSet parent, PlayerPermissionSet secondary, Material material){
-        int globalPerm = PermissionRoute.CONTAINERS.getPerm(parent, material);
-
-        if (secondary == null){
-            return globalPerm;
-        }
-
-        int mainPerm = PermissionRoute.CONTAINERS.getPerm(secondary, material);
-
-        return mainPerm == PermState.NEUTRAL ?
-                        globalPerm : mainPerm;
-    }
- */
 }

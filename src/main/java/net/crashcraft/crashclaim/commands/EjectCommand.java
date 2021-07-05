@@ -67,7 +67,7 @@ public class EjectCommand extends BaseCommand {
             otherPlayer.sendMessage(Localization.EJECT__BEEN_EJECTED.getMessage());
             player.sendMessage(Localization.EJECT__SUCCESS.getMessage());
         } else {
-            player.sendMessage(Localization.GENERIC__NO_CLAIM_STANDING.getMessage());
+            player.sendMessage(Localization.EJECT__NO_CLAIM.getMessage());
         }
     }
 }

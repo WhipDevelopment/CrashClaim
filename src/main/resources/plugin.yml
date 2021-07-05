@@ -3,6 +3,6 @@ version: 1.0
 description: A modern advanced user oriented claiming system
 author: Chasewhip
 depend: [CrashPayment, ProtocolLib]
-softdepend: [Vault, GriefPrevention]
+softdepend: [Vault, GriefPrevention, WorldGuard]
 main: net.crashcraft.crashclaim.CrashClaim
 api-version: 1.16

@@ -1,5 +1,9 @@
 package net.crashcraft.crashclaim.claimobjects;
 
+import net.crashcraft.crashclaim.localization.Localization;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import java.util.UUID;
 
 public abstract class BaseClaim {
@@ -16,7 +20,9 @@ public abstract class BaseClaim {
 
     private String name;
     private String entryMessage;
+    private BaseComponent[] parsedEntryMessage; // Cached for efficiency
     private String exitMessage;
+    private BaseComponent[] parsedExitMessage; // Cached for efficiency
 
     private boolean isEditing = false;
 
@@ -93,11 +99,13 @@ public abstract class BaseClaim {
 
     public void setEntryMessage(String entryMessage) {
         this.entryMessage = entryMessage;
+        this.parsedEntryMessage = entryMessage == null ? null : Localization.parseRawUserInput(entryMessage);
         setToSave(true);
     }
 
     public void setExitMessage(String exitMessage) {
         this.exitMessage = exitMessage;
+        this.parsedExitMessage = exitMessage == null ? null :  Localization.parseRawUserInput(exitMessage);
         setToSave(true);
     }
 
@@ -115,6 +123,14 @@ public abstract class BaseClaim {
 
     public void setMaxCornerZ(int maxCornerZ) {
         this.maxCornerZ = maxCornerZ;
+    }
+
+    public BaseComponent[] getParsedEntryMessage() {
+        return parsedEntryMessage;
+    }
+
+    public BaseComponent[] getParsedExitMessage() {
+        return parsedExitMessage;
     }
 }
 

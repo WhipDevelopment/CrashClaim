@@ -71,6 +71,7 @@ public class NewClaimMode implements ClaimMode {
         Location max = StaticClaimLogic.calculateMaxCorner(firstLocation, secondLocation);
 
         if (!checkCanCreate(min, max)){
+            cleanup(player.getUniqueId(), true);
             return;
         }
 
@@ -89,6 +90,7 @@ public class NewClaimMode implements ClaimMode {
                     (p, aBoolean) -> {
                         if (aBoolean){
                             if (!checkCanCreate(min, max)){
+                                cleanup(player.getUniqueId(), true);
                                 return "";
                             }
 

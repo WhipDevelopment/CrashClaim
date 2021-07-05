@@ -57,12 +57,10 @@ public class PluginSupportManager implements Listener {
         }
 
         supportDistributor = new PluginSupportDistributor(this);
-
-        Bukkit.getPluginManager().registerEvents(this, crashClaim);
     }
 
     private String getPluginName(Class<?> clazz){
-        return clazz.getSimpleName().substring(0, clazz.getSimpleName().length() - 8); // Support - 1 for length
+        return clazz.getSimpleName().substring(0, clazz.getSimpleName().length() - 7); // Support
     }
 
     @EventHandler

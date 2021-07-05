@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public enum Localization {
-    //Generic
-    GENERIC__NO_CLAIM_STANDING("<red>There is no claim where you are standing."),
-
     //Generic Localizations
     BYPASS__ENABLED("<green>Enabled claim bypass. You are now bypassing permissions"),
     BYPASS__DISABLED("<red>Disabled claim bypass."),
@@ -57,8 +54,11 @@ public enum Localization {
             "<red>the contributing parties"),
     UN_SUBCLAIM__MENU__CONFIRMATION__ACCEPT(Material.GREEN_CONCRETE, 1, "<gold>Accept"),
     UN_SUBCLAIM__MENU__CONFIRMATION__DENY(Material.RED_CONCRETE, 1, "<gold>Cancel"),
-    UN_SUBCLAIM__MENU__NO_PERMISSION("<red>You do not have permission to modify this sub claim."),
-    UN_SUBCLAIM__MENU__NO_CLAIM("<red>There is no sub claim where you are standing."),
+    UN_SUBCLAIM__MENU__NO_PERMISSION("<red>You do not have permission to modify this sub-claim."),
+    UN_SUBCLAIM__MENU__NO_CLAIM("<red>There is no sub-claim where you are standing."),
+
+    RELOAD__RELOADING("<yellow>Starting Config Reload..."),
+    RELOAD__RELOADED("<green>Finished Reloading Configs."),
 
     MIGRATE__WARNING_PLAYERS_ONLINE("<red><bold>It is not recommended to initiate a migration when there are players online."),
     MIGRATE__WARNING_BACKUP("<red><bold>Backup both the plugin you are migrating data from, and existing CrashClaim data before continuing."),
@@ -94,9 +94,9 @@ public enum Localization {
     ),
     MIGRATE__CANCEL("<green>Unselected migration adapter."),
 
-    SHOW__SUBCLAIM__NO_PERMISSION("<red>You need permission to view sub claims."),
-    SHOW__SUBCLAIM__NO_SUBCLAIMS("<green>There are no sub claims to visualize"),
-    SHOW__SUBCLAIM__STAND_INSIDE("<red>You need to stand in a claim to visualize its sub claims."),
+    SHOW__SUBCLAIM__NO_PERMISSION("<red>You need permission to view sub-claims."),
+    SHOW__SUBCLAIM__NO_SUBCLAIMS("<green>There are no sub-claims to visualize"),
+    SHOW__SUBCLAIM__STAND_INSIDE("<red>You need to stand in a claim to visualize its sub-claims."),
 
     CLAIM_INFO__STATUS_ENABLED("<dark_green>Enabled"),
     CLAIM_INFO__STATUS_DISABLED("<red>Disabled"),
@@ -107,7 +107,7 @@ public enum Localization {
             "<green>Build <yellow>: <build_status>",
             "<green>Entities <yellow>: <entities_status>",
             "<green>Interactions <yellow>: <interactions_status>",
-            "<green>View Sub Claims <yellow>: <view_sub_claims_status>",
+            "<green>View Sub-Claims <yellow>: <view_sub_claims_status>",
             "<green>Teleportation <yellow>: <teleportation_status>",
             "<green>Explosions <yellow>: <explosions_status>",
             "<green>Fluids <yellow>: <fluids_status>",
@@ -117,7 +117,7 @@ public enum Localization {
     CLAIM_INFO__CONTAINER_MESSAGE("<green><name> <yellow>: <status>"),
     CLAIM_INFO__NO_CLAIM("<red>There is no claim where you are standing."),
 
-    NEW_CLAIM__CLICK_CORNER("<green>Click the an opposite corner to form a new claim."),
+    NEW_CLAIM__CLICK_CORNER("<green>Click an opposite corner to form a new claim."),
     NEW_CLAIM__MIN_SIZE("<red>A claim has to be at least a 5x5."),
     NEW_CLAIM__OVERLAPPING("<red>You cannot claim over an existing claim."),
     NEW_CLAIM__OTHER_ERROR("<red>You cannot claim because of another region or plugin wont allow it."),
@@ -132,21 +132,21 @@ public enum Localization {
     NEW_CLAIM__CREATE_MENU__ACCEPT(Material.GREEN_CONCRETE, 1, "<gold>Accept"),
     NEW_CLAIM__CREATE_MENU__DENY(Material.RED_CONCRETE, 1, "<gold>Cancel"),
 
-    NEW_SUBCLAIM__CLICK_CORNER("<green>Click an opposite corner to form a sub claim"),
-    NEW_SUBCLAIM__NOT_INSIDE_PARENT("<red>Sub claims can only be formed inside of a parent claim."),
-    NEW_SUBCLAIM__SUCCESS("<green>Successfully created sub claim."),
-    NEW_SUBCLAIM__MIN_AREA("<red>A sub claim needs to be at least a 5x5 area."),
-    NEW_SUBCLAIM__NEED_PARENT("<red>You cannot form a sub claim outside of a parent claim."),
-    NEW_SUBCLAIM__NO_OVERLAP("<red>You cannot overlap an existing sub claim."),
-    NEW_SUBCLAIM__ERROR("<red>There was an error creating the sub claim."),
+    NEW_SUBCLAIM__CLICK_CORNER("<green>Click an opposite corner to form a sub-claim"),
+    NEW_SUBCLAIM__NOT_INSIDE_PARENT("<red>Sub-Claims can only be formed inside of a parent claim."),
+    NEW_SUBCLAIM__SUCCESS("<green>Successfully created sub-claim."),
+    NEW_SUBCLAIM__MIN_AREA("<red>A sub-claim needs to be at least a 5x5 area."),
+    NEW_SUBCLAIM__NEED_PARENT("<red>You cannot form a sub-claim outside of a parent claim."),
+    NEW_SUBCLAIM__NO_OVERLAP("<red>You cannot overlap an existing sub-claim."),
+    NEW_SUBCLAIM__ERROR("<red>There was an error creating the sub-claim."),
 
     CLAIM__ENABLED("<green>Claim mode <bold>enabled!"),
     CLAIM__DISABLED("<red>Claim mode <bold>disabled!"),
 
-    SUBCLAIM__ENABLED("<green>Sub Claiming mode <bold>enabled!"),
-    SUBCLAIM__DISABLED("<red>Sub Claiming mode <bold>disabled!"),
-    SUBCLAIM__NO_CLAIM("<red>You need to be standing in a claim to enable sub claiming mode."),
-    SUBCLAIM__NO_PERMISSION("<red>You need MODIFY_CLAIM to create sub claims."),
+    SUBCLAIM__ENABLED("<green>Sub-Claiming mode <bold>enabled!"),
+    SUBCLAIM__DISABLED("<red>Sub-Claiming mode <bold>disabled!"),
+    SUBCLAIM__NO_CLAIM("<red>You need to be standing in a claim to enable sub-claiming mode."),
+    SUBCLAIM__NO_PERMISSION("<red>You need MODIFY_CLAIM to create sub-claims."),
     SUBCLAIM__ALREADY_RESIZING("<red>The claim your are attempting to resize is already being resized."),
 
     RESIZE__CLICK_ANOTHER_LOCATION("<green>Click another location to resize the claim."),
@@ -156,15 +156,15 @@ public enum Localization {
     RESIZE__NO_OVERLAP("<red>You cannot overlap other claims."),
     RESIZE__MIN_SIZE("<red>A claim has to be at least a 5x5"),
     RESIZE__CANNOT_FLIP("<red>Claims cannot be flipped, please retry and grab the other edge to expand in this direction"),
-    RESIZE__OVERLAP_EXISTING("<red>Sub claims cannot overlap over existing sub claims."),
+    RESIZE__OVERLAP_EXISTING("<red>Sub-Claims cannot overlap over existing sub-claims."),
     RESIZE__ERROR_OTHER("<red>Another region or plugin is preventing the claim from being resized."),
     RESIZE__TRANSACTION_ERROR("<red><error>"),
     RESIZE__NO_LONGER_PERMISSION("<red>You no longer have permission to resize the claim."),
 
-    RESIZE_SUBCLAIM__INSTRUCTIONS("<red>You need to click the border of the sub claim to resize it. Grabbing an edge will move it in that direction, grabbing a corner will move it in both directions relative to the corner."),
+    RESIZE_SUBCLAIM__INSTRUCTIONS("<red>You need to click the border of the sub-claim to resize it. Grabbing an edge will move it in that direction, grabbing a corner will move it in both directions relative to the corner."),
     RESIZE_SUBCLAIM__CLICK_ANOTHER_LOCATION("<green>Click another location to resize the claims."),
-    RESIZE_SUBCLAIM__INSIDE_PARENT("<red>Sub claims can only be formed inside of a parent claim."),
-    RESIZE_SUBCLAIM__NO_OVERLAP("<red>You cannot overlap other sub claims."),
+    RESIZE_SUBCLAIM__INSIDE_PARENT("<red>Sub-Claims can only be formed inside of a parent claim."),
+    RESIZE_SUBCLAIM__NO_OVERLAP("<red>You cannot overlap other sub-claims."),
     RESIZE_SUBCLAIM__MIN_SIZE("<red>A claim has to be at least a 5x5."),
     RESIZE_SUBCLAIM__CANNOT_FLIP("Claims cannot be flipped, please retry and grab the other edge to expand in this direction."),
     RESIZE_SUBCLAIM__SUCCESS("<green>Claim has been successfully resized."),
@@ -182,12 +182,12 @@ public enum Localization {
 
     MENU__SIMPLE_PERMISSIONS__NO_PERMISSION("<red>You no longer have sufficient permissions to continue"),
 
-    ALERT__NO_PERMISSIONS__BUILD("You do not have permission to build in this claim"),
-    ALERT__NO_PERMISSIONS__INTERACTION("You do not have permission to interact in this claim."),
-    ALERT__NO_PERMISSIONS__CONTAINERS("You do not have permission to open containers in this claim."),
-    ALERT__NO_PERMISSIONS__ENTITIES("You do not have permission to interact with entities in this claim"),
-    ALERT__NO_PERMISSIONS__TELEPORT("You do not have permission to teleport to that claim."),
-    ALERT__NO_PERMISSIONS__TELEPORT_RELOCATE("You do not have permission to teleport to that claim. You have been relocated outside of it."),
+    ALERT__NO_PERMISSIONS__BUILD("<red>You do not have permission to build in this claim"),
+    ALERT__NO_PERMISSIONS__INTERACTION("<red>You do not have permission to interact in this claim."),
+    ALERT__NO_PERMISSIONS__CONTAINERS("<red>You do not have permission to open containers in this claim."),
+    ALERT__NO_PERMISSIONS__ENTITIES("<red>You do not have permission to interact with entities in this claim"),
+    ALERT__NO_PERMISSIONS__TELEPORT("<red>You do not have permission to teleport to that claim."),
+    ALERT__NO_PERMISSIONS__TELEPORT_RELOCATE("<red>You do not have permission to teleport to that claim. You have been relocated outside of it."),
 
     // General Visuals
 
@@ -217,22 +217,22 @@ public enum Localization {
     MENU__CLAIM__ENTRY_MESSAGE__MESSAGE(Material.PAPER, 1, "Enter new claim entry message"),
     MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION("<green>Change claim entry message to <gold><entry_message>"),
 
-    MENU__CLAIM__EXIT_MESSAGE__MESSAGE("Enter new claim exit message"),
+    MENU__CLAIM__EXIT_MESSAGE__MESSAGE(Material.PAPER, 1, "Enter new claim exit message"),
     MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION("<green>Change claim exit message to <gold><exit_message>"),
 
     // Permissions
     MENU__PERMISSIONS__BUTTONS__PER_PLAYER(Material.PLAYER_HEAD, 1,
-            "<gold>Per Player settings",
+            "<gold>Per Player Settings",
             "<green>Edit claim permissions on a per player basis"),
     MENU__PERMISSIONS__BUTTONS__PER_PLAYER_DISABLED(Material.PLAYER_HEAD, 1,
-            "<gray>Per Player settings",
+            "<gray>Per Player Settings",
             "<dark_gray>Edit claim permissions on a per player basis"),
 
     MENU__PERMISSIONS__BUTTONS__GLOBAL(Material.COMPASS, 1,
-            "<gold>Global Claim settings",
+            "<gold>Global Claim Settings",
             "<green>Set global permissions for your claim"),
     MENU__PERMISSIONS__BUTTONS__GLOBAL_DISABLED(Material.COMPASS, 1,
-            "<gray>Global Claim settings",
+            "<gray>Global Claim Settings",
             "<dark_gray>Set global permissions for your claim"),
 
     MENU__PERMISSIONS__BUTTONS__RENAME(Material.ANVIL, 1,
@@ -264,11 +264,11 @@ public enum Localization {
             "<dark_gray>Delete your claim permanently"),
 
     MENU__PERMISSIONS__BUTTONS_SUBCLAIMS(Material.WRITABLE_BOOK, 1,
-            "<gold>Sub Claims",
-            "<green>View the a list of the sub claims for this claim"),
+            "<gold>Sub-Claims",
+            "<green>View the a list of the sub-claims for this claim"),
     MENU__PERMISSIONS__BUTTONS_NO_SUBCLAIMS(Material.WRITABLE_BOOK, 1,
-            "<gray>No Sub Claims",
-            "<dark_gray>There are no sub claims you have permission to list."),
+            "<gray>No Sub-Claims",
+            "<dark_gray>There are no sub-claims you have permission to list."),
 
     MENU__PERMISSIONS__CONTAINERS__DISPLAY(null, 1, "<gold><name>"),
 
@@ -296,29 +296,61 @@ public enum Localization {
 
     MENU__PERMISSIONS__PISTONS(Material.PISTON, 1,
             "<gold>Allow Pistons",
-            "<green>Allows pistons to cross into and out of claim"
-    ),
+            "<green>Allows pistons to push and pull across the claim border"),
     MENU__PERMISSIONS__FLUIDS(Material.WATER_BUCKET, 1,
             "<gold>Allow Fluids",
-            "<green>Allows fluids to cross into and out of claim"),
+            "<green>Allows fluids to flow across the claim border"),
     MENU__PERMISSIONS__VIEW_SUB_CLAIMS(Material.SEA_LANTERN, 1,
-            "<gold>View Sub Claims",
-            "<green>Allows players to view the sub claims"),
-    MENU__PERMISSIONS__BUILD(Material.GRASS_BLOCK, 1, "<gold>Build"),
-    MENU__PERMISSIONS__CONTAINERS(Material.BARREL, 1, "<gold>Containers"),
-    MENU__PERMISSIONS__ENTITIES(Material.CREEPER_HEAD, 1, "<gold>Entities"),
-    MENU__PERMISSIONS__INTERACTIONS(Material.OAK_FENCE_GATE, 1, "<gold>Interactions"),
-    MENU__PERMISSIONS__EXPLOSIONS(Material.TNT, 1, "<gold>Explosions"),
-    MENU__PERMISSIONS__TELEPORTATION(Material.ENDER_PEARL, 1, "<gold>Teleportation"),
-    MENU__PERMISSIONS__MODIFY_PERMISSIONS(Material.CRAFTING_TABLE, 1, "<gold>Modify Permissions"),
-    MENU__PERMISSIONS__MODIFY_CLAIM(Material.OAK_FENCE, 1, "<gold>Modify Claim"),
-    MENU__PERMISSIONS__ADMIN(Material.BEACON, 1, "<gold>Admin"),
-    MENU__PERMISSIONS__MISC(Material.SEA_LANTERN, 1, "<gold>Misc"),
+            "<gold>View Sub-Claims",
+            "<green>Allows players to view the sub-claims"),
+    MENU__PERMISSIONS__BUILD(Material.GRASS_BLOCK, 1,
+            "<gold>Build",
+            "<green>Allow breaking and placing of blocks"),
+    MENU__PERMISSIONS__CONTAINERS(Material.BARREL, 1,
+            "<gold>Containers",
+            "<green>Allow access to containers"),
+    MENU__PERMISSIONS__ENTITIES(Material.CREEPER_HEAD, 1,
+            "<gold>Entities",
+            "<green>Allow interacting with entities"),
+    MENU__PERMISSIONS__INTERACTIONS(Material.OAK_FENCE_GATE, 1,
+            "<gold>Interactions",
+            "<green>Allow interacting with blocks such as",
+            "<green>doors, levers, and more"),
+    MENU__PERMISSIONS__EXPLOSIONS(Material.TNT, 1,
+            "<gold>Explosions",
+            "<green>Allow explosions from tnt, creepers,",
+            "<green>and more"),
+    MENU__PERMISSIONS__TELEPORTATION(Material.ENDER_PEARL, 1,
+            "<gold>Teleportation",
+            "<green>Allow players to teleport inside",
+            "<green>of the claim."),
+    MENU__PERMISSIONS__MODIFY_PERMISSIONS(Material.CRAFTING_TABLE, 1,
+            "<gold>Modify Permissions",
+            "<green>Allow user to modify claim permissions,",
+            "<green>players can only grant permissions they have",
+            "<green>to others"),
+    MENU__PERMISSIONS__MODIFY_CLAIM(Material.OAK_FENCE, 1,
+            "<gold>Modify Claim",
+            "<green>Allow user to modify the claim,",
+            "<green>this includes resizing, deleting, and modifying",
+            "<green>all claim traits"),
+    MENU__PERMISSIONS__ADMIN(Material.BEACON, 1,
+            "<gold>Admin",
+            "<green>Grants the user the ability to modify and grant",
+            "<green>permissions they are granted and modify every",
+            "<green>aspect of the claim, this includes deleting",
+            "<green>the claim."),
+    MENU__PERMISSIONS__MISC(Material.SEA_LANTERN, 1,
+            "<gold>Misc",
+            "<green>Allows pistons and fluids to flow across the",
+            "<green>claim border"),
 
     // Menu buttons
 
     MENU__PERMISSION_OPTION__SIMPLE(Material.CRAFTING_TABLE, 1,
-            "<green>Simple Configuration"),
+            "<gold>Simple Configuration",
+            "<green>A simple look and feel to modify claim",
+            "<green>permissions"),
     MENU__PERMISSION_OPTION__SIMPLE_GLOWING(){
         @Override
         void postLoad(){
@@ -327,7 +359,9 @@ public enum Localization {
     },
 
     MENU__PERMISSION_OPTION__ADVANCED(Material.SMITHING_TABLE, 1,
-            "<yellow>Advanced Configuration"),
+            "<yellow>Advanced Configuration",
+            "<green>An advanced menu to deep dive into",
+            "<green>permission configuration"),
     MENU__PERMISSION_OPTION__ADVANCED_GLOWING(){
         @Override
         void postLoad(){
@@ -336,7 +370,7 @@ public enum Localization {
     },
 
     MENU__PERMISSION_OPTION__GENERAL(Material.SMITHING_TABLE, 1,
-            "<green>General"),
+            "<gold>General"),
     MENU__PERMISSION_OPTION__GENERAL_GLOWING(){
         @Override
         void postLoad(){
@@ -345,7 +379,7 @@ public enum Localization {
     },
 
     MENU__PERMISSION_OPTION__CONTAINERS(Material.BARREL, 1,
-            "<green>Containers"),
+            "<gold>Containers"),
     MENU__PERMISSION_OPTION__CONTAINERS_GLOWING(){
         @Override
         void postLoad(){
@@ -354,7 +388,7 @@ public enum Localization {
     },
 
     MENU__PERMISSION_OPTION__ADMIN(Material.BEACON, 1,
-            "<green>Admin"),
+            "<gold>Admin"),
     MENU__PERMISSION_OPTION__ADMIN_GLOWING(){
         @Override
         void postLoad(){
@@ -363,7 +397,7 @@ public enum Localization {
     },
 
     MENU__PERMISSION_OPTION__MISC(Material.CRAFTING_TABLE, 1,
-            "<green>Misc"),
+            "<gold>Misc"),
     MENU__PERMISSION_OPTION__MISC_GLOWING(){
         @Override
         void postLoad(){
@@ -382,8 +416,8 @@ public enum Localization {
         }
     }
 
-    public static BaseComponent[] parseRaw(String s){
-        return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(s));
+    public static BaseComponent[] parseRawUserInput(String s){
+        return BungeeComponentSerializer.get().serialize(LocalizationLoader.userParser.parse(s));
     }
 
     public static void rebuildCachedMessages(){

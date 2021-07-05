@@ -290,19 +290,19 @@ public class PlayerListener implements Listener {
                     }
 
                     if (to.getEntryMessage() != null){
-                        visuals.sendAlert(player, Localization.parseRaw(to.getEntryMessage()));
+                        visuals.sendAlert(player,to.getParsedEntryMessage());
                     } else if (from.getEntryMessage() != null){
-                        visuals.sendAlert(player, Localization.parseRaw(from.getExitMessage()));
+                        visuals.sendAlert(player, from.getParsedExitMessage());
                     }
                 } else {
                     if (to.getEntryMessage() != null){
-                        visuals.sendAlert(player, Localization.parseRaw(to.getEntryMessage()));
+                        visuals.sendAlert(player, to.getParsedEntryMessage());
                     }
                 }
             } else {
                 if (from != null){
                     if (from.getExitMessage() != null){
-                        visuals.sendAlert(player, Localization.parseRaw(from.getExitMessage()));
+                        visuals.sendAlert(player, from.getParsedExitMessage());
                     }
                 }
             }

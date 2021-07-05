@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.pluginsupport.plugins;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
@@ -60,7 +61,7 @@ public class WorldGuardSupport implements PluginSupport {
         );
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager regions = container.get((World) minLoc.getWorld());
+        RegionManager regions = container.get(BukkitAdapter.adapt(minLoc.getWorld()));
 
         if (regions == null){
             return true;

@@ -40,7 +40,7 @@ public class CommandManager {
         commandManager.registerCommand(new BypassCommand(bypassManager));
         commandManager.registerCommand(new ClaimInfoCommand(manager));
         commandManager.registerCommand(new EjectCommand(manager));
-        commandManager.registerCommand(new MigrationCommand(plugin.getMigrationManager()));
+        commandManager.registerCommand(new AdminCommand(plugin, plugin.getMigrationManager()));
     }
 
     private void loadCommandCompletions(){

@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.BufferedReader;
 import java.io.File;
 
 public class CrashClaim extends JavaPlugin {
@@ -64,7 +65,7 @@ public class CrashClaim extends JavaPlugin {
         this.paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
 
         if (paymentPlugin == null){
-            disablePlugin("Payment plugin not found, disabling plugin");
+            disablePlugin("[Payment] CrashPayment plugin not found, download and install it, disabling plugin");
         }
 
         this.crashUtils = new CrashUtils(this);
@@ -75,28 +76,12 @@ public class CrashClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Bukkit.getPluginManager().registerEvents(pluginSupport, this);
+
         taskChainFactory = BukkitTaskChainFactory.create(this);
         this.adventure = BukkitAudiences.create(this);
 
-        File dataFolder = plugin.getDataFolder();
-
-        if (dataFolder.mkdirs()){
-            getLogger().info("Created data directory");
-        }
-
-        try {
-            getLogger().info("Loading configs");
-            if (!new File(dataFolder, "lookup.yml").exists()) {
-                plugin.saveResource("lookup.yml", false);
-            }
-            ConfigManager.initConfig(new File(dataFolder, "config.yml"), GlobalConfig.class);
-
-            getLogger().info("Finished loading base configs");
-        } catch (Exception ex){
-            ex.printStackTrace();
-            getLogger().severe("Could not load configuration properly. Stopping server");
-            plugin.getServer().shutdown();
-        }
+        loadConfigs();
 
         wrapper = new CompatabilityManager(protocolManager).getWrapper(); // Find and fetch version wrapper
 
@@ -166,6 +151,28 @@ public class CrashClaim extends JavaPlugin {
         commandManager = null;
         migrationManager = null;
         adventure = null;
+    }
+
+    public void loadConfigs(){
+        File dataFolder = plugin.getDataFolder();
+
+        if (dataFolder.mkdirs()){
+            getLogger().info("Created data directory");
+        }
+
+        try {
+            getLogger().info("Loading configs");
+            if (!new File(dataFolder, "lookup.yml").exists()) {
+                plugin.saveResource("lookup.yml", false);
+            }
+            ConfigManager.initConfig(new File(dataFolder, "config.yml"), GlobalConfig.class);
+
+            getLogger().info("Finished loading base configs");
+        } catch (Exception ex){
+            ex.printStackTrace();
+            getLogger().severe("Could not load configuration properly. Stopping server");
+            plugin.getServer().shutdown();
+        }
     }
 
     public void disablePlugin(String error){

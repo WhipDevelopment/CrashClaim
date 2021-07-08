@@ -23,14 +23,8 @@ All artifacts will be moved into `../Server116/plugins` automatically.
 
 **Compiling Dependencies**
 ```
-git clone https://github.com/CrashCraftNetwork/CrashUtils.git
-cd CrashUtils/
-mvn clean install
-```
-```
-git clone https://github.com/WhipDevelopment/CrashPayment.git
-cd CrashPayment/
-mvn clean install
+https://github.com/CrashCraftNetwork/CrashUtils.git
+https://github.com/WhipDevelopment/CrashPayment.git
 ```
 
 **Compiling From Source**

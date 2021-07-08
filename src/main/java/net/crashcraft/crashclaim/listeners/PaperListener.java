@@ -5,7 +5,6 @@ import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
-import net.crashcraft.crashclaim.permissions.PermissionSetup;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

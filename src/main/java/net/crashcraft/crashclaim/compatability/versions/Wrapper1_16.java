@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("Duplicates")
-public class Wrapper1_16_R1 implements CompatabilityWrapper {
+public class Wrapper1_16 implements CompatabilityWrapper {
     @Override
     public void sendActionBarTitle(Player player, BaseComponent[] message, int fade_in, int duration, int fade_out) {
         PacketContainer packet = CompatabilityManager.getProtocolManager().createPacket(PacketType.Play.Server.TITLE);

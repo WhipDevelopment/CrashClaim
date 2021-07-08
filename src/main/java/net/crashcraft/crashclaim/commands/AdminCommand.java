@@ -7,6 +7,7 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.migration.MigrationAdapter;
 import net.crashcraft.crashclaim.migration.MigrationManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 @CommandAlias("crashclaim")
@@ -28,6 +29,16 @@ public class AdminCommand extends BaseCommand {
         Localization.rebuildCachedMessages(); // Reload localization config, will load with new language value if changed in config.
 
         sender.sendMessage(Localization.RELOAD__RELOADED.getMessage());
+    }
+
+    @Subcommand("version")
+    @CommandPermission("crashclaim.admin.version")
+    public void version(CommandSender sender){
+        // This message should not be configurable by end user as it is used for debug
+
+        sender.sendMessage(ChatColor.GREEN + crashClaim.getDescription().getName() + ": " + ChatColor.YELLOW + crashClaim.getDescription().getVersion()
+                + ChatColor.GREEN + "\nMinecraft Version: " + ChatColor.YELLOW + Bukkit.getServer().getMinecraftVersion()
+                + ChatColor.GREEN + "\nServer Version: " + ChatColor.YELLOW + Bukkit.getVersion());
     }
 
     @Subcommand("migratedata")

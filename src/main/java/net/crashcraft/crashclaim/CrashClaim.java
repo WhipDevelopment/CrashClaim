@@ -33,7 +33,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.BufferedReader;
 import java.io.File;
 
 public class CrashClaim extends JavaPlugin {
@@ -65,7 +64,7 @@ public class CrashClaim extends JavaPlugin {
         this.paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
 
         if (paymentPlugin == null){
-            disablePlugin("[Payment] CrashPayment plugin not found, download and install it, disabling plugin");
+            disablePlugin("[Payment] CrashPayment plugin not found, disabling plugin, download and install it here, https://www.spigotmc.org/resources/crashpayment.94069/");
         }
 
         this.crashUtils = new CrashUtils(this);

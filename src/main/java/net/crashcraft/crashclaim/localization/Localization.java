@@ -178,7 +178,7 @@ public enum Localization {
     RESIZE__MENU__CONFIRMATION__DENY(Material.RED_CONCRETE, 1,
             "<gold>Cancel"),
 
-    CONTRIBUTION_REFUND("<green<You have received <gold> <amount> <green>for a refunded contribution to a claim."),
+    CONTRIBUTION_REFUND("<greenYou have received <gold><amount> <green>for a refunded contribution to a claim."),
 
     MENU__SIMPLE_PERMISSIONS__NO_PERMISSION("<red>You no longer have sufficient permissions to continue"),
 

@@ -2,10 +2,7 @@ package net.crashcraft.crashclaim.compatability;
 
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import net.crashcraft.crashclaim.compatability.versions.Wrapper1_16_R1;
-import net.crashcraft.crashclaim.compatability.versions.Wrapper1_17_R1;
-import net.crashcraft.crashclaim.compatability.versions.inherits.Wrapper1_16_R2;
-import net.crashcraft.crashclaim.compatability.versions.inherits.Wrapper1_16_R3;
+import net.crashcraft.crashclaim.compatability.versions.*;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import org.bukkit.Bukkit;
 
@@ -26,10 +23,14 @@ public class CompatabilityManager {
     private final CompatabilityWrapper wrapper;
 
     private final List<Class<? extends CompatabilityWrapper>> versions = Arrays.asList(
-            Wrapper1_16_R1.class,
-            Wrapper1_16_R2.class,
-            Wrapper1_16_R3.class,
-            Wrapper1_17_R1.class
+            Wrapper1_16.class,
+            Wrapper1_16_1.class,
+            Wrapper1_16_2.class,
+            Wrapper1_16_3.class,
+            Wrapper1_16_4.class,
+            Wrapper1_16_5.class,
+            Wrapper1_17.class,
+            Wrapper1_17_1.class
     );
 
     public CompatabilityManager(ProtocolManager manager){
@@ -39,7 +40,7 @@ public class CompatabilityManager {
         if (forcedVersion != null && !forcedVersion.equals("")){
             wrapper = match(forcedVersion);
         } else {
-            wrapper = match(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].substring(1));
+            wrapper = match(Bukkit.getServer().getMinecraftVersion().replace(".", "_"));
         }
     }
 

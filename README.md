@@ -21,18 +21,6 @@ All artifacts will be moved into `../Server116/plugins` automatically.
 - Maven
 - Git
 
-**Compiling Dependencies**
-```
-git clone https://github.com/CrashCraftNetwork/CrashUtils.git
-cd CrashUtils/
-mvn clean install
-```
-```
-git clone https://github.com/WhipDevelopment/CrashPayment.git
-cd CrashPayment/
-mvn clean install
-```
-
 **Compiling From Source**
 
 If you are the right person to be compiling it yourself then you should not need any directions for this.

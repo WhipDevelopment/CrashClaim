@@ -15,10 +15,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @SuppressWarnings("Duplicates")
 public class Wrapper1_17 implements CompatabilityWrapper {
@@ -83,7 +80,7 @@ public class Wrapper1_17 implements CompatabilityWrapper {
     }
 
     @Override
-    public void removeEntity(Player player, int[] entity_ids){
+    public void removeEntity(Player player, Set<Integer> entity_ids){
         for (int id : entity_ids) {
             PacketContainer packet = CompatabilityManager.getProtocolManager().createPacket(
                     new PacketType(PacketType.Protocol.PLAY, PacketType.Sender.SERVER, 0x3A, MinecraftVersion.getCurrentVersion(), "DestroyEntity"));

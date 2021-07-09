@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface CompatabilityWrapper {
@@ -18,7 +19,7 @@ public interface CompatabilityWrapper {
     void spawnGlowingInvisibleMagmaSlime(Player player, double x, double z, double y, int id, UUID uuid,
                                          HashMap<Integer, String> fakeEntities, HashMap<Integer, Location> entityLocations);
 
-    void removeEntity(Player player, int[] entity_ids);
+    void removeEntity(Player player, Set<Integer> entity_ids);
 
     void setEntityTeam(Player player, String team, List<String> uuids);
 

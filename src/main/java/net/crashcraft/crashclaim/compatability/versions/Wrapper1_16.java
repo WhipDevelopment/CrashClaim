@@ -5,19 +5,18 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.google.common.primitives.Ints;
 import net.crashcraft.crashclaim.compatability.CompatabilityManager;
 import net.crashcraft.crashclaim.compatability.CompatabilityWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @SuppressWarnings("Duplicates")
 public class Wrapper1_16 implements CompatabilityWrapper {
@@ -77,11 +76,11 @@ public class Wrapper1_16 implements CompatabilityWrapper {
     }
 
     @Override
-    public void removeEntity(Player player, int[] entity_ids){
+    public void removeEntity(Player player, Set<Integer> entity_ids){
         PacketContainer packet = CompatabilityManager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_DESTROY);
 
         packet.getIntegerArrays()
-                .write(0, entity_ids);
+                .write(0, Ints.toArray(entity_ids));
 
         try {
             CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);

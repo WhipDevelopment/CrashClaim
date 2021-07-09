@@ -42,7 +42,7 @@ public abstract class BaseGlowVisual extends BaseVisual {
     }
 
     public void removeAll(){
-        CrashClaim.getPlugin().getWrapper().removeEntity(getPlayer(), toPrimitiveIntegerArrays(fakeEntities.keySet()));
+        CrashClaim.getPlugin().getWrapper().removeEntity(getPlayer(), fakeEntities.keySet());
     }
 
     public void colorEntities(Player player, VisualColor color, ArrayList<String> uuids){
@@ -83,9 +83,5 @@ public abstract class BaseGlowVisual extends BaseVisual {
 
     public boolean containsUUID(String uuid){
         return fakeEntities.containsValue(uuid);
-    }
-
-    private static int[] toPrimitiveIntegerArrays(Set<Integer> array){
-        return ArrayUtils.toPrimitive(array.toArray(new Integer[0]));
     }
 }

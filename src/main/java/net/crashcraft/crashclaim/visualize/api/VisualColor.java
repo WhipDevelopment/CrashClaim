@@ -7,8 +7,6 @@ public enum VisualColor {
     RED,
     GREEN,
     YELLOW,
-    DARK_RED,
-    DARK_GREEN,
     WHITE;
 
     private Material material;

@@ -39,16 +39,24 @@ public class GlobalConfig extends BaseConfig{
         visual_alert_duration = getInt("visualization.alert.duration", 1);
         visual_alert_fade_out = getInt("visualization.alert.fade-out", 10);
 
-        for (VisualColor color : VisualColor.values()){
-            Material material = Material.getMaterial(getString("visualization.visual-colors." + color.name(), Material.ORANGE_CONCRETE.name()));
+        setVisualBlockColor(VisualColor.GOLD, Material.ORANGE_CONCRETE);
+        setVisualBlockColor(VisualColor.RED, Material.RED_CONCRETE);
+        setVisualBlockColor(VisualColor.GREEN, Material.LIME_CONCRETE);
+        setVisualBlockColor(VisualColor.YELLOW, Material.GREEN_CONCRETE);
+        setVisualBlockColor(VisualColor.WHITE, Material.WHITE_CONCRETE);
+    }
 
-            if (material == null){
-                log("Invalid material for visualization.visual-colors." + color.name() + ", loading default value");
-                material = Material.ORANGE_CONCRETE;
-            }
+    private static void setVisualBlockColor(VisualColor color, Material defaultMaterial){
+        String key = "visualization.visual-colors." + color.name();
+        Material material = Material.getMaterial(getString(key, defaultMaterial.name()));
 
+        if (material != null) {
             color.setMaterial(material);
+            return;
         }
+
+        log("Invalid material for " + key + ", loading default value");
+        color.setMaterial(defaultMaterial);
     }
 
     public static boolean useCommandInsteadOfEdgeEject;
@@ -109,5 +117,11 @@ public class GlobalConfig extends BaseConfig{
 
     private static void onBypass(){
         bypassModeBypassesMoney = getBoolean("bypass-mode-bypasses-payment", false);
+    }
+
+    public static boolean useStatistics;
+
+    private static void onStats(){
+        useStatistics = getBoolean("statistics", true);
     }
 }

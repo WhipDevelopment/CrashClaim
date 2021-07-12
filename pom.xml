@@ -8,7 +8,7 @@
 
     <groupId>net.crashcraft</groupId>
     <artifactId>CrashClaim</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,6 +76,10 @@
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
                             <shadedPattern>net.crashcraft.crashclaim.paperlib</shadedPattern> <!-- Replace this -->
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>net.crashcraft.crashclaim.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                     <artifactSet>
@@ -236,6 +240,12 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>2.4.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>2.2.1</version>
             <scope>compile</scope>
         </dependency>
 

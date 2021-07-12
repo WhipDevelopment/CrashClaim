@@ -28,6 +28,8 @@ import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashpayment.CrashPayment;
 import net.crashcraft.crashpayment.payment.PaymentProcessor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -112,11 +114,17 @@ public class CrashClaim extends JavaPlugin {
             getLogger().info("Using extra protections provided by the paper api");
             Bukkit.getPluginManager().registerEvents(new PaperListener(manager, visualizationManager), this);
         } else {
-            getLogger().info("Looks like your not running paper, some protections will be disabled.");
+            getLogger().info("Looks like your not running paper, some protections will be disabled");
             PaperLib.suggestPaper(this);
         }
 
         commandManager = new CommandManager(this);
+
+        if (GlobalConfig.useStatistics){
+            getLogger().info("Enabling Statistics");
+            Metrics metrics = new Metrics(this, 12015);
+            metrics.addCustomChart(new SimplePie("used_language", () -> GlobalConfig.locale));
+        }
     }
 
     @Override

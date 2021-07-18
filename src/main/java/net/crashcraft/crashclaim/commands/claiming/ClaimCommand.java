@@ -54,13 +54,13 @@ public class ClaimCommand extends BaseCommand implements Listener {
         if (modeMap.containsKey(uuid)) {
             forceCleanup(uuid, true);
 
-            visualizationManager.sendAlert(player, Localization.CLAIM__DISABLED.getMessage());
+            visualizationManager.sendAlert(player, Localization.CLAIM__DISABLED.getMessage(player));
         } else {
             forceCleanup(uuid, true);
 
             modeMap.put(uuid, ClickState.CLAIM);
             visualizationManager.visualizeSuroudningClaims(player, dataManager);
-            visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage());
+            visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage(player));
         }
     }
 
@@ -71,7 +71,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
         if (modeMap.containsKey(uuid)) {
             forceCleanup(uuid, true);
 
-            visualizationManager.sendAlert(player, Localization.SUBCLAIM__DISABLED.getMessage());
+            visualizationManager.sendAlert(player, Localization.SUBCLAIM__DISABLED.getMessage(player));
         } else {
             forceCleanup(uuid, true);
 
@@ -79,17 +79,17 @@ public class ClaimCommand extends BaseCommand implements Listener {
 
             Claim claim = dataManager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());
             if (claim == null) {
-                player.sendMessage(Localization.SUBCLAIM__NO_CLAIM.getMessage());
+                player.sendMessage(Localization.SUBCLAIM__NO_CLAIM.getMessage(player));
                 return;
             }
 
             if (!PermissionHelper.getPermissionHelper().hasPermission(claim, uuid, PermissionRoute.MODIFY_CLAIM)) {
-                player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage());
+                player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
                 return;
             }
 
             if (claim.isEditing()){
-                player.sendMessage(Localization.SUBCLAIM__ALREADY_RESIZING.getMessage());
+                player.sendMessage(Localization.SUBCLAIM__ALREADY_RESIZING.getMessage(player));
                 return;
             }
 
@@ -99,7 +99,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
             claim.setEditing(true);
             visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
-            visualizationManager.sendAlert(player, Localization.SUBCLAIM__ENABLED.getMessage());
+            visualizationManager.sendAlert(player, Localization.SUBCLAIM__ENABLED.getMessage(player));
         }
     }
 

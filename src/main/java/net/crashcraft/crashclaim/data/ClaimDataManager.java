@@ -174,7 +174,7 @@ public class ClaimDataManager implements Listener {
                 String priceString = Integer.toString(price);
                 //Check price with player
                 new ConfirmationMenu(resizer,
-                        Localization.RESIZE__MENU__CONFIRMATION__TITLE.getMessage(),
+                        Localization.RESIZE__MENU__CONFIRMATION__TITLE.getMessage(resizer),
                         Localization.RESIZE__MENU__CONFIRMATION__MESSAGE.getItem("price", priceString),
                         Localization.RESIZE__MENU__CONFIRMATION__ACCEPT.getItem("price", priceString),
                         Localization.RESIZE__MENU__CONFIRMATION__DENY.getItem("price", priceString),
@@ -190,12 +190,13 @@ public class ClaimDataManager implements Listener {
                                             return;
                                         } else {
                                             //Didnt have enough money or something
-                                            player.sendMessage(Localization.RESIZE__TRANSACTION_ERROR.getMessage("error", response.getTransactionError()));
+                                            player.sendMessage(Localization.RESIZE__TRANSACTION_ERROR.getMessage(player,
+                                                    "error", response.getTransactionError()));
                                         }
                                         consumer.accept(false);
                                     });
                                 } else {
-                                    player.sendMessage(Localization.RESIZE__NO_LONGER_PERMISSION.getMessage());
+                                    player.sendMessage(Localization.RESIZE__NO_LONGER_PERMISSION.getMessage(player));
                                 }
                             }
                             return "";

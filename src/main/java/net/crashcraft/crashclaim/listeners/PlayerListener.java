@@ -67,7 +67,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.BUILD)) {
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));
         }
     }
 
@@ -86,7 +86,7 @@ public class PlayerListener implements Listener {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && perms.getHeldItemInteraction().contains(e.getItem().getType())) {
             if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
             }
             return;
         }
@@ -102,10 +102,10 @@ public class PlayerListener implements Listener {
             }
 
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__CONTAINERS.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__CONTAINERS.getMessage(player));
         } else if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
         }
     }
 
@@ -213,13 +213,13 @@ public class PlayerListener implements Listener {
                 return;
             case 1: //Block
                 if (!helper.hasPermission(event.getPlayer().getUniqueId(), location, PermissionRoute.TELEPORTATION)){
-                    visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__TELEPORT.getMessage());
+                    visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__TELEPORT.getMessage(event.getPlayer()));
                     event.setCancelled(true);
                 }
                 return;
             case 2: //Relocate
                 if (!helper.hasPermission(event.getPlayer().getUniqueId(), location, PermissionRoute.TELEPORTATION)){
-                    visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__TELEPORT_RELOCATE.getMessage());
+                    visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__TELEPORT_RELOCATE.getMessage(event.getPlayer()));
 
                     Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
                     if (claim != null) {
@@ -338,7 +338,7 @@ public class PlayerListener implements Listener {
 
                 if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){
                     e.setCancelled(true);
-                    visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+                    visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
                 }
             } else {
                 if (!helper.hasPermission(location, PermissionRoute.ENTITIES)){
@@ -349,7 +349,7 @@ public class PlayerListener implements Listener {
             Player player = (Player) e.getDamager();
             if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
             }
         } else if (e.getDamager() instanceof TNTPrimed){
             if (!helper.hasPermission(e.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
@@ -387,7 +387,7 @@ public class PlayerListener implements Listener {
             }
         } else if (!helper.hasPermission(event.getPlayer().getUniqueId(), event.getBlock().getLocation(), PermissionRoute.INTERACTIONS)){
             event.setCancelled(true);
-            visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
+            visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(event.getPlayer()));
         }
     }
 
@@ -401,7 +401,7 @@ public class PlayerListener implements Listener {
             Player player = (Player) e.getAttacker();
             if (!helper.hasPermission(player.getUniqueId(), e.getVehicle().getLocation(), PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
-                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
             }
         } else if (e.getAttacker() instanceof TNTPrimed){
             if (!helper.hasPermission(e.getAttacker().getLocation(), PermissionRoute.EXPLOSIONS)){
@@ -424,7 +424,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
         }
     }
 
@@ -438,7 +438,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getRightClicked().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
         }
     }
 
@@ -452,7 +452,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getArrow().getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
         }
     }
 
@@ -466,7 +466,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));
         }
     }
 
@@ -480,7 +480,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));
         }
     }
 
@@ -494,7 +494,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));
         }
     }
 
@@ -508,7 +508,7 @@ public class PlayerListener implements Listener {
 
         if (!helper.hasPermission(player.getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)){
             e.setCancelled(true);
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));
         }
     }
 
@@ -521,7 +521,7 @@ public class PlayerListener implements Listener {
         if (e.getIgnitingEntity() instanceof Player &&
                 !helper.hasPermission(e.getPlayer().getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)) {
             e.setCancelled(true);
-            visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
+            visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
         }
     }
 }

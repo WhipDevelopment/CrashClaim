@@ -30,7 +30,7 @@ public class PaperListener implements Listener {
             Player player = (Player) e.getEgg().getShooter();
             if (!helper.hasPermission(player.getUniqueId(), e.getEgg().getLocation(), PermissionRoute.ENTITIES)){
                 e.setHatching(false);
-                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage());
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
             }
         } else {
             if (!helper.hasPermission(e.getEgg().getLocation(), PermissionRoute.ENTITIES)){

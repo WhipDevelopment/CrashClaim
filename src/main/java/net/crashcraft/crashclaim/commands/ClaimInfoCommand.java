@@ -38,6 +38,7 @@ public class ClaimInfoCommand extends BaseCommand {
 
             player.sendMessage(
                     Localization.CLAIM_INFO__MESSAGE.getMessage(
+                            player,
                             "min_x", Integer.toString(claim.getMinX()),
                             "min_z", Integer.toString(claim.getMinZ()),
                             "max_x", Integer.toString(claim.getMaxX()),
@@ -56,12 +57,13 @@ public class ClaimInfoCommand extends BaseCommand {
 
             for (Map.Entry<Material, Integer> entry :set.getContainers().entrySet()) {
                 player.sendMessage(Localization.CLAIM_INFO__CONTAINER_MESSAGE.getMessage(
+                        player,
                         "name", CrashClaim.getPlugin().getMaterialName().getMaterialName(entry.getKey()),
                         "status", entry.getValue() == PermState.ENABLED ? enabled : disabled
                 ));
             }
         } else {
-            player.sendMessage(Localization.CLAIM_INFO__NO_CLAIM.getMessage());
+            player.sendMessage(Localization.CLAIM_INFO__NO_CLAIM.getMessage(player));
         }
     }
 }

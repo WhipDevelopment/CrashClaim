@@ -25,7 +25,7 @@ public class HideClaimsCommand extends BaseCommand {
         if (group != null){
             group.removeAllVisuals();
 
-            player.sendMessage(Localization.HIDE_CLAIMS__SUCCESS.getMessage());
+            player.sendMessage(Localization.HIDE_CLAIMS__SUCCESS.getMessage(player));
         }
     }
 }

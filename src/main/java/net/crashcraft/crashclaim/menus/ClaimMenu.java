@@ -118,7 +118,7 @@ public class ClaimMenu extends GUI {
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
                     new PlayerPermListMenu(claim, getPlayer(), this);
                 } else {
-                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
+                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
                 }
                 break;
@@ -126,7 +126,7 @@ public class ClaimMenu extends GUI {
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
                     new SimplePermissionMenu(player, claim, null, this).open();
                 } else {
-                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
+                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
                 }
                 break;
@@ -142,12 +142,13 @@ public class ClaimMenu extends GUI {
                             .itemLeft(Localization.MENU__CLAIM__RENAME__MESSAGE.getItem())
                             .onComplete(((player, reply) -> {
                                 claim.setName(reply);
-                                player.sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage("name", reply));
+                                player.sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage(player,
+                                        "name", reply));
                                 return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
                 } else {
-                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
+                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
                 }
                 break;
@@ -158,12 +159,13 @@ public class ClaimMenu extends GUI {
                             .itemLeft(Localization.MENU__CLAIM__ENTRY_MESSAGE__MESSAGE.getItem())
                             .onComplete(((player, reply) -> {
                                 claim.setEntryMessage(reply);
-                                player.sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage("entry_message", reply));
+                                player.sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage(player,
+                                        "entry_message", reply));
                                 return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
                 } else {
-                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
+                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
                 }
                 break;
@@ -174,12 +176,13 @@ public class ClaimMenu extends GUI {
                             .itemLeft(Localization.MENU__CLAIM__EXIT_MESSAGE__MESSAGE.getItem())
                             .onComplete(((player, reply) -> {
                                 claim.setExitMessage(reply);
-                                player.sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage("exit_message", reply));
+                                player.sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage(player,
+                                        "exit_message", reply));
                                 return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
                 } else {
-                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
+                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
                 }
                 break;
@@ -189,7 +192,7 @@ public class ClaimMenu extends GUI {
                     message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
 
                     new ConfirmationMenu(player,
-                            Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(),
+                            Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
                             message,
                             Localization.UN_CLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
                             Localization.UN_CLAIM__MENU__CONFIRMATION__DENY.getItem(),
@@ -198,13 +201,13 @@ public class ClaimMenu extends GUI {
                                     if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
                                         CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
                                     } else {
-                                        player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
+                                        player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                                     }
                                 }
                                 return "";
                             }, player -> "").open();
                 } else {
-                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage());
+                    player.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
                 }
                 break;

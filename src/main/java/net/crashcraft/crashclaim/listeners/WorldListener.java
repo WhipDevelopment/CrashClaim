@@ -52,7 +52,7 @@ public class WorldListener implements Listener {
                     Material material = e.getBlock().getType();
                     if (material.isInteractable() || perms.getExtraInteractables().contains(material)) {
                         e.setCancelled(true);
-                        visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
+                        visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                     }
                 }
             } else if (!helper.hasPermission(location, PermissionRoute.INTERACTIONS)){
@@ -77,7 +77,7 @@ public class WorldListener implements Listener {
             if (e.getBlock().getType().equals(Material.TNT)
                     && !helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
                 e.setCancelled(true);
-                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
             }
         } else if ((e.getEntity() instanceof WitherSkull || e.getEntity() instanceof Wither)
                 && !helper.hasPermission(location, PermissionRoute.EXPLOSIONS)) {
@@ -85,7 +85,8 @@ public class WorldListener implements Listener {
         } else if (e.getEntity() instanceof Player
                 && !helper.hasPermission(e.getEntity().getUniqueId(), location, PermissionRoute.INTERACTIONS)){
             e.setCancelled(true);
-            visuals.sendAlert((Player) e.getEntity(), Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
+            Player player = (Player) e.getEntity();
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
         } else {
             for (Entity entity : e.getEntity().getPassengers()) {
                 if (entity instanceof Player){
@@ -94,7 +95,8 @@ public class WorldListener implements Listener {
                     }
 
                     e.setCancelled(true);
-                    visuals.sendAlert((Player) entity, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage());
+                    Player player = (Player) entity;
+                    visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                 }
             }
         }
@@ -110,7 +112,7 @@ public class WorldListener implements Listener {
         if (e.getPlayer() != null){
             if (!helper.hasPermission(e.getPlayer().getUniqueId(), location, PermissionRoute.BUILD)) {
                 e.setCancelled(true);
-                visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage());
+                visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
             }
         } else if (!helper.hasPermission(location, PermissionRoute.BUILD)){
             e.setCancelled(true);

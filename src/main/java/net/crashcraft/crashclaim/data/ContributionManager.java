@@ -53,7 +53,8 @@ public class ContributionManager {
                 if (offlinePlayer.isOnline()){
                     Player p = offlinePlayer.getPlayer();
                     if (p != null) {
-                        p.sendMessage(Localization.CONTRIBUTION_REFUND.getMessage("amount", Integer.toString((int) Math.floor(transaction.getAmount()))));
+                        p.sendMessage(Localization.CONTRIBUTION_REFUND.getMessage(p,
+                                "amount", Integer.toString((int) Math.floor(transaction.getAmount()))));
                     }
                 }
             });

@@ -45,7 +45,7 @@ public class MenuCommand extends BaseCommand {
         if (claim != null){
             new ClaimMenu(player, claim, null).open();
         } else {
-            player.sendMessage(Localization.CLAIM_SETTINGS__NO_CLAIM.getMessage());
+            player.sendMessage(Localization.CLAIM_SETTINGS__NO_CLAIM.getMessage(player));
         }
     }
 
@@ -60,7 +60,7 @@ public class MenuCommand extends BaseCommand {
             message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
 
             new ConfirmationMenu(player,
-                    Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(),
+                    Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
                     message,
                     Localization.UN_CLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
                     Localization.UN_CLAIM__MENU__CONFIRMATION__DENY.getItem(),
@@ -73,13 +73,13 @@ public class MenuCommand extends BaseCommand {
                                     group.removeAllVisuals();
                                 }
                             } else {
-                                player.sendMessage(Localization.UN_CLAIM__NO_PERMISSION.getMessage());
+                                player.sendMessage(Localization.UN_CLAIM__NO_PERMISSION.getMessage(player));
                             }
                         }
                         return "";
                     }, p -> "").open();
         } else {
-            player.sendMessage(Localization.UN_CLAIM__NO_CLAIM.getMessage());
+            player.sendMessage(Localization.UN_CLAIM__NO_CLAIM.getMessage(player));
         }
     }
 
@@ -93,7 +93,7 @@ public class MenuCommand extends BaseCommand {
             message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
 
             new ConfirmationMenu(player,
-                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__TITLE.getMessage(),
+                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
                     message,
                     Localization.UN_SUBCLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
                     Localization.UN_SUBCLAIM__MENU__CONFIRMATION__DENY.getItem(),
@@ -112,13 +112,13 @@ public class MenuCommand extends BaseCommand {
                                     visualizationManager.deSpawnAfter(visual, 10);
                                 }
                             } else {
-                                player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_PERMISSION.getMessage());
+                                player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_PERMISSION.getMessage(player));
                             }
                         }
                         return "";
                     }, p -> "").open();
         } else {
-            player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_CLAIM.getMessage());
+            player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_CLAIM.getMessage(player));
         }
     }
 }

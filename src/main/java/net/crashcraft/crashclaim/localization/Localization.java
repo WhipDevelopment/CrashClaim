@@ -10,6 +10,7 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -450,14 +451,24 @@ public enum Localization {
                 switch (localization.type){
                     case MESSAGE:
                         localization.setDefault(getString(parseToKey(localization.name()), localization.def));
-                        localization.message = localization.getMessage(new String[0]);
+                        localization.hasPlaceholders = LocalizationLoader.placeholderManager.hasPlaceholders(localization.def);
+
+                        if (!localization.hasPlaceholders) {
+                            localization.message = localization.getMessage(null, new String[0]);
+                        }
                         break;
                     case MESSAGE_LIST:
                         localization.setDefaultList(getStringList(parseToKey(localization.name()), Arrays.asList(localization.defList)).toArray(new String[0]));
-                        localization.messageList = localization.getMessageList(new String[0]);
+                        localization.hasPlaceholders = LocalizationLoader.placeholderManager.hasPlaceholders(localization.defList);
+
+                        if (!localization.hasPlaceholders) {
+                            localization.messageList = localization.getMessageList(null, new String[0]);
+                        }
                         break;
                     case ITEM:
                         localization.item = createItemStack(parseToKey(localization.name()), localization.getItemTemplate());
+                        localization.hasPlaceholders = LocalizationLoader.placeholderManager.hasPlaceholders(localization.getItemTemplate().title)
+                                || LocalizationLoader.placeholderManager.hasPlaceholders(localization.getItemTemplate().lore.toArray(new String[0]));
                         break;
                     case CODE_ONLY:
                         break;
@@ -497,6 +508,8 @@ public enum Localization {
 
     private final localizationType type;
 
+    private boolean hasPlaceholders = false;
+
     Localization(){
         this.def = "";
         this.defList = null;
@@ -528,23 +541,39 @@ public enum Localization {
         this.item = new ItemStackTemplate(material, stackSize, title, Arrays.asList(loreDef));
     }
 
-    public BaseComponent[] getMessage() {
+    public BaseComponent[] getMessage(Player player) {
+        if (hasPlaceholders){
+            return getMessage(player, new String[0]);
+        }
         return message;
     }
 
-    public BaseComponent[] getMessage(String... replace){
+    public BaseComponent[] getMessage(Player player, String... replace){
+        if (hasPlaceholders){
+            return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(LocalizationLoader.placeholderManager.usePlaceholders(player, def), replace));
+        }
         return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(def, replace));
     }
 
-    public List<BaseComponent[]> getMessageList() {
+    public List<BaseComponent[]> getMessageList(Player player) {
+        if (hasPlaceholders){
+            return getMessageList(player, new String[0]);
+        }
         return messageList;
     }
 
-    public List<BaseComponent[]> getMessageList(String... replace){
+    public List<BaseComponent[]> getMessageList(Player player, String... replace){
         ArrayList<BaseComponent[]> arr = new ArrayList<>(defList.length);
 
-        for (String line : defList) {
-            Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(line, replace)));
+        if (hasPlaceholders){
+            for (String line : defList) {
+                Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(
+                        LocalizationLoader.placeholderManager.usePlaceholders(player, line), replace)));
+            }
+        } else {
+            for (String line : defList) {
+                Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(line, replace)));
+            }
         }
 
         return arr;

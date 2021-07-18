@@ -29,7 +29,7 @@ public class EjectCommand extends BaseCommand {
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim != null){
             if (!PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), player.getLocation(), PermissionRoute.MODIFY_PERMISSIONS)){
-                player.sendMessage(Localization.EJECT__NO_PERMISSION.getMessage());
+                player.sendMessage(Localization.EJECT__NO_PERMISSION.getMessage(player));
                 return;
             }
 
@@ -37,12 +37,12 @@ public class EjectCommand extends BaseCommand {
             Claim otherClaim = manager.getClaim(otherLocation.getBlockX(), otherLocation.getBlockZ(), otherLocation.getWorld().getUID());
 
             if (!claim.equals(otherClaim)){
-                player.sendMessage(Localization.EJECT__NOT_SAME_CLAIM.getMessage());
+                player.sendMessage(Localization.EJECT__NOT_SAME_CLAIM.getMessage(player));
                 return;
             }
 
             if (PermissionHelper.getPermissionHelper().hasPermission(otherPlayer.getUniqueId(), otherPlayer.getLocation(), PermissionRoute.MODIFY_PERMISSIONS)){
-                player.sendMessage(Localization.EJECT__HAS_PERMISSION.getMessage());
+                player.sendMessage(Localization.EJECT__HAS_PERMISSION.getMessage(player));
                 return;
             }
 
@@ -64,10 +64,10 @@ public class EjectCommand extends BaseCommand {
                 }
             }
 
-            otherPlayer.sendMessage(Localization.EJECT__BEEN_EJECTED.getMessage());
-            player.sendMessage(Localization.EJECT__SUCCESS.getMessage());
+            otherPlayer.sendMessage(Localization.EJECT__BEEN_EJECTED.getMessage(otherPlayer));
+            player.sendMessage(Localization.EJECT__SUCCESS.getMessage(player));
         } else {
-            player.sendMessage(Localization.EJECT__NO_CLAIM.getMessage());
+            player.sendMessage(Localization.EJECT__NO_CLAIM.getMessage(player));
         }
     }
 }

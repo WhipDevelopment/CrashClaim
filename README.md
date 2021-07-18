@@ -1,17 +1,17 @@
 ![](https://i.imgur.com/g5rKXNp.png)
 [Discord](https://discord.gg/6FU9eCjcrA) | [SpigotMC](https://www.spigotmc.org/resources/crashclaim-claiming-plugin.94037/) | [Website](https://whips.dev)
 ***
-CrashClaim is a claiming plugin oriented towards improving the claiming experience for surival servers wanting to fofer a clean and comprehensive system for their players. 
+CrashClaim is a claiming plugin oriented towards improving the claiming experience for survival servers wanting a clean, comprehensive system for their players. 
 
-The latest downlaods can be found on our SpigotMC page [here]().
+The latest downloads can be found on our SpigotMC page [here]().
 
 Check out our [features](https://github.com/WhipDevelopment/CrashClaim/wiki/Features) or [commands](https://github.com/WhipDevelopment/CrashClaim/wiki/Commands).
 
 
 ## Setup
-Downalod or build the latest compatible version for your server.
+Download or build the latest compatible version for your server.
 
-Follow our isntalation and migration guide [here](https://github.com/WhipDevelopment/CrashClaim/wiki/https://github.com/WhipDevelopment/CrashClaim/wiki/Installation), or if you need help with your configuration click [here](https://github.com/WhipDevelopment/CrashClaim/wiki/https://github.com/WhipDevelopment/CrashClaim/wiki/Configuration).
+Follow our installation and migration guide [here](https://github.com/WhipDevelopment/CrashClaim/wiki/https://github.com/WhipDevelopment/CrashClaim/wiki/Installation). If you need help with your configuration, click [here](https://github.com/WhipDevelopment/CrashClaim/wiki/https://github.com/WhipDevelopment/CrashClaim/wiki/Configuration).
 
 ## Building
 
@@ -24,7 +24,7 @@ Follow our isntalation and migration guide [here](https://github.com/WhipDevelop
 
 If you are the right person to be compiling it yourself then you should not need any directions for this.
 
-## Contirbute
+## Contribute
 If you need a feature that you want to upstream, file a pull request and we will take a look. 
 
-Try anf folow the code style currently pressent in the class your editing and make clean and consise code changes with comments where needed. 
+Try to follow the code style currently present in the class your editing and make clean and concise code changes with comments where necessary. 

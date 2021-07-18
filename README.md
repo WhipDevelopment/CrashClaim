@@ -1,20 +1,19 @@
 ![](https://i.imgur.com/g5rKXNp.png)
-[Discord](https://discord.gg/6FU9eCjcrA) | SpigotMC | [Website](https://whips.dev)
+[Discord](https://discord.gg/6FU9eCjcrA) | [SpigotMC](https://www.spigotmc.org/resources/crashclaim-claiming-plugin.94037/) | [Website](https://whips.dev)
 ***
 CrashClaim is a claiming plugin oriented towards improving the claiming experience for surival servers wanting to fofer a clean and comprehensive system for their players. 
 
 The latest downlaods can be found on our SpigotMC page [here]().
 
-Check out our [features](https://github.com/Chasewhip8/WhipClaim/wiki/Features) or [commands](https://github.com/Chasewhip8/WhipClaim/wiki/Commands).
+Check out our [features](https://github.com/WhipDevelopment/CrashClaim/wiki/Features) or [commands](https://github.com/WhipDevelopment/CrashClaim/wiki/Commands).
 
 
 ## Setup
 Downalod or build the latest compatible version for your server.
 
-Follow our isntalation and migration guide [here](https://github.com/Chasewhip8/WhipClaim/wiki/https://github.com/Chasewhip8/WhipClaim/wiki/Installation), or if you need help with your configuration click [here](https://github.com/Chasewhip8/WhipClaim/wiki/https://github.com/Chasewhip8/WhipClaim/wiki/Configuration).
+Follow our isntalation and migration guide [here](https://github.com/WhipDevelopment/CrashClaim/wiki/https://github.com/WhipDevelopment/CrashClaim/wiki/Installation), or if you need help with your configuration click [here](https://github.com/WhipDevelopment/CrashClaim/wiki/https://github.com/WhipDevelopment/CrashClaim/wiki/Configuration).
 
 ## Building
-All artifacts will be moved into `../Server116/plugins` automatically.
 
 **Requirements**
 - Java 8 JDK or newer

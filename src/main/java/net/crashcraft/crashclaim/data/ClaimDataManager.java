@@ -175,9 +175,12 @@ public class ClaimDataManager implements Listener {
                 //Check price with player
                 new ConfirmationMenu(resizer,
                         Localization.RESIZE__MENU__CONFIRMATION__TITLE.getMessage(resizer),
-                        Localization.RESIZE__MENU__CONFIRMATION__MESSAGE.getItem("price", priceString),
-                        Localization.RESIZE__MENU__CONFIRMATION__ACCEPT.getItem("price", priceString),
-                        Localization.RESIZE__MENU__CONFIRMATION__DENY.getItem("price", priceString),
+                        Localization.RESIZE__MENU__CONFIRMATION__MESSAGE.getItem(resizer,
+                                "price", priceString),
+                        Localization.RESIZE__MENU__CONFIRMATION__ACCEPT.getItem(resizer,
+                                "price", priceString),
+                        Localization.RESIZE__MENU__CONFIRMATION__DENY.getItem(resizer,
+                                "price", priceString),
                         (player, aBoolean) -> {
                             if (aBoolean) {
                                 if (PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {

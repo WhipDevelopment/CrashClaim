@@ -84,9 +84,12 @@ public class NewClaimMode implements ClaimMode {
         if (price > 0){
             new ConfirmationMenu(player,
                     Localization.NEW_CLAIM__CREATE_MENU__TITLE.getMessage(player),
-                    Localization.NEW_CLAIM__CREATE_MENU__MESSAGE.getItem("price", priceString),
-                    Localization.NEW_CLAIM__CREATE_MENU__ACCEPT.getItem("price", priceString),
-                    Localization.NEW_CLAIM__CREATE_MENU__DENY.getItem("price", priceString),
+                    Localization.NEW_CLAIM__CREATE_MENU__MESSAGE.getItem(player,
+                            "price", priceString),
+                    Localization.NEW_CLAIM__CREATE_MENU__ACCEPT.getItem(player,
+                            "price", priceString),
+                    Localization.NEW_CLAIM__CREATE_MENU__DENY.getItem(player,
+                            "price", priceString),
                     (p, aBoolean) -> {
                         if (aBoolean){
                             if (!checkCanCreate(min, max)){

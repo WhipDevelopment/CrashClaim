@@ -78,8 +78,8 @@ public class SimplePermissionMenu extends MenuListHelper {
 
         inv.setItem(17, descItem);
 
-        inv.setItem(35, Localization.MENU__PERMISSION_OPTION__SIMPLE_GLOWING.getItem());
-        inv.setItem(44, Localization.MENU__PERMISSION_OPTION__ADVANCED.getItem());
+        inv.setItem(35, Localization.MENU__PERMISSION_OPTION__SIMPLE_GLOWING.getItem(player));
+        inv.setItem(44, Localization.MENU__PERMISSION_OPTION__ADVANCED.getItem(player));
     }
 
     @Override

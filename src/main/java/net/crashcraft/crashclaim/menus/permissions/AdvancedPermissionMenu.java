@@ -107,36 +107,36 @@ public class AdvancedPermissionMenu extends MenuListHelper {
     private void drawSidebar(){
         switch (submenu) {
             case GENERAL:
-                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL_GLOWING.getItem());
-                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem());
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL_GLOWING.getItem(player));
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem(player));
 
                 if (isPlayerPermission) {
-                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem());
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem(player));
                 } else {
-                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem());
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem(player));
                 }
                 return;
             case CONTAINERS:
-                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem());
-                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS_GLOWING.getItem());
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem(player));
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS_GLOWING.getItem(player));
 
                 if (isPlayerPermission) {
-                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem());
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem(player));
                 } else {
-                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem());
+                    inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem(player));
                 }
                 break;
             case ADMIN:
-                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem());
-                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem());
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem(player));
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem(player));
 
-                inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN_GLOWING.getItem());
+                inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN_GLOWING.getItem(player));
                 break;
             case MISC:
-                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem());
-                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem());
+                inv.setItem(24, Localization.MENU__PERMISSION_OPTION__GENERAL.getItem(player));
+                inv.setItem(33, Localization.MENU__PERMISSION_OPTION__CONTAINERS.getItem(player));
 
-                inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC_GLOWING.getItem());
+                inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC_GLOWING.getItem(player));
                 break;
         }
     }
@@ -149,8 +149,8 @@ public class AdvancedPermissionMenu extends MenuListHelper {
 
         inv.setItem(17, descItem);
 
-        inv.setItem(35, Localization.MENU__PERMISSION_OPTION__SIMPLE.getItem());
-        inv.setItem(44, Localization.MENU__PERMISSION_OPTION__ADVANCED_GLOWING.getItem());
+        inv.setItem(35, Localization.MENU__PERMISSION_OPTION__SIMPLE.getItem(player));
+        inv.setItem(44, Localization.MENU__PERMISSION_OPTION__ADVANCED_GLOWING.getItem(player));
     }
 
     @Override

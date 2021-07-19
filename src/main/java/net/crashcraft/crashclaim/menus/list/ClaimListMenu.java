@@ -70,7 +70,7 @@ public class ClaimListMenu extends GUI {
             ItemStack descItem;
 
             if (claim.getOwner().equals(getPlayer().getUniqueId())) {
-                descItem = Localization.MENU__GENERAL__CLAIM_ITEM_NO_OWNER.getItem(
+                descItem = Localization.MENU__GENERAL__CLAIM_ITEM_NO_OWNER.getItem(player,
                         "name", claim.getName(),
                         "min_x", Integer.toString(claim.getMinX()),
                         "min_z", Integer.toString(claim.getMinZ()),
@@ -79,7 +79,7 @@ public class ClaimListMenu extends GUI {
                         "world", Bukkit.getWorld(claim.getWorld()).getName()
                 );
             } else {
-                descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(
+                descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(player,
                         "name", claim.getName(),
                         "min_x", Integer.toString(claim.getMinX()),
                         "min_z", Integer.toString(claim.getMinZ()),
@@ -99,20 +99,20 @@ public class ClaimListMenu extends GUI {
 
         //Controls
         if (page > 1) {
-            inv.setItem(48, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem());
+            inv.setItem(48, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem(player));
         }
 
-        inv.setItem(49, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(
+        inv.setItem(49, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(player,
                 "page", Integer.toString(page),
                 "page_total", Integer.toString((int) Math.ceil((float) claims.size() / 21))
         ));
 
         if (claims.size() > page * 21) {
-            inv.setItem(50, Localization.MENU__GENERAL__NEXT_BUTTON.getItem());
+            inv.setItem(50, Localization.MENU__GENERAL__NEXT_BUTTON.getItem(player));
         }
 
         if (previousMenu != null) {
-            inv.setItem(45, Localization.MENU__GENERAL__BACK_BUTTON.getItem());
+            inv.setItem(45, Localization.MENU__GENERAL__BACK_BUTTON.getItem(player));
         }
     }
 

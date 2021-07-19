@@ -355,7 +355,7 @@ public enum Localization {
     MENU__PERMISSION_OPTION__SIMPLE_GLOWING(){
         @Override
         void postLoad(){
-            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__SIMPLE.getItem())));
+            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__SIMPLE.getItem(null))));
         }
     },
 
@@ -366,7 +366,7 @@ public enum Localization {
     MENU__PERMISSION_OPTION__ADVANCED_GLOWING(){
         @Override
         void postLoad(){
-            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__ADVANCED.getItem())));
+            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__ADVANCED.getItem(null))));
         }
     },
 
@@ -375,7 +375,7 @@ public enum Localization {
     MENU__PERMISSION_OPTION__GENERAL_GLOWING(){
         @Override
         void postLoad(){
-            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__GENERAL.getItem())));
+            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__GENERAL.getItem(null))));
         }
     },
 
@@ -384,7 +384,7 @@ public enum Localization {
     MENU__PERMISSION_OPTION__CONTAINERS_GLOWING(){
         @Override
         void postLoad(){
-            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__CONTAINERS.getItem())));
+            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__CONTAINERS.getItem(null))));
         }
     },
 
@@ -393,7 +393,7 @@ public enum Localization {
     MENU__PERMISSION_OPTION__ADMIN_GLOWING(){
         @Override
         void postLoad(){
-            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__ADMIN.getItem())));
+            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__ADMIN.getItem(null))));
         }
     },
 
@@ -402,7 +402,7 @@ public enum Localization {
     MENU__PERMISSION_OPTION__MISC_GLOWING(){
         @Override
         void postLoad(){
-            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__MISC.getItem())));
+            this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__MISC.getItem(null))));
         }
     }
 
@@ -467,8 +467,6 @@ public enum Localization {
                         break;
                     case ITEM:
                         localization.item = createItemStack(parseToKey(localization.name()), localization.getItemTemplate());
-                        localization.hasPlaceholders = LocalizationLoader.placeholderManager.hasPlaceholders(localization.getItemTemplate().title)
-                                || LocalizationLoader.placeholderManager.hasPlaceholders(localization.getItemTemplate().lore.toArray(new String[0]));
                         break;
                     case CODE_ONLY:
                         break;
@@ -487,13 +485,22 @@ public enum Localization {
         }
 
         private static ItemStackTemplate createItemStack(String key, ItemStackTemplate template){
+            String title = getString(key + ".title", template.getTitle());
+            List<String> lore = getStringList(key + ".lore", template.getLore());
+
             return new ItemStackTemplate(
                     template.getMaterial() != null ? getMaterial(key + ".type", template.getMaterial()) : Material.PAPER, // Usually gets replaced
                     getInt(key + ".count", template.getStackSize()),
-                    getString(key + ".title", template.getTitle()),
-                    getStringList(key + ".lore", template.getLore())
+                    title,
+                    lore,
+                    itemHasPlaceholders(title, lore)
             );
         }
+    }
+
+    private static boolean itemHasPlaceholders(String title, List<String> lore){
+        return LocalizationLoader.placeholderManager.hasPlaceholders(title)
+                || LocalizationLoader.placeholderManager.hasPlaceholders(lore.toArray(new String[0]));
     }
 
     private enum localizationType {
@@ -538,7 +545,7 @@ public enum Localization {
         this.defList = null;
         this.type = localizationType.ITEM;
 
-        this.item = new ItemStackTemplate(material, stackSize, title, Arrays.asList(loreDef));
+        this.item = new ItemStackTemplate(material, stackSize, title, Arrays.asList(loreDef), false);
     }
 
     public BaseComponent[] getMessage(Player player) {
@@ -579,12 +586,12 @@ public enum Localization {
         return arr;
     }
 
-    public ItemStack getItem(){
-        return item.build();
+    public ItemStack getItem(Player player){
+        return item.build(player);
     }
 
-    public ItemStack getItem(String... replace){
-        return item.build(replace);
+    public ItemStack getItem(Player player, String... replace){
+        return item.build(player, replace);
     }
 
     public String getRawMessage() {
@@ -604,16 +611,18 @@ public enum Localization {
         private final int stackSize;
         private final String title;
         private final List<String> lore;
+        private final boolean hasPlaceholders;
 
         private final ItemStack staticItemStack;
 
-        public ItemStackTemplate(Material material, int stackSize, String title, List<String> lore) {
+        public ItemStackTemplate(Material material, int stackSize, String title, List<String> lore, boolean hasPlaceholders) {
             this.material = material;
             this.stackSize = stackSize;
             this.title = title;
             this.lore = lore;
+            this.hasPlaceholders = hasPlaceholders;
 
-            this.staticItemStack = build(new String[0]);
+            this.staticItemStack = build(null, new String[0]);
         }
 
         public ItemStackTemplate(ItemStack itemStack) {
@@ -621,30 +630,36 @@ public enum Localization {
             this.stackSize = 0;
             this.title = null;
             this.lore = null;
+            this.hasPlaceholders = false; // Cant have placeholders for these items.
 
             this.staticItemStack = itemStack;
         }
 
-        public ItemStack build(){
+        public ItemStack build(Player player){
+            if (hasPlaceholders){
+                return build(player, new String[0]);
+            }
+
             return staticItemStack;
         }
 
-        public ItemStack build(String... replace){
+        public ItemStack build(Player player, String... replace){
             if (material == null){
                 return staticItemStack;
             }
 
             ItemStack item = new ItemStack(material, stackSize);
-
             ItemMeta iMeta = item.getItemMeta();
 
+            String newTitle = hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, title) : title;
             iMeta.setDisplayNameComponent(BungeeComponentSerializer.get().serialize(
-                    Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(title, replace))));
+                    Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(newTitle, replace))));
 
             List<BaseComponent[]> components = new ArrayList<>(lore.size());
-            for (String line : lore){
+            for (String line : lore) {
                 components.add(BungeeComponentSerializer.get().serialize(
-                        Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(line, replace))));
+                        Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
+                                hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace))));
             }
             iMeta.setLoreComponents(components);
 

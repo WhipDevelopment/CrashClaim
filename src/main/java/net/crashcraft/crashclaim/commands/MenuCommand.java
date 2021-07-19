@@ -56,14 +56,14 @@ public class MenuCommand extends BaseCommand {
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
 
         if (claim != null){
-            ItemStack message = Localization.UN_CLAIM__MENU__CONFIRMATION__MESSAGE.getItem();
+            ItemStack message = Localization.UN_CLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
             message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
 
             new ConfirmationMenu(player,
                     Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
                     message,
-                    Localization.UN_CLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
-                    Localization.UN_CLAIM__MENU__CONFIRMATION__DENY.getItem(),
+                    Localization.UN_CLAIM__MENU__CONFIRMATION__ACCEPT.getItem(player),
+                    Localization.UN_CLAIM__MENU__CONFIRMATION__DENY.getItem(player),
                     (p, aBoolean) -> {
                         if (aBoolean) {
                             if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
@@ -89,14 +89,14 @@ public class MenuCommand extends BaseCommand {
         Location location = player.getLocation();
         SubClaim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID()).getSubClaim(location.getBlockX(), location.getBlockZ());
         if (claim != null){
-            ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem();
+            ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
             message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
 
             new ConfirmationMenu(player,
                     Localization.UN_SUBCLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
                     message,
-                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
-                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__DENY.getItem(),
+                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__ACCEPT.getItem(player),
+                    Localization.UN_SUBCLAIM__MENU__CONFIRMATION__DENY.getItem(player),
                     (p, aBoolean) -> {
                         if (aBoolean) {
                             if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {

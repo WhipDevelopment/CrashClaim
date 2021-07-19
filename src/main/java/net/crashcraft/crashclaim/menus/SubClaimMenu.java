@@ -40,7 +40,7 @@ public class SubClaimMenu extends GUI {
         ItemStack descItem;
 
         if (claim.getParent().getOwner().equals(getPlayer().getUniqueId())){
-            descItem = Localization.MENU__GENERAL__CLAIM_ITEM_NO_OWNER.getItem(
+            descItem = Localization.MENU__GENERAL__CLAIM_ITEM_NO_OWNER.getItem(player,
                     "name", claim.getName(),
                     "min_x", Integer.toString(claim.getMinX()),
                     "min_z", Integer.toString(claim.getMinZ()),
@@ -49,7 +49,7 @@ public class SubClaimMenu extends GUI {
                     "world", Bukkit.getWorld(claim.getWorld()).getName()
             );
         } else {
-            descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(
+            descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(player,
                     "name", claim.getName(),
                     "min_x", Integer.toString(claim.getMinX()),
                     "min_z", Integer.toString(claim.getMinZ()),
@@ -64,26 +64,26 @@ public class SubClaimMenu extends GUI {
         inv.setItem(13, descItem);
 
         if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
-            inv.setItem(28, Localization.MENU__PERMISSIONS__BUTTONS__PER_PLAYER.getItem());
-            inv.setItem(29, Localization.MENU__PERMISSIONS__BUTTONS__GLOBAL.getItem());
+            inv.setItem(28, Localization.MENU__PERMISSIONS__BUTTONS__PER_PLAYER.getItem(player));
+            inv.setItem(29, Localization.MENU__PERMISSIONS__BUTTONS__GLOBAL.getItem(player));
         } else {
-            inv.setItem(28, Localization.MENU__PERMISSIONS__BUTTONS__PER_PLAYER_DISABLED.getItem());
-            inv.setItem(29, Localization.MENU__PERMISSIONS__BUTTONS__GLOBAL_DISABLED.getItem());
+            inv.setItem(28, Localization.MENU__PERMISSIONS__BUTTONS__PER_PLAYER_DISABLED.getItem(player));
+            inv.setItem(29, Localization.MENU__PERMISSIONS__BUTTONS__GLOBAL_DISABLED.getItem(player));
         }
 
         if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
-            inv.setItem(32, Localization.MENU__PERMISSIONS__BUTTONS__RENAME.getItem());
-            inv.setItem(33, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_ENTRY.getItem());
-            inv.setItem(34, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_EXIT.getItem());
-            inv.setItem(49, Localization.MENU__PERMISSIONS__BUTTONS__DELETE.getItem());
+            inv.setItem(32, Localization.MENU__PERMISSIONS__BUTTONS__RENAME.getItem(player));
+            inv.setItem(33, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_ENTRY.getItem(player));
+            inv.setItem(34, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_EXIT.getItem(player));
+            inv.setItem(49, Localization.MENU__PERMISSIONS__BUTTONS__DELETE.getItem(player));
         } else {
-            inv.setItem(32, Localization.MENU__PERMISSIONS__BUTTONS__RENAME_DISABLED.getItem());
-            inv.setItem(33, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_ENTRY_DISABLED.getItem());
-            inv.setItem(34, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_EXIT_DISABLED.getItem());
-            inv.setItem(49, Localization.MENU__PERMISSIONS__BUTTONS__DELETE_DISABLED.getItem());
+            inv.setItem(32, Localization.MENU__PERMISSIONS__BUTTONS__RENAME_DISABLED.getItem(player));
+            inv.setItem(33, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_ENTRY_DISABLED.getItem(player));
+            inv.setItem(34, Localization.MENU__PERMISSIONS__BUTTONS__EDIT_EXIT_DISABLED.getItem(player));
+            inv.setItem(49, Localization.MENU__PERMISSIONS__BUTTONS__DELETE_DISABLED.getItem(player));
         }
 
-        inv.setItem(45, Localization.MENU__GENERAL__BACK_BUTTON.getItem());
+        inv.setItem(45, Localization.MENU__GENERAL__BACK_BUTTON.getItem(player));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class SubClaimMenu extends GUI {
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
-                            .itemLeft(Localization.MENU__CLAIM__RENAME__MESSAGE.getItem())
+                            .itemLeft(Localization.MENU__CLAIM__RENAME__MESSAGE.getItem(player))
                             .onComplete(((player, reply) -> {
                                 claim.setName(reply);
                                 player.sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage(player,
@@ -131,7 +131,7 @@ public class SubClaimMenu extends GUI {
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
-                            .itemLeft(Localization.MENU__CLAIM__ENTRY_MESSAGE__MESSAGE.getItem())
+                            .itemLeft(Localization.MENU__CLAIM__ENTRY_MESSAGE__MESSAGE.getItem(player))
                             .onComplete(((player, reply) -> {
                                 claim.setEntryMessage(reply);
                                 player.sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage(player,
@@ -148,7 +148,7 @@ public class SubClaimMenu extends GUI {
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
-                            .itemLeft(Localization.MENU__CLAIM__EXIT_MESSAGE__MESSAGE.getItem())
+                            .itemLeft(Localization.MENU__CLAIM__EXIT_MESSAGE__MESSAGE.getItem(player))
                             .onComplete(((player, reply) -> {
                                 claim.setExitMessage(reply);
                                 player.sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage(player,
@@ -163,14 +163,14 @@ public class SubClaimMenu extends GUI {
                 break;
             case 49:
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
-                    ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem();
+                    ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
                     message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
 
                     new ConfirmationMenu(player,
                             Localization.UN_SUBCLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
                             message,
-                            Localization.UN_SUBCLAIM__MENU__CONFIRMATION__ACCEPT.getItem(),
-                            Localization.UN_SUBCLAIM__MENU__CONFIRMATION__DENY.getItem(),
+                            Localization.UN_SUBCLAIM__MENU__CONFIRMATION__ACCEPT.getItem(player),
+                            Localization.UN_SUBCLAIM__MENU__CONFIRMATION__DENY.getItem(player),
                             (player, aBoolean) -> {
                                 if (aBoolean) {
                                     if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {

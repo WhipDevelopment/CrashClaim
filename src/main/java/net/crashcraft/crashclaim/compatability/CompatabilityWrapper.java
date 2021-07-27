@@ -24,4 +24,6 @@ public interface CompatabilityWrapper {
     void setEntityTeam(Player player, String team, List<String> uuids);
 
     int getMinWorldHeight(World world);
+
+    int getUniqueEntityID();
 }

@@ -6,13 +6,11 @@ import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualType;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.UUID;
 
 public abstract class BaseGlowVisual extends BaseVisual {
@@ -37,7 +35,7 @@ public abstract class BaseGlowVisual extends BaseVisual {
                 x,
                 z,
                 y,
-                getParent().generateUiniqueID(),
+                getParent().generateUniqueID(),
                 getParent().generateUiniqueUUID());
     }
 

@@ -10,12 +10,15 @@ import net.crashcraft.crashclaim.compatability.CompatabilityManager;
 import net.crashcraft.crashclaim.compatability.CompatabilityWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("Duplicates")
 public class Wrapper1_17 implements CompatabilityWrapper {
@@ -138,5 +141,29 @@ public class Wrapper1_17 implements CompatabilityWrapper {
     @Override
     public int getMinWorldHeight(World world) {
         return world.getMinHeight();
+    }
+
+    private AtomicInteger ENTITY_ID;
+    private String NMS;
+
+    public Class<?> getNMSClass(final String className) throws ClassNotFoundException {
+        return Class.forName(NMS + className);
+    }
+
+    @Override
+    public int getUniqueEntityID() {
+        if (ENTITY_ID == null){
+            final String packageName = Bukkit.getServer().getClass().getPackage().getName();
+            final String SERVER_VERSION = packageName.substring(packageName.lastIndexOf('.') + 1);
+            NMS = "net.minecraft.server." + SERVER_VERSION + ".";
+            try {
+                final Field entityCount = Class.forName("net.minecraft.world.entity.Entity").getDeclaredField("b");
+                entityCount.setAccessible(true);
+                ENTITY_ID = (AtomicInteger) entityCount.get(null);
+            } catch (final ReflectiveOperationException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+        return ENTITY_ID.incrementAndGet();
     }
 }

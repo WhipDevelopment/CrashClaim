@@ -26,7 +26,7 @@ public class GlowMarketVisual extends BaseGlowVisual {
                 location.getBlockX(),
                 location.getBlockZ(),
                 location.getBlockY(),
-                getParent().generateUiniqueID(),
+                getParent().generateUniqueID(),
                 getParent().generateUiniqueUUID());
 
         colorEntities(getParent().getPlayer(), getColor(), getEntityUUIDs());

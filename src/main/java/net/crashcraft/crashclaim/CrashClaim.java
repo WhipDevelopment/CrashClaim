@@ -129,11 +129,12 @@ public class CrashClaim extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (dataLoaded) {
-            manager.saveClaimsSync();
-        }
+        Bukkit.getScheduler().cancelTasks(this); // Stop saving tasks
 
-        manager.cleanupAndClose(); // freezes claim saving and cleans up memory references to claims
+        if (dataLoaded) {
+            manager.saveClaimsSync(); // Do a force save to make sure all claims are saved as we just unregistered the save task
+            manager.cleanupAndClose(); // freezes claim saving and cleans up memory references to claims
+        }
 
         //Unregister all user facing things
         HandlerList.unregisterAll(this);

@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.compatability;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import net.crashcraft.crashclaim.compatability.versions.*;
@@ -40,7 +41,7 @@ public class CompatabilityManager {
         if (forcedVersion != null && !forcedVersion.equals("")){
             wrapper = match(forcedVersion);
         } else {
-            wrapper = match(Bukkit.getServer().getMinecraftVersion().replace(".", "_"));
+            wrapper = match(ProtocolLibrary.getProtocolManager().getMinecraftVersion().getVersion().replace(".", "_"));
         }
     }
 

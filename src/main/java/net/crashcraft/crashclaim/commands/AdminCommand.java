@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import com.comphenix.protocol.ProtocolLibrary;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.migration.MigrationAdapter;
@@ -37,7 +38,7 @@ public class AdminCommand extends BaseCommand {
         // This message should not be configurable by end user as it is used for debug
 
         sender.sendMessage(ChatColor.GREEN + crashClaim.getDescription().getName() + ": " + ChatColor.YELLOW + crashClaim.getDescription().getVersion()
-                + ChatColor.GREEN + "\nMinecraft Version: " + ChatColor.YELLOW + Bukkit.getServer().getMinecraftVersion()
+                + ChatColor.GREEN + "\nMinecraft Version: " + ChatColor.YELLOW + ProtocolLibrary.getProtocolManager().getMinecraftVersion().getVersion()
                 + ChatColor.GREEN + "\nServer Version: " + ChatColor.YELLOW + Bukkit.getVersion());
     }
 

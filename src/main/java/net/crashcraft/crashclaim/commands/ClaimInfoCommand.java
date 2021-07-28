@@ -10,6 +10,8 @@ import net.crashcraft.crashclaim.claimobjects.PermState;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.localization.Localization;
+import net.crashcraft.crashclaim.localization.LocalizationUtils;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,24 +38,22 @@ public class ClaimInfoCommand extends BaseCommand {
             final String enabled = Localization.CLAIM_INFO__STATUS_ENABLED.getRawMessage();
             final String disabled = Localization.CLAIM_INFO__STATUS_DISABLED.getRawMessage();
 
-            player.sendMessage(
-                    Localization.CLAIM_INFO__MESSAGE.getMessage(
-                            player,
-                            "min_x", Integer.toString(claim.getMinX()),
-                            "min_z", Integer.toString(claim.getMinZ()),
-                            "max_x", Integer.toString(claim.getMaxX()),
-                            "max_z", Integer.toString(claim.getMaxZ()),
-                            "owner", Bukkit.getOfflinePlayer(claim.getOwner()).getName(),
-                            "build_status", set.getBuild() == PermState.ENABLED ? enabled : disabled,
-                            "entities_status", set.getEntities() == PermState.ENABLED ? enabled : disabled,
-                            "interactions_status", set.getInteractions() == PermState.ENABLED ? enabled : disabled,
-                            "view_sub_claims_status", set.getViewSubClaims() == PermState.ENABLED ? enabled : disabled,
-                            "teleportation_status", set.getTeleportation() == PermState.ENABLED ? enabled : disabled,
-                            "explosions_status", set.getExplosions() == PermState.ENABLED ? enabled : disabled,
-                            "fluids_status", set.getFluids() == PermState.ENABLED ? enabled : disabled,
-                            "pistons_status", set.getPistons() == PermState.ENABLED ? enabled : disabled
-                    )
-            );
+            LocalizationUtils.sendMessageList(player, Localization.CLAIM_INFO__MESSAGE.getMessageList(
+                    player,
+                    "min_x", Integer.toString(claim.getMinX()),
+                    "min_z", Integer.toString(claim.getMinZ()),
+                    "max_x", Integer.toString(claim.getMaxX()),
+                    "max_z", Integer.toString(claim.getMaxZ()),
+                    "owner", Bukkit.getOfflinePlayer(claim.getOwner()).getName(),
+                    "build_status", set.getBuild() == PermState.ENABLED ? enabled : disabled,
+                    "entities_status", set.getEntities() == PermState.ENABLED ? enabled : disabled,
+                    "interactions_status", set.getInteractions() == PermState.ENABLED ? enabled : disabled,
+                    "view_sub_claims_status", set.getViewSubClaims() == PermState.ENABLED ? enabled : disabled,
+                    "teleportation_status", set.getTeleportation() == PermState.ENABLED ? enabled : disabled,
+                    "explosions_status", set.getExplosions() == PermState.ENABLED ? enabled : disabled,
+                    "fluids_status", set.getFluids() == PermState.ENABLED ? enabled : disabled,
+                    "pistons_status", set.getPistons() == PermState.ENABLED ? enabled : disabled
+            ));
 
             for (Map.Entry<Material, Integer> entry :set.getContainers().entrySet()) {
                 player.sendMessage(Localization.CLAIM_INFO__CONTAINER_MESSAGE.getMessage(

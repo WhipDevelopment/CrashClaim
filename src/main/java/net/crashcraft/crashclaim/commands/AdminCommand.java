@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.*;
 import com.comphenix.protocol.ProtocolLibrary;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.localization.Localization;
+import net.crashcraft.crashclaim.localization.LocalizationUtils;
 import net.crashcraft.crashclaim.migration.MigrationAdapter;
 import net.crashcraft.crashclaim.migration.MigrationManager;
 import org.bukkit.Bukkit;
@@ -84,29 +85,29 @@ public class AdminCommand extends BaseCommand {
         @Subcommand("confirm")
         public void onConfirmation(CommandSender sender){
             if (selectedAdaptor == null){
-                sender.sendMessage(Localization.MIGRATE__CONFIRM__NOT_SELECTED.getMessage(null));
+                LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__NOT_SELECTED.getMessageList(null));
                 return;
             }
 
             String error = selectedAdaptor.checkRequirements(manager);
             if (error != null){
-                sender.sendMessage(Localization.MIGRATE__CONFIRM__FAILED_REQUIREMENTS.getMessage(null,
+                LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__FAILED_REQUIREMENTS.getMessageList(null,
                         "error", error));
                 return;
             }
 
-            sender.sendMessage(Localization.MIGRATE__CONFIRM__START_MESSAGE.getMessage(null,
+            LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__START_MESSAGE.getMessageList(null,
                     "identifier", selectedAdaptor.getIdentifier()));
 
             String migrateError = manager.migrate(selectedAdaptor);
 
             if (migrateError != null){
-                sender.sendMessage(Localization.MIGRATE__CONFIRM__ERROR.getMessage(null,
+                LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__ERROR.getMessageList(null,
                         "error", migrateError));
                 return;
             }
 
-            sender.sendMessage(Localization.MIGRATE__CONFIRM__SUCCESS.getMessage(null,
+            LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__SUCCESS.getMessageList(null,
                     "identifier", selectedAdaptor.getIdentifier()));
         }
 

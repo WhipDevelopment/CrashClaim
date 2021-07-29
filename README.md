@@ -28,3 +28,10 @@ If you are the right person to be compiling it yourself then you should not need
 If you need a feature that you want to upstream, file a pull request and we will take a look. 
 
 Try to follow the code style currently present in the class your editing and make clean and concise code changes with comments where necessary. 
+
+## Special Thanks
+![YourKit](https://www.yourkit.com/images/yklogo.png)
+
+YourKit supports open source projects with innovative and intelligent tools  
+for monitoring and profiling Java and .NET applications.  
+YourKit is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/), [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/), and [YourKit YouMonitor](https://www.yourkit.com/youmonitor/).

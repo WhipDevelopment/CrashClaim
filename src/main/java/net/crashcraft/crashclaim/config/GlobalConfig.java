@@ -13,9 +13,11 @@ import java.util.UUID;
 
 public class GlobalConfig extends BaseConfig{
     public static String locale;
+    public static String paymentProvider;
 
-    private static void loadLocale(){
+    private static void loadGeneral(){
         locale = getString("language", "en_US");
+        paymentProvider = getString("payment-provider", "default");
     }
 
     public static String visual_type;

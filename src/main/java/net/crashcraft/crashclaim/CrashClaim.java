@@ -93,9 +93,7 @@ public class CrashClaim extends JavaPlugin {
         crashUtils.setupMenuSubSystem();
         crashUtils.setupTextureCache();
 
-        if (paymentPlugin != null) {
-            payment = paymentPlugin.setupPaymentProvider(this).getProcessor();
-        }
+        payment = paymentPlugin.setupPaymentProvider(this, GlobalConfig.paymentProvider).getProcessor();
 
         this.visualizationManager = new VisualizationManager(this);
         this.manager = new ClaimDataManager(this);

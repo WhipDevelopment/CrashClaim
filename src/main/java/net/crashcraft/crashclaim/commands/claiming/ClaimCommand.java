@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.commands.claiming;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
@@ -48,6 +49,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
     }
 
     @CommandAlias("claim")
+    @CommandPermission("crashclaim.user.claim")
     public void claim(Player player){
         UUID uuid = player.getUniqueId();
 
@@ -61,10 +63,12 @@ public class ClaimCommand extends BaseCommand implements Listener {
             modeMap.put(uuid, ClickState.CLAIM);
             visualizationManager.visualizeSuroudningClaims(player, dataManager);
             visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage(player));
+            player.sendMessage(Localization.NEW_CLAIM__INFO.getMessage(player));
         }
     }
 
     @CommandAlias("subclaim")
+    @CommandPermission("crashclaim.user.subclaim")
     public void subClaim(Player player){
         UUID uuid = player.getUniqueId();
 
@@ -100,6 +104,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
             visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
             visualizationManager.sendAlert(player, Localization.SUBCLAIM__ENABLED.getMessage(player));
+            player.sendMessage(Localization.NEW_SUBCLAIM__INFO.getMessage(player));
         }
     }
 

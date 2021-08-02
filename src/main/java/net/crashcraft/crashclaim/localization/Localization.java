@@ -118,6 +118,7 @@ public enum Localization {
     CLAIM_INFO__CONTAINER_MESSAGE("<green><name> <yellow>: <status>"),
     CLAIM_INFO__NO_CLAIM("<red>There is no claim where you are standing."),
 
+    NEW_CLAIM__INFO("<yellow>Click two corners to form a new claim. To resize an existing claim click a corner or side to resize in that direction."),
     NEW_CLAIM__CLICK_CORNER("<green>Click an opposite corner to form a new claim."),
     NEW_CLAIM__MIN_SIZE("<red>A claim has to be at least a 5x5."),
     NEW_CLAIM__OVERLAPPING("<red>You cannot claim over an existing claim."),
@@ -133,6 +134,7 @@ public enum Localization {
     NEW_CLAIM__CREATE_MENU__ACCEPT(Material.GREEN_CONCRETE, 1, "<gold>Accept"),
     NEW_CLAIM__CREATE_MENU__DENY(Material.RED_CONCRETE, 1, "<gold>Cancel"),
 
+    NEW_SUBCLAIM__INFO("<yellow>Click two corners to form a new sub-claim. To resize an existing sub-claim click a corner or side to resize in that direction."),
     NEW_SUBCLAIM__CLICK_CORNER("<green>Click an opposite corner to form a sub-claim"),
     NEW_SUBCLAIM__NOT_INSIDE_PARENT("<red>Sub-Claims can only be formed inside of a parent claim."),
     NEW_SUBCLAIM__SUCCESS("<green>Successfully created sub-claim."),

@@ -22,6 +22,7 @@ public class DatabaseManager {
         this.dataVersions = new ArrayList<>();
         this.currentRevision = -1; // represents no database configured yet
 
+        setInitialParams();
         setupDataVersions();
         validateDataVersions();
 
@@ -33,6 +34,14 @@ public class DatabaseManager {
         }
 
         updateDatabase();
+    }
+
+    private void setInitialParams(){
+        try {
+            DB.executeUpdate("PRAGMA foreign_keys=ON");
+        } catch (SQLException e){
+            plugin.disablePlugin("There was an error enabling SQlite foreign keys support, it is unsafe to continue.");
+        }
     }
 
     private void updateDatabase(){

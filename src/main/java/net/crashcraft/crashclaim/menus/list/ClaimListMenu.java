@@ -102,9 +102,11 @@ public class ClaimListMenu extends GUI {
             inv.setItem(48, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem(player));
         }
 
+        int maxPages = (int) Math.ceil((float) claims.size() / 21);
+
         inv.setItem(49, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(player,
                 "page", Integer.toString(page),
-                "page_total", Integer.toString((int) Math.ceil((float) claims.size() / 21))
+                "page_total", Integer.toString(maxPages == 0 ? 1 : maxPages)
         ));
 
         if (claims.size() > page * 21) {

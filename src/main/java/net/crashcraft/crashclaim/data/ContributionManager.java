@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class ContributionManager {
     public static int getArea(int minCornerX, int minCornerZ, int maxCornerX, int maxCornerZ){
-        return ((maxCornerX - minCornerX) * (maxCornerZ - minCornerZ));
+        return (((maxCornerX + 1) - minCornerX) * ((maxCornerZ + 1) - minCornerZ));
     }
 
     public static void addContribution(Claim claim, int minCornerX, int minCornerZ, int maxCornerX, int maxCornerZ, UUID player){

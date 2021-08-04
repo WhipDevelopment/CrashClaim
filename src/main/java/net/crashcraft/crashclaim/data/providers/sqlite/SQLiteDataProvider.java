@@ -378,7 +378,7 @@ public class SQLiteDataProvider implements DataProvider {
 
     @Override
     public void removeClaim(Claim claim) {
-        DB.executeUpdateAsync("DELETE FROM claims WHERE id = ?", claim.getId());
+        DB.executeUpdateAsync("DELETE FROM claim_data WHERE id = (SELECT `data` FROM claims WHERE id = ?)", claim.getId());
     }
 
     @Override

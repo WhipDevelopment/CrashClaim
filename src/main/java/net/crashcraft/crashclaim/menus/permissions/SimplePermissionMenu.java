@@ -69,7 +69,7 @@ public class SimplePermissionMenu extends MenuListHelper {
             }
         }
 
-        setup(menuList, 6, permissionSet, player.getUniqueId(), claim.getPerms());
+        setup(menuList, 6, permissionSet, player.getUniqueId(), claim.getPerms(), uuid);
     }
 
     @Override

@@ -64,10 +64,10 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                     menuList.put(PermissionRoute.VIEW_SUB_CLAIMS, type);
                 }
 
-                setup(menuList, 5, permissionSet, player.getUniqueId(), claim.getPerms());
+                setup(menuList, 5, permissionSet, player.getUniqueId(), claim.getPerms(), uuid);
                 return;
             case CONTAINERS:
-                setupContainerList(permissionSet, player.getUniqueId(), claim.getPerms(), 5, 0);
+                setupContainerList(permissionSet, player.getUniqueId(), claim.getPerms(), 5, 0, uuid);
                 return;
             case ADMIN:
                 LinkedHashMap<PermissionRoute, MenuSwitchType> list = new LinkedHashMap<>();
@@ -87,7 +87,7 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                     list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE_DISABLED);
                 }
 
-                setup(list, 5, permissionSet, player.getUniqueId(), claim.getPerms());
+                setup(list, 5, permissionSet, player.getUniqueId(), claim.getPerms(), uuid);
                 return;
             case MISC:
                 LinkedHashMap<PermissionRoute, MenuSwitchType> menuItemlist = new LinkedHashMap<>();
@@ -97,7 +97,7 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                 menuItemlist.put(null, null);
                 menuItemlist.put(PermissionRoute.VIEW_SUB_CLAIMS, MenuSwitchType.DOUBLE);
 
-                setup(menuItemlist, 5, permissionSet, player.getUniqueId(), claim.getPerms());
+                setup(menuItemlist, 5, permissionSet, player.getUniqueId(), claim.getPerms(), uuid);
                 return;
         }
 

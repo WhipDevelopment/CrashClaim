@@ -14,9 +14,11 @@ import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,6 +29,7 @@ public abstract class MenuListHelper extends GUI {
     private static final int startMenu = 10;
     private static final PermissionHelper helper = PermissionHelper.getPermissionHelper();
 
+    private UUID setting;
     private PermissionSet set;
 
     private LinkedHashMap<PermissionRoute, MenuSwitchType> itemDisplay;
@@ -53,7 +56,7 @@ public abstract class MenuListHelper extends GUI {
     }
 
     public void setup(LinkedHashMap<PermissionRoute, MenuSwitchType> itemDisplay, int numPerPage, PermissionSet set,
-                      UUID setter, PermissionGroup group){
+                      UUID setter, PermissionGroup group, UUID setting){
         isContainerList = false;
         inv.clear();
 
@@ -62,6 +65,7 @@ public abstract class MenuListHelper extends GUI {
         this.set = set;
         this.setter = setter;
         this.group = group;
+        this.setting = setting;
 
         items = new ArrayList<>(itemDisplay.keySet());
 
@@ -71,12 +75,13 @@ public abstract class MenuListHelper extends GUI {
         setupGUI();
     }
 
-    public void setupContainerList(PermissionSet set, UUID setter, PermissionGroup group, int numPerPage, int controlOffset){
+    public void setupContainerList(PermissionSet set, UUID setter, PermissionGroup group, int numPerPage, int controlOffset , UUID setting){
         isContainerList = true;
         inv.clear();
 
         this.set = set;
         this.setter = setter;
+        this.setting = setting;
         this.group = group;
         this.numPerPage = numPerPage;
         this.containers = CrashClaim.getPlugin().getDataManager().getPermissionSetup().getTrackedContainers();
@@ -97,6 +102,25 @@ public abstract class MenuListHelper extends GUI {
 
     private void init(){
         BaseClaim claim = group.getOwner();
+
+        if (setting != null){
+            OfflinePlayer settingPlayer = Bukkit.getOfflinePlayer(setting);
+
+            descItem = Localization.MENU__GENERAL__CLAIM_ITEM_PLAYER.getItem(player,
+                    "name", settingPlayer.getName(),
+                    "min_x", Integer.toString(claim.getMinX()),
+                    "min_z", Integer.toString(claim.getMinZ()),
+                    "max_x", Integer.toString(claim.getMaxX()),
+                    "max_z", Integer.toString(claim.getMaxZ()),
+                    "world", Bukkit.getWorld(claim.getWorld()).getName()
+            );
+
+            descItem.setType(Material.PLAYER_HEAD);
+            SkullMeta meta = (SkullMeta) descItem.getItemMeta();
+            meta.setOwningPlayer(settingPlayer);
+            descItem.setItemMeta(meta);
+            return;
+        }
 
         if (group.getOwner() instanceof SubClaim){
             SubClaim subClaim = (SubClaim) group.getOwner();
@@ -403,7 +427,7 @@ public abstract class MenuListHelper extends GUI {
                         inv.setItem(startMenu + itemOffset + 9,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 18,
-                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
+                                allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
                         break;

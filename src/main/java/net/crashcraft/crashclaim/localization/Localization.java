@@ -207,6 +207,11 @@ public enum Localization {
             "<green>World: <yellow><world>",
             "<green>Owner: <yellow><owner>"),
 
+    MENU__GENERAL__CLAIM_ITEM_PLAYER(null, 1,
+            "<gold><name>",
+            "<green>Claim Coordinates: <yellow><min_x>, <min_z><gold> | <yellow><max_x>, <max_z>",
+            "<green>Claim World: <yellow><world>"),
+
     MENU__GENERAL__PAGE_DISPLAY(Material.ARROW, 1, "<gold>Page <page> / <page_total>"),
     MENU__GENERAL__NEXT_BUTTON(Material.OAK_BUTTON, 1, "<yellow>Next"),
     MENU__GENERAL__PREVIOUS_BUTTON(Material.OAK_BUTTON, 1, "<yellow>Previous"),

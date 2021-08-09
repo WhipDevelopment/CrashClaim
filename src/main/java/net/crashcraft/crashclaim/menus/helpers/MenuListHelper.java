@@ -199,17 +199,14 @@ public abstract class MenuListHelper extends GUI {
         Material clickedItem = event.getCurrentItem().getType();
         int value;
 
-        switch (clickedItem){
-            case GREEN_STAINED_GLASS:
-                value = 1;
-                break;
-            case GRAY_STAINED_GLASS:
-                value = 2;
-                break;
-            case RED_STAINED_GLASS:
-                value = 0;
-                break;
-            default: return;
+        if (clickedItem == Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItemTemplate().getMaterial()){
+            value = 1;
+        } else if (clickedItem == Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OFF.getItemTemplate().getMaterial()){
+            value = 2;
+        } else if (clickedItem == Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItemTemplate().getMaterial()){
+            value = 0;
+        } else {
+            return;
         }
 
         if (!helper.hasPermission(group.getOwner(), setter, PermissionRoute.MODIFY_PERMISSIONS)){
@@ -226,7 +223,7 @@ public abstract class MenuListHelper extends GUI {
 
     private void onInventoryClick(InventoryClickEvent event, int value){
         int index = ((event.getSlot() - 1) % 9) - page * numPerPage;
-        if (index > items.size() || index < 0){
+        if (index > items.size() - 1 || index < 0){
             return;
         }
 
@@ -337,7 +334,7 @@ public abstract class MenuListHelper extends GUI {
         for (int x = page * numPerPage; x < (Math.min(page * numPerPage + numPerPage, items.size())); x++){
             PermissionRoute route = items.get(x);
 
-            if (route == null){
+             if (route == null){
                 itemOffset++;
                 continue;
             }
@@ -380,6 +377,8 @@ public abstract class MenuListHelper extends GUI {
                 return Localization.MENU__PERMISSIONS__VIEW_SUB_CLAIMS.getItem(player);
             case MODIFY_PERMISSIONS:
                 return Localization.MENU__PERMISSIONS__MODIFY_PERMISSIONS.getItem(player);
+            case SUBCLAIM_ADMIN:
+                return Localization.MENU__PERMISSIONS__SUBCLAIM_ADMIN.getItem(player);
             default:
                 return null; // Will never happen
         }
@@ -473,6 +472,33 @@ public abstract class MenuListHelper extends GUI {
                         break;
                     case 4:
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
+                        inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
+                        break;
+                }
+                break;
+            case TRIPLE_DISABLED:
+                switch (value) {
+                    case 0:
+                        inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem(player));
+
+                        inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
+                        inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
+                        break;
+                    case 1:
+                        inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem(player));
+
+                        inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
+                        inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
+                        break;
+                    case 2:
+                        inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__SELECTED_DISABLED.getItem(player));
+
+                        inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
+                        inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
+                        break;
+                    case 4:
+                        inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
+                        inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
                         break;
                 }

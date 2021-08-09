@@ -88,7 +88,7 @@ public class GlowClaimVisual extends BaseGlowVisual {
                     return VisualColor.GREEN;
                 }
             } else {
-                return  VisualColor.GOLD;
+                return VisualColor.GOLD;
             }
         }
         return getDefaultColor();

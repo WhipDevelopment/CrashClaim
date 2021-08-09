@@ -66,14 +66,22 @@ public class MenuCommand extends BaseCommand {
                     Localization.UN_CLAIM__MENU__CONFIRMATION__DENY.getItem(player),
                     (p, aBoolean) -> {
                         if (aBoolean) {
-                            if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
-                                CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
-                                VisualGroup group = visualizationManager.fetchVisualGroup(player, false);
-                                if (group != null){
-                                    group.removeAllVisuals();
-                                }
-                            } else {
+                            if (!PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
                                 player.sendMessage(Localization.UN_CLAIM__NO_PERMISSION.getMessage(player));
+                                return "";
+                            }
+
+                            for (SubClaim subClaim : claim.getSubClaims()){
+                                if (!PermissionHelper.getPermissionHelper().hasPermission(subClaim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)){
+                                    player.sendMessage(Localization.UN_CLAIM__NO_PERMISSION_IN_ALL.getMessage(player));
+                                    return "";
+                                }
+                            }
+
+                            CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
+                            VisualGroup group = visualizationManager.fetchVisualGroup(player, false);
+                            if (group != null){
+                                group.removeAllVisuals();
                             }
                         }
                         return "";

@@ -11,6 +11,7 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.helpers.MenuListHelper;
 import net.crashcraft.crashclaim.menus.helpers.MenuSwitchType;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,7 +25,10 @@ public class SimplePermissionMenu extends MenuListHelper {
     private final UUID uuid;
 
     public SimplePermissionMenu(Player player, BaseClaim claim, UUID uuid, GUI prevMenu) {
-        super(player, "Claim Permissions", 54, prevMenu);
+        super(player,
+                BaseComponent.toLegacyText(claim instanceof SubClaim ?
+                        Localization.MENU__SUB_CLAIM_SIMPLE_PERMISSIONS__TITLE.getMessage(null) : Localization.MENU__SIMPLE_PERMISSIONS__TITLE.getMessage(null)
+                ), 54, prevMenu);
 
         this.uuid = uuid;
         this.claim = claim;
@@ -54,10 +58,18 @@ public class SimplePermissionMenu extends MenuListHelper {
                 owner = ((Claim) claim).getOwner();
             }
 
-            if (player.getUniqueId().equals(owner)) {
-                menuList.put(PermissionRoute.ADMIN, MenuSwitchType.DOUBLE);
+            if (claim instanceof SubClaim){
+                if (player.getUniqueId().equals(owner)) {
+                    menuList.put(PermissionRoute.SUBCLAIM_ADMIN, MenuSwitchType.TRIPLE);
+                } else {
+                    menuList.put(PermissionRoute.SUBCLAIM_ADMIN, MenuSwitchType.TRIPLE_DISABLED);
+                }
             } else {
-                menuList.put(PermissionRoute.ADMIN, MenuSwitchType.DOUBLE_DISABLED);
+                if (player.getUniqueId().equals(owner)) {
+                    menuList.put(PermissionRoute.ADMIN, MenuSwitchType.DOUBLE);
+                } else {
+                    menuList.put(PermissionRoute.ADMIN, MenuSwitchType.DOUBLE_DISABLED);
+                }
             }
         } else {
             menuList.put(PermissionRoute.EXPLOSIONS, type);
@@ -84,7 +96,7 @@ public class SimplePermissionMenu extends MenuListHelper {
 
     @Override
     public void invalidPermissions() {
-        player.sendMessage(Localization.MENU__SIMPLE_PERMISSIONS__NO_PERMISSION.getMessage(player));
+        player.sendMessage(Localization.MENU__ADVANCED_PERMISSIONS__NO_PERMISSION.getMessage(player));
         forceClose();
     }
 

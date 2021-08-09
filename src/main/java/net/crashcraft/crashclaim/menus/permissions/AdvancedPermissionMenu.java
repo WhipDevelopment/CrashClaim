@@ -11,6 +11,9 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.helpers.MenuListHelper;
 import net.crashcraft.crashclaim.menus.helpers.MenuSwitchType;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -27,7 +30,11 @@ public class AdvancedPermissionMenu extends MenuListHelper {
     private SUBMENU submenu;
 
     public AdvancedPermissionMenu(Player player, BaseClaim claim, UUID uuid, GUI prevMenu) {
-        super(player, "Claim Permissions", 54, prevMenu);
+        super(player,
+                BaseComponent.toLegacyText(claim instanceof SubClaim ?
+                                Localization.MENU__SUB_CLAIM_ADVANCED_PERMISSIONS__TITLE.getMessage(null) : Localization.MENU__ADVANCED_PERMISSIONS__TITLE.getMessage(null)
+                        ),
+                54, prevMenu);
 
         this.uuid = uuid;
         this.isPlayerPermission = uuid != null;
@@ -60,7 +67,10 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                     menuList.put(PermissionRoute.EXPLOSIONS, type);
                 }
                 menuList.put(PermissionRoute.TELEPORTATION, type);
-                if (isPlayerPermission){
+
+                if (claim instanceof SubClaim){
+                    menuList.put(PermissionRoute.MODIFY_PERMISSIONS, type);
+                } else if (isPlayerPermission){
                     menuList.put(PermissionRoute.VIEW_SUB_CLAIMS, type);
                 }
 
@@ -79,12 +89,22 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                     owner = ((Claim) claim).getOwner();
                 }
 
-                if (player.getUniqueId().equals(owner)) {
-                    list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.DOUBLE);
-                    list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE);
+                if (claim instanceof SubClaim){
+                    if (player.getUniqueId().equals(owner)) {
+                        list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.TRIPLE);
+                        list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.TRIPLE);
+                    } else {
+                        list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.TRIPLE_DISABLED);
+                        list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.TRIPLE_DISABLED);
+                    }
                 } else {
-                    list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.DOUBLE_DISABLED);
-                    list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE_DISABLED);
+                    if (player.getUniqueId().equals(owner)) {
+                        list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.DOUBLE);
+                        list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE);
+                    } else {
+                        list.put(PermissionRoute.MODIFY_PERMISSIONS, MenuSwitchType.DOUBLE_DISABLED);
+                        list.put(PermissionRoute.MODIFY_CLAIM, MenuSwitchType.DOUBLE_DISABLED);
+                    }
                 }
 
                 setup(list, 5, permissionSet, player.getUniqueId(), claim.getPerms(), uuid);
@@ -113,6 +133,11 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                 if (isPlayerPermission) {
                     inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem(player));
                 } else {
+                    if (claim instanceof SubClaim){
+                        inv.setItem(42, Localization.MENU__PERMISSION_OPTION__UNUSED.getItem(player));
+                        break;
+                    }
+
                     inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem(player));
                 }
                 return;
@@ -123,6 +148,11 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                 if (isPlayerPermission) {
                     inv.setItem(42, Localization.MENU__PERMISSION_OPTION__ADMIN.getItem(player));
                 } else {
+                    if (claim instanceof SubClaim){
+                        inv.setItem(42, Localization.MENU__PERMISSION_OPTION__UNUSED.getItem(player));
+                        break;
+                    }
+
                     inv.setItem(42, Localization.MENU__PERMISSION_OPTION__MISC.getItem(player));
                 }
                 break;
@@ -171,6 +201,9 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                 if (isPlayerPermission){
                     render(SUBMENU.ADMIN);
                 } else {
+                    if (claim instanceof SubClaim){
+                        break; // Don't need misc menu because fluid and piston controls do not affect subclaim
+                    }
                     render(SUBMENU.MISC);
                 }
                 break;
@@ -179,7 +212,8 @@ public class AdvancedPermissionMenu extends MenuListHelper {
 
     @Override
     public void invalidPermissions() {
-
+        player.sendMessage(Localization.MENU__SIMPLE_PERMISSIONS__NO_PERMISSION.getMessage(player));
+        forceClose();
     }
 
     @Override

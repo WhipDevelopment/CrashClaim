@@ -356,6 +356,39 @@ public enum  PermissionRoute {
             FLUIDS.setPerm(set, value);
         }
     },
+    SUBCLAIM_ADMIN {
+        @Override
+        public int getPerm(PlayerPermissionSet set) {
+            return set.getModifyClaim() == set.getModifyPermissions() ? set.getModifyClaim() : 4;
+        }
+
+        @Override
+        public void setPerm(PlayerPermissionSet set, int value) {
+            if (value == PermState.ENABLED){ // Set all values here to enable because admins should have perms, its more intuitive
+                for (Material material : CrashClaim.getPlugin().getDataManager().getPermissionSetup().getTrackedContainers()) {
+                    CONTAINERS.setPerm(set, value, material);
+                }
+
+                TELEPORTATION.setPerm(set, value);
+                ENTITIES.setPerm(set, value);
+                INTERACTIONS.setPerm(set, value);
+                BUILD.setPerm(set, value);
+            }
+
+            MODIFY_CLAIM.setPerm(set, value);
+            MODIFY_PERMISSIONS.setPerm(set, value);
+        }
+
+        @Override
+        public int getPerm(GlobalPermissionSet set) {
+            throw new RuntimeException("PermissionRoute was called with an invalid perm. (ADMIN called setPerm");
+        }
+
+        @Override
+        public void setPerm(GlobalPermissionSet set, int value) {
+            throw new RuntimeException("PermissionRoute was called with an invalid perm. (ADMIN called setPerm");
+        }
+    },
     ADMIN {
         @Override
         public int getPerm(PlayerPermissionSet set) {
@@ -364,6 +397,18 @@ public enum  PermissionRoute {
 
         @Override
         public void setPerm(PlayerPermissionSet set, int value) {
+            if (value == PermState.ENABLED){ // Set all values here to enable because admins should have perms, its more intuitive
+                for (Material material : CrashClaim.getPlugin().getDataManager().getPermissionSetup().getTrackedContainers()) {
+                    CONTAINERS.setPerm(set, value, material);
+                }
+
+                TELEPORTATION.setPerm(set, value);
+                ENTITIES.setPerm(set, value);
+                INTERACTIONS.setPerm(set, value);
+                BUILD.setPerm(set, value);
+                VIEW_SUB_CLAIMS.setPerm(set, value);
+            }
+
             MODIFY_CLAIM.setPerm(set, value);
             MODIFY_PERMISSIONS.setPerm(set, value);
         }

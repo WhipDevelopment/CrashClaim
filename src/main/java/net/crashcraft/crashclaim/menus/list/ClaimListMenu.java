@@ -7,6 +7,7 @@ import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.ClaimMenu;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,7 +25,7 @@ public class ClaimListMenu extends GUI {
     private final HashMap<Integer, Claim> pageItemsDisplay;
 
     public ClaimListMenu(Player player, GUI previousMenu) {
-        super(player, "Claims", 54);
+        super(player, BaseComponent.toLegacyText(Localization.MENU__CLAIM_LIST__TITLE.getMessage(null)), 54);
         this.previousMenu = previousMenu;
         this.claims = new ArrayList<>();
         this.pageItemsDisplay = new HashMap<>();
@@ -37,16 +38,20 @@ public class ClaimListMenu extends GUI {
         claims.clear();
 
         CrashClaim.newChain().async(() -> {
-            ClaimDataManager manager = CrashClaim.getPlugin().getDataManager();
+            try {
+                ClaimDataManager manager = CrashClaim.getPlugin().getDataManager();
 
-            Set<Integer> claimIds = manager.getOwnedClaims(player.getUniqueId());
-            if (claimIds != null) {
-                for (Integer id : claimIds) {
-                    Claim claim = manager.getClaim(id);
-                    if (!claims.contains(claim)){
-                        claims.add(claim);
+                Set<Integer> claimIds = manager.getOwnedClaims(player.getUniqueId());
+                if (claimIds != null) {
+                    for (Integer id : claimIds) {
+                        Claim claim = manager.getClaim(id);
+                        if (!claims.contains(claim)){
+                            claims.add(claim);
+                        }
                     }
                 }
+            } catch (Exception ex){
+                ex.printStackTrace();
             }
         }).sync(this::loadItems)
         .execute();

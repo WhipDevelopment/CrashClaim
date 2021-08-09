@@ -151,6 +151,11 @@ public class ClaimCommand extends BaseCommand implements Listener {
                     SubClaim subClaim = parent.getSubClaim(location.getBlockX(), location.getBlockZ());
 
                     if (subClaim != null){
+                        if (!PermissionHelper.getPermissionHelper().hasPermission(subClaim, uuid, PermissionRoute.MODIFY_CLAIM)) {
+                            player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
+                            return;
+                        }
+
                         stateMap.put(uuid, new ResizeSubClaimMode(this, player, parent, subClaim, location));
                         return;
                     }

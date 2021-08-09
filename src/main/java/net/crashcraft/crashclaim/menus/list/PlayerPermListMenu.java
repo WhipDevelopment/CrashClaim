@@ -9,6 +9,7 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.permissions.SimplePermissionMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
@@ -49,7 +50,7 @@ public class PlayerPermListMenu {
             throw new RuntimeException("Claim was not of known type.");
         }
 
-        new PlayerListMenu(viewer, previous, uuids, (gui, uuid) -> {
+        new PlayerListMenu(BaseComponent.toLegacyText(Localization.MENU__LIST_PLAYERS__TITLE.getMessage(null)), viewer, previous, uuids, (gui, uuid) -> {
             new SimplePermissionMenu(viewer, claim, uuid, gui).open();
             return "";
         }).open();

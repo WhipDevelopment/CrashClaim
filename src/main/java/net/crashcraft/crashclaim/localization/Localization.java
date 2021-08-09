@@ -46,6 +46,7 @@ public enum Localization {
     UN_CLAIM__MENU__CONFIRMATION__ACCEPT(Material.GREEN_CONCRETE, 1, "<gold>Accept"),
     UN_CLAIM__MENU__CONFIRMATION__DENY(Material.RED_CONCRETE, 1, "<gold>Cancel"),
     UN_CLAIM__NO_PERMISSION("<red>You do not have permission to modify this claim."),
+    UN_CLAIM__NO_PERMISSION_IN_ALL("<red>You do not have permission to modify this claim and all of its sub-claims"),
     UN_CLAIM__NO_CLAIM("<red>There is no claim where you are standing."),
 
     UN_SUBCLAIM__MENU__CONFIRMATION__TITLE("Confirm Delete Sub-Claim"),
@@ -149,7 +150,7 @@ public enum Localization {
     SUBCLAIM__ENABLED("<green>Sub-Claiming mode <bold>enabled!"),
     SUBCLAIM__DISABLED("<red>Sub-Claiming mode <bold>disabled!"),
     SUBCLAIM__NO_CLAIM("<red>You need to be standing in a claim to enable sub-claiming mode."),
-    SUBCLAIM__NO_PERMISSION("<red>You need MODIFY_CLAIM to create sub-claims."),
+    SUBCLAIM__NO_PERMISSION("<red>You need permission to modify this sub-claims."),
     SUBCLAIM__ALREADY_RESIZING("<red>The claim your are attempting to resize is already being resized."),
 
     RESIZE__CLICK_ANOTHER_LOCATION("<green>Click another location to resize the claim."),
@@ -183,7 +184,12 @@ public enum Localization {
 
     CONTRIBUTION_REFUND("<green>You have received <gold><amount> <green>for a refunded contribution to a claim."),
 
+    MENU__SIMPLE_PERMISSIONS__TITLE("Simple Permissions"),
+    MENU__SUB_CLAIM_SIMPLE_PERMISSIONS__TITLE("Simple Sub-Claim Permissions"),
+    MENU__ADVANCED_PERMISSIONS__TITLE("Advanced Permissions"),
+    MENU__SUB_CLAIM_ADVANCED_PERMISSIONS__TITLE("Advanced Sub-Claim Permissions"),
     MENU__SIMPLE_PERMISSIONS__NO_PERMISSION("<red>You no longer have sufficient permissions to continue"),
+    MENU__ADVANCED_PERMISSIONS__NO_PERMISSION("<red>You no longer have sufficient permissions to continue"),
 
     ALERT__NO_PERMISSIONS__BUILD("<red>You do not have permission to build in this claim"),
     ALERT__NO_PERMISSIONS__INTERACTION("<red>You do not have permission to interact in this claim."),
@@ -217,7 +223,13 @@ public enum Localization {
     MENU__GENERAL__PREVIOUS_BUTTON(Material.OAK_BUTTON, 1, "<yellow>Previous"),
     MENU__GENERAL__BACK_BUTTON(Material.ARROW, 1, "<gold>Back"),
 
+    MENU__LIST_PLAYERS__TITLE("Select Player"),
+
     // Claim
+    MENU__CLAIM__TITLE("Claim Settings"),
+    MENU__CLAIM_LIST__TITLE("Claims"),
+    MENU__SUB_CLAIM__TITLE("Sub-Claim Settings"),
+    MENU__SUB_CLAIM_LIST__TITLE("Sub-Claims"),
 
     MENU__CLAIM__RENAME__MESSAGE(Material.PAPER, 1, "Enter new claim name"),
     MENU__CLAIM__RENAME__CONFIRMATION("<green>Change claim name to <gold><name>"),
@@ -352,6 +364,12 @@ public enum Localization {
             "<gold>Misc",
             "<green>Allows pistons and fluids to flow across the",
             "<green>claim border"),
+    MENU__PERMISSIONS__SUBCLAIM_ADMIN(Material.BEACON, 1,
+            "<gold>Sub-Claim Admin",
+            "<green>Grants the user the ability to modify and grant",
+            "<green>permissions they are granted and modify every",
+            "<green>aspect of the claim besides resizing, this includes",
+            "<green>deleting the claim."),
 
     // Menu buttons
 
@@ -403,6 +421,10 @@ public enum Localization {
             this.setItem(new ItemStackTemplate(Utils.addItemShine(MENU__PERMISSION_OPTION__ADMIN.getItem(null))));
         }
     },
+
+    MENU__PERMISSION_OPTION__UNUSED(Material.GRAY_STAINED_GLASS, 1,
+            "<grey>Unused",
+            "<dark_grey>No permissions fall under this category."),
 
     MENU__PERMISSION_OPTION__MISC(Material.CRAFTING_TABLE, 1,
             "<gold>Misc"),
@@ -613,7 +635,7 @@ public enum Localization {
         this.item = item;
     }
 
-    protected static class ItemStackTemplate {
+    public static class ItemStackTemplate {
         private final Material material;
         private final int stackSize;
         private final String title;
@@ -708,7 +730,7 @@ public enum Localization {
         this.messageList = messageList;
     }
 
-    private ItemStackTemplate getItemTemplate() {
+    public ItemStackTemplate getItemTemplate() {
         return item;
     }
 

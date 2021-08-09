@@ -395,7 +395,9 @@ public class ClaimDataManager implements Listener {
             chunkMap.removeAll(entry.getValue());   //Remove all of the existing claim chunk entries
         }
 
-        claim.getSubClaims().iterator().forEachRemaining(this::deleteSubClaimWithoutRemove);
+        if (claim.getSubClaims() != null) {
+            claim.getSubClaims().iterator().forEachRemaining(this::deleteSubClaimWithoutRemove);
+        }
 
         claimLookup.remove(Integer.valueOf(claim.getId()));
 

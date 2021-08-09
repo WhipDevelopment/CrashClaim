@@ -12,6 +12,7 @@ import net.crashcraft.crashclaim.menus.list.SubClaimListMenu;
 import net.crashcraft.crashclaim.menus.permissions.SimplePermissionMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,7 +25,7 @@ public class SubClaimMenu extends GUI {
     private final PermissionHelper helper;
 
     public SubClaimMenu(Player player, SubClaim claim) {
-        super(player, "Claim Menu", 54);
+        super(player, BaseComponent.toLegacyText(Localization.MENU__SUB_CLAIM__TITLE.getMessage(null)), 54);
         this.claim = claim;
         this.helper = PermissionHelper.getPermissionHelper();
         setupGUI();

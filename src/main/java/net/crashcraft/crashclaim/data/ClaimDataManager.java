@@ -425,6 +425,12 @@ public class ClaimDataManager implements Listener {
 
     public void loadChunksForUnLoadedClaim(int claim_id, int minX, int minZ, int maxX, int maxZ, UUID world){
         Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(world);
+
+        if (map == null){
+            map = new Long2ObjectOpenHashMap<>();
+            chunkLookup.put(world, map);
+        }
+
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForUnLoadedClaim(minX, minZ, maxX, maxZ, claim_id).entrySet()){
             map.putIfAbsent(entry.getKey(), new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());

@@ -520,12 +520,14 @@ public enum Localization {
         private static ItemStackTemplate createItemStack(String key, ItemStackTemplate template){
             String title = getString(key + ".title", template.getTitle());
             List<String> lore = getStringList(key + ".lore", template.getLore());
+            int model = config.getInt(key + ".model");
 
             return new ItemStackTemplate(
                     template.getMaterial() != null ? getMaterial(key + ".type", template.getMaterial()) : Material.PAPER, // Usually gets replaced
                     getInt(key + ".count", template.getStackSize()),
                     title,
                     lore,
+                    model == 0 ? null : model,
                     itemHasPlaceholders(title, lore)
             );
         }
@@ -578,7 +580,7 @@ public enum Localization {
         this.defList = null;
         this.type = localizationType.ITEM;
 
-        this.item = new ItemStackTemplate(material, stackSize, title, Arrays.asList(loreDef), false);
+        this.item = new ItemStackTemplate(material, stackSize, title, Arrays.asList(loreDef), null, false);
     }
 
     public BaseComponent[] getMessage(Player player) {
@@ -645,14 +647,16 @@ public enum Localization {
         private final String title;
         private final List<String> lore;
         private final boolean hasPlaceholders;
+        private final Integer model;
 
         private final ItemStack staticItemStack;
 
-        public ItemStackTemplate(Material material, int stackSize, String title, List<String> lore, boolean hasPlaceholders) {
+        public ItemStackTemplate(Material material, int stackSize, String title, List<String> lore, Integer model, boolean hasPlaceholders) {
             this.material = material;
             this.stackSize = stackSize;
             this.title = title;
             this.lore = lore;
+            this.model = model;
             this.hasPlaceholders = hasPlaceholders;
 
             this.staticItemStack = build(null, new String[0]);
@@ -663,6 +667,7 @@ public enum Localization {
             this.stackSize = 0;
             this.title = null;
             this.lore = null;
+            this.model = null;
             this.hasPlaceholders = false; // Cant have placeholders for these items.
 
             this.staticItemStack = itemStack;
@@ -694,6 +699,10 @@ public enum Localization {
                                 hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace))));
             }
             iMeta.setLoreComponents(components);
+
+            if (model != null){
+                iMeta.setCustomModelData(model); // Set custom model data.
+            }
 
             item.setItemMeta(iMeta);
 

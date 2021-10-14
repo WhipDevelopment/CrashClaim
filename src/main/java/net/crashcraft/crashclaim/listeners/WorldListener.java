@@ -83,10 +83,13 @@ public class WorldListener implements Listener {
                 && !helper.hasPermission(location, PermissionRoute.EXPLOSIONS)) {
             e.setCancelled(true);
         } else if (e.getEntity() instanceof Player
-                && !helper.hasPermission(e.getEntity().getUniqueId(), location, PermissionRoute.INTERACTIONS)){
+                && !helper.hasPermission(e.getEntity().getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
             e.setCancelled(true);
             Player player = (Player) e.getEntity();
             visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
+        } else if (e.getEntity() instanceof Sheep || e.getEntity() instanceof Enderman
+                && !helper.hasPermission(location, PermissionRoute.BUILD)) {
+            e.setCancelled(true);
         } else {
             for (Entity entity : e.getEntity().getPassengers()) {
                 if (entity instanceof Player){

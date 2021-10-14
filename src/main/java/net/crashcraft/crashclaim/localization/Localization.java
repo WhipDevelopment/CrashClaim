@@ -12,6 +12,7 @@ import net.kyori.adventure.text.serializer.craftbukkit.MinecraftComponentSeriali
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -459,6 +460,11 @@ public enum Localization {
 
         File languagesFolder = new File(CrashClaim.getPlugin().getDataFolder(), "languages");
         languagesFolder.mkdirs();
+
+        // Load Additional Bundled Language Files
+        CrashClaim.getPlugin().saveResource("languages/es_ES.yml", false);
+
+        // Fetch configured file, default is en_US.yml
         File languageFile = new File(languagesFolder, GlobalConfig.locale + ".yml");
 
         if (!languageFile.exists() && !GlobalConfig.locale.equals("en_US")){

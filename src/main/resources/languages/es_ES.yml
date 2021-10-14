@@ -1,0 +1,628 @@
+contribution-refund: <green>Recibió <gold><amount> <green>por reintegro de contibución
+  a una propiedad.
+bypass:
+  enabled: <green>Sobrepasar propiedades habilidato. Esta sobrepasando permisos.
+  disabled: <red>Sobrepasar propiedades deshabilidato.
+eject:
+  no-permission: <red>No tiene el permiso de modificar en esta propiedad.
+  not-same-claim: <red>Este jugador no se encuentra en la misma propiedad como tu.
+  has-permission: <red>Este jugador tiene el permiso de modificar en esta propiedad
+    y no puede ser expulsado.
+  been-ejected: <red>Ha sido expulsado de la propiedad en la que se encontraba por
+    otro jugador.
+  success: <green>Ha expulsado el jugador de la propiedad con éxito.
+  no-claim: <red>No hay propiedad en donde se encuentra.
+hide-claims:
+  success: <green>Las asistencias visuales de propiedades han sido escondidos.
+claim-settings:
+  no-claim: <red>No hay propiedad en donde se encuentra.
+un-claim:
+  no-permission-in-all: <red>No tiene permiso de modificar esta propiedad y ninguno
+    de sus lotes.
+  no-permission: <red>No tiene permiso de modificar esta propiedad.
+  no-claim: <red>No hay propiedad en donde se encuentra.
+  menu:
+    confirmation:
+      title: Confirmación Borrar Propiedad
+      message:
+        count: 1
+        title: <dark_red>Borrar la propiedad permanentemente?
+        lore:
+        - '<red>Bloques de compra se restauran '
+        - <red>a las partes que cuntribuyeron.
+      accept:
+        type: GREEN_CONCRETE
+        count: 1
+        title: <gold>Aceptar
+        lore: []
+      deny:
+        type: RED_CONCRETE
+        count: 1
+        title: <gold>Cancelar
+        lore: []
+un-subclaim:
+  menu:
+    no-permission: <red>No tiene permiso de modificar este lote.
+    no-claim: <red>No hay lote en donde se encuentra.
+    confirmation:
+      title: Confirmación Borrar Lote
+      message:
+        count: 1
+        title: <dark_red>Borrar la lote permanentemente?
+        lore:
+        - '<red>Bloques de compra se restauran '
+        - <red>a las partes que cuntribuyeron.
+      accept:
+        type: GREEN_CONCRETE
+        count: 1
+        title: <gold>Aceptar
+        lore: []
+      deny:
+        type: RED_CONCRETE
+        count: 1
+        title: <gold>Cancelar
+        lore: []
+reload:
+  reloading: <yellow>Empezando recarga de configuración...
+  reloaded: <green>Finalizado recarga de configuración.
+migrate:
+  warning-players-online: <red><bold>No se recomienda empezar una migración mientras
+    haya jugaddores en línea.
+  warning-backup: <red><bold>Respalda a ambos el complemento del cual esta migrando,
+    y los datos existentes de CrashClaim antes de continuar.
+  no-adapter: <red>No hay adaptador de migración con este identificador. Intente '/migratedata
+    list' para más información acerca de adaptadores diosponibles.
+  selected: <green>Seleccionado <yellow><adapter> <green>para migración
+  cancel: <green>Adapptador de migración deseleccionado.
+  list:
+    title: <yellow>Adapptadores de Migración
+    available: <green>Disponible
+    disabled: <red>Deshabilitado - <error>
+    message: '<green><identifier><white>: <status>'
+  confirm:
+    not-selected:
+    - <red>Actualmente no hay adaptador de migracón seleccionado.
+    - Utiliza /migratedata [adaptor] para seleccionar un adaptador válido.
+    failed-requirements:
+    - <red>Ocurrió un error durante la revisión de requerimientos del adaptador de
+      migración seleccionado.
+    - <error>
+    start-message:
+    - <yellow>Epezanddo la migración ded datos utilizanddo [<identifier>]
+    - <yellow><bold>No apaga el servidor hasta completar.
+    error:
+    - <red>La migración terminó con un error, no se salvaron o moddificaron datos.
+    - <error>
+    - <dark_red>----- WARNING -----
+    - <red>Salvar datos ha sido apagado a razón de que el migrador puede posiblemente
+      poner el administrador de datos en un estado inseguro.
+    - Reinicia el servidor para habilitar salvar datos.
+    - <dark_red>----- WARNING -----
+    success:
+    - <bold><green>La migración de datos utilizando [<identifier>] se completo sin
+      error
+    - <green>Se recomienda reiniciar el serrvidor y quitar los datos que se migraron
+      del complemento.
+show:
+  subclaim:
+    no-permission: <red>Necesita permisos para ver lotes.
+    no-subclaims: <green>No hay lotes a visualizar.
+    stand-inside: <red>Tiene que ubicarse en una propiedad para visualizar lotes.
+claim-info:
+  status-enabled: <dark_green>Habilitado
+  status-disabled: <red>Deshabilidato
+  message:
+  - <gold>Información de propiedad | <yellow>[<min_x>, <min_z>] - [<max_x>, <max_z>]
+  - '<green>Dueño: <white><owner>'
+  - <gold>Permisos Globales
+  - '<green>Construcción <yellow>: <build_status>'
+  - '<green>Entidades <yellow>: <entities_status>'
+  - '<green>Interacciones <yellow>: <interactions_status>'
+  - '<green>Ver Lotes <yellow>: <view_sub_claims_status>'
+  - '<green>Teleportación <yellow>: <teleportation_status>'
+  - '<green>Explosiones <yellow>: <explosions_status>'
+  - '<green>Fluidos <yellow>: <fluids_status>'
+  - '<green>Pistones <yellow>: <pistons_status>'
+  - <gold>Permidsos Globales de Contenedores
+  container-message: '<green><name> <yellow>: <status>'
+  no-claim: <red>No hay propiedad en donde se encuentra.
+new-claim:
+  info: <yellow>Click two corners to form a new claim. To resize an existing claim
+    click a corner or side to resize in that direction.
+  click-corner: <green>Haz clic en una esquina diagonalmente opuesta para definir
+    una propiedad nueva.
+  min-size: <red>Una propiedad debe de medir por lo menos 5x5.
+  overlapping: <red>Una propiedad no puede traslapar a una propiedad existente.
+  other-error: <red>No puede crear la propiedad porque otra región o complemento no
+    lo permite.
+  not-enough-balance: <red>You need <price> coins to claim that area.
+  success: <green>La propiedad se creó exitosamente.
+  error: <red>Error al crear la propiedad.
+  create-menu:
+    title: Confirmar Creación de Propiedad
+    message:
+      type: EMERALD
+      count: 1
+      title: '<green>La creación de la propiedad costará: <yellow><price>'
+      lore:
+      - <gold>Aceeptar o cancelar la creación.
+    accept:
+      type: GREEN_CONCRETE
+      count: 1
+      title: <gold>Aceptar
+      lore: []
+    deny:
+      type: RED_CONCRETE
+      count: 1
+      title: <gold>Cancelar
+      lore: []
+new-subclaim:
+  info: <yellow>Haz clic en dos esquinas para formar un lote. Haz clic en una esquina
+    o un lado para cambiar un lote de tamaño en esta dirección.
+  click-corner: <green>Haz clic en una esquina diagonalmente opuesta para definir
+    un lote
+  not-inside-parent: <red>Los lotes solo pueden formarse dentro de una propiedad.
+  success: <green>Lote creado con éxito.
+  min-area: <red>Un lote debe de medir por lo menos 5x5.
+  need-parent: <red>No puede formar un lote fuera de una propiedad.
+  no-overlap: <red>Un lote no puede traslapar a un lote existente.
+  error: <red>Error al crear el lote.
+claim:
+  enabled: <green>Modo de propiedades <bold>habilitado!
+  disabled: <red>Modo de propiedades <bold>deshabilitado!
+subclaim:
+  enabled: <green>Modo de lotes <bold>habilitado!
+  disabled: <red>Modo de lotes <bold>deshabilitado!
+  no-claim: <red>Tiene que encontrase dentro de una propiedad para activar el modo
+    de lotes.
+  no-permission: <red>Necesita MODIFY_CLAIM para crear lotes.
+  already-resizing: <red>La propieddad a la que trata de cambiar de tamaño ya se esta
+    siendo cambiada.
+resize:
+  click-another-location: <green>Haz clic en otra ubicación para cambiar la propiedad
+    de tamaño.
+  no-permission: <red>No tiene permiso de modificar esta propiedad.
+  instructions: <red>Tiene que hacer clic en la orilla de la propiedad de cambiarla
+    de tamaño. Tomar un lado cambiará esta dirección; tomar una esquina cambiará a
+    las ddirecciones adjuntos a la esquina.
+  success: <green>La propiedad se cambió de tamaño con éxito.
+  no-overlap: <red>Una propiedad no puede traslapar a una propiedad existente.
+  min-size: <red>Una propiedad debe de medir por lo menos 5x5.
+  cannot-flip: <red>Propiedades no pueden ser volteados, favor tomar el otro lado
+    para cambiar en esta dirección.
+  overlap-existing: <red>Una propiedad no puede traslapar a una propiedad existente.
+  error-other: <red>Otra región o complemento no permite cambiar la propiedad de tamaño.
+  transaction-error: <red><error>
+  no-longer-permission: <red>Ya no tiene permiso de cambiar la propiedad de tamaño.
+  menu:
+    confirmation:
+      title: Confirmar Cambio de Tamaño de Propiedad
+      message:
+        type: EMERALD
+        count: 1
+        title: '<green>Cambiar el tamaño de la propiedad costará: <yellow><price>'
+        lore:
+        - <gold>Aceptar o cancelar el cambio de tamaño.
+      accept:
+        type: GREEN_CONCRETE
+        count: 1
+        title: <gold>Aceptar
+        lore: []
+      deny:
+        type: RED_CONCRETE
+        count: 1
+        title: <gold>Cancelar
+        lore: []
+resize-subclaim:
+  instructions: <red>Tiene que hacer clic en la orilla del lote de cambiarlo de tamaño.
+    Tomar un lado cambiará esta dirección; tomar una esquina cambiará a las ddirecciones
+    adjuntos a la esquina.
+  click-another-location: <green>Haz clic en otra ubicación para cambiar el lote de
+    tamaño.
+  inside-parent: <red>No puede formar un lote fuera de una propiedad.
+  no-overlap: <red>Un lote no puede traslapar a un lote existente.
+  min-size: <red>Una lote debe de medir por lo menos 5x5.
+  cannot-flip: Lotes no pueden ser volteados, favor tomar el otro lado para cambiar
+    en esta dirección.
+  success: <green>El lote se cambió de tamaño con éxito.
+menu:
+  simple-permissions:
+    title: Permisos Simples
+    no-permission: <red>Ya no tiene permisos suficientes para continuar.
+  general:
+    insufficient-permission: <red>Ya no tiene permisos suficientes para continuar.
+    claim-item-no-owner:
+      count: 1
+      title: <name>
+      lore:
+      - '<green>Coordenadas: <yellow><min_x>, <min_z><gold> | <yellow><max_x>, <max_z>'
+      - '<green>Mundo: <yellow><world>'
+    claim-item:
+      count: 1
+      title: <name>
+      lore:
+      - '<green>Coordenadas: <yellow><min_x>, <min_z><gold> | <yellow><max_x>, <max_z>'
+      - '<green>Mundo: <yellow><world>'
+      - '<green>Dueño: <yellow><owner>'
+    page-display:
+      type: ARROW
+      count: 1
+      title: <gold>Página <page> / <page_total>
+      lore: []
+    next-button:
+      type: OAK_BUTTON
+      count: 1
+      title: <yellow>Próxima
+      lore: []
+    previous-button:
+      type: OAK_BUTTON
+      count: 1
+      title: <yellow>Previa
+      lore: []
+    back-button:
+      type: ARROW
+      count: 1
+      title: <gold>Regresar
+      lore: []
+    claim-item-player:
+      title: <gold><name>
+      lore:
+      - '<green>Coordenadas de la Propiedad: <yellow><min_x>, <min_z><gold> | <yellow><max_x>,
+        <max_z>'
+      - '<green>Mundo de la Propiedad: <yellow><world>'
+      count: 1
+  claim:
+    title: Ajustes de la Propiedad
+    rename:
+      confirmation: <green>Cambiar el nombre a <gold><name>
+      message:
+        type: PAPER
+        count: 1
+        title: Introducir el nuevo nombre de la propiedad
+        lore: []
+    entry-message:
+      confirmation: <green>Cambiar el mensaje de ingreso a <gold><entry_message>
+      message:
+        type: PAPER
+        count: 1
+        title: Introducir el nuevo mensaje de ingreso a la propiedad
+        lore: []
+    exit-message:
+      confirmation: <green>Cambiar el mensaje de salida a <gold><exit_message>
+      message:
+        type: PAPER
+        count: 1
+        title: Introducir el nuevo mensaje de salids de la propiedad
+        lore: []
+  permissions:
+    buttons:
+      per-player:
+        type: PLAYER_HEAD
+        count: 1
+        title: <gold>Ajustes Por Jugador
+        lore:
+        - <green>Modificar permisos de propiedad sugún jugador.
+      per-player-disabled:
+        type: PLAYER_HEAD
+        count: 1
+        title: <gray>Ajustes Por Jugador
+        lore:
+        - <dark_gray>Modificar permisos de propiedad sugún jugador.
+      global:
+        type: COMPASS
+        count: 1
+        title: <gold>Ajusteds Globales de Propiedad
+        lore:
+        - <green>Setear permisos de propiedad globalmente.
+      global-disabled:
+        type: COMPASS
+        count: 1
+        title: <gray>Ajusteds Globales de Propiedad
+        lore:
+        - <dark_gray>Setear permisos de propiedad globalmente.
+      rename:
+        type: ANVIL
+        count: 1
+        title: <gold>Cambiar Propiedad de Nombre
+        lore:
+        - <green>Cambia el nombre de la propiedad para identificarlo facilmente.
+      rename-disabled:
+        type: ANVIL
+        count: 1
+        title: <gray>Cambiar Propiedad de Nombre
+        lore:
+        - <dark_gray>Cambia el nombre de la propiedad para identificarlo facilmente.
+      edit-entry:
+        type: ANVIL
+        count: 1
+        title: <gold>Cambiar Mensaje de Ingreso
+        lore:
+        - <green>Cambiar el mensaje de ingreso a la propiedad.
+      edit-entry-disabled:
+        type: ANVIL
+        count: 1
+        title: <gray>Cambiar Mensaje de Ingreso
+        lore:
+        - <dark_gray>Cambiar el mensaje de ingreso a la propiedad.
+      edit-exit:
+        type: ANVIL
+        count: 1
+        title: <gold>Cambiar Mensaje de Salida
+        lore:
+        - <green>Cambiar el mensaje de salida de la propiedad.
+      edit-exit-disabled:
+        type: ANVIL
+        count: 1
+        title: <gray>Cambiar Mensaje de Salida
+        lore:
+        - <dark_gray>Cambiar el mensaje de salida de la propiedad.
+      delete:
+        type: RED_CONCRETE
+        count: 1
+        title: <gold>Eliminar Propiedad
+        lore:
+        - <green>Eliminar a una propiedad permanentemente.
+      delete-disabled:
+        type: GRAY_CONCRETE
+        count: 1
+        title: <gray>Eliminar Propiedad
+        lore:
+        - <dark_gray>Eliminar a una propiedad permanentemente.
+    buttons-subclaims:
+      type: WRITABLE_BOOK
+      count: 1
+      title: <gold>Lotes
+      lore:
+      - <green>Ver la lista de lotes en esta propiedad.
+    buttons-no-subclaims:
+      type: WRITABLE_BOOK
+      count: 1
+      title: <gray>No Hay Lotes
+      lore:
+      - <dark_gray>No hay lotes de los cuales tiene permiso de ver.
+    containers:
+      type: BARREL
+      count: 1
+      title: <gold>Contenedores
+      lore:
+      - <green>Permitir acceso a contenedores.
+      display:
+        count: 1
+        title: <gold><name>
+        lore: []
+    pistons:
+      type: PISTON
+      count: 1
+      title: <gold>Permitir Pistones
+      lore:
+      - <green>Permite que pistones empujan o jalan a través de los bordes de la propiedad.
+    fluids:
+      type: WATER_BUCKET
+      count: 1
+      title: <gold>Permitir Fluidos
+      lore:
+      - <green>Permite que fluidos fluyen a través de los bordes de la propiedad.
+    view-sub-claims:
+      type: SEA_LANTERN
+      count: 1
+      title: <gold>Ver Lotes
+      lore:
+      - <green>Permite a jugadores ver lotes.
+    build:
+      type: GRASS_BLOCK
+      count: 1
+      title: <gold>Constricción
+      lore:
+      - <green>Permite romper y poner bloques.
+    entities:
+      type: CREEPER_HEAD
+      count: 1
+      title: <gold>Entidades
+      lore:
+      - <green>Permite interactuar con entidades.
+    interactions:
+      type: OAK_FENCE_GATE
+      count: 1
+      title: <gold>Interacciones
+      lore:
+      - <green>Permite interactuar con bloques como
+      - <green>puertas, palancas y otros.
+    explosions:
+      type: TNT
+      count: 1
+      title: <gold>Explosiones
+      lore:
+      - <green>Permite explosiones de dinamita, creepers
+      - <green>y otros.
+    teleportation:
+      type: ENDER_PEARL
+      count: 1
+      title: <gold>Teleportación
+      lore:
+      - <green>Permite a jugadores de teleportarse a dentro
+      - <green>de la propiedad.
+    modify-permissions:
+      type: CRAFTING_TABLE
+      count: 1
+      title: <gold>Modificar Permisos
+      lore:
+      - <green>Permite al jugador de modificar los permisos de la propiedad,
+      - <green>jugadores solamente pueden asignar permisos que poseen
+      - <green>a otros jugarores.
+    modify-claim:
+      type: OAK_FENCE
+      count: 1
+      title: <gold>Modificar Propiedadd
+      lore:
+      - <green>Permite al jugador de modificar la propiedad,
+      - <green>incluye cambiar de tamaño, eliminar, y modoficar
+      - <green>todas las características de la propiedad.
+    admin:
+      type: BEACON
+      count: 1
+      title: <gold>Admin
+      lore:
+      - <green>Permite al jugador modificar los permisos y la propiedad,
+      - <green>pueden asignar permisos que poseen, y modificar
+      - <green>todas las características de la propiedad,
+      - <green>lo que incluye cambiar de tamaño, eliminar.
+    misc:
+      type: SEA_LANTERN
+      count: 1
+      title: <gold>Misc
+      lore:
+      - <green>Permite que pistones y fluidos fluyen a través de
+      - <green>los bordes de la propiedad.
+    subclaim-admin:
+      title: <gold>Admin Lote
+      lore:
+      - <green>Permite al jugador modificar los permisos y el lote,
+      - <green>pueden asignar permisos que poseen, y modificar
+      - <green>todas las características de la propiedad,
+      - <green>lo que incluye cambiar de tamaño, eliminar.
+      type: BEACON
+      count: 1
+  permissions-toggles:
+    enable:
+      'off':
+        type: GREEN_STAINED_GLASS
+        count: 1
+        title: <dark_green>Enable
+        lore: []
+      disabled:
+        type: GRAY_STAINED_GLASS_PANE
+        count: 1
+        title: <gray>Enable
+        lore: []
+      selected:
+        type: GREEN_CONCRETE
+        count: 1
+        title: <green>Enabled
+        lore: []
+      selected-disabled:
+        type: GRAY_CONCRETE
+        count: 1
+        title: <gray>Enabled
+        lore: []
+      overrode:
+        type: YELLOW_STAINED_GLASS_PANE
+        count: 1
+        title: <yellow>Enabled
+        lore: []
+    neutral:
+      'off':
+        type: GRAY_STAINED_GLASS
+        count: 1
+        title: <dark_gray>Neutral
+        lore: []
+      disabled:
+        type: GRAY_STAINED_GLASS_PANE
+        count: 1
+        title: <gray>Neutral
+        lore: []
+      selected:
+        type: GRAY_CONCRETE
+        count: 1
+        title: <gray>Neutral
+        lore: []
+      selected-disabled:
+        type: GRAY_CONCRETE
+        count: 1
+        title: <gray>Neutral
+        lore: []
+      overrode:
+        type: YELLOW_STAINED_GLASS_PANE
+        count: 1
+        title: <yellow>Neutral
+        lore: []
+    disable:
+      'off':
+        type: RED_STAINED_GLASS
+        count: 1
+        title: <dark_red>Disable
+        lore: []
+      disabled:
+        type: GRAY_STAINED_GLASS_PANE
+        count: 1
+        title: <gray>Disable
+        lore: []
+      selected:
+        type: RED_CONCRETE
+        count: 1
+        title: <red>Disabled
+        lore: []
+      selected-disabled:
+        type: GRAY_CONCRETE
+        count: 1
+        title: <gray>Disabled
+        lore: []
+      overrode:
+        type: YELLOW_STAINED_GLASS_PANE
+        count: 1
+        title: <yellow>Disabled
+        lore: []
+  permission-option:
+    simple:
+      type: CRAFTING_TABLE
+      count: 1
+      title: <gold>Configuración Simple
+      lore:
+      - <green>Una apariencia simple para modificar
+      - <green>permisos de la propiedad.
+    advanced:
+      type: SMITHING_TABLE
+      count: 1
+      title: <yellow>Configuración Avanzada
+      lore:
+      - <green>Un menú avanzado para profundizar
+      - <green>la configuración de permisos.
+    general:
+      type: SMITHING_TABLE
+      count: 1
+      title: <gold>General
+      lore: []
+    containers:
+      type: BARREL
+      count: 1
+      title: <gold>Containers
+      lore: []
+    admin:
+      type: BEACON
+      count: 1
+      title: <gold>Admin
+      lore: []
+    misc:
+      type: CRAFTING_TABLE
+      count: 1
+      title: <gold>Misc
+      lore: []
+    unused:
+      title: <grey>Sin Usar
+      lore:
+      - <dark_grey>No hay permisos en esta categoría.
+      type: GRAY_STAINED_GLASS
+      count: 1
+  sub-claim-simple-permissions:
+    title: Permisos de Lote Simples
+  advanced-permissions:
+    title: Permisos Avanzados
+    no-permission: <red>Ya no tiene suficientes permisos para continuar.
+  sub-claim-advanced-permissions:
+    title: Permisos de Lote Avanzados
+  list-players:
+    title: Seleccionar Jugador
+  claim-list:
+    title: Claims
+  sub-claim:
+    title: Ajustes de Lote
+  sub-claim-list:
+    title: Lotes
+alert:
+  no-permissions:
+    build: <red>No tiene permiso de construir en esta propiedad.
+    interaction: <red>No tiene permiso de interactuar en esta propiedad.
+    containers: <red>No tiene permiso de abrir conteneddores en esta propiedad.
+    entities: <red>No tiene permiso de interactuar con entidades en esta propiedad
+    teleport: <red>No tiene permiso de teleportar a esta propiedad.
+    teleport-relocate: <red>No tiene permiso de teleportar a esta propiedad. Fue ubicado
+      fuera de ella.

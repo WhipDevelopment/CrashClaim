@@ -81,6 +81,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>net.crashcraft.crashclaim.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>net.kyori.adventure</pattern>
+                            <shadedPattern>net.crashcraft.crashclaim.adventure</shadedPattern>
+                        </relocation>
                     </relocations>
                     <artifactSet>
                         <includes>
@@ -162,7 +166,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -276,13 +280,13 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.0.0-SNAPSHOT</version>
+            <version>4.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bungeecord</artifactId>
-            <version>4.0.0-SNAPSHOT</version>
+            <version>4.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -70,6 +70,11 @@ public class ResizeClaimMode implements ClaimMode {
 
         UUID uuid = player.getUniqueId();
 
+        if (!PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM)){
+            cleanup(player.getUniqueId(), true);
+            return;
+        }
+
         ErrorType error = manager.resizeClaim(claim, firstLocation.getBlockX(), firstLocation.getBlockZ(), click.getBlockX(), click.getBlockZ(), player,
                 aBoolean -> {
                     VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
@@ -113,6 +118,7 @@ public class ResizeClaimMode implements ClaimMode {
 
     @Override
     public void cleanup(UUID player, boolean visuals) {
+        //firstLocation = null;
         claim.setEditing(false);
 
         commandManager.forceCleanup(player, visuals);

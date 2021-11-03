@@ -10,6 +10,7 @@ import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,6 +20,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,22 @@ public class WorldListener implements Listener {
         this.perms = manager.getPermissionSetup();
         this.visuals = visuals;
         this.helper = PermissionHelper.getPermissionHelper();
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onStructureGrowEvent(StructureGrowEvent e){
+        if (GlobalConfig.disabled_worlds.contains(e.getWorld().getUID())){
+            return;
+        }
+
+        ArrayList<BlockState> removeAlBlocks = new ArrayList<>();
+        for (BlockState state : e.getBlocks()){
+            if (!helper.hasPermission(state.getLocation(), PermissionRoute.BUILD)){ // Fixes Mushrooms and trees growing into claims.
+                removeAlBlocks.add(state);
+            }
+        }
+
+        e.getBlocks().removeAll(removeAlBlocks);
     }
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)

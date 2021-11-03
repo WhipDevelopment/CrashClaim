@@ -10,6 +10,8 @@ import net.crashcraft.crashclaim.data.ErrorType;
 import net.crashcraft.crashclaim.data.MathUtils;
 import net.crashcraft.crashclaim.data.StaticClaimLogic;
 import net.crashcraft.crashclaim.localization.Localization;
+import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
@@ -71,6 +73,12 @@ public class ResizeSubClaimMode implements ClaimMode {
 
     @Override
     public void click(Player player, Location click) {
+        if (!PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+            player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
+            cleanup(player.getUniqueId(), true);
+            return;
+        }
+
         if (firstLocation == null){
             firstLocation = click;
             firstClick();
@@ -116,6 +124,7 @@ public class ResizeSubClaimMode implements ClaimMode {
 
     @Override
     public void cleanup(UUID player, boolean visuals) {
+        firstLocation = null;
         claim.setEditing(false);
 
         commandManager.forceCleanup(player, visuals);

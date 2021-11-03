@@ -8,7 +8,7 @@
 
     <groupId>net.crashcraft</groupId>
     <artifactId>CrashClaim</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.15</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -242,7 +242,7 @@
         <dependency>
             <groupId>dev.whip</groupId>
             <artifactId>CrashUtils</artifactId>
-            <version>1.6</version>
+            <version>1.6.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

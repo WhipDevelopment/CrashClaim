@@ -24,6 +24,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class WorldListener implements Listener {
      private final PermissionHelper helper;
@@ -43,9 +44,22 @@ public class WorldListener implements Listener {
         }
 
         ArrayList<BlockState> removeAlBlocks = new ArrayList<>();
-        for (BlockState state : e.getBlocks()){
-            if (!helper.hasPermission(state.getLocation(), PermissionRoute.BUILD)){ // Fixes Mushrooms and trees growing into claims.
-                removeAlBlocks.add(state);
+        if (e.getPlayer() != null){
+            UUID uuid = e.getPlayer().getUniqueId();
+            for (BlockState state : e.getBlocks()){
+                if (!helper.hasPermission(uuid, state.getLocation(), PermissionRoute.BUILD)){ // Fixes Mushrooms and trees growing into claims.
+                    removeAlBlocks.add(state);
+                }
+            }
+
+            if (removeAlBlocks.size() > 0){
+                visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
+            }
+        } else {
+            for (BlockState state : e.getBlocks()){
+                if (!helper.hasPermission(state.getLocation(), PermissionRoute.BUILD)){ // Fixes Mushrooms and trees growing into claims.
+                    removeAlBlocks.add(state);
+                }
             }
         }
 

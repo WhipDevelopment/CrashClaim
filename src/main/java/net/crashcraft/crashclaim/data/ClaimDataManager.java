@@ -626,8 +626,17 @@ public class ClaimDataManager implements Listener {
         this.freezeSaving = freezeSaving;
     }
 
-    public Set<Integer> getOwnedClaims(UUID uuid) {
-        return provider.getPermittedClaims(uuid);
+    public ArrayList<Claim> getOwnedClaims(UUID uuid) {
+        ArrayList<Claim> claims = new ArrayList<>();
+
+        for (Integer id : provider.getPermittedClaims(uuid)){
+            Claim claim = getClaim(id);
+            if (Bukkit.getWorld(claim.getWorld()) != null){ // Make sure world of claim is loaded before we send it back.
+                claims.add(claim);
+            }
+        }
+
+        return claims;
     }
 
     public int getIdCounter() {
@@ -668,10 +677,6 @@ public class ClaimDataManager implements Listener {
 
     public synchronized void setReSave(boolean reSave) {
         this.reSave = reSave;
-    }
-
-    public IntCache<Claim> getClaimCache(){
-        return claimLookup;
     }
 
     public void cleanupAndClose() {

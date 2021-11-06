@@ -14,10 +14,12 @@ import java.util.UUID;
 public class GlobalConfig extends BaseConfig{
     public static String locale;
     public static String paymentProvider;
+    public static boolean checkUpdates;
 
     private static void loadGeneral(){
         locale = getString("language", "en_US");
         paymentProvider = getString("payment-provider", "default");
+        checkUpdates = getBoolean("check-updates", true);
     }
 
     public static String visual_type;

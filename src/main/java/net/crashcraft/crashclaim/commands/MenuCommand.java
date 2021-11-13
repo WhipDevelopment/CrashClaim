@@ -19,6 +19,7 @@ import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -57,7 +58,7 @@ public class MenuCommand extends BaseCommand {
 
         if (claim != null){
             ItemStack message = Localization.UN_CLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
-            message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+            message.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
 
             new ConfirmationMenu(player,
                     Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
@@ -98,7 +99,7 @@ public class MenuCommand extends BaseCommand {
         SubClaim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID()).getSubClaim(location.getBlockX(), location.getBlockZ());
         if (claim != null){
             ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
-            message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+            message.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
 
             new ConfirmationMenu(player,
                     Localization.UN_SUBCLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),

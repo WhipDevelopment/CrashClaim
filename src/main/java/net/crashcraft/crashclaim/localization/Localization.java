@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.localization;
 
+import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.config.BaseConfig;
 import net.crashcraft.crashclaim.config.ConfigManager;
@@ -8,11 +9,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.craftbukkit.BukkitComponentSerializer;
-import net.kyori.adventure.text.serializer.craftbukkit.MinecraftComponentSerializer;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -447,8 +445,12 @@ public enum Localization {
     private static class Utils {
         static ItemStack addItemShine(ItemStack itemStack){
             ItemStack item = itemStack.clone();
+
             item.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
-            item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            ItemMeta meta = item.getItemMeta(); // Stupid spigot api
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+            item.setItemMeta(meta);
             return item;
         }
     }
@@ -464,7 +466,10 @@ public enum Localization {
         languagesFolder.mkdirs();
 
         // Load Additional Bundled Language Files
-        CrashClaim.getPlugin().saveResource("languages/es_ES.yml", false);
+        String langSpanishFile = "languages/es_ES.yml";
+        if (!new File(CrashClaim.getPlugin().getDataFolder(), langSpanishFile).exists()) {
+            CrashClaim.getPlugin().saveResource(langSpanishFile, false);
+        }
 
         // Fetch configured file, default is en_US.yml
         File languageFile = new File(languagesFolder, GlobalConfig.locale + ".yml");
@@ -700,13 +705,27 @@ public enum Localization {
             String newTitle = hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, title) : title;
             iMeta.setDisplayName(BukkitComponentSerializer.legacy().serialize(Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(newTitle, replace))));
 
-            List<BaseComponent[]> components = new ArrayList<>(lore.size());
-            for (String line : lore) {
-                components.add(BungeeComponentSerializer.get().serialize(
-                        Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
-                                hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace))));
+            if (PaperLib.isPaper()){
+                List<Component> components = new ArrayList<>(lore.size());
+                for (String line : lore) {
+                    components.add(
+                            Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
+                                    hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace))
+                    );
+                }
+
+                iMeta.lore(components);
+            } else {
+                List<String> components = new ArrayList<>(lore.size());
+                for (String line : lore) {
+                    components.add(
+                            ComponentSerializer.toString(Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
+                                    hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace)))
+                    );
+                }
+
+                iMeta.setLore(components);
             }
-            iMeta.setLoreComponents(components);
 
             if (model != null){
                 iMeta.setCustomModelData(model); // Set custom model data.

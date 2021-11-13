@@ -182,8 +182,6 @@ public class SQLiteDataProvider implements DataProvider {
                 claimData_id = -1;
             }
 
-
-
             //Claim Data
             addClaimData(
                     claimData_id,

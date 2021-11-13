@@ -165,7 +165,7 @@ public class SubClaimMenu extends GUI {
             case 49:
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
                     ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
-                    message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+                    message.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
 
                     new ConfirmationMenu(player,
                             Localization.UN_SUBCLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),

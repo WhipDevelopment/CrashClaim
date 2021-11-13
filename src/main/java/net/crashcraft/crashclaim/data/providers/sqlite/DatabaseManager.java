@@ -4,6 +4,7 @@ import co.aikar.idb.DB;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev0;
 import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev1;
+import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev2;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class DatabaseManager {
     private void setupDataVersions(){
         registerDataVersion(new DataRev0());
         registerDataVersion(new DataRev1());
+        registerDataVersion(new DataRev2());
     }
 
     private void validateDataVersions(){

@@ -4,6 +4,7 @@ import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class GlobalConfig extends BaseConfig{
         visual_type = getString("visualization.visual-type", "glow");
 
         visual_menu_items = new HashMap<>();
+
         for (World world : Bukkit.getWorlds()){
             visual_menu_items.put(world.getUID(), Material.getMaterial(getString("visualization.claim-items." + world.getName(), Material.OAK_FENCE.name())));
         }

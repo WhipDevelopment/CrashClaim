@@ -8,7 +8,7 @@
 
     <groupId>net.crashcraft</groupId>
     <artifactId>CrashClaim</artifactId>
-    <version>1.0.17</version>
+    <version>1.0.18-dev</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,8 +82,8 @@
                             <shadedPattern>net.crashcraft.crashclaim.bstats</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>net.kyori.adventure</pattern>
-                            <shadedPattern>net.crashcraft.crashclaim.adventure</shadedPattern>
+                            <pattern>it.unimi.dsi</pattern>
+                            <shadedPattern>net.crashcraft.crashclaim.fastutil</shadedPattern>
                         </relocation>
                     </relocations>
                     <artifactSet>
@@ -160,6 +160,10 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>dynmap-repo</id>
+            <url>https://repo.mikeprimm.com/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -179,7 +183,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.7.0-SNAPSHOT</version>
+            <version>4.7.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -214,12 +218,26 @@
             <version>3.7.2</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>co.aikar</groupId>
-            <artifactId>fastutil-lite</artifactId>
-            <version>1.0</version>
+            <artifactId>fastutil-base</artifactId>
+            <version>3.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>fastutil-longbase</artifactId>
+            <version>3.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>fastutil-longhashmap</artifactId>
+            <version>3.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>acf-paper</artifactId>
@@ -294,6 +312,13 @@
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.1.0-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>us.dynmap</groupId>
+            <artifactId>dynmap-api</artifactId>
+            <version>3.2-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

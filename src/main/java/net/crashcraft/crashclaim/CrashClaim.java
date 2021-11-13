@@ -73,7 +73,6 @@ public class CrashClaim extends JavaPlugin {
         }
 
         this.crashUtils = new CrashUtils(this);
-        this.api = new CrashClaimAPI();
 
         this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
     }
@@ -130,6 +129,8 @@ public class CrashClaim extends JavaPlugin {
         if (GlobalConfig.checkUpdates){
             updateManager = new UpdateManager(this);
         }
+
+        this.api = new CrashClaimAPI(this); // Enable api last as it might require some instances before to function properly.
     }
 
     @Override
@@ -251,5 +252,9 @@ public class CrashClaim extends JavaPlugin {
 
     public PluginSupport getPluginSupport(){
         return pluginSupport.getSupportDistributor();
+    }
+
+    public UpdateManager getUpdateManager() {
+        return updateManager;
     }
 }

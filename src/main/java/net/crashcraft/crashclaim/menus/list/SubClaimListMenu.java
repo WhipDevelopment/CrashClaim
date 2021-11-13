@@ -8,6 +8,7 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.SubClaimMenu;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -75,7 +76,7 @@ public class SubClaimListMenu extends GUI {
                 );
             }
 
-            descItem.setType(GlobalConfig.visual_menu_items.get(item.getWorld()));
+            descItem.setType(GlobalConfig.visual_menu_items.getOrDefault(item.getWorld(), Material.OAK_FENCE));
 
             inv.setItem(slot, descItem);
 

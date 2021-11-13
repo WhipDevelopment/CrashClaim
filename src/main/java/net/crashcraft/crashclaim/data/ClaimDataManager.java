@@ -33,6 +33,7 @@ import org.cache2k.IntCache;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -49,7 +50,7 @@ public class ClaimDataManager implements Listener {
     private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
     private final HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
 
-    private int idCounter;
+    private final AtomicInteger idCounter;
 
     private boolean isSaving;
     private boolean reSave;
@@ -60,7 +61,7 @@ public class ClaimDataManager implements Listener {
         this.logger = plugin.getLogger();
         this.isSaving = false;
         this.freezeSaving = false;
-        this.idCounter = 0;
+        this.idCounter = new AtomicInteger(0);
         this.permissionSetup = new PermissionSetup(plugin);
         this.chunkLookup = new HashMap<>();
 
@@ -73,22 +74,17 @@ public class ClaimDataManager implements Listener {
         provider.init(plugin, this);
         Bukkit.getPluginManager().registerEvents(provider, plugin);
 
-        try {
-            claimLookup = new Cache2kBuilder<Integer, Claim>() {}
-                    .name("chunkToClaimCache")
-                    .storeByReference(true)
-                    .loaderThreadCount(3)
-                    .disableStatistics(true)
-                    .loader((id) -> {
-                        Claim claim = provider.loadClaim(id);
-                        fixupOwnerPerms(claim);
-                        return claim;
-                    })
-                    .buildForIntKey();
-        } catch (Exception e){
-            e.printStackTrace();
-            logger.info("Cache initialized with cache2k");
-        }
+        claimLookup = new Cache2kBuilder<Integer, Claim>() {}
+                .name("chunkToClaimCache")
+                .storeByReference(true)
+                .loaderThreadCount(3)
+                .disableStatistics(true)
+                .loader((id) -> {
+                    Claim claim = provider.loadClaim(id);
+                    fixupOwnerPerms(claim);
+                    return claim;
+                })
+                .buildForIntKey();
 
         logger.info("Starting claim saving routine");
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::saveClaims, 0, 1200);
@@ -97,7 +93,7 @@ public class ClaimDataManager implements Listener {
     }
 
     public int requestUniqueID(){
-        return idCounter+=1;
+        return idCounter.getAndIncrement();
     }
 
     public ClaimResponse createClaim(Location maxCorner, Location minCorner, UUID owner){
@@ -417,7 +413,7 @@ public class ClaimDataManager implements Listener {
     public void loadChunksForClaim(Claim claim){
         Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(claim.getWorld());
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
-            map.putIfAbsent(entry.getKey(), new ArrayList<>());
+            map.putIfAbsent(entry.getKey().longValue(), new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());
             integers.add(claim.getId());
         }
@@ -432,7 +428,7 @@ public class ClaimDataManager implements Listener {
         }
 
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForUnLoadedClaim(minX, minZ, maxX, maxZ, claim_id).entrySet()){
-            map.putIfAbsent(entry.getKey(), new ArrayList<>());
+            map.putIfAbsent(entry.getKey().longValue(), new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());
             integers.add(claim_id);
         }
@@ -441,7 +437,7 @@ public class ClaimDataManager implements Listener {
     private void removeChunksForClaim(Claim claim){
         Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(claim.getWorld());
         for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
-            map.putIfAbsent(entry.getKey(), new ArrayList<>());
+            map.putIfAbsent(entry.getKey().longValue(), new ArrayList<>());
             ArrayList<Integer> integers = map.get(entry.getKey().longValue());
             integers.remove(Integer.valueOf(claim.getId()));
         }
@@ -596,8 +592,9 @@ public class ClaimDataManager implements Listener {
     public Claim getClaim(int x, int z, UUID world){
         ArrayList<Integer> integers = chunkLookup.get(world).get(getChunkHashFromLocation(x, z));
 
-        if (integers == null)
+        if (integers == null) {
             return null;
+        }
 
         for (Integer id : integers){
             Claim claim = getClaim(id);
@@ -608,6 +605,22 @@ public class ClaimDataManager implements Listener {
             }
         }
         return null;
+    }
+
+    public ArrayList<Claim> getClaims(long chunkX, long chunkZ, UUID world){
+        ArrayList<Integer> integers = chunkLookup.get(world).get(getChunkHash(chunkX, chunkZ));
+
+        if (integers == null) {
+            return null;
+        }
+
+        ArrayList<Claim> claims = new ArrayList<>(integers.size());
+
+        for (Integer id : integers){
+            claims.add(getClaim(id));
+        }
+
+        return claims;
     }
 
     public Claim getClaim(Location location) {
@@ -631,7 +644,7 @@ public class ClaimDataManager implements Listener {
 
         for (Integer id : provider.getPermittedClaims(uuid)){
             Claim claim = getClaim(id);
-            if (Bukkit.getWorld(claim.getWorld()) != null){ // Make sure world of claim is loaded before we send it back.
+            if (chunkLookup.containsKey(claim.getWorld())){ // Make sure world of claim is loaded before we send it back.
                 claims.add(claim);
             }
         }
@@ -639,12 +652,8 @@ public class ClaimDataManager implements Listener {
         return claims;
     }
 
-    public int getIdCounter() {
-        return idCounter;
-    }
-
     public void setIdCounter(int idCounter) {
-        this.idCounter = idCounter;
+        this.idCounter.set(idCounter);
     }
 
     public PermissionSetup getPermissionSetup() {
@@ -653,14 +662,6 @@ public class ClaimDataManager implements Listener {
 
     public Long2ObjectOpenHashMap<ArrayList<Integer>> getClaimChunkMap(UUID world){
         return chunkLookup.get(world);
-    }
-
-    public ConcurrentMap<Integer, Claim> temporaryTestGetClaimMap(){
-        return claimLookup.asMap();
-    }
-
-    public HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> temporaryTestGetChunkMap(){
-        return chunkLookup;
     }
 
     public synchronized boolean isSaving() {

@@ -15,6 +15,7 @@ import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -66,7 +67,7 @@ public class ClaimMenu extends GUI {
             );
         }
 
-        descItem.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+        descItem.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
         inv.setItem(13, descItem);
 
         if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
@@ -190,7 +191,7 @@ public class ClaimMenu extends GUI {
             case 49:
                 if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
                     ItemStack message = Localization.UN_CLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
-                    message.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+                    message.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
 
                     new ConfirmationMenu(player,
                             Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),

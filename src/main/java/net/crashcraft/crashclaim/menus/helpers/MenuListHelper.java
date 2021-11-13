@@ -136,7 +136,7 @@ public abstract class MenuListHelper extends GUI {
                         "owner", Bukkit.getOfflinePlayer(subClaim.getParent().getOwner()).getName()
                 );
 
-                descItem.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+                descItem.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
                 return;
             }
         }
@@ -150,7 +150,7 @@ public abstract class MenuListHelper extends GUI {
                 "world", Bukkit.getWorld(claim.getWorld()).getName()
         );
 
-        descItem.setType(GlobalConfig.visual_menu_items.get(claim.getWorld()));
+        descItem.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
     }
 
     @Override

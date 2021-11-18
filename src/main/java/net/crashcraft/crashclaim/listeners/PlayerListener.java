@@ -11,11 +11,13 @@ import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionSetup;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -381,7 +383,22 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (event.getPlayer() == null){
+        if (event.getPlayer() == null){ // It was a dispenser
+            Location baseLocation = event.getBlock().getLocation();
+            Claim baseClaim = manager.getClaim(baseLocation);
+
+            if (baseClaim == null){
+                return;
+            }
+
+            if (blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.NORTH)
+                || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.EAST)
+                    || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.SOUTH)
+                    || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.WEST)
+                    || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.UP)) { // Exclude down because the block has to be placed on something
+                return;
+            }
+
             if (!helper.hasPermission(event.getBlock().getLocation(), PermissionRoute.INTERACTIONS)){
                 event.setCancelled(true);
             }
@@ -389,6 +406,21 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
             visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(event.getPlayer()));
         }
+    }
+
+    private boolean blockFertilizeDispenserCHeck(Claim baseClaim, Location baseLocation, BlockFace blockFace){
+        Block block = baseLocation.add(blockFace.getDirection()).getBlock();
+
+        if (block.getType() == Material.DISPENSER){
+            BaseClaim blockClaim = manager.getClaim(block.getLocation());
+
+            if (blockClaim == baseClaim){
+                Dispenser dispenser = (Dispenser) block.getState().getBlockData();
+                return dispenser.isTriggered();
+            }
+        }
+
+        return false;
     }
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)

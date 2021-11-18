@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.menus.list;
 
+import co.aikar.taskchain.TaskChain;
 import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
@@ -38,15 +39,17 @@ public class ClaimListMenu extends GUI {
     public void initialize() {
         claims.clear();
 
-        CrashClaim.newChain().async(() -> {
+        TaskChain<?> chain = CrashClaim.newChain().async(() -> {
             try {
                 ClaimDataManager manager = CrashClaim.getPlugin().getDataManager();
                 claims.addAll(manager.getOwnedClaims(player.getUniqueId()));
             } catch (Exception ex){
                 ex.printStackTrace();
             }
-        }).sync(this::loadItems)
-        .execute();
+        }).sync(this::loadItems);
+
+        chain.setErrorHandler((ex, task) -> ex.printStackTrace());
+        chain.execute();
     }
 
     @Override

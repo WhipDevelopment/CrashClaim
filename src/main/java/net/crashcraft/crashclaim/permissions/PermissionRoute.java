@@ -109,6 +109,29 @@ public enum  PermissionRoute {
             set.setExplosions(value);
         }
     },
+    ENTITY_GRIEF {
+        @Override
+        public int getPerm(PlayerPermissionSet set) {
+            return PermState.ENABLED; //Enabled so we cant set it as players
+        }
+
+        @Override
+        public void setPerm(PlayerPermissionSet set, int value) {
+            throw new RuntimeException("Unsupported operation in permission class");
+        }
+
+        @Override
+        public int getPerm(GlobalPermissionSet set) {
+            if (set == null)
+                return -1;
+            return set.getEntityGrief();
+        }
+
+        @Override
+        public void setPerm(GlobalPermissionSet set, int value) {
+            set.setEntityGrief(value);
+        }
+    },
     TELEPORTATION{
         @Override
         public int getPerm(PlayerPermissionSet set) {

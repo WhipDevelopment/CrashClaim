@@ -8,13 +8,15 @@ public class GlobalPermissionSet extends PermissionSet {
     private int pistons;
     private int fluids;
     private int explosions;
+    private int entityGrief;
 
     public GlobalPermissionSet() {
 
     }
 
-    public GlobalPermissionSet(int build, int interactions, int entities, int explosions, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue, int pistons, int fluids) {
+    public GlobalPermissionSet(int build, int interactions, int entities, int explosions, int entityGrief, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue, int pistons, int fluids) {
         super(build, interactions, entities, teleportation, viewSubClaims, containers, defaultContainerValue);
+        this.entityGrief = entityGrief;
         this.pistons = pistons;
         this.explosions = explosions;
         this.fluids = fluids;
@@ -42,6 +44,14 @@ public class GlobalPermissionSet extends PermissionSet {
 
     public void setExplosions(int explosions) {
         this.explosions = explosions;
+    }
+
+    public int getEntityGrief() {
+        return entityGrief;
+    }
+
+    public void setEntityGrief(int entityGrief) {
+        this.entityGrief = entityGrief;
     }
 
     @Override

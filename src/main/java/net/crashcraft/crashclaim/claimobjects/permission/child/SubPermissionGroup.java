@@ -27,7 +27,7 @@ public class SubPermissionGroup extends PermissionGroup {
 
     @Override
     public GlobalPermissionSet createGlobalPermissionSet() {
-        return new GlobalPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
+        return new GlobalPermissionSet(PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL,
                 PermState.NEUTRAL, new HashMap<>(), PermState.NEUTRAL, PermState.NEUTRAL, PermState.NEUTRAL);
     }
 

@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.listeners;
 
+import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.localization.Localization;
@@ -30,14 +31,16 @@ public class WorldListener implements Listener {
      private final PermissionHelper helper;
      private final PermissionSetup perms;
      private final VisualizationManager visuals;
+     private final ClaimDataManager manager;
 
     public WorldListener(ClaimDataManager manager, VisualizationManager visuals){
+        this.manager = manager;
         this.perms = manager.getPermissionSetup();
         this.visuals = visuals;
         this.helper = PermissionHelper.getPermissionHelper();
     }
 
-    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler (priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onStructureGrowEvent(StructureGrowEvent e){
         if (GlobalConfig.disabled_worlds.contains(e.getWorld().getUID())){
             return;
@@ -46,6 +49,13 @@ public class WorldListener implements Listener {
         ArrayList<BlockState> removeAlBlocks = new ArrayList<>();
         if (e.getPlayer() != null){
             UUID uuid = e.getPlayer().getUniqueId();
+
+            if (!helper.hasPermission(uuid, e.getLocation(), PermissionRoute.BUILD)) { // Fixes Mushrooms and trees growing into claims.
+                visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
+                e.setCancelled(true);
+                return; // Unable to grow initial block so whole event needs to be canceled.
+            }
+
             for (BlockState state : e.getBlocks()){
                 if (!helper.hasPermission(uuid, state.getLocation(), PermissionRoute.BUILD)){ // Fixes Mushrooms and trees growing into claims.
                     removeAlBlocks.add(state);
@@ -56,14 +66,37 @@ public class WorldListener implements Listener {
                 visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
             }
         } else {
-            for (BlockState state : e.getBlocks()){
-                if (!helper.hasPermission(state.getLocation(), PermissionRoute.BUILD)){ // Fixes Mushrooms and trees growing into claims.
-                    removeAlBlocks.add(state);
+            Location baseBlock = e.getLocation();
+            Claim baseClaim = manager.getClaim(baseBlock); // Claim of base block, should be grow source.
+
+            if (baseClaim == null) {
+                // If there is no claim at the base of the, for example tree (sapling) then we check every block
+                for (BlockState state : e.getBlocks()) {
+                    if (!helper.hasPermission(state.getLocation(), PermissionRoute.BUILD)) { // Fixes Mushrooms and trees growing into claims.
+                        removeAlBlocks.add(state);
+                    }
+                }
+            } else {
+                for (BlockState state : e.getBlocks()) {
+                    Location blockLocation = state.getLocation();
+                    Claim blockClaim = manager.getClaim(blockLocation);
+
+                    if (blockClaim == null || blockClaim == baseClaim){
+                        continue; // Skip as this should only be hit under a natural grow event.
+                    }
+
+                    if (!helper.hasPermission(state.getLocation(), PermissionRoute.BUILD)) { // Final check if claims do not match, check permission as we want to prevent growing into another claim
+                        removeAlBlocks.add(state);
+                    }
                 }
             }
         }
 
         e.getBlocks().removeAll(removeAlBlocks);
+
+        if (e.getBlocks().isEmpty()){
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -119,7 +152,7 @@ public class WorldListener implements Listener {
             e.setCancelled(true);
             Player player = (Player) e.getEntity();
             visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
-        } else if (e.getEntity() instanceof Sheep || e.getEntity() instanceof Enderman
+        } else if ((e.getEntity() instanceof Sheep || e.getEntity() instanceof Enderman)
                 && !helper.hasPermission(location, PermissionRoute.BUILD)) {
             e.setCancelled(true);
         } else {

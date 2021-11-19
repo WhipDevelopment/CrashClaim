@@ -644,7 +644,7 @@ public class ClaimDataManager implements Listener {
 
         for (Integer id : provider.getPermittedClaims(uuid)){
             Claim claim = getClaim(id);
-            if (chunkLookup.containsKey(claim.getWorld())){ // Make sure world of claim is loaded before we send it back.
+            if (Bukkit.getWorld(claim.getWorld()) != null){ // Make sure world of claim is loaded before we send it back.
                 claims.add(claim);
             }
         }

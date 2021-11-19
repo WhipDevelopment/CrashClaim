@@ -11,6 +11,7 @@ import net.crashcraft.crashclaim.menus.ClaimMenu;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -69,6 +70,12 @@ public class ClaimListMenu extends GUI {
 
             ItemStack descItem;
 
+            World world = Bukkit.getWorld(claim.getWorld());
+
+            if (world == null){
+                continue; // Skip the claim if the world is not loaded
+            }
+
             if (claim.getOwner().equals(getPlayer().getUniqueId())) {
                 descItem = Localization.MENU__GENERAL__CLAIM_ITEM_NO_OWNER.getItem(player,
                         "name", claim.getName(),
@@ -76,7 +83,7 @@ public class ClaimListMenu extends GUI {
                         "min_z", Integer.toString(claim.getMinZ()),
                         "max_x", Integer.toString(claim.getMaxX()),
                         "max_z", Integer.toString(claim.getMaxZ()),
-                        "world", Bukkit.getWorld(claim.getWorld()).getName()
+                        "world", world.getName()
                 );
             } else {
                 descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(player,
@@ -85,7 +92,7 @@ public class ClaimListMenu extends GUI {
                         "min_z", Integer.toString(claim.getMinZ()),
                         "max_x", Integer.toString(claim.getMaxX()),
                         "max_z", Integer.toString(claim.getMaxZ()),
-                        "world", Bukkit.getWorld(claim.getWorld()).getName(),
+                        "world", world.getName(),
                         "owner", Bukkit.getOfflinePlayer(claim.getOwner()).getName()
                 );
             }

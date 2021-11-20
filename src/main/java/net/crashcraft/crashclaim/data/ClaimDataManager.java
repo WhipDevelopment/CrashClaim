@@ -47,7 +47,7 @@ public class ClaimDataManager implements Listener {
     private final DataProvider provider;
     private final PermissionSetup permissionSetup;
 
-    private IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
+    private final IntCache<Claim> claimLookup; // claim id - claim  - First to get called on loads
     private final HashMap<UUID, Long2ObjectOpenHashMap<ArrayList<Integer>>> chunkLookup; // Pre load with data from mem
 
     private final AtomicInteger idCounter;

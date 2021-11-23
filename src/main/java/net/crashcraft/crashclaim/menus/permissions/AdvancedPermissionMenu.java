@@ -112,10 +112,15 @@ public class AdvancedPermissionMenu extends MenuListHelper {
             case MISC:
                 LinkedHashMap<PermissionRoute, MenuSwitchType> menuItemlist = new LinkedHashMap<>();
 
-                menuItemlist.put(PermissionRoute.PISTONS, MenuSwitchType.DOUBLE);
-                menuItemlist.put(PermissionRoute.FLUIDS, MenuSwitchType.DOUBLE);
-                menuItemlist.put(null, null);
-                menuItemlist.put(PermissionRoute.VIEW_SUB_CLAIMS, MenuSwitchType.DOUBLE);
+                if (claim instanceof SubClaim){ // Sub Claims do not need the other options.
+                    menuItemlist.put(PermissionRoute.ENTITY_GRIEF, MenuSwitchType.DOUBLE);
+                } else {
+                    menuItemlist.put(PermissionRoute.PISTONS, MenuSwitchType.DOUBLE);
+                    menuItemlist.put(PermissionRoute.FLUIDS, MenuSwitchType.DOUBLE);
+                    menuItemlist.put(PermissionRoute.ENTITY_GRIEF, MenuSwitchType.DOUBLE);
+                    menuItemlist.put(null, null);
+                    menuItemlist.put(PermissionRoute.VIEW_SUB_CLAIMS, MenuSwitchType.DOUBLE);
+                }
 
                 setup(menuItemlist, 5, permissionSet, player.getUniqueId(), claim.getPerms(), uuid);
                 return;
@@ -201,9 +206,6 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                 if (isPlayerPermission){
                     render(SUBMENU.ADMIN);
                 } else {
-                    if (claim instanceof SubClaim){
-                        break; // Don't need misc menu because fluid and piston controls do not affect subclaim
-                    }
                     render(SUBMENU.MISC);
                 }
                 break;

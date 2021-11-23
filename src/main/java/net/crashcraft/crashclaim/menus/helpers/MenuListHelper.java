@@ -351,6 +351,8 @@ public abstract class MenuListHelper extends GUI {
 
     private ItemStack getItemForPermission(PermissionRoute route){
         switch (route){
+            case ENTITY_GRIEF:
+                return Localization.MENU__PERMISSIONS__ENTITY_GRIEF.getItem(player);
             case MISC:
                 return Localization.MENU__PERMISSIONS__MISC.getItem(player);
             case ADMIN:

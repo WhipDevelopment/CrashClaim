@@ -1,6 +1,7 @@
 package net.crashcraft.crashclaim.data.providers.sqlite.versions;
 
 import co.aikar.idb.DB;
+import net.crashcraft.crashclaim.claimobjects.PermState;
 import net.crashcraft.crashclaim.data.providers.sqlite.DataVersion;
 
 import java.sql.SQLException;
@@ -13,6 +14,8 @@ public class DataRev3 implements DataVersion {
 
     @Override
     public void executeUpgrade(int fromRevision) throws SQLException {
+        DB.executeUpdate("DROP TABLE players_backup"); // Drop previous data revisions backup
+
         DB.executeUpdate("PRAGMA foreign_keys = OFF"); // Turn foreign keys off
 
         DB.executeUpdate("CREATE TABLE \"permission_set_backup\" (\n" +
@@ -61,7 +64,7 @@ public class DataRev3 implements DataVersion {
         DB.executeInsert("INSERT INTO permission_set(data_id, players_id, build, interactions, entities, teleportation, viewSubClaims, defaultContainer, " +
                 "explosions, pistons, fluids, modifyPermissions, modifyClaim) SELECT * FROM permission_set_backup;");
 
-        DB.executeInsert("INSERT INTO permission_set(entityGrief) VALUES (0) WHERE players_id = -1");
+        DB.executeInsert("UPDATE permission_set SET entityGrief = ? WHERE players_id = -1", PermState.DISABLE);
 
         DB.executeUpdate("PRAGMA foreign_keys = ON");  // Undo
     }

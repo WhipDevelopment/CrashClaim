@@ -348,6 +348,7 @@ public enum  PermissionRoute {
         }
     },
     /**
+     * Mob Griefs
      * Allow Pistons
      * Allow Fluids
      *
@@ -366,7 +367,7 @@ public enum  PermissionRoute {
 
         @Override
         public int getPerm(GlobalPermissionSet set) {
-            return set.getPistons() == set.getPistons() ? set.getPistons() : 4;
+            return (set.getPistons() == set.getFluids() && set.getFluids() == set.getEntityGrief()) ? set.getPistons() : 4;
         }
 
         @Override
@@ -377,6 +378,7 @@ public enum  PermissionRoute {
 
             PISTONS.setPerm(set, value);
             FLUIDS.setPerm(set, value);
+            ENTITY_GRIEF.setPerm(set, value);
         }
     },
     SUBCLAIM_ADMIN {

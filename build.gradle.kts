@@ -69,9 +69,9 @@ tasks {
 }
 
 group = "net.crashcraft"
-version = "1.0.18"
+version = "1.0.19"
 description = "CrashClaim"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_16
 
 publishing {
     publications {

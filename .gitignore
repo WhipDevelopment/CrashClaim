@@ -9,6 +9,7 @@ bin/
 
 # IntelliJ IDEA
 .idea/
+/.idea/
 *.iml
 
 # Gradle
@@ -19,7 +20,8 @@ bin/
 .gradletasknamecache
 !gradle-wrapper.jar
 gradle-app.setting
-gradle/
+/build/
+/.gradle/
 
 # Mac OSX
 .DS_Store

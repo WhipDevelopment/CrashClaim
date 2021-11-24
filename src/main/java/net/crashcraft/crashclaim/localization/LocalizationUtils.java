@@ -2,7 +2,6 @@ package net.crashcraft.crashclaim.localization;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 

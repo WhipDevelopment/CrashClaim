@@ -3,7 +3,6 @@ package net.crashcraft.crashclaim.localization;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.transformation.TransformationType;
-import org.bukkit.Bukkit;
 
 public class LocalizationLoader {
     static MiniMessage parser;

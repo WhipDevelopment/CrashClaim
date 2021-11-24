@@ -1,6 +1,10 @@
 package net.crashcraft.crashclaim.data.providers.sqlite;
 
-import co.aikar.idb.*;
+import co.aikar.idb.DB;
+import co.aikar.idb.Database;
+import co.aikar.idb.DatabaseOptions;
+import co.aikar.idb.DbRow;
+import co.aikar.idb.PooledDatabaseOptions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.crashcraft.crashclaim.CrashClaim;
@@ -24,7 +28,12 @@ import org.bukkit.event.world.WorldInitEvent;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class SQLiteDataProvider implements DataProvider {
     private BiMap<Material, Integer> containerIDMap;

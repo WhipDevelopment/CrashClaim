@@ -24,7 +24,6 @@ import net.crashcraft.crashclaim.migration.MigrationManager;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
-import net.crashcraft.crashclaim.update.UpdateChecker;
 import net.crashcraft.crashclaim.update.UpdateManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashpayment.CrashPayment;

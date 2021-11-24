@@ -8,8 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.concurrent.CompletableFuture;
-
 public class UpdateManager implements Listener {
    private final UpdateChecker updateChecker;
 

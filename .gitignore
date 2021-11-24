@@ -1,5 +1,24 @@
+# Java
+*.class
+
+# Eclipse IDE
+.settings/
+bin/
+.classpath
+.project
+
+# IntelliJ IDEA
 .idea/
-CrashCore.iml
-Server/
-target/
-/WhipClaim.iml
+*.iml
+
+# Gradle
+.gradle
+**/build/
+**/out/
+!eco-api/src/**/build/
+.gradletasknamecache
+!gradle-wrapper.jar
+gradle-app.setting
+
+# Mac OSX
+.DS_Store

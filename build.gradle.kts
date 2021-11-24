@@ -66,10 +66,18 @@ tasks {
         dependsOn(shadowJar)
         dependsOn(publishToMavenLocal)
     }
+
+    compileJava {
+        dependsOn(clean)
+    }
+
+    processResources {
+        expand(project.properties)
+    }
 }
 
 group = "net.crashcraft"
-version = "1.0.19"
+version = findProperty("version")!!
 description = "CrashClaim"
 java.sourceCompatibility = JavaVersion.VERSION_16
 

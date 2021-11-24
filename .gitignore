@@ -12,14 +12,14 @@ bin/
 *.iml
 
 # Gradle
-.gradle
+.gradle/
 **/build/
 **/out/
 !eco-api/src/**/build/
 .gradletasknamecache
 !gradle-wrapper.jar
 gradle-app.setting
-gradle
+gradle/
 
 # Mac OSX
 .DS_Store

@@ -19,6 +19,7 @@ bin/
 .gradletasknamecache
 !gradle-wrapper.jar
 gradle-app.setting
+gradle
 
 # Mac OSX
 .DS_Store

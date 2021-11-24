@@ -23,6 +23,10 @@ repositories {
 }
 
 dependencies {
+    // Fix your releases on jitpack so I don't have to do this
+    implementation(files("lib/CrashUtils-1.6.1.jar"))
+    compileOnly(files("lib/CrashPayment-1.0.1.jar"))
+
     implementation("org.cache2k:cache2k-base-bom:1.2.2.Final")
     implementation("co.aikar:taskchain-bukkit:3.7.2")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")
@@ -31,7 +35,6 @@ dependencies {
     implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
     implementation("net.wesjd:anvilgui:1.5.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.1")
-    implementation("dev.whip:CrashUtils:1.6.1")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:2.4.1")
     implementation("org.bstats:bstats-bukkit:2.2.1")
@@ -42,21 +45,27 @@ dependencies {
     compileOnly( "com.google.guava:guava:29.0-jre")
     compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly( "net.crashcraft:CrashPayment:1.0.1")
     compileOnly( "com.sk89q.worldguard:worldguard-bukkit:7.0.5")
     compileOnly( "com.github.TechFortress:GriefPrevention:16.16.0")
     compileOnly( "me.clip:placeholderapi:2.10.10")
     compileOnly( "us.dynmap:dynmap-api:3.2-SNAPSHOT")
 }
 
-shadowJar {
-    relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
-    relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
-    relocate("dev.whip.crashutils", "net.crashcraft.crashclaim.crashutils")
-    relocate("co.aikar.taskchain", "net.crashcraft.crashclaim.taskchain")
-    relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
-    relocate("org.bstats", "net.crashcraft.crashclaim.bstats")
-    relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
+tasks {
+    shadowJar {
+        relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
+        relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
+        relocate("dev.whip.crashutils", "net.crashcraft.crashclaim.crashutils")
+        relocate("co.aikar.taskchain", "net.crashcraft.crashclaim.taskchain")
+        relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
+        relocate("org.bstats", "net.crashcraft.crashclaim.bstats")
+        relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
+    }
+
+    build {
+        dependsOn(shadowJar)
+        dependsOn(publishToMavenLocal)
+    }
 }
 
 group = "net.crashcraft"
@@ -66,8 +75,8 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {
     publications {
-        maven<MavenPublication> {
-            from(components.java)
+        create<MavenPublication>("maven") {
+            from(components["java"])
         }
     }
 }

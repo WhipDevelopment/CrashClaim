@@ -18,10 +18,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Dispenser;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -343,7 +340,7 @@ public class PlayerListener implements Listener {
                     visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
                 }
             } else {
-                if (!helper.hasPermission(location, PermissionRoute.ENTITIES)){
+                if (!helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)){ // Skeletons and other shooters
                     e.setCancelled(true);
                 }
             }
@@ -358,7 +355,7 @@ public class PlayerListener implements Listener {
                 e.setCancelled(true);
             }
         } else if (e.getDamager() instanceof Creeper){
-            if (!helper.hasPermission(e.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
+            if (!helper.hasPermission(e.getEntity().getLocation(), PermissionRoute.ENTITY_GRIEF)){ // Creeper damage is now moved to this flag
                 e.setCancelled(true);
             }
         }
@@ -374,6 +371,10 @@ public class PlayerListener implements Listener {
             if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
                 event.setCancelled(true);
             }
+        } else if (event.getCause() == HangingBreakEvent.RemoveCause.ENTITY){ // TODO test this to make sure its only entity not player
+            if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.ENTITY_GRIEF)){
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -382,6 +383,8 @@ public class PlayerListener implements Listener {
         if (GlobalConfig.disabled_worlds.contains(event.getBlock().getWorld().getUID())){
             return;
         }
+
+        //TODO look into capturing bee fetalization and put into entity_grief
 
         if (event.getPlayer() == null){ // It was a dispenser
             Location baseLocation = event.getBlock().getLocation();
@@ -439,8 +442,9 @@ public class PlayerListener implements Listener {
             if (!helper.hasPermission(e.getAttacker().getLocation(), PermissionRoute.EXPLOSIONS)){
                 e.setCancelled(true);
             }
-        } else if (e.getAttacker() instanceof Creeper){
-            if (!helper.hasPermission(e.getAttacker().getLocation(), PermissionRoute.EXPLOSIONS)){
+        } else if (e.getAttacker() != null) {
+            // Entity other than player or tnt did the damage
+            if (!helper.hasPermission(e.getAttacker().getLocation(), PermissionRoute.ENTITY_GRIEF)) {
                 e.setCancelled(true);
             }
         }
@@ -550,10 +554,16 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (e.getIgnitingEntity() instanceof Player &&
-                !helper.hasPermission(e.getPlayer().getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)) {
-            e.setCancelled(true);
-            visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
+        if (e.getPlayer() == null){
+            // Not a player so it is an entity
+            if (!helper.hasPermission(e.getBlock().getLocation(), PermissionRoute.ENTITY_GRIEF)){
+                e.setCancelled(true);
+            }
+        } else {
+            if (!helper.hasPermission(e.getPlayer().getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)) {
+                e.setCancelled(true);
+                visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.StaticClaimLogic;
 import net.crashcraft.crashclaim.menus.list.ClaimListMenu;
+import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -79,5 +80,9 @@ public class CrashClaimAPI {
         chain.execute();
 
         return completableFuture;
+    }
+
+    public PermissionHelper getPermissionHelper(){
+        return PermissionHelper.getPermissionHelper();
     }
 }

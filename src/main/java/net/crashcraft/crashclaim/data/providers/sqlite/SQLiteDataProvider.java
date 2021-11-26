@@ -268,15 +268,16 @@ public class SQLiteDataProvider implements DataProvider {
     private void savePermissions(int data_id, PermissionGroup group) throws SQLException{
         GlobalPermissionSet global = group.getGlobalPermissionSet();
 
-        DB.executeUpdate("INSERT INTO permission_set(data_id, players_id, build, interactions, entities, explosions, teleportation, defaultContainer, viewSubClaims, pistons, fluids) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (data_id, players_id) DO UPDATE SET " +
-                        "build = ?, interactions = ?, entities = ?, explosions = ?, teleportation = ?, defaultContainer = ?, viewSubClaims = ?, pistons = ?, fluids = ?",
+        DB.executeUpdate("INSERT INTO permission_set(data_id, players_id, build, interactions, entities, explosions, entityGrief, teleportation, defaultContainer, viewSubClaims, pistons, fluids) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (data_id, players_id) DO UPDATE SET " +
+                        "build = ?, interactions = ?, entities = ?, explosions = ?, entityGrief = ?, teleportation = ?, defaultContainer = ?, viewSubClaims = ?, pistons = ?, fluids = ?",
                 data_id,
                 -1,
                 global.getBuild(),
                 global.getInteractions(),
                 global.getEntities(),
                 global.getExplosions(),
+                global.getEntityGrief(),
                 global.getTeleportation(),
                 global.getDefaultConatinerValue(),
                 global.getViewSubClaims(),
@@ -287,6 +288,7 @@ public class SQLiteDataProvider implements DataProvider {
                 global.getInteractions(),
                 global.getEntities(),
                 global.getExplosions(),
+                global.getEntityGrief(),
                 global.getTeleportation(),
                 global.getDefaultConatinerValue(),
                 global.getViewSubClaims(),
@@ -502,7 +504,7 @@ public class SQLiteDataProvider implements DataProvider {
     }
 
     private GlobalPermissionSet getGlobalPermissionSet(int data_id) throws SQLException{
-        DbRow globalPermissionRow = DB.getFirstRow("SELECT build, interactions, entities, explosions, teleportation, viewSubClaims, pistons, fluids, defaultContainer FROM permission_set " +
+        DbRow globalPermissionRow = DB.getFirstRow("SELECT build, interactions, entities, explosions, entityGrief, teleportation, viewSubClaims, pistons, fluids, defaultContainer FROM permission_set " +
                 "WHERE data_id = ? AND players_id = -1", data_id);
 
         HashMap<Material, Integer> globalContainers = new HashMap<>();
@@ -515,6 +517,7 @@ public class SQLiteDataProvider implements DataProvider {
                 globalPermissionRow.getInt("interactions"),
                 globalPermissionRow.getInt("entities"),
                 globalPermissionRow.getInt("explosions"),
+                globalPermissionRow.getInt("entityGrief"),
                 globalPermissionRow.getInt("teleportation"),
                 globalPermissionRow.getInt("viewSubClaims"),
                 globalContainers,

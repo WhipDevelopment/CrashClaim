@@ -105,22 +105,24 @@ public class WorldListener implements Listener {
             return;
         }
 
-        if (e.getEntity() instanceof Projectile){
+        if (e.getEntity() instanceof Projectile && ((Projectile) e.getEntity()).getShooter() instanceof Player){
             Location location = e.getBlock().getLocation();
-            if (((Projectile) e.getEntity()).getShooter() instanceof Player) {
-                Player player = (Player) ((Projectile) e.getEntity()).getShooter();
+            Player player = (Player) ((Projectile) e.getEntity()).getShooter();
 
-                if (player == null)
-                    return;
+            if (player == null) {
+                return;
+            }
 
-                if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
-                    Material material = e.getBlock().getType();
-                    if (material.isInteractable() || perms.getExtraInteractables().contains(material)) {
-                        e.setCancelled(true);
-                        visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
-                    }
+            if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
+                Material material = e.getBlock().getType();
+                if (material.isInteractable() || perms.getExtraInteractables().contains(material)) {
+                    e.setCancelled(true);
+                    visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                 }
-            } else if (!helper.hasPermission(location, PermissionRoute.INTERACTIONS)){
+            }
+        } else {
+            // Entities other than projectiles where shooter is a player are handled by entity grief
+            if (!helper.hasPermission(e.getBlock().getLocation(), PermissionRoute.ENTITY_GRIEF)){
                 e.setCancelled(true);
             }
         }
@@ -133,57 +135,51 @@ public class WorldListener implements Listener {
         }
 
         Location location = e.getBlock().getLocation();
-        if (e.getEntity() instanceof Arrow && ((Arrow) e.getEntity()).getShooter() instanceof Player) {
-            Player player = (Player) ((Arrow) e.getEntity()).getShooter();
 
-            if (player == null)
-                return;
-
-            if (e.getBlock().getType().equals(Material.TNT)
-                    && !helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
+        if (e.getEntity() instanceof Player) {
+            if (!helper.hasPermission(e.getEntity().getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
                 e.setCancelled(true);
+                Player player = (Player) e.getEntity();
                 visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
             }
-        } else if ((e.getEntity() instanceof WitherSkull || e.getEntity() instanceof Wither)
-                && !helper.hasPermission(location, PermissionRoute.EXPLOSIONS)) {
-            e.setCancelled(true);
-        } else if (e.getEntity() instanceof Player
-                && !helper.hasPermission(e.getEntity().getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
-            e.setCancelled(true);
-            Player player = (Player) e.getEntity();
-            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
-        } else if ((e.getEntity() instanceof Sheep || e.getEntity() instanceof Enderman)
-                && !helper.hasPermission(location, PermissionRoute.BUILD)) {
-            e.setCancelled(true);
         } else {
-            for (Entity entity : e.getEntity().getPassengers()) {
-                if (entity instanceof Player){
-                    if (helper.hasPermission(entity.getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
-                        return;
-                    }
+            if (e.getEntity() instanceof Arrow && ((Arrow) e.getEntity()).getShooter() instanceof Player) {
+                Player player = (Player) ((Arrow) e.getEntity()).getShooter();
 
+                if (player == null) {
+                    return;
+                }
+
+                if (e.getBlock().getType().equals(Material.TNT)
+                        && !helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
                     e.setCancelled(true);
-                    Player player = (Player) entity;
                     visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                 }
-            }
-        }
-    }
-
-    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onBlockIgniteEvent(BlockIgniteEvent e){
-        if (GlobalConfig.disabled_worlds.contains(e.getBlock().getWorld().getUID())){
-            return;
-        }
-
-        Location location = e.getBlock().getLocation();
-        if (e.getPlayer() != null){
-            if (!helper.hasPermission(e.getPlayer().getUniqueId(), location, PermissionRoute.BUILD)) {
+            } else if (
+                    ((e.getEntity() instanceof Sheep || e.getEntity() instanceof Enderman) && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF))
+                            || (e.getEntity() instanceof WitherSkull && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) // Wither skulls should be the one exploding but some versions the api is wrong, TODO check if explosions are handled correctly
+                            || (e.getEntity() instanceof Wither && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) // Handles wither block breaks other than explosions
+            ) {
                 e.setCancelled(true);
-                visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
+            } else {
+                for (Entity entity : e.getEntity().getPassengers()) { // Used for boats and horses with player as passenger
+                    if (entity instanceof Player){
+                        if (helper.hasPermission(entity.getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
+                            return;
+                        }
+
+                        e.setCancelled(true);
+                        Player player = (Player) entity;
+                        visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
+                        return;
+                    }
+                }
+
+                //No player with permissions was a passenger or no passengers
+                if (!helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) {
+                    e.setCancelled(true);
+                }
             }
-        } else if (!helper.hasPermission(location, PermissionRoute.BUILD)){
-            e.setCancelled(true);
         }
     }
 

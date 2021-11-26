@@ -27,7 +27,7 @@ public class ParentPermissionGroup extends PermissionGroup {
 
     @Override
     public GlobalPermissionSet createGlobalPermissionSet() {
-        return new GlobalPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.ENABLED, PermState.ENABLED,
+        return new GlobalPermissionSet(PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.DISABLE, PermState.ENABLED, PermState.ENABLED,
                 new HashMap<>(), PermState.DISABLE, PermState.DISABLE, PermState.DISABLE);
     }
 

@@ -49,14 +49,14 @@ public class ResizeClaimMode implements ClaimMode {
 
                 visualizationManager.getProvider().spawnClaimVisual(VisualColor.GOLD, group, claim, player.getLocation().getBlockY() - 1).spawn();
 
-                player.sendMessage(Localization.RESIZE__CLICK_ANOTHER_LOCATION.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE__CLICK_ANOTHER_LOCATION.getMessage(player));
             } else {
-                player.sendMessage(Localization.RESIZE__NO_PERMISSION.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE__NO_PERMISSION.getMessage(player));
                 cleanup(player.getUniqueId(), true);
             }
         } else {
             firstLocation = null;
-            player.sendMessage(Localization.RESIZE__INSTRUCTIONS.getMessage(player));
+            player.spigot().sendMessage(Localization.RESIZE__INSTRUCTIONS.getMessage(player));
         }
     }
 
@@ -86,7 +86,7 @@ public class ResizeClaimMode implements ClaimMode {
                     visualizationManager.deSpawnAfter(visual, 5);
 
                     if (aBoolean) {
-                        player.sendMessage(Localization.RESIZE__SUCCESS.getMessage(player));
+                        player.spigot().sendMessage(Localization.RESIZE__SUCCESS.getMessage(player));
                     } else {
                         cleanup(uuid, true);
                     }
@@ -94,23 +94,23 @@ public class ResizeClaimMode implements ClaimMode {
 
         switch (error){
             case OVERLAP_EXISTING:
-                player.sendMessage(Localization.RESIZE__NO_OVERLAP.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE__NO_OVERLAP.getMessage(player));
                 cleanup(uuid, true);
                 return;
             case TOO_SMALL:
-                player.sendMessage(Localization.RESIZE__MIN_SIZE.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE__MIN_SIZE.getMessage(player));
                 cleanup(uuid, true);
                 return;
             case CANNOT_FLIP_ON_RESIZE:
-                player.sendMessage(Localization.RESIZE__CANNOT_FLIP.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE__CANNOT_FLIP.getMessage(player));
                 cleanup(uuid, true);
                 return;
             case OVERLAP_EXISTING_SUBCLAIM:
-                player.sendMessage(Localization.RESIZE__OVERLAP_EXISTING.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE__OVERLAP_EXISTING.getMessage(player));
                 cleanup(uuid, true);
                 return;
             case OVERLAP_EXISTING_OTHER:
-                player.sendMessage(Localization.RESIZE__ERROR_OTHER.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE__ERROR_OTHER.getMessage(player));
             case NONE:
                 cleanup(uuid, false);
         }

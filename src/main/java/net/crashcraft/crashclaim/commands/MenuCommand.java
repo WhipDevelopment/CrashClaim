@@ -46,7 +46,7 @@ public class MenuCommand extends BaseCommand {
         if (claim != null){
             new ClaimMenu(player, claim, null).open();
         } else {
-            player.sendMessage(Localization.CLAIM_SETTINGS__NO_CLAIM.getMessage(player));
+            player.spigot().sendMessage(Localization.CLAIM_SETTINGS__NO_CLAIM.getMessage(player));
         }
     }
 
@@ -68,13 +68,13 @@ public class MenuCommand extends BaseCommand {
                     (p, aBoolean) -> {
                         if (aBoolean) {
                             if (!PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
-                                player.sendMessage(Localization.UN_CLAIM__NO_PERMISSION.getMessage(player));
+                                player.spigot().sendMessage(Localization.UN_CLAIM__NO_PERMISSION.getMessage(player));
                                 return "";
                             }
 
                             for (SubClaim subClaim : claim.getSubClaims()){
                                 if (!PermissionHelper.getPermissionHelper().hasPermission(subClaim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)){
-                                    player.sendMessage(Localization.UN_CLAIM__NO_PERMISSION_IN_ALL.getMessage(player));
+                                    player.spigot().sendMessage(Localization.UN_CLAIM__NO_PERMISSION_IN_ALL.getMessage(player));
                                     return "";
                                 }
                             }
@@ -88,7 +88,7 @@ public class MenuCommand extends BaseCommand {
                         return "";
                     }, p -> "").open();
         } else {
-            player.sendMessage(Localization.UN_CLAIM__NO_CLAIM.getMessage(player));
+            player.spigot().sendMessage(Localization.UN_CLAIM__NO_CLAIM.getMessage(player));
         }
     }
 
@@ -121,13 +121,13 @@ public class MenuCommand extends BaseCommand {
                                     visualizationManager.deSpawnAfter(visual, 10);
                                 }
                             } else {
-                                player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_PERMISSION.getMessage(player));
+                                player.spigot().sendMessage(Localization.UN_SUBCLAIM__MENU__NO_PERMISSION.getMessage(player));
                             }
                         }
                         return "";
                     }, p -> "").open();
         } else {
-            player.sendMessage(Localization.UN_SUBCLAIM__MENU__NO_CLAIM.getMessage(player));
+            player.spigot().sendMessage(Localization.UN_SUBCLAIM__MENU__NO_CLAIM.getMessage(player));
         }
     }
 }

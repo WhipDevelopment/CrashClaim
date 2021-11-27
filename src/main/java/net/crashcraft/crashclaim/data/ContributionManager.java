@@ -53,7 +53,7 @@ public class ContributionManager {
                 if (offlinePlayer.isOnline()){
                     Player p = offlinePlayer.getPlayer();
                     if (p != null) {
-                        p.sendMessage(Localization.CONTRIBUTION_REFUND.getMessage(p,
+                        p.spigot().sendMessage(Localization.CONTRIBUTION_REFUND.getMessage(p,
                                 "amount", Integer.toString((int) Math.floor(transaction.getAmount()))));
                     }
                 }

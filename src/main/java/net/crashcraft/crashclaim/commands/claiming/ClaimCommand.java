@@ -63,7 +63,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
             modeMap.put(uuid, ClickState.CLAIM);
             visualizationManager.visualizeSuroudningClaims(player, dataManager);
             visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage(player));
-            player.sendMessage(Localization.NEW_CLAIM__INFO.getMessage(player));
+            player.spigot().sendMessage(Localization.NEW_CLAIM__INFO.getMessage(player));
         }
     }
 
@@ -83,17 +83,17 @@ public class ClaimCommand extends BaseCommand implements Listener {
 
             Claim claim = dataManager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());
             if (claim == null) {
-                player.sendMessage(Localization.SUBCLAIM__NO_CLAIM.getMessage(player));
+                player.spigot().sendMessage(Localization.SUBCLAIM__NO_CLAIM.getMessage(player));
                 return;
             }
 
             if (!PermissionHelper.getPermissionHelper().hasPermission(claim, uuid, PermissionRoute.MODIFY_CLAIM)) {
-                player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
+                player.spigot().sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
                 return;
             }
 
             if (claim.isEditing()){
-                player.sendMessage(Localization.SUBCLAIM__ALREADY_RESIZING.getMessage(player));
+                player.spigot().sendMessage(Localization.SUBCLAIM__ALREADY_RESIZING.getMessage(player));
                 return;
             }
 
@@ -104,7 +104,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
             visualizationManager.visualizeSuroudningSubClaims(claim, player);
 
             visualizationManager.sendAlert(player, Localization.SUBCLAIM__ENABLED.getMessage(player));
-            player.sendMessage(Localization.NEW_SUBCLAIM__INFO.getMessage(player));
+            player.spigot().sendMessage(Localization.NEW_SUBCLAIM__INFO.getMessage(player));
         }
     }
 
@@ -152,7 +152,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
 
                     if (subClaim != null){
                         if (!PermissionHelper.getPermissionHelper().hasPermission(subClaim, uuid, PermissionRoute.MODIFY_CLAIM)) {
-                            player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
+                            player.spigot().sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
                             return;
                         }
 

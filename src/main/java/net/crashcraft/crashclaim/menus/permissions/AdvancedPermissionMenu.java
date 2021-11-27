@@ -212,7 +212,7 @@ public class AdvancedPermissionMenu extends MenuListHelper {
 
     @Override
     public void invalidPermissions() {
-        player.sendMessage(Localization.MENU__SIMPLE_PERMISSIONS__NO_PERMISSION.getMessage(player));
+        player.spigot().sendMessage(Localization.MENU__SIMPLE_PERMISSIONS__NO_PERMISSION.getMessage(player));
         forceClose();
     }
 

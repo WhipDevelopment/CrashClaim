@@ -18,9 +18,9 @@ public class BypassCommand extends BaseCommand {
     @CommandPermission("crashclaim.admin.bypass")
     public void onByp(Player player){
         if (manager.toggleBypass(player.getUniqueId())){
-            player.sendMessage(Localization.BYPASS__ENABLED.getMessage(player));
+            player.spigot().sendMessage(Localization.BYPASS__ENABLED.getMessage(player));
         } else {
-            player.sendMessage(Localization.BYPASS__DISABLED.getMessage(player));
+            player.spigot().sendMessage(Localization.BYPASS__DISABLED.getMessage(player));
         }
     }
 }

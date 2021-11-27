@@ -8,7 +8,7 @@ import java.util.List;
 public class LocalizationUtils {
     public static void sendMessageList(CommandSender player, List<BaseComponent[]> message){
         for (BaseComponent[] line : message){
-            player.sendMessage(line);
+            player.spigot().sendMessage(line);
         }
     }
 }

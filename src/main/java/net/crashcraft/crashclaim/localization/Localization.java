@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.craftbukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Material;
@@ -721,10 +722,13 @@ public enum Localization {
                 iMeta.lore(components);
             } else {
                 List<String> components = new ArrayList<>(lore.size());
+
+                LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().build();
                 for (String line : lore) {
                     components.add(
-                            ComponentSerializer.toString(Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
-                                    hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace)))
+                            serializer.serialize(
+                                    Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
+                                            hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace)))
                     );
                 }
 

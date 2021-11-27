@@ -46,11 +46,11 @@ public class ResizeSubClaimMode implements ClaimMode {
         if (!StaticClaimLogic.isClaimBorder(subClaim.getMinX(), subClaim.getMaxX(), subClaim.getMinZ(), subClaim.getMaxZ(),
                 firstLocation.getBlockX(), firstLocation.getBlockZ())){
             firstLocation = null;
-            player.sendMessage(Localization.RESIZE_SUBCLAIM__INSTRUCTIONS.getMessage(player));
+            player.spigot().sendMessage(Localization.RESIZE_SUBCLAIM__INSTRUCTIONS.getMessage(player));
             return;
         }
 
-        player.sendMessage(Localization.RESIZE_SUBCLAIM__CLICK_ANOTHER_LOCATION.getMessage(player));
+        player.spigot().sendMessage(Localization.RESIZE_SUBCLAIM__CLICK_ANOTHER_LOCATION.getMessage(player));
 
         VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
@@ -74,7 +74,7 @@ public class ResizeSubClaimMode implements ClaimMode {
     @Override
     public void click(Player player, Location click) {
         if (!PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
-            player.sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
+            player.spigot().sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
             cleanup(player.getUniqueId(), true);
             return;
         }
@@ -87,7 +87,7 @@ public class ResizeSubClaimMode implements ClaimMode {
 
         if (!MathUtils.iskPointCollide(claim.getMinX(), claim.getMinZ(),
                 claim.getMaxX(), claim.getMaxZ(), click.getBlockX(), click.getBlockZ())){
-            player.sendMessage(Localization.RESIZE_SUBCLAIM__INSIDE_PARENT.getMessage(player));
+            player.spigot().sendMessage(Localization.RESIZE_SUBCLAIM__INSIDE_PARENT.getMessage(player));
             cleanup(player.getUniqueId(), true);
             return;
         }
@@ -96,19 +96,19 @@ public class ResizeSubClaimMode implements ClaimMode {
 
         switch (error){
             case OVERLAP_EXISTING_SUBCLAIM:
-                player.sendMessage(Localization.RESIZE_SUBCLAIM__NO_OVERLAP.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE_SUBCLAIM__NO_OVERLAP.getMessage(player));
                 cleanup(player.getUniqueId(), true);
                 return;
             case TOO_SMALL:
-                player.sendMessage(Localization.RESIZE_SUBCLAIM__MIN_SIZE.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE_SUBCLAIM__MIN_SIZE.getMessage(player));
                 cleanup(player.getUniqueId(), true);
                 return;
             case CANNOT_FLIP_ON_RESIZE:
-                player.sendMessage(Localization.RESIZE_SUBCLAIM__CANNOT_FLIP.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE_SUBCLAIM__CANNOT_FLIP.getMessage(player));
                 cleanup(player.getUniqueId(), true);
                 return;
             case NONE:
-                player.sendMessage(Localization.RESIZE_SUBCLAIM__SUCCESS.getMessage(player));
+                player.spigot().sendMessage(Localization.RESIZE_SUBCLAIM__SUCCESS.getMessage(player));
 
                 VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 

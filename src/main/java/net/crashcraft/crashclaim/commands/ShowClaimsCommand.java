@@ -38,17 +38,17 @@ public class ShowClaimsCommand extends BaseCommand {
         Claim claim = claimDataManager.getClaim(location.getBlockX(), location.getBlockZ(), player.getWorld().getUID());
         if (claim != null) {
             if (!PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.VIEW_SUB_CLAIMS)){
-                player.sendMessage(Localization.SHOW__SUBCLAIM__NO_PERMISSION.getMessage(player));
+                player.spigot().sendMessage(Localization.SHOW__SUBCLAIM__NO_PERMISSION.getMessage(player));
                 return;
             }
 
             if (claim.getSubClaims().size() != 0){
                 visualizationManager.visualizeSuroudningSubClaims(claim, player);
             } else {
-                player.sendMessage(Localization.SHOW__SUBCLAIM__NO_SUBCLAIMS.getMessage(player));
+                player.spigot().sendMessage(Localization.SHOW__SUBCLAIM__NO_SUBCLAIMS.getMessage(player));
             }
         } else {
-            player.sendMessage(Localization.SHOW__SUBCLAIM__STAND_INSIDE.getMessage(player));
+            player.spigot().sendMessage(Localization.SHOW__SUBCLAIM__STAND_INSIDE.getMessage(player));
         }
     }
 }

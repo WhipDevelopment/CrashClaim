@@ -20,7 +20,7 @@ import java.util.UUID;
 public class PlayerPermListMenu {
     public PlayerPermListMenu(BaseClaim claim, Player viewer, GUI previous){
         if (!PermissionHelper.getPermissionHelper().hasPermission(claim, viewer.getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)){
-            viewer.sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(viewer));
+            viewer.spigot().sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(viewer));
             //Try and close an inventory, want to close a loose end just in case
             viewer.closeInventory();
             return;

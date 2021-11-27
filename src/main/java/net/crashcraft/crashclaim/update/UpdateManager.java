@@ -52,7 +52,7 @@ public class UpdateManager implements Listener {
         Player player = event.getPlayer();
 
         if (player.hasPermission("crashclaim.admin.notifyupdate")){
-            player.sendMessage(Localization.UPDATE_AVAILABLE.getMessage(player,
+            player.spigot().sendMessage(Localization.UPDATE_AVAILABLE.getMessage(player,
                     "version", updateChecker.getLastResult().getNewestVersion()));
         }
     }

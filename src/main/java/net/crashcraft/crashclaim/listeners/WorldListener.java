@@ -212,7 +212,7 @@ public class WorldListener implements Listener {
         e.blockList().removeAll(processExplosion(e.blockList()));
     }
 
-    private List<Block> processExplosion(List<Block> blocks){
+    private List<Block> processExplosion(List<Block> blocks ){
         ArrayList<Block> removeAlBlocks = new ArrayList<>();
         for (Block block : blocks){
             if (!helper.hasPermission(block.getLocation(), PermissionRoute.EXPLOSIONS)){

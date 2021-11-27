@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class Wrapper1_17_1 extends Wrapper1_17 {
+public class Wrapper1_17_1 extends Wrapper1_17_0 {
     @Override
     public void removeEntity(Player player, Set<Integer> entity_ids){
         PacketContainer packet = CompatabilityManager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_DESTROY);

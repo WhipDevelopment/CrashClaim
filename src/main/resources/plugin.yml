@@ -1,5 +1,5 @@
-name: ${project.name}
-version: ${project.version}
+name: CrashClaim
+version: ${version}
 description: A modern advanced user oriented claiming system
 author: Chasewhip
 depend: [ProtocolLib]

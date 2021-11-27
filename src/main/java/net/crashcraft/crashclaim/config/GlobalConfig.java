@@ -4,7 +4,6 @@ import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.ArrayList;

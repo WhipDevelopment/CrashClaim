@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class ClaimListMenu extends GUI {
     private final GUI previousMenu;

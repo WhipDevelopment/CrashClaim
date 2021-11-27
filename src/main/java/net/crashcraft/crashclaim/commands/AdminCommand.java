@@ -1,7 +1,11 @@
 package net.crashcraft.crashclaim.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandCompletion;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Subcommand;
 import com.comphenix.protocol.ProtocolLibrary;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.localization.Localization;
@@ -12,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 @CommandAlias("crashclaim")
 public class AdminCommand extends BaseCommand {

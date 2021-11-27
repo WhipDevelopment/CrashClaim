@@ -4,7 +4,6 @@ import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.dynmap.DynmapAPI;
-import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerSet;
 
 public class dynmapSupport implements PluginSupport {

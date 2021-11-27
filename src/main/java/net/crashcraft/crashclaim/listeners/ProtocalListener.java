@@ -37,9 +37,7 @@ public class ProtocalListener {
                             int id = packet.getIntegers().read(0);
 
                             for (BaseVisual visual : group.getActiveVisuals()){
-                                if (visual instanceof BaseGlowVisual) {
-                                    BaseGlowVisual glowVisual = (BaseGlowVisual) visual;
-
+                                if (visual instanceof BaseGlowVisual glowVisual) {
                                     Location location = glowVisual.getEntityLocation(id);
                                     if (location != null) {
                                         Bukkit.getScheduler().runTask(plugin, () -> command.click(player, location));

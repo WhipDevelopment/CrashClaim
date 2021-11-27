@@ -24,15 +24,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.SheepRegrowWoolEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class WorldListener implements Listener {
      private final PermissionHelper helper;
@@ -40,11 +38,22 @@ public class WorldListener implements Listener {
      private final VisualizationManager visuals;
      private final ClaimDataManager manager;
 
+     private final Set<Sheep> trackSheepRegrow; // Tracker to block sheep from regrowing after block cancelled
+
     public WorldListener(ClaimDataManager manager, VisualizationManager visuals){
         this.manager = manager;
         this.perms = manager.getPermissionSetup();
         this.visuals = visuals;
         this.helper = PermissionHelper.getPermissionHelper();
+
+        this.trackSheepRegrow = new HashSet<>();
+    }
+
+    @EventHandler
+    public void onSheepRegrowWoolEvent(SheepRegrowWoolEvent e){
+        if (trackSheepRegrow.remove(e.getEntity())){ // API workaround
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler (priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -112,13 +121,8 @@ public class WorldListener implements Listener {
             return;
         }
 
-        if (e.getEntity() instanceof Projectile && ((Projectile) e.getEntity()).getShooter() instanceof Player){
+        if (e.getEntity() instanceof Projectile && ((Projectile) e.getEntity()).getShooter() instanceof Player player){
             Location location = e.getBlock().getLocation();
-            Player player = (Player) ((Projectile) e.getEntity()).getShooter();
-
-            if (player == null) {
-                return;
-            }
 
             if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
                 Material material = e.getBlock().getType();
@@ -150,33 +154,33 @@ public class WorldListener implements Listener {
                 visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
             }
         } else {
-            if (e.getEntity() instanceof Arrow && ((Arrow) e.getEntity()).getShooter() instanceof Player) {
-                Player player = (Player) ((Arrow) e.getEntity()).getShooter();
-
-                if (player == null) {
-                    return;
-                }
-
+            if (e.getEntity() instanceof Arrow && ((Arrow) e.getEntity()).getShooter() instanceof Player player) {
                 if (e.getBlock().getType().equals(Material.TNT)
                         && !helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
                     e.setCancelled(true);
                     visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                 }
+            } else if (e.getEntity() instanceof Sheep sheep && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) {
+                e.setCancelled(true);
+
+                if (e.getBlock().getBlockData().getMaterial() == Material.GRASS_BLOCK && e.getTo() == Material.DIRT) { // Stupid api workaround for sheep eat
+                    trackSheepRegrow.add(sheep);
+                }
             } else if (
-                    ((e.getEntity() instanceof Sheep || e.getEntity() instanceof Enderman) && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF))
-                            || (e.getEntity() instanceof WitherSkull && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) // Wither skulls should be the one exploding but some versions the api is wrong, TODO check if explosions are handled correctly
-                            || (e.getEntity() instanceof Wither && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) // Handles wither block breaks other than explosions
+                    (e.getEntity() instanceof Enderman
+                            || (e.getEntity() instanceof WitherSkull) // Wither skulls should be the one exploding but some versions the api is wrong, TODO check if explosions are handled correctly
+                            || (e.getEntity() instanceof Wither)) // Handles wither block breaks other than explosions
+                    && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)
             ) {
                 e.setCancelled(true);
             } else {
                 for (Entity entity : e.getEntity().getPassengers()) { // Used for boats and horses with player as passenger
-                    if (entity instanceof Player){
+                    if (entity instanceof Player player){
                         if (helper.hasPermission(entity.getUniqueId(), location, PermissionRoute.INTERACTIONS)) {
                             return;
                         }
 
                         e.setCancelled(true);
-                        Player player = (Player) entity;
                         visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                         return;
                     }

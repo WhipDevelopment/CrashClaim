@@ -12,14 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Enderman;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkull;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -173,6 +166,8 @@ public class WorldListener implements Listener {
                     && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)
             ) {
                 e.setCancelled(true);
+            } else if (e.getEntity() instanceof FallingBlock){
+                // Don't handle this for now, maybe need to handle
             } else {
                 for (Entity entity : e.getEntity().getPassengers()) { // Used for boats and horses with player as passenger
                     if (entity instanceof Player player){

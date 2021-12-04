@@ -27,6 +27,9 @@ dependencies {
     implementation("com.github.CrashCraftNetwork:CrashUtils:master-SNAPSHOT")
     compileOnly("com.github.Chasewhip8:CrashPayment:master-SNAPSHOT")
 
+    // Paper
+    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
+
     // Other
     implementation("org.cache2k:cache2k-base-bom:1.2.2.Final")
     implementation("co.aikar:taskchain-bukkit:3.7.2")
@@ -34,7 +37,7 @@ dependencies {
     implementation("co.aikar:fastutil-longbase:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longhashmap:3.0-SNAPSHOT")
     implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
-    implementation("net.wesjd:anvilgui:1.5.1-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT-dev")
     implementation("io.papermc:paperlib:1.0.1")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:2.4.1")
@@ -42,7 +45,6 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.0.0")
     implementation("net.kyori:adventure-platform-bungeecord:4.0.0")
     implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
-    compileOnly( "io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
     compileOnly( "com.google.guava:guava:29.0-jre")
     compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
@@ -82,7 +84,7 @@ tasks {
 group = "net.crashcraft"
 version = findProperty("version")!!
 description = "CrashClaim"
-java.sourceCompatibility = JavaVersion.VERSION_16
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
     publications {

@@ -28,13 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Wrapper1_17_0 implements CompatabilityWrapper {
     @Override
     public void sendActionBarTitle(Player player, BaseComponent[] message, int fade_in, int duration, int fade_out) {
-        PacketContainer packet = CompatabilityManager.getProtocolManager().createPacket(
-                new PacketType(PacketType.Protocol.PLAY, PacketType.Sender.SERVER, 0x41, MinecraftVersion.getCurrentVersion(), "ActionBar"));
+        PacketContainer packet = CompatabilityManager.getProtocolManager().createPacket(PacketType.Play.Server.SET_ACTION_BAR_TEXT);
 
         packet.getChatComponents().write(0, WrappedChatComponent.fromJson(ComponentSerializer.toString(message)));
 
-        PacketContainer packetDelay = CompatabilityManager.getProtocolManager().createPacket(
-                new PacketType(PacketType.Protocol.PLAY, PacketType.Sender.SERVER, 0x5A, MinecraftVersion.getCurrentVersion(), "SetTitleTime"));
+        PacketContainer packetDelay = CompatabilityManager.getProtocolManager().createPacket(PacketType.Play.Server.SET_TITLES_ANIMATION);
 
         packetDelay.getIntegers().write(0, fade_in);
         packetDelay.getIntegers().write(1, duration);

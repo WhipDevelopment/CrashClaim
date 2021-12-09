@@ -31,6 +31,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
@@ -195,7 +196,7 @@ public class PlayerListener implements Listener {
 
     private boolean processPistonEvent(BlockFace direction, List<Block> blocks, Block pistonBlock){
         Block pushed = pistonBlock.getRelative(direction);
-        if (blocks.size() == 0) {
+        if (blocks.isEmpty()) {
             return checkToCancel(pistonBlock, pushed);
         }
 
@@ -344,12 +345,9 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (e.getDamager() instanceof Projectile){
-            Projectile arrow = (Projectile) e.getDamager();
+        if (e.getDamager() instanceof Projectile arrow){
             Location location = arrow.getLocation();
-            if (arrow.getShooter() instanceof Player){
-                Player player = (Player) arrow.getShooter();
-
+            if (arrow.getShooter() instanceof Player player){
                 if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){
                     e.setCancelled(true);
                     visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
@@ -359,8 +357,7 @@ public class PlayerListener implements Listener {
                     e.setCancelled(true);
                 }
             }
-        } else if (e.getDamager() instanceof Player) {
-            Player player = (Player) e.getDamager();
+        } else if (e.getDamager() instanceof Player player) {
             if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.ENTITIES)){
                 e.setCancelled(true);
                 visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
@@ -377,7 +374,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onHangingBreak(HangingBreakEvent event) {
+    public void onHangingBreakByEntityEvent(HangingBreakByEntityEvent event) {
         if (GlobalConfig.disabled_worlds.contains(event.getEntity().getWorld().getUID())){
             return;
         }
@@ -386,8 +383,32 @@ public class PlayerListener implements Listener {
             if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
                 event.setCancelled(true);
             }
-        } else if (event.getCause() == HangingBreakEvent.RemoveCause.ENTITY){ // TODO test this to make sure its only entity not player
+        } else if (event.getCause() == HangingBreakEvent.RemoveCause.ENTITY){
+            if (event.getRemover() instanceof Player player){
+                if (!helper.hasPermission(player.getUniqueId(), event.getEntity().getLocation(), PermissionRoute.ENTITIES)){
+                    event.setCancelled(true);
+                }
+            } else if (event.getRemover() instanceof Arrow arrow){
+                if (arrow.getShooter() instanceof Player player && !helper.hasPermission(player.getUniqueId(), event.getEntity().getLocation(), PermissionRoute.ENTITIES)){
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+
             if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.ENTITY_GRIEF)){
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onHangingBreakEvent(HangingBreakEvent event) {
+        if (GlobalConfig.disabled_worlds.contains(event.getEntity().getWorld().getUID())){
+            return;
+        }
+
+        if (event.getCause() == HangingBreakEvent.RemoveCause.EXPLOSION) {
+            if (!helper.hasPermission(event.getEntity().getLocation(), PermissionRoute.EXPLOSIONS)){
                 event.setCancelled(true);
             }
         }

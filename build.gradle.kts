@@ -37,7 +37,7 @@ dependencies {
     implementation("co.aikar:fastutil-longbase:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longhashmap:3.0-SNAPSHOT")
     implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
-    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT-dev")
+    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.1")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:2.4.1")

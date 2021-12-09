@@ -124,6 +124,8 @@ public class WorldListener implements Listener {
                     visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                 }
             }
+        } if (e.getEntity() instanceof Villager){
+            // TODO remove once other check is done
         } else {
             // Entities other than projectiles where shooter is a player are handled by entity grief
             if (!helper.hasPermission(e.getBlock().getLocation(), PermissionRoute.ENTITY_GRIEF)){
@@ -166,7 +168,7 @@ public class WorldListener implements Listener {
                     && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)
             ) {
                 e.setCancelled(true);
-            } else if (e.getEntity() instanceof FallingBlock){
+            } else if (e.getEntity() instanceof Villager || e.getEntity() instanceof FallingBlock){
                 // Don't handle this for now, maybe need to handle
             } else {
                 for (Entity entity : e.getEntity().getPassengers()) { // Used for boats and horses with player as passenger

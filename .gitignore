@@ -14,6 +14,8 @@ bin/
 
 # Gradle
 .gradle/
+/.gradle/
+/.gradle
 **/build/
 **/out/
 .gradletasknamecache

@@ -3,6 +3,7 @@ package net.crashcraft.crashclaim.compatability;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.compatability.versions.*;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 
@@ -47,10 +48,27 @@ public class CompatabilityManager {
 
     private CompatabilityWrapper match(String serverVersion) {
         try {
-            return versions.stream()
-                    .filter(version -> version.getSimpleName().substring(7).equals(serverVersion))
-                    .findFirst().orElseThrow(() -> new RuntimeException("Your server version [" + serverVersion + "] isn't supported in CrashClaim! Setting use-this-version-instead to a version string, like 1_17_R1, will skip this check and might work. Proceed with caution."))
-                    .getDeclaredConstructor().newInstance();
+            for (Class<? extends CompatabilityWrapper> version : versions){
+                if (version.getSimpleName().substring(7).equals(serverVersion)){
+                    return version.getDeclaredConstructor().newInstance();
+                }
+            }
+
+            // Find partial match if other not possible.
+
+            final String partialMatchVersion = serverVersion.substring(0, serverVersion.length() - 2);
+            for (int x = versions.size() - 1; x >= 0; x--){ // Iterate backwards so 1.16.3 mappings are used over 1.16.1 ones
+                Class<? extends CompatabilityWrapper> version = versions.get(x);
+
+                if (version.getSimpleName().substring(7, version.getSimpleName().length() - 2).equals(partialMatchVersion)){
+                    CrashClaim.getPlugin().getLogger().severe("Your server version [" + serverVersion + "] is not fully supported in CrashClaim! Defaulting to closest mapped subversion. Report this.");
+                    return version.getDeclaredConstructor().newInstance();
+                }
+            }
+
+            final String latestVersion = versions.get(versions.size() - 1).getSimpleName().substring(7);
+
+            throw new RuntimeException("Your server version [" + serverVersion + "] isn't supported in CrashClaim! Setting use-this-version-instead to a version string, like " + latestVersion + ", will skip this check and might work. Proceed with caution.");
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException ex) {
             throw new RuntimeException(ex);
         }

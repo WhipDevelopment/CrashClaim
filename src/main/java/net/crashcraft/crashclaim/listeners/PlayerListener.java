@@ -388,6 +388,8 @@ public class PlayerListener implements Listener {
                 if (!helper.hasPermission(player.getUniqueId(), event.getEntity().getLocation(), PermissionRoute.ENTITIES)){
                     event.setCancelled(true);
                 }
+
+                return; // Stop its a player!
             } else if (event.getRemover() instanceof Arrow arrow){
                 if (arrow.getShooter() instanceof Player player && !helper.hasPermission(player.getUniqueId(), event.getEntity().getLocation(), PermissionRoute.ENTITIES)){
                     event.setCancelled(true);

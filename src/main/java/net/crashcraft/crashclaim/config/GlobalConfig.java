@@ -101,6 +101,8 @@ public class GlobalConfig extends BaseConfig{
     public static double money_per_block;
     public static ArrayList<UUID> disabled_worlds;
     public static String forcedVersionString;
+    public static boolean blockPvPInsideClaims;
+    public static boolean checkEntryExitWhileFlying;
 
     private static void miscValues(){
         money_per_block = getDouble("money-per-block", 0.01);
@@ -116,6 +118,8 @@ public class GlobalConfig extends BaseConfig{
         }
 
         forcedVersionString = config.getString("use-this-version-instead");
+        blockPvPInsideClaims = getBoolean("block-pvp-inside-claims", false);
+        checkEntryExitWhileFlying = config.getBoolean("check-entry-and-exit-while-flying", false);
     }
 
     public static boolean bypassModeBypassesMoney;

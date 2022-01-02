@@ -28,6 +28,8 @@ import java.util.logging.Logger;
 
 public enum Localization {
     //Generic Localizations
+    PVP_DISABLED_INSIDE_CLAIM("<red>PvP is disabled inside of claims!"),
+
     UPDATE_AVAILABLE("<yellow>An updated <bold>CrashClaim <version></bold> is now available to download on SpigotMC!\n<gold>Download now at https://whips.dev/crashclaim"),
 
     BYPASS__ENABLED("<green>Enabled claim bypass. You are now bypassing permissions"),

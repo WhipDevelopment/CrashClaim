@@ -336,12 +336,56 @@ public class PlayerListener implements Listener {
         }
     }
 
+    private boolean inClaim(Player player){
+        return manager.getClaim(player.getLocation()) != null;
+    }
+
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e){
-        if (e.getEntity() instanceof Player)
-            return;
-
         if (GlobalConfig.disabled_worlds.contains(e.getEntity().getWorld().getUID())){
+            return;
+        }
+
+        // Handle pvp inside claims
+        if (e.getEntity() instanceof Player player){
+            if (!GlobalConfig.blockPvPInsideClaims){
+                return;
+            }
+
+            Entity damager = e.getDamager();
+            if (damager instanceof Player attacker) {
+                boolean isAttackerInClaim = inClaim(attacker);
+                if (inClaim(player) || isAttackerInClaim) {
+                    e.setCancelled(true);
+
+                    if (isAttackerInClaim){
+                        attacker.sendActionBar(Localization.PVP_DISABLED_INSIDE_CLAIM.getMessage(attacker));
+                    }
+                }
+            } else if (damager instanceof Projectile) {
+                Projectile proj = ((Projectile) e.getDamager());
+
+                if (proj instanceof EnderPearl){
+                    return;
+                }
+
+                if (proj.getShooter() instanceof Player shooter) {
+                    boolean isAttackerInClaim = inClaim(shooter);
+                    if (inClaim(player) || isAttackerInClaim) {
+                        e.setCancelled(true);
+
+                        if (proj instanceof Arrow arrow) { // Remove fire damage
+                            if (arrow.getFireTicks() >= 1 && player.getFireTicks() >= 1) {
+                                player.setFireTicks(0);
+                            }
+                        }
+
+                        if (isAttackerInClaim){
+                            shooter.sendActionBar(Localization.PVP_DISABLED_INSIDE_CLAIM.getMessage(shooter));
+                        }
+                    }
+                }
+            }
             return;
         }
 

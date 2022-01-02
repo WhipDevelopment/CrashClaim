@@ -1,5 +1,7 @@
 package net.crashcraft.crashclaim.migration;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface MigrationAdapter {
     /**
      * Make sure everything is in place before the migration continues
@@ -13,7 +15,7 @@ public interface MigrationAdapter {
      * @param manager supplies needed methods to load data into memory
      * @return an error message if migration failed
      */
-    String migrate(MigrationManager manager);
+    CompletableFuture<String> migrate(MigrationManager manager);
 
     /**
      * Get an identifier for the migration adapter

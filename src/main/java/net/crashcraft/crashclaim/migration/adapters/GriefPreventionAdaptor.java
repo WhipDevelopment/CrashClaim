@@ -4,20 +4,29 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.DataStore;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.PermState;
+import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.crashclaim.data.ClaimResponse;
 import net.crashcraft.crashclaim.migration.MigrationAdapter;
 import net.crashcraft.crashclaim.migration.MigrationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public class GriefPreventionAdaptor implements MigrationAdapter {
     private final GriefPrevention griefPrevention;
+
+    private BukkitTask task;
+    private int pos;
 
     public GriefPreventionAdaptor(){
         griefPrevention = (GriefPrevention) Bukkit.getPluginManager().getPlugin("GriefPrevention");
@@ -37,44 +46,72 @@ public class GriefPreventionAdaptor implements MigrationAdapter {
     }
 
     @Override
-    public String migrate(MigrationManager manager) {
+    public CompletableFuture<String> migrate(MigrationManager manager) {
         final Logger logger = manager.getLogger();
         final DataStore dataStore = griefPrevention.dataStore;
 
         logger.info("Found " + dataStore.getClaims().size() + " claims in memory, migrating...");
-        for (Claim claim : dataStore.getClaims()){
-            if (claim.isAdminClaim()){
-                //TODO implement admin claims so we can support this
-                continue;
+
+        CompletableFuture<String> finishedFuture = new CompletableFuture<>();
+        ArrayList<Claim> claims = new ArrayList<>(dataStore.getClaims());
+
+        task = Bukkit.getScheduler().runTaskTimer(CrashClaim.getPlugin(), () -> {
+            int nextPos = Math.min(pos + 20, claims.size());
+            for (int x = pos; x < nextPos; x++){
+                Claim claim = claims.get(x);
+
+                if (claim.isAdminClaim()){
+                    //TODO implement admin claims so we can support this
+                    logger.info("Skipping Admin Claim as support is not properly implemented at this time.");
+                    continue;
+                }
+
+                if (claim.parent != null){
+                    logger.info("Claim had a parent, skipping and waiting for parent.");
+                    continue;
+                }
+
+                ClaimResponse claimResponse = manager.getManager().createClaim(claim.getGreaterBoundaryCorner(), claim.getLesserBoundaryCorner(), claim.getOwnerID());
+
+                if (!claimResponse.isStatus()){
+                    logger.warning("A claim has failed to be created due to [" + claimResponse.getError().name() + "] : {Owner: " + claim.getOwnerName() + "}");
+                    continue;
+                }
+
+                net.crashcraft.crashclaim.claimobjects.Claim cClaim = (net.crashcraft.crashclaim.claimobjects.Claim) claimResponse.getClaim();
+
+                grantPermissions(manager, claim, cClaim);
+
+                //Children convert to SubClaims
+                for (Claim child : claim.children){
+                    ClaimResponse subClaimResponse = manager.getManager().createSubClaim(cClaim, child.getGreaterBoundaryCorner(), child.getLesserBoundaryCorner(), child.getOwnerID());
+
+                    if (!subClaimResponse.isStatus()){
+                        logger.warning("A sub-claim has failed to be created due to [" + subClaimResponse.getError().name() + "] : {Owner: " + child.getOwnerName() + "}");
+                        continue;
+                    }
+
+                    net.crashcraft.crashclaim.claimobjects.SubClaim cSubClaim = (net.crashcraft.crashclaim.claimobjects.SubClaim) subClaimResponse.getClaim();
+
+                    grantPermissions(manager, child, cSubClaim);
+                    logger.info("Successfully migrated sub-claim [" + claim.getID() + "] for claim [" + claim.getID() + "]");
+                }
+
+                logger.info("Successfully migrated claim [" + claim.getID() + "]");
             }
 
-            if (claim.parent != null){
-                logger.info("Claim had a parent, skipping and waiting for parent");
-                continue;
+            pos = nextPos + 1;
+
+            if (nextPos >= claims.size()){
+                finishedFuture.complete(null);
+                task.cancel();
             }
+        }, 1L, 1L);
 
-            ClaimResponse claimResponse = manager.getManager().createClaim(claim.getGreaterBoundaryCorner(), claim.getLesserBoundaryCorner(), claim.getOwnerID());
-
-            if (!claimResponse.isStatus()){
-                logger.warning("A claim has failed to be created due to [" + claimResponse.getError().name() + "] : {Owner: " + claim.getOwnerName() + "}");
-                continue;
-            }
-
-            net.crashcraft.crashclaim.claimobjects.Claim cClaim = (net.crashcraft.crashclaim.claimobjects.Claim) claimResponse.getClaim();
-
-            grantPermissions(manager, claim, cClaim);
-
-            //Children convert to SubClaims
-            for (Claim child : claim.children){
-                grantPermissions(manager, child, cClaim);
-            }
-
-            logger.info("Successfully migrated claim [" + claim.getID() + "]");
-        }
-        return null;
+        return finishedFuture;
     }
 
-    private void grantPermissions(MigrationManager manager, Claim claim, net.crashcraft.crashclaim.claimobjects.Claim cClaim) {
+    private void grantPermissions(MigrationManager manager, Claim claim, net.crashcraft.crashclaim.claimobjects.BaseClaim cClaim) {
         if (claim.areExplosivesAllowed){
             cClaim.getPerms().getGlobalPermissionSet().setExplosions(PermState.ENABLED);
         }
@@ -102,30 +139,52 @@ public class GriefPreventionAdaptor implements MigrationAdapter {
         }
     }
 
-    private void createPermsAndGrant(MigrationManager manager, net.crashcraft.crashclaim.claimobjects.Claim cClaim, ArrayList<String> uuids, ClaimPermission permission){
+    private void createPermsAndGrant(MigrationManager manager, net.crashcraft.crashclaim.claimobjects.BaseClaim cClaim, ArrayList<String> uuids, ClaimPermission permission){
         for (String fakeUUID : uuids) {
-            UUID uuid = UUID.fromString(fakeUUID);
-            PlayerPermissionSet permissionSet = cClaim.getPerms().getPlayerPermissionSet(uuid);
+            if (fakeUUID.equalsIgnoreCase("public")){
+                GlobalPermissionSet permissionSet = cClaim.getPerms().getGlobalPermissionSet();
 
-            if (ClaimPermission.Build.isGrantedBy(permission)) {
-                permissionSet.setBuild(PermState.ENABLED);
-            }
-
-            if (ClaimPermission.Access.isGrantedBy(permission)) {
-                permissionSet.setInteractions(PermState.ENABLED);
-            }
-
-            if (ClaimPermission.Inventory.isGrantedBy(permission)) {
-                permissionSet.setEntities(PermState.ENABLED);
-
-                for (Material container : manager.getManager().getPermissionSetup().getTrackedContainers()) {
-                    permissionSet.setContainer(container, PermState.ENABLED);
+                if (ClaimPermission.Build.isGrantedBy(permission)) {
+                    permissionSet.setBuild(PermState.ENABLED);
                 }
-            }
 
-            cClaim.getPerms().setPlayerPermissionSet(
-                    uuid, permissionSet
-            );
+                if (ClaimPermission.Access.isGrantedBy(permission)) {
+                    permissionSet.setInteractions(PermState.ENABLED);
+                }
+
+                if (ClaimPermission.Inventory.isGrantedBy(permission)) {
+                    permissionSet.setEntities(PermState.ENABLED);
+
+                    for (Material container : manager.getManager().getPermissionSetup().getTrackedContainers()) {
+                        permissionSet.setContainer(container, PermState.ENABLED);
+                    }
+                }
+
+                cClaim.getPerms().setGlobalPermissionSet(permissionSet);
+            } else {
+                UUID uuid = UUID.fromString(fakeUUID);
+                PlayerPermissionSet permissionSet = cClaim.getPerms().getPlayerPermissionSet(uuid);
+
+                if (ClaimPermission.Build.isGrantedBy(permission)) {
+                    permissionSet.setBuild(PermState.ENABLED);
+                }
+
+                if (ClaimPermission.Access.isGrantedBy(permission)) {
+                    permissionSet.setInteractions(PermState.ENABLED);
+                }
+
+                if (ClaimPermission.Inventory.isGrantedBy(permission)) {
+                    permissionSet.setEntities(PermState.ENABLED);
+
+                    for (Material container : manager.getManager().getPermissionSetup().getTrackedContainers()) {
+                        permissionSet.setContainer(container, PermState.ENABLED);
+                    }
+                }
+
+                cClaim.getPerms().setPlayerPermissionSet(
+                        uuid, permissionSet
+                );
+            }
         }
     }
 

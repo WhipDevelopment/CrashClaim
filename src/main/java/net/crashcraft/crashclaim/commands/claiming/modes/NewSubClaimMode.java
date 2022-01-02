@@ -48,7 +48,7 @@ public class NewSubClaimMode implements ClaimMode {
             return;
         }
 
-        ClaimResponse response = manager.createSubClaim(player, claim, firstLocation, click);
+        ClaimResponse response = manager.createSubClaim(claim, firstLocation, click, player.getUniqueId());
 
         if (response.isStatus()){
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);

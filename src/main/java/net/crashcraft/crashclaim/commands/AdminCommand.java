@@ -17,6 +17,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import java.util.concurrent.CompletableFuture;
+
 @CommandAlias("crashclaim")
 public class AdminCommand extends BaseCommand {
     private final CrashClaim crashClaim;
@@ -119,16 +121,16 @@ public class AdminCommand extends BaseCommand {
             LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__START_MESSAGE.getMessageList(null,
                     "identifier", selectedAdaptor.getIdentifier()));
 
-            String migrateError = manager.migrate(selectedAdaptor);
+            manager.migrate(selectedAdaptor).thenAccept((migrateError) -> {
+                if (migrateError != null){
+                    LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__ERROR.getMessageList(null,
+                            "error", migrateError));
+                    return;
+                }
 
-            if (migrateError != null){
-                LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__ERROR.getMessageList(null,
-                        "error", migrateError));
-                return;
-            }
-
-            LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__SUCCESS.getMessageList(null,
-                    "identifier", selectedAdaptor.getIdentifier()));
+                LocalizationUtils.sendMessageList(sender, Localization.MIGRATE__CONFIRM__SUCCESS.getMessageList(null,
+                        "identifier", selectedAdaptor.getIdentifier()));
+            });
         }
 
         @Subcommand("cancel")

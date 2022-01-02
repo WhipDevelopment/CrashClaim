@@ -5,6 +5,7 @@ import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.migration.adapters.GriefPreventionAdaptor;
 
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 public class MigrationManager {
@@ -22,29 +23,37 @@ public class MigrationManager {
         adapters.add(new GriefPreventionAdaptor());
     }
 
-    public String migrate(MigrationAdapter adapter){
+    public CompletableFuture<String> migrate(MigrationAdapter adapter){
         String requirementCheck = adapter.checkRequirements(this);
         if (requirementCheck != null){
-            return "Requirement Check Failed: " + requirementCheck;
+            return CompletableFuture.completedFuture("Requirement Check Failed: " + requirementCheck);
         }
 
         manager.setFreezeSaving(true);
 
         plugin.getLogger().info("Starting data migration with [" + adapter.getIdentifier() + "]");
-        String error = adapter.migrate(this);
-        if (error != null){
-            plugin.getLogger().severe("Data migration failed with error: " + error);
+        CompletableFuture<String> migrateFuture = new CompletableFuture<>();
+        CompletableFuture<String> completableFuture = adapter.migrate(this);
+        completableFuture.thenAccept((error) -> {
+            if (error != null){
+                plugin.getLogger().severe("Data migration failed with error: " + error);
 
-            cleanup();
-            return error;
-        }
-        plugin.getLogger().info("Data migration completed successfully");
+                cleanup();
+                migrateFuture.complete(error);
+            }
+            plugin.getLogger().info("Data migration completed successfully");
 
-        manager.setFreezeSaving(false);
-        manager.saveClaimsSync();
+            manager.setFreezeSaving(false);
 
-        cleanup();
-        return null;
+            plugin.getLogger().info("Force data save starting...");
+            manager.forceSaveClaims().thenAccept((a) -> {
+                plugin.getLogger().info("Force data save finished.");
+                cleanup();
+                migrateFuture.complete(null);
+            });
+        });
+
+        return migrateFuture;
     }
 
     private void cleanup(){

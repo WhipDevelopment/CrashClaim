@@ -28,6 +28,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.cache2k.Cache2kBuilder;
 import org.cache2k.IntCache;
 
@@ -36,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -55,6 +58,8 @@ public class ClaimDataManager implements Listener {
 
     private final AtomicInteger idCounter;
 
+    private BukkitTask forceSaveTask;
+    private int forceSavePosition;
     private boolean isSaving;
     private boolean reSave;
     private boolean freezeSaving;
@@ -84,8 +89,12 @@ public class ClaimDataManager implements Listener {
                 .disableStatistics(true)
                 .loader((id) -> {
                     Claim claim = provider.loadClaim(id);
-                    fixupOwnerPerms(claim);
-                    return claim;
+                    if (claim != null) {
+                        fixupOwnerPerms(claim);
+                        return claim;
+                    } else {
+                        return null;
+                    }
                 })
                 .buildForIntKey();
 
@@ -471,7 +480,7 @@ public class ClaimDataManager implements Listener {
         return chunks;
     }
 
-    public ClaimResponse createSubClaim(Player player, Claim claim, Location loc1, Location loc2){
+    public ClaimResponse createSubClaim(Claim claim, Location loc1, Location loc2, UUID owner){
         if (!MathUtils.containedInside(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ(),
                 loc1.getBlockX(), loc1.getBlockZ(), loc2.getBlockX(), loc2.getBlockZ())){
             return new ClaimResponse(false, ErrorType.OUT_OF_BOUNDS);
@@ -510,7 +519,7 @@ public class ClaimDataManager implements Listener {
 
         permissionGroup.setOwner(subClaim);
 
-        permissionGroup.setPlayerPermissionSet(player.getUniqueId(), permissionSetup.getOwnerPermissionSet().clone());
+        permissionGroup.setPlayerPermissionSet(owner, permissionSetup.getOwnerPermissionSet().clone());
 
         claim.addSubClaim(subClaim);
         claim.setToSave(true);
@@ -573,6 +582,29 @@ public class ClaimDataManager implements Listener {
         for (Claim claim : claims){
             saveClaim(claim);
         }
+    }
+
+    public CompletableFuture<Void> forceSaveClaims(){
+        forceSavePosition = 0;
+        ArrayList<Claim> claims = new ArrayList<>(claimLookup.asMap().values());
+        CompletableFuture<Void> finishedFuture = new CompletableFuture<>();
+
+        forceSaveTask = Bukkit.getScheduler().runTaskTimer(CrashClaim.getPlugin(), () -> {
+            int nextPos = Math.min(forceSavePosition + 5, claims.size());
+            for (int x = forceSavePosition; x < nextPos; x++){
+                logger.info("Saving " + x + " : " + claims.get(x).getId());
+                saveClaim(claims.get(x));
+            }
+
+            forceSavePosition = nextPos;
+
+            if (nextPos >= claims.size()){
+                finishedFuture.complete(null);
+                forceSaveTask.cancel();
+            }
+        }, 20L, 1L);
+
+        return finishedFuture;
     }
 
     @EventHandler

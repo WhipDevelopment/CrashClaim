@@ -354,13 +354,9 @@ public class PlayerListener implements Listener {
 
             Entity damager = e.getDamager();
             if (damager instanceof Player attacker) {
-                boolean isAttackerInClaim = inClaim(attacker);
-                if (inClaim(player) || isAttackerInClaim) {
+                if (inClaim(player) || inClaim(attacker)) {
                     e.setCancelled(true);
-
-                    if (isAttackerInClaim){
-                        attacker.sendActionBar(Localization.PVP_DISABLED_INSIDE_CLAIM.getMessage(attacker));
-                    }
+                    attacker.sendActionBar(Localization.PVP_DISABLED_INSIDE_CLAIM.getMessage(attacker));
                 }
             } else if (damager instanceof Projectile) {
                 Projectile proj = ((Projectile) e.getDamager());
@@ -370,8 +366,7 @@ public class PlayerListener implements Listener {
                 }
 
                 if (proj.getShooter() instanceof Player shooter) {
-                    boolean isAttackerInClaim = inClaim(shooter);
-                    if (inClaim(player) || isAttackerInClaim) {
+                    if (inClaim(player) || inClaim(shooter)) {
                         e.setCancelled(true);
 
                         if (proj instanceof Arrow arrow) { // Remove fire damage
@@ -380,9 +375,7 @@ public class PlayerListener implements Listener {
                             }
                         }
 
-                        if (isAttackerInClaim){
-                            shooter.sendActionBar(Localization.PVP_DISABLED_INSIDE_CLAIM.getMessage(shooter));
-                        }
+                        shooter.sendActionBar(Localization.PVP_DISABLED_INSIDE_CLAIM.getMessage(shooter));
                     }
                 }
             }

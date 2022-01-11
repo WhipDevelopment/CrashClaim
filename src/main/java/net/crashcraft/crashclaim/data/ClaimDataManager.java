@@ -532,7 +532,14 @@ public class ClaimDataManager implements Listener {
     }
 
     public void preLoadChunk(UUID world, long seed){
-        ArrayList<Integer> claims = chunkLookup.get(world).get(seed);
+        Long2ObjectOpenHashMap<ArrayList<Integer>> map = chunkLookup.get(world);
+        if (map == null){
+            Long2ObjectOpenHashMap<ArrayList<Integer>> newMap = new Long2ObjectOpenHashMap<>();
+            chunkLookup.put(world, newMap);
+            map = newMap;
+        }
+
+        ArrayList<Integer> claims = map.get(seed);
         if (claims != null){
             claimLookup.prefetchAll(claims, null);
         }

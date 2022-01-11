@@ -11,6 +11,7 @@ import net.crashcraft.crashclaim.commands.claiming.modes.NewClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.NewSubClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.ResizeClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.ResizeSubClaimMode;
+import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.listeners.ProtocalListener;
 import net.crashcraft.crashclaim.localization.Localization;
@@ -53,6 +54,12 @@ public class ClaimCommand extends BaseCommand implements Listener {
     public void claim(Player player){
         UUID uuid = player.getUniqueId();
 
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
+            player.sendMessage(Localization.DISABLED_WORLD.getMessage(player));
+            forceCleanup(uuid, true);
+            return;
+        }
+
         if (modeMap.containsKey(uuid)) {
             forceCleanup(uuid, true);
 
@@ -71,6 +78,12 @@ public class ClaimCommand extends BaseCommand implements Listener {
     @CommandPermission("crashclaim.user.subclaim")
     public void subClaim(Player player){
         UUID uuid = player.getUniqueId();
+
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
+            player.sendMessage(Localization.DISABLED_WORLD.getMessage(player));
+            forceCleanup(uuid, true);
+            return;
+        }
 
         if (modeMap.containsKey(uuid)) {
             forceCleanup(uuid, true);
@@ -113,6 +126,13 @@ public class ClaimCommand extends BaseCommand implements Listener {
         if (e.getHand() == null
                 || !e.getHand().equals(EquipmentSlot.HAND)
                 || e.getClickedBlock() == null){
+            return;
+        }
+
+        Player player = e.getPlayer();
+        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
+            player.sendMessage(Localization.DISABLED_WORLD.getMessage(player));
+            forceCleanup(player.getUniqueId(), true);
             return;
         }
 

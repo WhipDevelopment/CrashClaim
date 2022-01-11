@@ -10,7 +10,7 @@ import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
-import net.crashcraft.crashclaim.visualize.api.visuals.BaseGlowVisual;
+import net.crashcraft.crashclaim.visualize.api.providers.glow.BaseGlowVisual;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

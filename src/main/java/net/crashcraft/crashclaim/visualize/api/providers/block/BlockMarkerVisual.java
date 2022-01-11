@@ -1,9 +1,8 @@
-package net.crashcraft.crashclaim.visualize.api.marker;
+package net.crashcraft.crashclaim.visualize.api.providers.block;
 
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualType;
-import net.crashcraft.crashclaim.visualize.api.visuals.BaseBlockVisual;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

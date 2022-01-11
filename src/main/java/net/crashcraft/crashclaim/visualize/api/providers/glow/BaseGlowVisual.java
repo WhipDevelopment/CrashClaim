@@ -1,4 +1,4 @@
-package net.crashcraft.crashclaim.visualize.api.visuals;
+package net.crashcraft.crashclaim.visualize.api.providers.glow;
 
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;

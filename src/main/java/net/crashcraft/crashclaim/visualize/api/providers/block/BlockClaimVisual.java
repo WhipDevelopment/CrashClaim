@@ -1,4 +1,4 @@
-package net.crashcraft.crashclaim.visualize.api.claim;
+package net.crashcraft.crashclaim.visualize.api.providers.block;
 
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.PermState;
@@ -12,18 +12,31 @@ import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualType;
 import net.crashcraft.crashclaim.visualize.api.VisualUtils;
-import net.crashcraft.crashclaim.visualize.api.visuals.BaseGlowVisual;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public class GlowClaimVisual extends BaseGlowVisual {
-    public GlowClaimVisual(VisualColor color, VisualGroup parent, Player player, int y,  BaseClaim claim) {
+import java.util.ArrayList;
+
+public class BlockClaimVisual extends BaseBlockVisual {
+    private final ArrayList<Location> changedBlocks;
+
+    public BlockClaimVisual(VisualColor color, VisualGroup parent, Player player, int y, BaseClaim claim) {
         super(VisualType.CLAIM, color, parent, player, y, claim);
+        this.changedBlocks = new ArrayList<>();
     }
 
     @Override
-    public void remove() {
-        removeAll();
+    public void remove(){
+        for (Location location : changedBlocks){
+            revertBlock(getPlayer(), location);
+        }
+    }
+
+    private void sendBlock(int x, int z, int y, World world){
+        Location location = new Location(world, x, y, z);
+        changedBlocks.add(location);
+        setBlock(getPlayer(), location, getColor().getMaterial());
     }
 
     @Override
@@ -35,23 +48,21 @@ public class GlowClaimVisual extends BaseGlowVisual {
         int SECordX = getClaim().getMaxX();
         int SECordZ = getClaim().getMaxZ();
 
-        spawnEntity(NWCordX, NWCordZ, calcY(NWCordX, NWCordZ, world));
-        spawnEntity(NWCordX, SECordZ, calcY(NWCordX, SECordZ, world));
+        sendBlock(NWCordX, NWCordZ, calcY(NWCordX, NWCordZ, world), world);
+        sendBlock(NWCordX, SECordZ, calcY(NWCordX, SECordZ, world), world);
 
-        spawnEntity(SECordX, SECordZ, calcY(SECordX, SECordZ, world));
-        spawnEntity(SECordX, NWCordZ, calcY(SECordX, NWCordZ, world));
+        sendBlock(SECordX, SECordZ, calcY(SECordX, SECordZ, world), world);
+        sendBlock(SECordX, NWCordZ, calcY(SECordX, NWCordZ, world), world);
 
         for (Integer integer : VisualUtils.getLine(SECordX - NWCordX)){
-            spawnEntity(NWCordX + integer, NWCordZ, calcY(NWCordX + integer, NWCordZ, world));
-            spawnEntity(NWCordX + integer, SECordZ, calcY(NWCordX + integer, SECordZ, world));
+            sendBlock(NWCordX + integer, NWCordZ, calcY(NWCordX + integer, NWCordZ, world), world);
+            sendBlock(NWCordX + integer, SECordZ, calcY(NWCordX + integer, SECordZ, world), world);
         }
 
         for (Integer integer : VisualUtils.getLine(SECordZ - NWCordZ)){
-            spawnEntity(NWCordX, NWCordZ + integer, calcY(NWCordX, NWCordZ + integer, world));
-            spawnEntity(SECordX, NWCordZ + integer, calcY(SECordX, NWCordZ + integer, world));
+            sendBlock(NWCordX, NWCordZ + integer, calcY(NWCordX, NWCordZ + integer, world), world);
+            sendBlock(SECordX, NWCordZ + integer, calcY(SECordX, NWCordZ + integer, world), world);
         }
-
-        colorEntities(getParent().getPlayer(), getColor(), getEntityUUIDs());
     }
 
     private int calcY(int x, int z, World world){
@@ -88,9 +99,11 @@ public class GlowClaimVisual extends BaseGlowVisual {
                     return VisualColor.GREEN;
                 }
             } else {
-                return VisualColor.GOLD;
+                return  VisualColor.GOLD;
             }
         }
         return getDefaultColor();
     }
+
+
 }

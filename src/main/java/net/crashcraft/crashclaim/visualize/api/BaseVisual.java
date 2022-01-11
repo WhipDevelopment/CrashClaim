@@ -1,6 +1,7 @@
 package net.crashcraft.crashclaim.visualize.api;
 
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public abstract class BaseVisual {

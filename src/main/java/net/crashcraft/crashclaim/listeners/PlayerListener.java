@@ -31,6 +31,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -61,10 +62,24 @@ public class PlayerListener implements Listener {
         this.helper = PermissionHelper.getPermissionHelper();
     }
 
+    @EventHandler
+    public void onProjectileThrow(ProjectileLaunchEvent e){
+        if (GlobalConfig.disabled_worlds.contains(e.getEntity().getWorld().getUID())){
+            return;
+        }
+
+        if (e.getEntity().getShooter() instanceof Player player){
+            if (!helper.hasPermission(player.getUniqueId(), player.getLocation(), PermissionRoute.ENTITIES)) {
+                e.setCancelled(true);
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));
+            }
+        }
+    }
+
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerJoinEvent(PlayerJoinEvent event){
-        if (event.getPlayer().hasPermission("crashclaim.admin.bypassonjoin")){
-            helper.getBypassManager().addBypass(event.getPlayer().getUniqueId()); // Enable on join
+    public void onPlayerJoinEvent(PlayerJoinEvent e){
+        if (e.getPlayer().hasPermission("crashclaim.admin.bypassonjoin")){
+            helper.getBypassManager().addBypass(e.getPlayer().getUniqueId()); // Enable on join
         }
     }
 
@@ -265,10 +280,7 @@ public class PlayerListener implements Listener {
         final UUID world = e.getTo().getWorld().getUID();
         final Player player = e.getPlayer();
 
-        if(!player.isGliding() &&
-                !player.isFlying() &&
-                (fromX != toX || fromZ != toZ)) {
-
+        if((GlobalConfig.checkEntryExitWhileFlying || (!player.isGliding() && !player.isFlying())) && (fromX != toX || fromZ != toZ)) {
             if (GlobalConfig.disabled_worlds.contains(world)){
                 return;
             }

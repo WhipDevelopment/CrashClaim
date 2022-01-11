@@ -122,9 +122,7 @@ public abstract class MenuListHelper extends GUI {
             return;
         }
 
-        if (group.getOwner() instanceof SubClaim){
-            SubClaim subClaim = (SubClaim) group.getOwner();
-
+        if (group.getOwner() instanceof SubClaim subClaim){
             if (!subClaim.getParent().getOwner().equals(getPlayer().getUniqueId())){
                 descItem = Localization.MENU__GENERAL__CLAIM_ITEM.getItem(player,
                         "name", claim.getName(),
@@ -350,40 +348,23 @@ public abstract class MenuListHelper extends GUI {
     }
 
     private ItemStack getItemForPermission(PermissionRoute route){
-        switch (route){
-            case ENTITY_GRIEF:
-                return Localization.MENU__PERMISSIONS__ENTITY_GRIEF.getItem(player);
-            case MISC:
-                return Localization.MENU__PERMISSIONS__MISC.getItem(player);
-            case ADMIN:
-                return Localization.MENU__PERMISSIONS__ADMIN.getItem(player);
-            case BUILD:
-                return Localization.MENU__PERMISSIONS__BUILD.getItem(player);
-            case FLUIDS:
-                return Localization.MENU__PERMISSIONS__FLUIDS.getItem(player);
-            case PISTONS:
-                return Localization.MENU__PERMISSIONS__PISTONS.getItem(player);
-            case ENTITIES:
-                return Localization.MENU__PERMISSIONS__ENTITIES.getItem(player);
-            case CONTAINERS:
-                return Localization.MENU__PERMISSIONS__CONTAINERS.getItem(player);
-            case EXPLOSIONS:
-                return Localization.MENU__PERMISSIONS__EXPLOSIONS.getItem(player);
-            case INTERACTIONS:
-                return Localization.MENU__PERMISSIONS__INTERACTIONS.getItem(player);
-            case MODIFY_CLAIM:
-                return Localization.MENU__PERMISSIONS__MODIFY_CLAIM.getItem(player);
-            case TELEPORTATION:
-                return Localization.MENU__PERMISSIONS__TELEPORTATION.getItem(player);
-            case VIEW_SUB_CLAIMS:
-                return Localization.MENU__PERMISSIONS__VIEW_SUB_CLAIMS.getItem(player);
-            case MODIFY_PERMISSIONS:
-                return Localization.MENU__PERMISSIONS__MODIFY_PERMISSIONS.getItem(player);
-            case SUBCLAIM_ADMIN:
-                return Localization.MENU__PERMISSIONS__SUBCLAIM_ADMIN.getItem(player);
-            default:
-                return null; // Will never happen
-        }
+        return switch (route) {
+            case ENTITY_GRIEF -> Localization.MENU__PERMISSIONS__ENTITY_GRIEF.getItem(player);
+            case MISC -> Localization.MENU__PERMISSIONS__MISC.getItem(player);
+            case ADMIN -> Localization.MENU__PERMISSIONS__ADMIN.getItem(player);
+            case BUILD -> Localization.MENU__PERMISSIONS__BUILD.getItem(player);
+            case FLUIDS -> Localization.MENU__PERMISSIONS__FLUIDS.getItem(player);
+            case PISTONS -> Localization.MENU__PERMISSIONS__PISTONS.getItem(player);
+            case ENTITIES -> Localization.MENU__PERMISSIONS__ENTITIES.getItem(player);
+            case CONTAINERS -> Localization.MENU__PERMISSIONS__CONTAINERS.getItem(player);
+            case EXPLOSIONS -> Localization.MENU__PERMISSIONS__EXPLOSIONS.getItem(player);
+            case INTERACTIONS -> Localization.MENU__PERMISSIONS__INTERACTIONS.getItem(player);
+            case MODIFY_CLAIM -> Localization.MENU__PERMISSIONS__MODIFY_CLAIM.getItem(player);
+            case TELEPORTATION -> Localization.MENU__PERMISSIONS__TELEPORTATION.getItem(player);
+            case VIEW_SUB_CLAIMS -> Localization.MENU__PERMISSIONS__VIEW_SUB_CLAIMS.getItem(player);
+            case MODIFY_PERMISSIONS -> Localization.MENU__PERMISSIONS__MODIFY_PERMISSIONS.getItem(player);
+            case SUBCLAIM_ADMIN -> Localization.MENU__PERMISSIONS__SUBCLAIM_ADMIN.getItem(player);
+        };
     }
 
     private void drawSwitch(MenuSwitchType type, int value, int itemOffset, Boolean allow){
@@ -397,41 +378,38 @@ public abstract class MenuListHelper extends GUI {
                 }
 
                 switch (value) {
-                    case 0:
+                    case 0 -> {
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem(player));
-
                         inv.setItem(startMenu + itemOffset + 9,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 18,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
-                        break;
-                    case 1:
+                    }
+                    case 1 -> {
                         inv.setItem(startMenu + itemOffset + 9,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem(player));
-
                         inv.setItem(startMenu + itemOffset + 18,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         inv.setItem(startMenu + itemOffset + 18,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__SELECTED.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__SELECTED_DISABLED.getItem(player));
-
                         inv.setItem(startMenu + itemOffset + 9,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
-                    case 4:
+                    }
+                    case 4 -> {
                         inv.setItem(startMenu + itemOffset + 9,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 18,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
+                    }
                 }
                 break;
             case DOUBLE:
@@ -442,67 +420,64 @@ public abstract class MenuListHelper extends GUI {
                 }
 
                 switch (value) {
-                    case 0:
-                        inv.setItem(startMenu + itemOffset+ 27,
+                    case 0 -> {
+                        inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 18,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
-                        break;
-                    case 1:
+                    }
+                    case 1 -> {
                         inv.setItem(startMenu + itemOffset + 18,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
-                    case 4:
+                    }
+                    case 4 -> {
                         inv.setItem(startMenu + itemOffset + 18,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27,
                                 allow ? Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__OFF.getItem(player) : Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
+                    }
                 }
                 break;
             case DOUBLE_DISABLED:
                 switch (value) {
-                    case 0:
-                        inv.setItem(startMenu + itemOffset+ 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem(player));
+                    case 0 -> {
+                        inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
-                        break;
-                    case 1:
+                    }
+                    case 1 -> {
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
-                    case 4:
+                    }
+                    case 4 -> {
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
+                    }
                 }
                 break;
             case TRIPLE_DISABLED:
                 switch (value) {
-                    case 0:
+                    case 0 -> {
                         inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__SELECTED_DISABLED.getItem(player));
-
                         inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
-                        break;
-                    case 1:
+                    }
+                    case 1 -> {
                         inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__SELECTED_DISABLED.getItem(player));
-
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__SELECTED_DISABLED.getItem(player));
-
                         inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
-                    case 4:
+                    }
+                    case 4 -> {
                         inv.setItem(startMenu + itemOffset + 9, Localization.MENU__PERMISSIONS_TOGGLES__ENABLE__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 18, Localization.MENU__PERMISSIONS_TOGGLES__NEUTRAL__DISABLED.getItem(player));
                         inv.setItem(startMenu + itemOffset + 27, Localization.MENU__PERMISSIONS_TOGGLES__DISABLE__DISABLED.getItem(player));
-                        break;
+                    }
                 }
                 break;
         }

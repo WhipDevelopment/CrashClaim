@@ -3,6 +3,7 @@ package net.crashcraft.crashclaim.localization;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.crashcraft.crashclaim.CrashClaim;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -15,6 +16,12 @@ public class PlaceholderManager {
 
         if (isEnabled){
             CrashClaim.getPlugin().getLogger().info("PlaceholderAPI Support enabled.");
+        }
+    }
+
+    public void registerPlaceholders(){
+        if (isEnabled){
+            new CrashClaimExpansion(CrashClaim.getPlugin()).register();
         }
     }
 
@@ -38,7 +45,7 @@ public class PlaceholderManager {
         return false;
     }
 
-    public String usePlaceholders(Player player, String message){
+    public String usePlaceholders(OfflinePlayer player, String message){
         if (!isEnabled){
             return message;
         }
@@ -46,7 +53,7 @@ public class PlaceholderManager {
         return PlaceholderAPI.setPlaceholders(player, message);
     }
 
-    public List<String> usePlaceholders(Player player, List<String> messageList){
+    public List<String> usePlaceholders(OfflinePlayer player, List<String> messageList){
         if (!isEnabled){
             return messageList;
         }

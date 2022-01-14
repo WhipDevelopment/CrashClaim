@@ -1,6 +1,7 @@
 package net.crashcraft.crashclaim.pluginsupport;
 
 import net.crashcraft.crashclaim.CrashClaim;
+import net.crashcraft.crashclaim.pluginsupport.plugins.LuckPermsSupport;
 import net.crashcraft.crashclaim.pluginsupport.plugins.WorldGuardSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -10,15 +11,13 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class PluginSupportManager implements Listener {
-    private static final List<Class<? extends PluginSupport>> pluginSupportWrappers = Collections.singletonList(
-            WorldGuardSupport.class
+    private static final List<Class<? extends PluginSupport>> pluginSupportWrappers = Arrays.asList(
+            WorldGuardSupport.class,
+            LuckPermsSupport.class
     );
 
     private final Logger logger;

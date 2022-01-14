@@ -50,48 +50,6 @@ public class MenuCommand extends BaseCommand {
         }
     }
 
-    @CommandAlias("unclaim|removeclaim")
-    @CommandPermission("crashclaim.user.unclaim")
-    public void unClaim(Player player){
-        Location location = player.getLocation();
-        Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
-
-        if (claim != null){
-            ItemStack message = Localization.UN_CLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
-            message.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
-
-            new ConfirmationMenu(player,
-                    Localization.UN_CLAIM__MENU__CONFIRMATION__TITLE.getMessage(player),
-                    message,
-                    Localization.UN_CLAIM__MENU__CONFIRMATION__ACCEPT.getItem(player),
-                    Localization.UN_CLAIM__MENU__CONFIRMATION__DENY.getItem(player),
-                    (p, aBoolean) -> {
-                        if (aBoolean) {
-                            if (!PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
-                                player.spigot().sendMessage(Localization.UN_CLAIM__NO_PERMISSION.getMessage(player));
-                                return "";
-                            }
-
-                            for (SubClaim subClaim : claim.getSubClaims()){
-                                if (!PermissionHelper.getPermissionHelper().hasPermission(subClaim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)){
-                                    player.spigot().sendMessage(Localization.UN_CLAIM__NO_PERMISSION_IN_ALL.getMessage(player));
-                                    return "";
-                                }
-                            }
-
-                            CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
-                            VisualGroup group = visualizationManager.fetchVisualGroup(player, false);
-                            if (group != null){
-                                group.removeAllVisuals();
-                            }
-                        }
-                        return "";
-                    }, p -> "").open();
-        } else {
-            player.spigot().sendMessage(Localization.UN_CLAIM__NO_CLAIM.getMessage(player));
-        }
-    }
-
     @CommandAlias("unclaimsubclaim|removesubclaim")
     @CommandPermission("crashclaim.user.unclaimsubclaim")
     public void unSubClaim(Player player){

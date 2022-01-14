@@ -393,24 +393,33 @@ public class ClaimDataManager implements Listener {
     }
 
     public void deleteClaim(Claim claim){
-        provider.removeClaim(claim);
+        this.setFreezeSaving(true);
 
-        //Chunks
-        Long2ObjectOpenHashMap<ArrayList<Integer>> chunks = chunkLookup.get(claim.getWorld());
+        try {
+            provider.removeClaim(claim);
 
-        for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()){
-            ArrayList<Integer> chunkMap = chunks.get(entry.getKey().longValue());
-            chunkMap.removeAll(entry.getValue());   //Remove all of the existing claim chunk entries
+            //Chunks
+            Long2ObjectOpenHashMap<ArrayList<Integer>> chunks = chunkLookup.get(claim.getWorld());
+
+            for (Map.Entry<Long, ArrayList<Integer>> entry : getChunksForClaim(claim).entrySet()) {
+                ArrayList<Integer> chunkMap = chunks.get(entry.getKey().longValue());
+                chunkMap.removeAll(entry.getValue());   //Remove all of the existing claim chunk entries
+            }
+
+            if (claim.getSubClaims() != null) {
+                new ArrayList<>(claim.getSubClaims()).iterator().forEachRemaining(this::deleteSubClaimWithoutRemove);
+            }
+
+            claimLookup.remove(Integer.valueOf(claim.getId()));
+
+            //Refund
+            ContributionManager.refundContributors(claim);
+            // Continue and restart saving.
+        } catch (Exception ex){
+            ex.printStackTrace();
+            logger.warning("An exception occurred while a claim was being deleted, restarting saving process.");
         }
-
-        if (claim.getSubClaims() != null) {
-            claim.getSubClaims().iterator().forEachRemaining(this::deleteSubClaimWithoutRemove);
-        }
-
-        claimLookup.remove(Integer.valueOf(claim.getId()));
-
-        //Refund
-        ContributionManager.refundContributors(claim);
+        this.setFreezeSaving(false);
     }
 
     public void deleteSubClaimWithoutRemove(SubClaim subClaim){
@@ -555,6 +564,10 @@ public class ClaimDataManager implements Listener {
     }
 
     public void saveClaims(){
+        if (freezeSaving){
+            return;
+        }
+
         Collection<Claim> claims = claimLookup.asMap().values();
 
         if (isSaving){
@@ -568,13 +581,17 @@ public class ClaimDataManager implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             for (Claim claim : claims){
                 if (claim.isToSave()) {
+                    if (freezeSaving){
+                        break;
+                    }
+
                     saveClaim(claim);
                 }
             }
 
             this.setSaving(false);
 
-            if (reSave){
+            if (reSave && !freezeSaving){
                 setReSave(false);
                 saveClaims();
             }
@@ -679,6 +696,9 @@ public class ClaimDataManager implements Listener {
 
     public void setFreezeSaving(boolean freezeSaving) {
         this.freezeSaving = freezeSaving;
+        if (!freezeSaving){
+            saveClaims();
+        }
     }
 
     public ArrayList<Claim> getOwnedClaims(UUID uuid) {
@@ -692,6 +712,27 @@ public class ClaimDataManager implements Listener {
         }
 
         return claims;
+    }
+
+    public int getNumberOwnedClaims(UUID uuid) {
+        return provider.getPermittedClaims(uuid).size();
+    }
+
+    public ArrayList<Claim> getOwnedParentClaims(UUID uuid) {
+        ArrayList<Claim> claims = new ArrayList<>();
+
+        for (Integer id : provider.getOwnedParentClaims(uuid)){
+            Claim claim = getClaim(id);
+            if (Bukkit.getWorld(claim.getWorld()) != null){ // Make sure world of claim is loaded before we send it back.
+                claims.add(claim);
+            }
+        }
+
+        return claims;
+    }
+
+    public int getNumberOwnedParentClaims(UUID uuid) {
+        return provider.getOwnedParentClaims(uuid).size();
     }
 
     public void setIdCounter(int idCounter) {

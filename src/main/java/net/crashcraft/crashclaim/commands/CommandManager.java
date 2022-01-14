@@ -4,6 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
+import net.crashcraft.crashclaim.commands.claiming.UnClaimCommand;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.migration.MigrationAdapter;
 import net.crashcraft.crashclaim.permissions.BypassManager;
@@ -35,6 +36,8 @@ public class CommandManager {
         commandManager.registerCommand(new HideClaimsCommand(visualizationManager));
 
         commandManager.registerCommand(new ClaimCommand(manager, visualizationManager, protocolManager));
+        commandManager.registerCommand(new UnClaimCommand(manager, visualizationManager));
+
 
         commandManager.registerCommand(new MenuCommand(manager, visualizationManager));
         commandManager.registerCommand(new BypassCommand(bypassManager));

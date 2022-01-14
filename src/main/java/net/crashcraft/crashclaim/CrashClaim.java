@@ -129,6 +129,8 @@ public class CrashClaim extends JavaPlugin {
             updateManager = new UpdateManager(this);
         }
 
+        LocalizationLoader.register(); // Register PlaceHolders
+
         this.api = new CrashClaimAPI(this); // Enable api last as it might require some instances before to function properly.
     }
 

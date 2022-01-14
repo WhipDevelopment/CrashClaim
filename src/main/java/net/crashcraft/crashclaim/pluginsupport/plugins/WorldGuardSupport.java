@@ -13,8 +13,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import net.crashcraft.crashclaim.CrashClaim;
+import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class WorldGuardSupport implements PluginSupport {
@@ -69,5 +71,10 @@ public class WorldGuardSupport implements PluginSupport {
         ApplicableRegionSet set = regions.getApplicableRegions(test);
 
         return set.testState(null, ALLOW_CLAIMING);
+    }
+
+    @Override
+    public GroupSettings getPlayerGroupSettings(Player player) {
+        return null;
     }
 }

@@ -52,6 +52,7 @@ dependencies {
     compileOnly( "com.github.TechFortress:GriefPrevention:16.16.0")
     compileOnly( "me.clip:placeholderapi:2.10.10")
     compileOnly( "us.dynmap:dynmap-api:3.2-SNAPSHOT")
+    compileOnly("net.luckperms:api:5.3")
 }
 
 tasks {

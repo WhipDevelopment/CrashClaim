@@ -1,6 +1,9 @@
 package net.crashcraft.crashclaim.pluginsupport;
 
+import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.config.GroupSettings;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -36,5 +39,16 @@ public class PluginSupportDistributor implements PluginSupport{
         }
 
         return true;
+    }
+
+    @Override
+    public GroupSettings getPlayerGroupSettings(Player player) {
+        for (PluginSupport support : enabled){
+            GroupSettings groupSettings = support.getPlayerGroupSettings(player);
+            if (groupSettings != null){
+                return groupSettings;
+            }
+        }
+        return GlobalConfig.groupSettings.get("default");
     }
 }

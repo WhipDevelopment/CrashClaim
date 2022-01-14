@@ -4,12 +4,11 @@ import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class GlobalConfig extends BaseConfig{
     public static String locale;
@@ -20,6 +19,29 @@ public class GlobalConfig extends BaseConfig{
         locale = getString("language", "en_US");
         paymentProvider = getString("payment-provider", "default");
         checkUpdates = getBoolean("check-updates", true);
+    }
+
+    public static HashMap<String, GroupSettings> groupSettings;
+
+    private static void loadGroups(){
+        groupSettings = new HashMap<>();
+
+        final String baseKey = "group-settings";
+        ConfigurationSection section = config.getConfigurationSection(baseKey);
+        Set<String> keys;
+        if (section == null){
+            keys = new HashSet<>();
+        } else {
+            keys = section.getKeys(false);
+        }
+
+        keys.add("default"); // Always need a default group.
+
+        for (String groupName : keys){
+            groupSettings.put(groupName, new GroupSettings(
+                    getInt(baseKey + "." + groupName + ".max-claims", -1)
+            ));
+        }
     }
 
     public static String visual_type;

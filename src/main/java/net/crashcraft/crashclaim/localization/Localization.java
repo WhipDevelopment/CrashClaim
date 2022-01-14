@@ -13,6 +13,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -31,6 +32,7 @@ public enum Localization {
     PVP_DISABLED_INSIDE_CLAIM("<red>PvP is disabled inside of claims!"),
     DISABLED_WORLD("<red>Claiming is disabled inside this world."),
     UPDATE_AVAILABLE("<yellow>An updated <bold>CrashClaim <version></bold> is now available to download on SpigotMC!\n<gold>Download now at https://whips.dev/crashclaim"),
+    MAX_CLAIMS_REACHED("<red>You have claimed the maximum amount of claims possible."),
 
     BYPASS__ENABLED("<green>Enabled claim bypass. You are now bypassing permissions"),
     BYPASS__DISABLED("<red>Disabled claim bypass."),
@@ -45,6 +47,17 @@ public enum Localization {
     HIDE_CLAIMS__SUCCESS("<green>Claim visuals have been hidden."),
 
     CLAIM_SETTINGS__NO_CLAIM("<red>There is no claim where you are standing."),
+
+    UN_CLAIM_ALL__MENU__CONFIRMATION__TITLE("Confirm Delete All Claims"),
+    UN_CLAIM_ALL__MENU__CONFIRMATION__MESSAGE(Material.BOOK, 1,
+            "<dark_red>Permanently Delete all claima?",
+            "<red>Claim Blocks will be restored to ",
+            "<red>the contributing parties"),
+    UN_CLAIM_ALL__MENU__CONFIRMATION__ACCEPT(Material.GREEN_CONCRETE, 1, "<gold>Accept"),
+    UN_CLAIM_ALL__MENU__CONFIRMATION__DENY(Material.RED_CONCRETE, 1, "<gold>Cancel"),
+    UN_CLAIM_ALL__NO_PERMISSION("<red>You do not have permission to the claim named <gold><name></gold>."),
+    UN_CLAIM_ALL__NO_PERMISSION_IN_ALL("<red>You do not have permission to modify the claim named <gold><name></gold> and all of its sub-claims"),
+    UN_CLAIM_ALL__NO_CLAIM("<red>You do not own any to un-claim."),
 
     UN_CLAIM__MENU__CONFIRMATION__TITLE("Confirm Delete Claim"),
     UN_CLAIM__MENU__CONFIRMATION__MESSAGE(null, 1,
@@ -603,28 +616,28 @@ public enum Localization {
         this.item = new ItemStackTemplate(material, stackSize, title, Arrays.asList(loreDef), null, false);
     }
 
-    public BaseComponent[] getMessage(Player player) {
+    public BaseComponent[] getMessage(OfflinePlayer player) {
         if (hasPlaceholders){
             return getMessage(player, new String[0]);
         }
         return message;
     }
 
-    public BaseComponent[] getMessage(Player player, String... replace){
+    public BaseComponent[] getMessage(OfflinePlayer player, String... replace){
         if (hasPlaceholders){
             return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(LocalizationLoader.placeholderManager.usePlaceholders(player, def), replace));
         }
         return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(def, replace));
     }
 
-    public List<BaseComponent[]> getMessageList(Player player) {
+    public List<BaseComponent[]> getMessageList(OfflinePlayer player) {
         if (hasPlaceholders){
             return getMessageList(player, new String[0]);
         }
         return messageList;
     }
 
-    public List<BaseComponent[]> getMessageList(Player player, String... replace){
+    public List<BaseComponent[]> getMessageList(OfflinePlayer player, String... replace){
         ArrayList<BaseComponent[]> arr = new ArrayList<>(defList.length);
 
         if (hasPlaceholders){

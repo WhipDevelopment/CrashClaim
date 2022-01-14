@@ -29,4 +29,8 @@ public class LocalizationLoader {
 
         Localization.rebuildCachedMessages();
     }
+
+    public static void register(){
+        placeholderManager.registerPlaceholders();
+    }
 }

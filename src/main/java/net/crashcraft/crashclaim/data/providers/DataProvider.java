@@ -31,7 +31,13 @@ public interface DataProvider extends Listener {
     Claim loadClaim(Integer id);
 
     /**
-     * @return a list of owned claims
+     * @return a list of permitted claims
      */
     Set<Integer> getPermittedClaims(UUID uuid);
+
+
+    /**
+     * @return a list of owned claims
+     */
+    Set<Integer> getOwnedParentClaims(UUID uuid);
 }

@@ -157,6 +157,26 @@ public class SQLiteDataProvider implements DataProvider {
         return new HashSet<>();
     }
 
+    @Override
+    public Set<Integer> getOwnedParentClaims(UUID uuid) {
+        try {
+            return new HashSet<>(DB.getFirstColumnResults("Select\n" +
+                            "    claims.id\n" +
+                            "From\n" +
+                            "    claim_data Inner Join\n" +
+                            "    permission_set On claim_data.id = permission_set.data_id Inner Join\n" +
+                            "    players On players.id = permission_set.players_id Inner Join\n" +
+                            "    claims On claim_data.id = claims.data\n" +
+                            "Where\n" +
+                            "    players.uuid = ?",
+                    uuid.toString()));
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return new HashSet<>();
+    }
+
     @EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldAdd(WorldInitEvent e){
         try {

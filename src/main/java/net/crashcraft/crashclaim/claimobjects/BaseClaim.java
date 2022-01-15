@@ -24,6 +24,7 @@ public abstract class BaseClaim {
     private BaseComponent[] parsedExitMessage; // Cached for efficiency
 
     private boolean isEditing = false;
+    private boolean deleted = false;
 
     public BaseClaim(int id, int maxCornerX, int maxCornerZ, int minCornerX, int minCornerZ, UUID world, PermissionGroup perms) {
         this.id = id;
@@ -122,6 +123,14 @@ public abstract class BaseClaim {
 
     public void setMaxCornerZ(int maxCornerZ) {
         this.maxCornerZ = maxCornerZ;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted() {
+        this.deleted = true;
     }
 
     public BaseComponent[] getParsedEntryMessage() {

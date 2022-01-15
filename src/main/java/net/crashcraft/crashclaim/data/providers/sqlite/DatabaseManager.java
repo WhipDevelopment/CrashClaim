@@ -2,10 +2,7 @@ package net.crashcraft.crashclaim.data.providers.sqlite;
 
 import co.aikar.idb.DB;
 import net.crashcraft.crashclaim.CrashClaim;
-import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev0;
-import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev1;
-import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev2;
-import net.crashcraft.crashclaim.data.providers.sqlite.versions.DataRev3;
+import net.crashcraft.crashclaim.data.providers.sqlite.versions.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -79,6 +76,7 @@ public class DatabaseManager {
         registerDataVersion(new DataRev1());
         registerDataVersion(new DataRev2());
         registerDataVersion(new DataRev3());
+        registerDataVersion(new DataRev4());
     }
 
     private void validateDataVersions(){

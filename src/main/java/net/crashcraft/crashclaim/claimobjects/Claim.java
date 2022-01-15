@@ -8,7 +8,9 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class Claim extends BaseClaim {
     private boolean toSave;
@@ -149,9 +151,12 @@ public class Claim extends BaseClaim {
     }
 
     public void removeSubClaim(int id){
-        for (SubClaim claim : subClaims){
-            if (claim.getId() == id){
-                subClaims.remove(claim);
+        Iterator<SubClaim> subClaimIterator = subClaims.iterator();
+        while (subClaimIterator.hasNext()){
+            SubClaim subClaim = subClaimIterator.next();
+
+            if (subClaim.getId() == id){
+                subClaimIterator.remove();
                 return;
             }
         }

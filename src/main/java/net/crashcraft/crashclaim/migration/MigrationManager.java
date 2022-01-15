@@ -29,8 +29,6 @@ public class MigrationManager {
             return CompletableFuture.completedFuture("Requirement Check Failed: " + requirementCheck);
         }
 
-        manager.setFreezeSaving(true);
-
         plugin.getLogger().info("Starting data migration with [" + adapter.getIdentifier() + "]");
         CompletableFuture<String> migrateFuture = new CompletableFuture<>();
         CompletableFuture<String> completableFuture = adapter.migrate(this);
@@ -38,26 +36,18 @@ public class MigrationManager {
             if (error != null){
                 plugin.getLogger().severe("Data migration failed with error: " + error);
 
-                cleanup();
                 migrateFuture.complete(error);
             }
             plugin.getLogger().info("Data migration completed successfully");
 
-            manager.setFreezeSaving(false);
-
             plugin.getLogger().info("Force data save starting...");
             manager.forceSaveClaims().thenAccept((a) -> {
                 plugin.getLogger().info("Force data save finished.");
-                cleanup();
                 migrateFuture.complete(null);
             });
         });
 
         return migrateFuture;
-    }
-
-    private void cleanup(){
-        manager.setFreezeSaving(false);
     }
 
     public MigrationAdapter getMigrationAdaptor(String name){

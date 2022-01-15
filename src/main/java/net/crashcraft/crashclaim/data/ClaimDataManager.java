@@ -28,17 +28,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.cache2k.Cache2kBuilder;
+import org.cache2k.CacheEntry;
 import org.cache2k.IntCache;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -60,15 +58,10 @@ public class ClaimDataManager implements Listener {
 
     private BukkitTask forceSaveTask;
     private int forceSavePosition;
-    private boolean isSaving;
-    private boolean reSave;
-    private boolean freezeSaving;
 
     public ClaimDataManager(CrashClaim plugin){
         this.plugin = plugin;
         this.logger = plugin.getLogger();
-        this.isSaving = false;
-        this.freezeSaving = false;
         this.idCounter = new AtomicInteger(0);
         this.permissionSetup = new PermissionSetup(plugin);
         this.chunkLookup = new HashMap<>();
@@ -99,7 +92,17 @@ public class ClaimDataManager implements Listener {
                 .buildForIntKey();
 
         logger.info("Starting claim saving routine");
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::saveClaims, 0, 1200);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            for (CacheEntry<Integer, Claim> entry : claimLookup.entries()){
+                Claim claim = entry.getValue();
+
+                if (claim == null || !claim.isToSave() || claim.isDeleted()){
+                    continue;
+                }
+
+                saveClaim(claim);
+            }
+        }, 200L, 200L);
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -392,10 +395,15 @@ public class ClaimDataManager implements Listener {
         return true;
     }
 
-    public void deleteClaim(Claim claim){
-        this.setFreezeSaving(true);
+    public synchronized void deleteClaim(Claim claim){
+        if (claim.isDeleted()){
+            return;
+        }
 
         try {
+            claim.setDeleted(); // Make sure it doesn't get saved again
+
+            claimLookup.remove(Integer.valueOf(claim.getId()));
             provider.removeClaim(claim);
 
             //Chunks
@@ -407,10 +415,8 @@ public class ClaimDataManager implements Listener {
             }
 
             if (claim.getSubClaims() != null) {
-                new ArrayList<>(claim.getSubClaims()).iterator().forEachRemaining(this::deleteSubClaimWithoutRemove);
+                new ArrayList<>(claim.getSubClaims()).iterator().forEachRemaining(this::deleteSubClaimWithoutSave);
             }
-
-            claimLookup.remove(Integer.valueOf(claim.getId()));
 
             //Refund
             ContributionManager.refundContributors(claim);
@@ -419,16 +425,17 @@ public class ClaimDataManager implements Listener {
             ex.printStackTrace();
             logger.warning("An exception occurred while a claim was being deleted, restarting saving process.");
         }
-        this.setFreezeSaving(false);
     }
 
-    public void deleteSubClaimWithoutRemove(SubClaim subClaim){
+    public synchronized void deleteSubClaimWithoutSave(SubClaim subClaim){
         Claim parent = subClaim.getParent();
         parent.removeSubClaim(subClaim.getId());
     }
 
-    public void deleteSubClaim(SubClaim subClaim){
-        deleteSubClaimWithoutRemove(subClaim);
+    public synchronized void deleteSubClaim(SubClaim subClaim){
+        Claim parent = subClaim.getParent();
+        parent.removeSubClaim(subClaim.getId());
+        saveClaim(parent);
     }
 
     public void loadChunksForClaim(Claim claim){
@@ -490,6 +497,10 @@ public class ClaimDataManager implements Listener {
     }
 
     public ClaimResponse createSubClaim(Claim claim, Location loc1, Location loc2, UUID owner){
+        if (claim.isDeleted()){
+            return new ClaimResponse(false, ErrorType.GENERIC);
+        }
+
         if (!MathUtils.containedInside(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ(),
                 loc1.getBlockX(), loc1.getBlockZ(), loc2.getBlockX(), loc2.getBlockZ())){
             return new ClaimResponse(false, ErrorType.OUT_OF_BOUNDS);
@@ -554,8 +565,8 @@ public class ClaimDataManager implements Listener {
         }
     }
 
-    public void saveClaim(Claim claim){
-        if (freezeSaving){
+    public synchronized void saveClaim(Claim claim){
+        if (claim.isDeleted()){
             return;
         }
 
@@ -563,45 +574,8 @@ public class ClaimDataManager implements Listener {
         claim.setToSave(false);
     }
 
-    public void saveClaims(){
-        if (freezeSaving){
-            return;
-        }
-
-        Collection<Claim> claims = claimLookup.asMap().values();
-
-        if (isSaving){
-            logger.warning("Tried to save claims while claims were already being saved. If this is on shutdown ignore it.");
-            setReSave(true);
-            return;
-        }
-
-        setSaving(true);
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            for (Claim claim : claims){
-                if (claim.isToSave()) {
-                    if (freezeSaving){
-                        break;
-                    }
-
-                    saveClaim(claim);
-                }
-            }
-
-            this.setSaving(false);
-
-            if (reSave && !freezeSaving){
-                setReSave(false);
-                saveClaims();
-            }
-        });
-    }
-
     public void saveClaimsSync(){   //Force save all data - shutdown
         Collection<Claim> claims = claimLookup.asMap().values();
-
-        Bukkit.getScheduler().cancelTasks(plugin);  //Stop tasks here to prevent ReSaving old data over new data
 
         for (Claim claim : claims){
             saveClaim(claim);
@@ -694,13 +668,6 @@ public class ClaimDataManager implements Listener {
         group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet().clone());
     }
 
-    public void setFreezeSaving(boolean freezeSaving) {
-        this.freezeSaving = freezeSaving;
-        if (!freezeSaving){
-            saveClaims();
-        }
-    }
-
     public ArrayList<Claim> getOwnedClaims(UUID uuid) {
         ArrayList<Claim> claims = new ArrayList<>();
 
@@ -747,25 +714,7 @@ public class ClaimDataManager implements Listener {
         return chunkLookup.get(world);
     }
 
-    public synchronized boolean isSaving() {
-        return isSaving;
-    }
-
-    public synchronized void setSaving(boolean saving) {
-        isSaving = saving;
-    }
-
-    public synchronized boolean isReSave() {
-        return reSave;
-    }
-
-    public synchronized void setReSave(boolean reSave) {
-        this.reSave = reSave;
-    }
-
     public void cleanupAndClose() {
-        this.freezeSaving = true;
-
         chunkLookup.clear();
         claimLookup.clearAndClose();
     }

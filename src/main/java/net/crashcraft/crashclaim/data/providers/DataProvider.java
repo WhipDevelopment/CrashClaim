@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.data.providers;
 
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
+import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import org.bukkit.event.Listener;
 
@@ -34,7 +35,6 @@ public interface DataProvider extends Listener {
      * @return a list of permitted claims
      */
     Set<Integer> getPermittedClaims(UUID uuid);
-
 
     /**
      * @return a list of owned claims

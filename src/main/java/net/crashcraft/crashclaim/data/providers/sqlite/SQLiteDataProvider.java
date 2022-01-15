@@ -221,7 +221,8 @@ public class SQLiteDataProvider implements DataProvider {
                     claim.getWorld(),
                     claim.getName(),
                     claim.getEntryMessage(),
-                    claim.getExitMessage()
+                    claim.getExitMessage(),
+                    DataType.CLAIM
             );
 
             //Claim
@@ -256,7 +257,8 @@ public class SQLiteDataProvider implements DataProvider {
                         subClaim.getWorld(),
                         subClaim.getName(),
                         subClaim.getEntryMessage(),
-                        subClaim.getExitMessage()
+                        subClaim.getExitMessage(),
+                        DataType.SUB_CLAIM
                 );
 
                 DB.executeUpdate("INSERT OR IGNORE INTO subclaims(id, data, claim_id) VALUES (?, " +
@@ -391,15 +393,15 @@ public class SQLiteDataProvider implements DataProvider {
         );
     }
 
-    private void addClaimData(int data_id, int minX, int minZ, int maxX, int maxZ, UUID world, String name, String entryMessage, String exitMessage) throws SQLException{
+    private void addClaimData(int data_id, int minX, int minZ, int maxX, int maxZ, UUID world, String name, String entryMessage, String exitMessage, DataType type) throws SQLException{
         if (data_id == -1) {
-            DB.executeUpdate("INSERT INTO claim_data(minX, minZ, maxX, maxZ, world, name, entryMessage, exitMessage) VALUES (?, ?, ?, ?, (SELECT id FROM claimworlds WHERE uuid = ?), ?, ?, ?)",
-                    minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage
+            DB.executeUpdate("INSERT INTO claim_data(minX, minZ, maxX, maxZ, world, name, entryMessage, exitMessage, `type`) VALUES (?, ?, ?, ?, (SELECT id FROM claimworlds WHERE uuid = ?), ?, ?, ?, ?)",
+                    minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage, type.getType()
             );
         } else {
-            DB.executeUpdate("INSERT INTO claim_data(id, minX, minZ, maxX, maxZ, world, name, entryMessage, exitMessage) VALUES (?, ?, ?, ?, ?, (SELECT id FROM claimworlds WHERE uuid = ?), ?, ?, ?)" +
+            DB.executeUpdate("INSERT INTO claim_data(id, minX, minZ, maxX, maxZ, world, name, entryMessage, exitMessage, `type`) VALUES (?, ?, ?, ?, ?, (SELECT id FROM claimworlds WHERE uuid = ?), ?, ?, ?, ?)" +
                             "ON CONFLICT(id) DO UPDATE SET minX = ?, minZ = ?, maxX = ?, maxZ = ?, world = (SELECT id FROM claimworlds WHERE uuid = ?), name = ?, entryMessage = ?, exitMessage = ?",
-                    data_id, minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage,
+                    data_id, minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage, type.getType(),
                     minX, minZ, maxX, maxZ, world.toString(), name, entryMessage, exitMessage
             );
         }
@@ -407,7 +409,12 @@ public class SQLiteDataProvider implements DataProvider {
 
     @Override
     public void removeClaim(Claim claim) {
-        DB.executeUpdateAsync("DELETE FROM claim_data WHERE id = (SELECT `data` FROM claims WHERE id = ?)", claim.getId());
+        try {
+            DB.executeUpdate("DELETE FROM claim_data WHERE id IN (SELECT data FROM subclaims WHERE subclaims.claim_id = ?)\n", claim.getId());
+            DB.executeUpdate("DELETE FROM claim_data WHERE id = (SELECT `data` FROM claims WHERE id = ?)", claim.getId());
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -525,7 +532,7 @@ public class SQLiteDataProvider implements DataProvider {
 
             return claim;
         } catch (Exception e){
-            System.out.println("Error was on claim id: " + id);
+            CrashClaim.getPlugin().getLogger().severe("There was a fatal error while loading a claim with id: " + id);
             e.printStackTrace();
         }
 

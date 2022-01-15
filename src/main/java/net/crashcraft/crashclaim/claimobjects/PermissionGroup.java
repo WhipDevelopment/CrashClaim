@@ -47,7 +47,6 @@ public abstract class PermissionGroup {
         if (playerPermissions.containsKey(id)) {
             return playerPermissions.get(id);
         } else {
-
             PlayerPermissionSet set = createPlayerPermissionSet();
 
             playerPermissions.put(id, set);

@@ -31,6 +31,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
@@ -63,16 +64,39 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPotionSplashEvent(PotionSplashEvent e){
+        if (e.getPotion().getShooter() instanceof Player shooter){
+            for (LivingEntity livingEntity : e.getAffectedEntities()){
+                if (livingEntity instanceof Player player){
+                    if (shooter == player || !GlobalConfig.blockPvPInsideClaims || manager.getClaim(player.getLocation()) == null){
+                        continue;
+                    }
+
+                    e.setCancelled(true);
+                    visuals.sendAlert(player, Localization.PVP_DISABLED_INSIDE_CLAIM.getMessage(player));
+                } else if (!helper.hasPermission(shooter.getUniqueId(), livingEntity.getLocation(), PermissionRoute.ENTITIES)){
+                    e.setCancelled(true);
+                    visuals.sendAlert(shooter, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(shooter));
+                }
+            }
+        } else {
+            for (LivingEntity livingEntity : e.getAffectedEntities()){
+                if (!(livingEntity instanceof Player) && !helper.hasPermission(livingEntity.getLocation(), PermissionRoute.ENTITIES)){ // If not player
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onProjectileThrow(ProjectileLaunchEvent e){
         if (GlobalConfig.disabled_worlds.contains(e.getEntity().getWorld().getUID())){
             return;
         }
 
-        if (e.getEntity().getShooter() instanceof Player player){
-            if (!helper.hasPermission(player.getUniqueId(), player.getLocation(), PermissionRoute.ENTITIES)) {
-                e.setCancelled(true);
-                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));
-            }
+        if (e.getEntity().getShooter() instanceof Player player && !helper.hasPermission(player.getUniqueId(), player.getLocation(), PermissionRoute.ENTITIES)){
+            e.setCancelled(true);
+            visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
         }
     }
 

@@ -14,6 +14,7 @@ import net.crashcraft.crashclaim.commands.claiming.modes.ResizeClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.ResizeSubClaimMode;
 import net.crashcraft.crashclaim.compatability.CompatabilityManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.listeners.ProtocalListener;
 import net.crashcraft.crashclaim.localization.Localization;
@@ -63,31 +64,18 @@ public class ClaimCommand extends BaseCommand implements Listener {
             return;
         }
 
-        TaskChain<?> chain = CrashClaim.newChain();
-        chain.asyncFirst(() -> {
-            final int alreadyClaimed = dataManager.getNumberOwnedParentClaims(uuid);
-            return alreadyClaimed < CrashClaim.getPlugin().getPluginSupport().getPlayerGroupSettings(player).getMaxClaims();
-        }).syncLast((canClaim) -> {
-            if (!canClaim){
-                player.sendMessage(Localization.MAX_CLAIMS_REACHED.getMessage(player));
-                forceCleanup(uuid, true);
-                return;
-            }
+        if (modeMap.containsKey(uuid)) {
+            forceCleanup(uuid, true);
 
-            if (modeMap.containsKey(uuid)) {
-                forceCleanup(uuid, true);
+            visualizationManager.sendAlert(player, Localization.CLAIM__DISABLED.getMessage(player));
+        } else {
+            forceCleanup(uuid, true);
 
-                visualizationManager.sendAlert(player, Localization.CLAIM__DISABLED.getMessage(player));
-            } else {
-                forceCleanup(uuid, true);
-
-                modeMap.put(uuid, ClickState.CLAIM);
-                visualizationManager.visualizeSuroudningClaims(player, dataManager);
-                visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage(player));
-                player.spigot().sendMessage(Localization.NEW_CLAIM__INFO.getMessage(player));
-            }
-        });
-        chain.execute();
+            modeMap.put(uuid, ClickState.CLAIM);
+            visualizationManager.visualizeSuroudningClaims(player, dataManager);
+            visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage(player));
+            player.spigot().sendMessage(Localization.NEW_CLAIM__INFO.getMessage(player));
+        }
     }
 
     @CommandAlias("subclaim")
@@ -166,27 +154,43 @@ public class ClaimCommand extends BaseCommand implements Listener {
         if (modeMap.containsKey(uuid)){
             ClickState state = modeMap.get(uuid);
 
-            switch (state){
-                case CLAIM:
+            switch (state) {
+                case CLAIM -> {
                     Claim claim = dataManager.getClaim(location);
-                    if (claim == null){
-                        stateMap.put(uuid, new NewClaimMode(this, player, location));
+                    if (claim == null) {
+                        TaskChain<?> chain = CrashClaim.newChain();
+                        chain.asyncFirst(() -> {
+                            final int alreadyClaimed = dataManager.getNumberOwnedParentClaims(uuid);
+                            final GroupSettings groupSettings = CrashClaim.getPlugin().getPluginSupport().getPlayerGroupSettings(player);
+
+                            if (groupSettings.getMaxClaims() == -1) {
+                                return true;
+                            }
+
+                            return alreadyClaimed < groupSettings.getMaxClaims();
+                        }).syncLast((canClaim) -> {
+                            if (!canClaim) {
+                                player.sendMessage(Localization.MAX_CLAIMS_REACHED.getMessage(player));
+                                forceCleanup(uuid, true);
+                                return;
+                            }
+
+                            stateMap.put(uuid, new NewClaimMode(this, player, location));
+                        });
+                        chain.execute();
                     } else {
                         stateMap.put(uuid, new ResizeClaimMode(this, player, claim, location));
                     }
-                    return;
-                case SUB_CLAIM:
+                }
+                case SUB_CLAIM -> {
                     Claim parent = claimMap.get(uuid);
-
-                    if (parent == null){
+                    if (parent == null) {
                         return;
                     }
 
                     parent.setEditing(true);
-
                     SubClaim subClaim = parent.getSubClaim(location.getBlockX(), location.getBlockZ());
-
-                    if (subClaim != null){
+                    if (subClaim != null) {
                         if (!PermissionHelper.getPermissionHelper().hasPermission(subClaim, uuid, PermissionRoute.MODIFY_CLAIM)) {
                             player.spigot().sendMessage(Localization.SUBCLAIM__NO_PERMISSION.getMessage(player));
                             return;
@@ -195,8 +199,8 @@ public class ClaimCommand extends BaseCommand implements Listener {
                         stateMap.put(uuid, new ResizeSubClaimMode(this, player, parent, subClaim, location));
                         return;
                     }
-
                     stateMap.put(uuid, new NewSubClaimMode(this, player, parent, location));
+                }
             }
         }
     }

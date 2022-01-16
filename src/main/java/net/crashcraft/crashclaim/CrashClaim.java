@@ -72,12 +72,12 @@ public class CrashClaim extends JavaPlugin {
         }
 
         this.crashUtils = new CrashUtils(this);
-
-        this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
     }
 
     @Override
     public void onEnable() {
+        this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
+
         Bukkit.getPluginManager().registerEvents(pluginSupport, this);
 
         taskChainFactory = BukkitTaskChainFactory.create(this);

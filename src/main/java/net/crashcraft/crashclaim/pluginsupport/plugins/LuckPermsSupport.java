@@ -16,7 +16,7 @@ public class LuckPermsSupport implements PluginSupport {
 
     @Override
     public boolean isUnSupportedVersion(String version) {
-        return true;
+        return false;
     }
 
     @Override

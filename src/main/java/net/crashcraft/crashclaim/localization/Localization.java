@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public enum Localization {
+    //PlaceholderAPI
+    PLACEHOLDERAPI__VISUAL_STATUS_SHOWN("shown"),
+    PLACEHOLDERAPI__VISUAL_STATUS_HIDDEN("hidden"),
+
     //Generic Localizations
     PVP_DISABLED_INSIDE_CLAIM("<red>PvP is disabled inside of claims!"),
     DISABLED_WORLD("<red>Claiming is disabled inside this world."),

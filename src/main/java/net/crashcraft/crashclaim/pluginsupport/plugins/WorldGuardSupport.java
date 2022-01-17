@@ -28,7 +28,7 @@ public class WorldGuardSupport implements PluginSupport {
     }
 
     @Override
-    public void init(Plugin plugin) {
+    public void onLoad(Plugin plugin) {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             StateFlag flag = new StateFlag("allow-claiming", true);
@@ -47,6 +47,11 @@ public class WorldGuardSupport implements PluginSupport {
                 ALLOW_CLAIMING = flag;
             }
         }
+    }
+
+    @Override
+    public void onEnable(Plugin plugin) {
+
     }
 
     @Override

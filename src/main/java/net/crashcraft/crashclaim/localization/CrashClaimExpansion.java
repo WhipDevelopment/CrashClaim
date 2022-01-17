@@ -3,8 +3,12 @@ package net.crashcraft.crashclaim.localization;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
+import net.crashcraft.crashclaim.visualize.api.BaseVisual;
+import net.crashcraft.crashclaim.visualize.api.VisualGroup;
+import net.crashcraft.crashclaim.visualize.api.claim.BlockClaimVisual;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class CrashClaimExpansion extends PlaceholderExpansion {
@@ -26,10 +30,16 @@ public class CrashClaimExpansion extends PlaceholderExpansion {
                 }
                 case "current_claim_owner" -> {
                     if (!player.isOnline()){
-                        return "";
+                        return null;
                     }
 
-                    Claim claim = crashClaim.getDataManager().getClaim(player.getPlayer().getLocation());
+                    Player onlinePlayer = player.getPlayer();
+
+                    if (onlinePlayer == null){
+                        return null;
+                    }
+
+                    Claim claim = crashClaim.getDataManager().getClaim(onlinePlayer.getLocation());
 
                     if (claim == null){
                         return "";
@@ -37,6 +47,31 @@ public class CrashClaimExpansion extends PlaceholderExpansion {
 
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(claim.getOwner());
                     return offlinePlayer.getName();
+                }
+                case "visual_status" -> {
+                    if (!player.isOnline()){
+                        return null;
+                    }
+
+                    Player onlinePlayer = player.getPlayer();
+
+                    if (onlinePlayer == null){
+                        return null;
+                    }
+
+                    VisualGroup group = CrashClaim.getPlugin().getVisualizationManager().fetchVisualGroup(onlinePlayer, false);
+
+                    if (group == null){
+                        return Localization.PLACEHOLDERAPI__VISUAL_STATUS_HIDDEN.getRawMessage();
+                    }
+
+                    for (BaseVisual visual : group.getActiveVisuals()){
+                        if (visual.getClaim() != null){
+                            return Localization.PLACEHOLDERAPI__VISUAL_STATUS_SHOWN.getRawMessage();
+                        }
+                    }
+
+                    return Localization.PLACEHOLDERAPI__VISUAL_STATUS_HIDDEN.getRawMessage();
                 }
             }
         }

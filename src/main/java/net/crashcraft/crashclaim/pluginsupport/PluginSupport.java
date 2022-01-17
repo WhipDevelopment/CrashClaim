@@ -8,7 +8,9 @@ import org.bukkit.plugin.Plugin;
 public interface PluginSupport {
     boolean isUnSupportedVersion(String version);
 
-    void init(Plugin plugin);
+    void onLoad(Plugin plugin);
+
+    void onEnable(Plugin plugin);
 
     void disable();
 

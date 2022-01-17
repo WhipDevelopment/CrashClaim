@@ -20,11 +20,13 @@ public class PluginSupportManager implements Listener {
             LuckPermsSupport.class
     );
 
+    private final CrashClaim crashClaim;
     private final Logger logger;
     private final List<PluginSupport> enabledSupport;
     private final PluginSupportDistributor supportDistributor;
 
     public PluginSupportManager(CrashClaim crashClaim) {
+        this.crashClaim = crashClaim;
         this.logger = crashClaim.getLogger();
 
         enabledSupport = new ArrayList<>();
@@ -49,13 +51,24 @@ public class PluginSupportManager implements Listener {
                 logger.info("Enabling plugin support for " + pluginName + ", enabling additional checks and features");
 
                 enabledSupport.add(support);
-                support.init(plugin);
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex){
                 // Unsupported then
             }
         }
 
         supportDistributor = new PluginSupportDistributor(this);
+    }
+
+    public void onLoad(){
+        for (PluginSupport pluginSupport : enabledSupport){
+            pluginSupport.onLoad(crashClaim);
+        }
+    }
+
+    public void onEnable(){
+        for (PluginSupport pluginSupport : enabledSupport){
+            pluginSupport.onEnable(crashClaim);
+        }
     }
 
     private String getPluginName(Class<?> clazz){
@@ -78,7 +91,8 @@ public class PluginSupportManager implements Listener {
                 for (PluginSupport otherSupport : enabledSupport){
                     if (getPluginName(otherSupport.getClass()).equals(pluginName)){
                         logger.warning("Plugin initialized twice without registering a disable, this might cause problems, reinfecting new instance.");
-                        support.init(event.getPlugin());
+                        support.onLoad(event.getPlugin());
+                        support.onEnable(event.getPlugin());
                         return;
                     }
                 }
@@ -91,7 +105,8 @@ public class PluginSupportManager implements Listener {
                 logger.info("Enabling plugin support for " + pluginName + ", enabling additional checks and features");
 
                 enabledSupport.add(support);
-                support.init(event.getPlugin());
+                support.onLoad(event.getPlugin());
+                support.onEnable(event.getPlugin());
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex){
                 // Unsupported then
             }

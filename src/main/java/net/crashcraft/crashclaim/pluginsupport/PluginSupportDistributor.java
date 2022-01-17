@@ -21,7 +21,12 @@ public class PluginSupportDistributor implements PluginSupport{
     }
 
     @Override
-    public void init(Plugin plugin) {
+    public void onLoad(Plugin plugin) {
+        throw new RuntimeException("Unsupported Operation.");
+    }
+
+    @Override
+    public void onEnable(Plugin plugin) {
         throw new RuntimeException("Unsupported Operation.");
     }
 

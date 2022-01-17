@@ -72,12 +72,13 @@ public class CrashClaim extends JavaPlugin {
         }
 
         this.crashUtils = new CrashUtils(this);
+        this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
+
+        pluginSupport.onLoad();
     }
 
     @Override
     public void onEnable() {
-        this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
-
         Bukkit.getPluginManager().registerEvents(pluginSupport, this);
 
         taskChainFactory = BukkitTaskChainFactory.create(this);
@@ -129,6 +130,7 @@ public class CrashClaim extends JavaPlugin {
             updateManager = new UpdateManager(this);
         }
 
+        pluginSupport.onEnable();
         LocalizationLoader.register(); // Register PlaceHolders
 
         this.api = new CrashClaimAPI(this); // Enable api last as it might require some instances before to function properly.

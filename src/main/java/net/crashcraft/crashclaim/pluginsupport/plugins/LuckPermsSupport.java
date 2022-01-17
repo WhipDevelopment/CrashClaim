@@ -20,7 +20,12 @@ public class LuckPermsSupport implements PluginSupport {
     }
 
     @Override
-    public void init(Plugin plugin) {
+    public void onLoad(Plugin plugin) {
+
+    }
+
+    @Override
+    public void onEnable(Plugin plugin) {
         luckPerms = LuckPermsProvider.get();
     }
 

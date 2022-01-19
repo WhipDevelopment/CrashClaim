@@ -31,7 +31,8 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
 
     // Other
-    implementation("org.cache2k:cache2k-base-bom:1.2.2.Final")
+    implementation("org.cache2k:cache2k-api:1.2.2.Final")
+    implementation("org.cache2k:cache2k-core:1.2.2.Final")
     implementation("co.aikar:taskchain-bukkit:3.7.2")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longbase:3.0-SNAPSHOT")

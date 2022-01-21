@@ -29,6 +29,7 @@ public class ShowClaimsCommand extends BaseCommand {
     @CommandPermission("crashclaim.user.show.claims")
     public void showClaims(Player player){
         visualizationManager.visualizeSuroudningClaims(player, claimDataManager);
+        player.spigot().sendMessage(Localization.SHOW_CLAIMS__SUCCESS.getMessage(player));
     }
 
     @Subcommand("subclaims")

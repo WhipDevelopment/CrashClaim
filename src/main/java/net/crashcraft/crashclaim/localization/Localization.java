@@ -49,6 +49,7 @@ public enum Localization {
     EJECT__NO_CLAIM("<red>There is no claim where you are standing."),
 
     HIDE_CLAIMS__SUCCESS("<green>Claim visuals have been hidden."),
+    SHOW_CLAIMS__SUCCESS("<green>Claim visuals have been shown."),
 
     CLAIM_SETTINGS__NO_CLAIM("<red>There is no claim where you are standing."),
 

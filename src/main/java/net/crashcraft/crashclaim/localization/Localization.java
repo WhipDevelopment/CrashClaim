@@ -54,7 +54,7 @@ public enum Localization {
 
     UN_CLAIM_ALL__MENU__CONFIRMATION__TITLE("Confirm Delete All Claims"),
     UN_CLAIM_ALL__MENU__CONFIRMATION__MESSAGE(Material.BOOK, 1,
-            "<dark_red>Permanently Delete all claima?",
+            "<dark_red>Permanently Delete all claims?",
             "<red>Claim Blocks will be restored to ",
             "<red>the contributing parties"),
     UN_CLAIM_ALL__MENU__CONFIRMATION__ACCEPT(Material.GREEN_CONCRETE, 1, "<gold>Accept"),

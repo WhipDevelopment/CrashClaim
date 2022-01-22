@@ -31,7 +31,6 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
 
     // Other
-    implementation("org.cache2k:cache2k-base-bom:1.2.2.Final")
     implementation("co.aikar:taskchain-bukkit:3.7.2")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longbase:3.0-SNAPSHOT")
@@ -53,11 +52,17 @@ dependencies {
     compileOnly( "me.clip:placeholderapi:2.10.10")
     compileOnly( "us.dynmap:dynmap-api:3.2-SNAPSHOT")
     compileOnly("net.luckperms:api:5.3")
+
+    // Cache2k
+    val cache2kVersion = "2.4.1.Final"
+
+    implementation("org.cache2k:cache2k-api:${cache2kVersion}")
+    runtimeOnly("org.cache2k:cache2k-core:${cache2kVersion}")
 }
 
 tasks {
     shadowJar {
-        archiveFileName.set(rootProject.name + ".jar")
+        archiveFileName.set("${rootProject.name}.jar")
 
         relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
         relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")

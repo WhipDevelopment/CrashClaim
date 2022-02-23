@@ -133,13 +133,6 @@ public class ClaimCommand extends BaseCommand implements Listener {
             return;
         }
 
-        Player player = e.getPlayer();
-        if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
-            player.sendMessage(Localization.DISABLED_WORLD.getMessage(player));
-            forceCleanup(player.getUniqueId(), true);
-            return;
-        }
-
         click(e.getPlayer(), e.getClickedBlock().getLocation());
     }
 
@@ -147,11 +140,23 @@ public class ClaimCommand extends BaseCommand implements Listener {
         UUID uuid = player.getUniqueId();
 
         if (stateMap.containsKey(uuid)){
+            if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
+                player.sendMessage(Localization.DISABLED_WORLD.getMessage(player));
+                forceCleanup(player.getUniqueId(), true);
+                return;
+            }
+
             stateMap.get(uuid).click(player, location);
             return;
         }
 
         if (modeMap.containsKey(uuid)){
+            if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
+                player.sendMessage(Localization.DISABLED_WORLD.getMessage(player));
+                forceCleanup(player.getUniqueId(), true);
+                return;
+            }
+
             ClickState state = modeMap.get(uuid);
 
             switch (state) {

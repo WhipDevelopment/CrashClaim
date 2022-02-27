@@ -578,9 +578,7 @@ public class ClaimDataManager implements Listener {
         Collection<Claim> claims = claimLookup.asMap().values();
 
         for (Claim claim : claims){
-            if (claim.isToSave()) {
-                saveClaim(claim);
-            }
+            saveClaim(claim);
         }
     }
 

@@ -146,18 +146,10 @@ public class Wrapper1_17_0 implements CompatabilityWrapper {
     }
 
     private AtomicInteger ENTITY_ID;
-    private String NMS;
-
-    public Class<?> getNMSClass(final String className) throws ClassNotFoundException {
-        return Class.forName(NMS + className);
-    }
 
     @Override
     public int getUniqueEntityID() {
         if (ENTITY_ID == null){
-            final String packageName = Bukkit.getServer().getClass().getPackage().getName();
-            final String SERVER_VERSION = packageName.substring(packageName.lastIndexOf('.') + 1);
-            NMS = "net.minecraft.server." + SERVER_VERSION + ".";
             try {
                 final Field entityCount = Class.forName("net.minecraft.world.entity.Entity").getDeclaredField("b");
                 entityCount.setAccessible(true);

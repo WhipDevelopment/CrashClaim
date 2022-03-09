@@ -28,7 +28,12 @@ dependencies {
     compileOnly("com.github.Chasewhip8:CrashPayment:master-SNAPSHOT")
 
     // Paper
-    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
+
+    // Adventure
+    implementation("net.kyori:adventure-api:4.10.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.1.0")
+    implementation("net.kyori:adventure-text-minimessage:4.10.1")
 
     // Other
     implementation("co.aikar:taskchain-bukkit:3.7.2")
@@ -41,9 +46,6 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:2.4.1")
     implementation("org.bstats:bstats-bukkit:2.2.1")
-    implementation("net.kyori:adventure-platform-bukkit:4.0.0")
-    implementation("net.kyori:adventure-platform-bungeecord:4.0.0")
-    implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
     compileOnly( "com.google.guava:guava:29.0-jre")
     compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")

@@ -7,6 +7,8 @@ import net.crashcraft.crashclaim.config.ConfigManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.craftbukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -481,7 +483,7 @@ public enum Localization {
     }
 
     public static BaseComponent[] parseRawUserInput(String s){
-        return BungeeComponentSerializer.get().serialize(LocalizationLoader.userParser.parse(s));
+        return BungeeComponentSerializer.get().serialize(LocalizationLoader.userParser.deserialize(s));
     }
 
     public static void rebuildCachedMessages(){
@@ -576,6 +578,14 @@ public enum Localization {
                 || LocalizationLoader.placeholderManager.hasPlaceholders(lore.toArray(new String[0]));
     }
 
+    private static TagResolver generateTagResolver(String... replace){
+        TagResolver.Builder builder = TagResolver.builder();
+        for (int x = 0; x < replace.length - 1; x+=2){
+            builder.resolver(Placeholder.parsed(replace[x], replace[x + 1]));
+        }
+        return builder.build();
+    }
+
     private enum localizationType {
         MESSAGE,
         MESSAGE_LIST,
@@ -630,9 +640,9 @@ public enum Localization {
 
     public BaseComponent[] getMessage(OfflinePlayer player, String... replace){
         if (hasPlaceholders){
-            return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(LocalizationLoader.placeholderManager.usePlaceholders(player, def), replace));
+            return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.deserialize(LocalizationLoader.placeholderManager.usePlaceholders(player, def), generateTagResolver(replace)));
         }
-        return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(def, replace));
+        return BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.deserialize(def, generateTagResolver(replace)));
     }
 
     public List<BaseComponent[]> getMessageList(OfflinePlayer player) {
@@ -647,12 +657,12 @@ public enum Localization {
 
         if (hasPlaceholders){
             for (String line : defList) {
-                Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(
-                        LocalizationLoader.placeholderManager.usePlaceholders(player, line), replace)));
+                Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.deserialize(
+                        LocalizationLoader.placeholderManager.usePlaceholders(player, line), generateTagResolver(replace))));
             }
         } else {
             for (String line : defList) {
-                Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.parse(line, replace)));
+                Collections.addAll(arr, BungeeComponentSerializer.get().serialize(LocalizationLoader.parser.deserialize(line, generateTagResolver(replace))));
             }
         }
 
@@ -728,14 +738,14 @@ public enum Localization {
             ItemMeta iMeta = item.getItemMeta();
 
             String newTitle = hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, title) : title;
-            iMeta.setDisplayName(BukkitComponentSerializer.legacy().serialize(Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(newTitle, replace))));
+            iMeta.setDisplayName(BukkitComponentSerializer.legacy().serialize(Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.deserialize(newTitle, generateTagResolver(replace)))));
 
             if (PaperLib.isPaper()){
                 List<Component> components = new ArrayList<>(lore.size());
                 for (String line : lore) {
                     components.add(
-                            Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
-                                    hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace))
+                            Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.deserialize(
+                                    hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, generateTagResolver(replace)))
                     );
                 }
 
@@ -747,8 +757,8 @@ public enum Localization {
                 for (String line : lore) {
                     components.add(
                             serializer.serialize(
-                                    Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.parse(
-                                            hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, replace)))
+                                    Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.deserialize(
+                                            hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, line) : line, generateTagResolver(replace))))
                     );
                 }
 

@@ -53,6 +53,10 @@ public enum Localization {
     HIDE_CLAIMS__SUCCESS("<green>Claim visuals have been hidden."),
     SHOW_CLAIMS__SUCCESS("<green>Claim visuals have been shown."),
 
+    CLAIM_TELEPORT__TELEPORT_OWN("<green>You have successfully teleported to your claim."),
+    CLAIM_TELEPORT__TELEPORT_OTHER("<green>You have successfully teleported to the claim."),
+    CLAIM_TELEPORT__TELEPORT_NO_PERMISSION("<red>You do not have permission to teleport to that claim."),
+
     CLAIM_SETTINGS__NO_CLAIM("<red>There is no claim where you are standing."),
 
     UN_CLAIM_ALL__MENU__CONFIRMATION__TITLE("Confirm Delete All Claims"),

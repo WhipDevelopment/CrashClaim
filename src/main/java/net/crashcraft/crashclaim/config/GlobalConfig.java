@@ -88,10 +88,12 @@ public class GlobalConfig extends BaseConfig{
 
     public static boolean useCommandInsteadOfEdgeEject;
     public static String claimEjectCommand;
+    public static boolean allowPlayerClaimTeleporting;
 
     private static void loadEject(){
         useCommandInsteadOfEdgeEject = getBoolean("eject.useCommandInstead", false);
         claimEjectCommand = getString("eject.command", "home");
+        allowPlayerClaimTeleporting = getBoolean("allow-player-teleport-claim", false);
     }
 
     public static HashMap<PlayerTeleportEvent.TeleportCause, Integer> teleportCause;

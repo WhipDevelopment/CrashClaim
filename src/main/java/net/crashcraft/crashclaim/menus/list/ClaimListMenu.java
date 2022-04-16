@@ -2,17 +2,22 @@ package net.crashcraft.crashclaim.menus.list;
 
 import co.aikar.taskchain.TaskChain;
 import dev.whip.crashutils.menusystem.GUI;
+import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.ClaimMenu;
+import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -153,9 +158,43 @@ public class ClaimListMenu extends GUI {
                 if (claim == null){
                     return;
                 }
+
+                if (GlobalConfig.allowPlayerClaimTeleporting && e.getClick().equals(ClickType.SHIFT_LEFT)){
+                    if (player.hasPermission("crashclaim.user.teleport-own-claim")
+                            && claim.getOwner().equals(player.getUniqueId())){
+                        forceClose();
+                        teleportPlayer(player, claim);
+                        player.sendMessage(Localization.CLAIM_TELEPORT__TELEPORT_OWN.getMessage(player));
+                        return;
+                    } else if (player.hasPermission("crashclaim.user.teleport-claim-with-permission")
+                            && PermissionHelper.getPermissionHelper().hasPermission(claim, player.getUniqueId(), PermissionRoute.TELEPORTATION)){
+                        teleportPlayer(player, claim);
+                        forceClose();
+                        player.sendMessage(Localization.CLAIM_TELEPORT__TELEPORT_OTHER.getMessage(player));
+                        return;
+                    } else {
+                        forceClose();
+                        player.sendMessage(Localization.CLAIM_TELEPORT__TELEPORT_NO_PERMISSION.getMessage(player));
+                        return;
+                    }
+                }
                 new ClaimMenu(player, claim, this).open();
                 break;
         }
+    }
+
+    private void teleportPlayer(Player player, Claim claim){
+        int x = (int) Math.round(claim.getMaxX() - (double) (Math.abs(claim.getMaxX() - claim.getMinX()) / 2));
+        int z = (int) Math.round(claim.getMaxZ() - (double) (Math.abs(claim.getMaxZ() - claim.getMinZ()) / 2));
+
+        World world = Bukkit.getWorld(claim.getWorld());
+        if (world == null){
+            return;
+        }
+
+        PaperLib.teleportAsync(player, new Location(world, x,
+                world.getHighestBlockYAt(x, z),
+                z));
     }
 
     private ArrayList<Claim> getPageFromArray() {

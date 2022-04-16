@@ -193,7 +193,7 @@ public class ClaimListMenu extends GUI {
         }
 
         PaperLib.teleportAsync(player, new Location(world, x,
-                world.getHighestBlockYAt(x, z),
+                world.getHighestBlockYAt(x, z) + 1,
                 z));
     }
 

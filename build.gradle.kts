@@ -20,6 +20,12 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.mikeprimm.com/")
     maven("https://repo.maven.apache.org/maven2/")
+
+    maven {
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+
+    mavenCentral()
 }
 
 dependencies {
@@ -28,32 +34,33 @@ dependencies {
     compileOnly("com.github.Chasewhip8:CrashPayment:master-SNAPSHOT")
 
     // Paper
-    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
 
     // Adventure
-    implementation("net.kyori:adventure-api:4.10.1")
+    implementation("net.kyori:adventure-api:4.11.0")
     implementation("net.kyori:adventure-platform-bukkit:4.1.0")
-    implementation("net.kyori:adventure-text-minimessage:4.10.1")
+    implementation("net.kyori:adventure-text-minimessage:4.11.0")
 
     // Other
     implementation("co.aikar:taskchain-bukkit:3.7.2")
+    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longbase:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longhashmap:3.0-SNAPSHOT")
     implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
-    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.1")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:2.4.1")
     implementation("org.bstats:bstats-bukkit:2.2.1")
     compileOnly( "com.google.guava:guava:29.0-jre")
-    compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
+    //compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
+    compileOnly("com.github.dmulloy2:ProtocolLib:-SNAPSHOT")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
     compileOnly( "com.sk89q.worldguard:worldguard-bukkit:7.0.5")
     compileOnly( "com.github.TechFortress:GriefPrevention:16.16.0")
     compileOnly( "me.clip:placeholderapi:2.10.10")
     compileOnly( "us.dynmap:dynmap-api:3.2-SNAPSHOT")
-    compileOnly("net.luckperms:api:5.3")
+    compileOnly("net.luckperms:api:5.4")
 
     // Cache2k
     val cache2kVersion = "2.4.1.Final"

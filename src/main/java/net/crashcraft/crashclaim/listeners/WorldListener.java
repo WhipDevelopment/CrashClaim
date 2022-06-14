@@ -155,7 +155,7 @@ public class WorldListener implements Listener {
                     e.setCancelled(true);
                     visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
                 }
-            } else if (e.getEntity() instanceof Sheep sheep && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) {
+            } else if (e.getEntity() instanceof Sheep sheep && !GlobalConfig.skipNaturalMobGrief && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)) {
                 e.setCancelled(true);
 
                 if (e.getBlock().getBlockData().getMaterial() == Material.GRASS_BLOCK && e.getTo() == Material.DIRT) { // Stupid api workaround for sheep eat
@@ -165,7 +165,7 @@ public class WorldListener implements Listener {
                     (e.getEntity() instanceof Enderman
                             || (e.getEntity() instanceof WitherSkull) // Wither skulls should be the one exploding but some versions the api is wrong, TODO check if explosions are handled correctly
                             || (e.getEntity() instanceof Wither)) // Handles wither block breaks other than explosions
-                    && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)
+                     && !helper.hasPermission(location, PermissionRoute.ENTITY_GRIEF)
             ) {
                 e.setCancelled(true);
             } else if (e.getEntity() instanceof Villager || e.getEntity() instanceof FallingBlock){

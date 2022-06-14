@@ -36,11 +36,7 @@ public class Wrapper1_16_0 implements CompatabilityWrapper {
         packet.getIntegers().write(1, duration);
         packet.getIntegers().write(2, fade_out);
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
     }
 
     @Override
@@ -70,15 +66,12 @@ public class Wrapper1_16_0 implements CompatabilityWrapper {
         metaDataPacket.getWatchableCollectionModifier()
                 .write(0, watcher.getWatchableObjects());
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, metaDataPacket);
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, metaDataPacket);
 
-            fakeEntities.put(id, uuid.toString());
-            entityLocations.put(id, new Location(player.getWorld(), x, y, z));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        fakeEntities.put(id, uuid.toString());
+        entityLocations.put(id, new Location(player.getWorld(), x, y, z));
+
     }
 
     @Override
@@ -88,11 +81,7 @@ public class Wrapper1_16_0 implements CompatabilityWrapper {
         packet.getIntegerArrays()
                 .write(0, Ints.toArray(entity_ids));
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
     }
 
     @Override
@@ -106,11 +95,7 @@ public class Wrapper1_16_0 implements CompatabilityWrapper {
         packet.getSpecificModifier(Collection.class)
                 .write(0, uuids);
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
     }
 
     @Override

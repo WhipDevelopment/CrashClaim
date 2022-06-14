@@ -38,12 +38,8 @@ public class Wrapper1_17_0 implements CompatabilityWrapper {
         packetDelay.getIntegers().write(1, duration);
         packetDelay.getIntegers().write(2, fade_out);
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packetDelay);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packetDelay);
     }
 
     @Override
@@ -73,15 +69,11 @@ public class Wrapper1_17_0 implements CompatabilityWrapper {
         metaDataPacket.getWatchableCollectionModifier()
                 .write(0, watcher.getWatchableObjects());
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, metaDataPacket);
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, metaDataPacket);
 
-            fakeEntities.put(id, uuid.toString());
-            entityLocations.put(id, new Location(player.getWorld(), x, y, z));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        fakeEntities.put(id, uuid.toString());
+        entityLocations.put(id, new Location(player.getWorld(), x, y, z));
     }
 
     @Override
@@ -93,11 +85,7 @@ public class Wrapper1_17_0 implements CompatabilityWrapper {
             packet.getIntegers()
                     .write(0, id);
 
-            try {
-                CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
         }
     }
 
@@ -112,11 +100,7 @@ public class Wrapper1_17_0 implements CompatabilityWrapper {
         packet.getSpecificModifier(Collection.class)
                 .write(0, uuids);
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
     }
 
     private static boolean tempFix = true;

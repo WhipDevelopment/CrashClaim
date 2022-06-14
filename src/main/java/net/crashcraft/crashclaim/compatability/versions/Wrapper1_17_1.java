@@ -17,10 +17,6 @@ public class Wrapper1_17_1 extends Wrapper1_17_0 {
         packet.getIntLists()
                 .write(0, new ArrayList<>(entity_ids));
 
-        try {
-            CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CompatabilityManager.getProtocolManager().sendServerPacket(player, packet);
     }
 }

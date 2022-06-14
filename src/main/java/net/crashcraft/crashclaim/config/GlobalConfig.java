@@ -14,11 +14,13 @@ public class GlobalConfig extends BaseConfig{
     public static String locale;
     public static String paymentProvider;
     public static boolean checkUpdates;
+    public static boolean skipNaturalMobGrief;
 
     private static void loadGeneral(){
         locale = getString("language", "en_US");
         paymentProvider = getString("payment-provider", "default");
         checkUpdates = getBoolean("check-updates", true);
+        skipNaturalMobGrief = getBoolean("skip-natural-mob-grief", false);
     }
 
     public static HashMap<String, GroupSettings> groupSettings;

@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.claimobjects;
 
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -81,7 +82,8 @@ public abstract class BaseClaim {
     }
 
     public String getName() {
-        return name == null ? "<gold>" + id : name;
+        return name == null ?
+                Localization.NEW_CLAIM__DEFAULT_CLAIM_NAME.getRawMessage().replace("<id>", Integer.toString(id)) : name;
     }
 
     public String getEntryMessage() {

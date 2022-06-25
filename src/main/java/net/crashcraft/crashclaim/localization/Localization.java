@@ -160,6 +160,7 @@ public enum Localization {
     NEW_CLAIM__SUCCESS("<green>Claim has been successfully created."),
     NEW_CLAIM__ERROR("<red>Error creating claim."),
 
+    NEW_CLAIM__DEFAULT_CLAIM_NAME("<gold><id>"),
     NEW_CLAIM__CREATE_MENU__TITLE("Confirm Claim Creation"),
     NEW_CLAIM__CREATE_MENU__MESSAGE(Material.EMERALD, 1,
             "<green>The claim creation will cost: <yellow><price>",
@@ -500,6 +501,11 @@ public enum Localization {
         String langSpanishFile = "languages/es_ES.yml";
         if (!new File(CrashClaim.getPlugin().getDataFolder(), langSpanishFile).exists()) {
             CrashClaim.getPlugin().saveResource(langSpanishFile, false);
+        }
+
+        String languageKoreanFile = "languages/ko_KR.yml";
+        if (!new File(CrashClaim.getPlugin().getDataFolder(), languageKoreanFile).exists()) {
+            CrashClaim.getPlugin().saveResource(languageKoreanFile, false);
         }
 
         // Fetch configured file, default is en_US.yml

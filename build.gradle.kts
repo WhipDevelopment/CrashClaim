@@ -80,7 +80,7 @@ tasks {
         relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
         relocate("org.bstats", "net.crashcraft.crashclaim.bstats")
         relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
-        relocate("org.cache2k", "net.crashcraft.crashclaim.cache2k")
+        relocate("org.cache2k.IntCache", "net.crashcraft.crashclaim.cache2k")
         relocate("com.zaxxer.hikari", "net.crashcraft.crashclaim.hikari")
     }
 

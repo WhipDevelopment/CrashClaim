@@ -718,4 +718,8 @@ public class ClaimDataManager implements Listener {
         chunkLookup.clear();
         claimLookup.clearAndClose();
     }
+
+    public IntCache<Claim> getClaimCache() {
+        return claimLookup;
+    }
 }

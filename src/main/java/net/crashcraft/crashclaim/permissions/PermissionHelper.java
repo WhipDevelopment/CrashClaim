@@ -4,6 +4,7 @@ import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.PermState;
+import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import org.bukkit.Bukkit;
@@ -33,6 +34,11 @@ public class PermissionHelper {
             return true;
         }
 
+        // Override owner to grant permissions
+        if (claim instanceof SubClaim subClaim && subClaim.getParent().getOwner().equals(player)){
+            return true;
+        }
+
         PlayerPermissionSet set = claim.getPerms().getPlayerPermissionSet(player);
         if (set == null){
             return false;
@@ -47,6 +53,11 @@ public class PermissionHelper {
 
     public Boolean hasPermission(BaseClaim claim, UUID player, Material material){
         if (bypassManager.isBypass(player)){
+            return true;
+        }
+
+        // Override owner to grant permissions
+        if (claim instanceof SubClaim subClaim && subClaim.getParent().getOwner().equals(player)){
             return true;
         }
 

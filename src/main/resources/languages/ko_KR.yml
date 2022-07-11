@@ -1,0 +1,643 @@
+placeholderapi:
+  visual-status-shown: 보이기
+  visual-status-hidden: 숨기기
+pvp-비활성화d-inside-claim: <red>해당 지역에서 PVP는 금지되어 있습니다!
+비활성화d-world: <red>해당 월드 내에서는 토지 소유가 불가능합니다.
+update-available: |-
+  <yellow>최신버전의 <bold>CrashClaim <version></bold>이 SpigotMC에서 다운로드 가능합니다!
+  <gold>해당 링크에서 다운받으세요! https://whips.dev/crashclaim
+max-claims-reached: <red>당신은 최대한도의 토지를 소유하고 있습니다.
+bypass:
+  활성화: <green>소유한 토지의 통과를 허용시킵니다. 권한을 우회합니다.
+  비활성화d: <red>소유한 토지의 통과를 금지시킵니다.
+eject:
+  no-permission: <red>당신은 이 토지내에서 수정 권한이 없습니다.
+  not-same-claim: <red>해당 플레이어는 당신과 같은 토지에 있지 않습니다.
+  has-permission: <red>해당 플레이어는 토지내 수정 권한이 있어서 쫓아낼 수 없습니다.
+  been-ejected: <red>당신은 해당 토지에서 다른 플레이어에 의해 쫓겨났습니다.
+  success: <green>당신은 해당 플레이어를 토지 경계부로 쫓아냈습니다.
+  no-claim: <red>당신이 있는곳은 어떠한 토지 소유 권한자가 없습니다.
+hide-claims:
+  success: <green>토지 확인 기능이 꺼졌습니다.
+show-claims:
+  success: <green>토지 확인 기능이 켜졌습니다.
+claim-teleport:
+  teleport-own: <green>당신의 토지로 성공적으로 텔레포트되었습니다.
+  teleport-other: <green>당신은 해당 토지로 성공적으로 텔레포트하였습니다.
+  teleport-no-permission: <red>당신은 해당 토지로 텔레포트할 수 있는 권한이 없습니다.
+claim-settings:
+  no-claim: <red>당신이 서 있는 곳은 누구의 토지소유지도 아닙니다.
+un-claim-all:
+  menu:
+    confirmation:
+      title: 모든 토지소유권한 포기 승인하기
+      message:
+        title: <dark_red>모든 토지소유권한을 삭제하시겠습니까?
+        lore:
+        - '<red>모든 소유하였던 토지는 야생으로 복원됩니다.'
+        type: BOOK
+        count: 1
+      accept:
+        title: <gold>승인하기
+        lore: []
+        type: GREEN_CONCRETE
+        count: 1
+      deny:
+        title: <gold>취소하기
+        lore: []
+        type: RED_CONCRETE
+        count: 1
+  no-permission: <red>해당 토지에 대한 수정 권한이 없습니다. - <gold><name></gold>.
+  no-permission-in-all: <red>해당 토지에 대한 수정 권한이 없습니다.
+    <gold><name></gold>
+  no-claim: <red>당신이 서 있는 토지는 소유권한이 없습니다.
+un-claim:
+  menu:
+    confirmation:
+      title: 토지소유권한 포기하기
+      message:
+        title: <dark_red>해당 토지소유권한을 포기하시겠습니까?
+        lore:
+        - '<red>모든 소유하였던 토지는 야생으로 복원됩니다.'
+        count: 1
+      accept:
+        title: <gold>승인하기
+        lore: []
+        type: GREEN_CONCRETE
+        count: 1
+      deny:
+        title: <gold>취소하기
+        lore: []
+        type: RED_CONCRETE
+        count: 1
+  no-permission: <red>해당 토지에 대한 수정 권한이 없습니다.
+  no-permission-in-all: <red>해당 토지에 대한 수정 권한이 없습니다.
+  no-claim: <red>당신이 서 있는 토지는 소유권한이 없습니다.
+un-subclaim:
+  menu:
+    confirmation:
+      title: 토지 부분소유권한 포기하기
+      message:
+        title: <dark_red>해당 토지소유권한을 포기하시겠습니까?
+        lore:
+        - '<red>소유하였던 부분 토지는 야생으로 복원됩니다.'
+        count: 1
+      accept:
+        title: <gold>승인하기
+        lore: []
+        type: GREEN_CONCRETE
+        count: 1
+      deny:
+        title: <gold>취소하기
+        lore: []
+        type: RED_CONCRETE
+        count: 1
+    no-permission: <red>해당 부분토지에 대한 수정 권한이 없습니다.
+    no-claim: <red>당신이 서 있는 부분토지는 소유권한이 없습니다.
+reload:
+  reloading: <yellow>Config파일 리로드중...
+  reloaded: <green>Config파일 리로드 완료!
+migrate:
+  warning-players-online: <red><bold>플레이어가 온라인인 경우에 마이그레이션은 위험 할 수 있습니다.
+  warning-backup: <red><bold>CrashClaim 플러그인과 마이그레이션을 진행하려는 해당 플러그인의 데이터를 백업하십시오.
+  no-adapter: <red>해당 식별자로 마이그레이션이 가능한 어댑터가 없습니다. '/migratedata
+    list' 명령어를 이용해 가능한 어댑터를 확인하세요.
+  selected: <green>마이그레이션을 위해 선택된 어댑터 <yellow><adapter>
+  list:
+    title: <yellow>마이그레이션 어댑터
+    available: <green>가능
+    비활성화d: <red>불가능 - <error>
+    message: '<green><identifier><white>: <status>'
+  confirm:
+    not-selected:
+    - <red>선택된 마이그레이션 어댑터가 없습니다.
+    - /migratedata [adaptor] 명령어를 사용하여 가능한 어댑터를 선택하세요.
+    failed-requirements:
+    - <red>선택된 마이그레이션 어댑터의 요구사항을 확인 하던 중 오류가 발생했습니다.
+    - <error>
+    start-message:
+    - <yellow>[<identifier>] 어댑터를 이용하여 마이그레이션을 진행합니다.
+    - <yellow><bold>완료될때까지 서버를 종료하지 마십시오.
+    error:
+    - <red>마이그레이션이 오류로 인해 종료되었습니다.어떤 정보도 저장되거나 변경되지 않았습니다.
+    - <error>
+    - <dark_red>----- 경고 -----
+    - <red>마이그레이터의 데이터관리 상태가 불안정하기때문에 데이터 저장기능이 꺼졌습니다.
+    - 데이터를 저장하려면 서버를 재시작 하십시오.
+    - <dark_red>----- 경고 -----
+    success:
+    - <bold><green>[<identifier>] 식별자로 진행된 마이그레이션이 오류없이 완료되었습니다.
+    - <green>마이그레이션이 완료된 플러그인의 정보는 삭제하고 서버를 재시작하는것을 권장합니다.
+  cancel: <green>비활성화 된 마이그레이션 어댑터.
+show:
+  subclaim:
+    no-permission: <red>부분토지를 확인하기 위해서는 권한이 필요합니다.
+    no-subclaims: <green>시각화가 가능한 부분토지가 없습니다.
+    stand-inside: <red>시각화하려는 부분토지내에 서 있어야 합니다.
+claim-info:
+  status-활성화: <dark_green>켜짐
+  status-비활성화d: <red>꺼짐
+  message:
+  - <gold>토지소유권 정보 | <yellow>[<min_x>, <min_z>] - [<max_x>, <max_z>]
+  - '<green>소유자: <white><owner>'
+  - <gold>전체 권한
+  - '<green>건축 <yellow>: <build_status>'
+  - '<green>엔티티 <yellow>: <entities_status>'
+  - '<green>상호작용 <yellow>: <interactions_status>'
+  - '<green>부분토지 보기 <yellow>: <view_sub_claims_status>'
+  - '<green>텔레포트 <yellow>: <teleportation_status>'
+  - '<green>폭발 <yellow>: <explosions_status>'
+  - '<green>액체흐름 <yellow>: <fluids_status>'
+  - '<green>피스톤 <yellow>: <pistons_status>'
+  - <gold>전체 상자권한
+  container-message: '<green><name> <yellow>: <status>'
+  no-claim: <red>당신이 서 있는곳은 누구의 소유도 아닙니다.
+new-claim:
+  info: <yellow>새로운 토지소유권한을 얻으려면 두개의 모서리를 클릭하십시오. 크기를 재조정 하려면
+    모서리또는 한 변을 재조정하려는 방향으로 클릭 하십시오.
+  click-corner: <green>대각선에 있는 모서리를 클릭하여 새 토지소유권을 얻습니다.
+  min-size: <red>토지의 크기는 최소 5x5여야 합니다.
+  overlapping: <red>이미 누군가 소유중인 토지 위에 당신의 토지를 설정 할 수 없습니다.
+  other-error: <red>해당 토지는 다른 플러그인이나 지역이 사용중으로, 토지소유권을 얻을 수 없습니다.
+  not-enough-balance: <red>해당 토지를 소유하려면 <price>원이 필요합니다.
+  success: <green>토지소유권을 획득했습니다.
+  error: <red>토지소유권을 획득하는데 오류가 있습니다.
+  create-menu:
+    title: 토지소유권 구매확인
+    message:
+      title: '<green>토지소유권 구매가격: <yellow><price>'
+      lore:
+      - <gold>토지소유권을 구매하거나 취소하세요.
+      type: EMERALD
+      count: 1
+    accept:
+      title: <gold>승인하기
+      lore: []
+      type: GREEN_CONCRETE
+      count: 1
+    deny:
+      title: <gold>취소하기
+      lore: []
+      type: RED_CONCRETE
+      count: 1
+new-subclaim:
+  info: <yellow>새로운 부분 토지소유권을 얻으려면 두개의 모서리를 클릭하십시오. 크기를 재조정 하려면
+    모서리또는 한 변을 재조정하려는 방향으로 클릭 하십시오.
+  click-corner: <green>대각선에 있는 모서리를 클릭하여 새 부분 토지소유권을 얻습니다.
+  not-inside-parent: <red>부분 토지소유권은 토지소유권 영역의 안에 형성되어야 합니다.
+  success: <green>부분 토지소유권을 획득했습니다.
+  min-area: <red>토지의 크기는 최소 5x5여야 합니다.
+  need-parent: <red>토지소유권 영역 밖에서 부분 토지소유권을 만들 수 없습니다.
+  no-overlap: <red>해당 토지는 다른 플러그인이나 지역이 사용중으로, 부분 토지소유권을 얻을 수 없습니다.
+  error: <red>부분 토지소유권을 획득하는데 오류가 있습니다.
+claim:
+  활성화: <green>토지소유권 획득 모드 <bold>활성화됨!
+  비활성화d: <red>토지소유권 획득 모드 <bold>비활성화됨!
+subclaim:
+  활성화: <green>부분 토지소유권 획득 모드<bold>활성화됨!
+  비활성화d: <red>부분 토지소유권 획득 모드 <bold>비활성화됨!
+  no-claim: <red>부분 토지 소유권 획득 모드를 활성화하기 위해서는 자신이 보유한 토지위에 서 있어야 합니다.
+  no-permission: <red>해당 부분 토지를 수정하기 위해서는 권한이 필요합니다.
+  already-resizing: <red>당신이 크기를 재조정하려는 토지는 이미 조정이 완료되었습니다.
+resize:
+  click-another-location: <green>크기를 재조정하려는 토지의 다른부분을 클릭하세요.
+  no-permission: <red>해당 토지를 수정하기 위해서는 권한이 필요합니다.
+  instructions: <red>해당 토지의 크기를 재조정 하기 위해서는 경계를 클릭해야합니다.
+    한 변을 선택하면 해당 방향으로 움직이고
+    모서리를 선택하면 연관되는 방향의 모서리로 움직입니다.  
+  success: <green>토지의 크기가 재조정되었습니다.
+  no-overlap: <red>다른 토지 위에 덮어씌울 수는 없습니다.
+  min-size: <red>토지의 크기는 최소 5x5여야 합니다.
+  cannot-flip: <red>토지를 뒤집을 수 없습니다, 이 방향으로 움직이고 싶으시다면 다른 변을 선택하세요.
+  overlap-existing: <red>부분 토지는 이미 존재하는 다른 부분 토지위를 덮어 씌울 수 없습니다.
+  error-other: <red>다른 플러그인이 토지의 크기를 조정하는것을 방지하고있습니다. 오류발생.
+  transaction-error: <red><error>
+  no-longer-permission: <red>당신은 해당 토지의 크기를 재조정할 권한을 잃었습니다.
+  menu:
+    confirmation:
+      title: 토지 크기 재조정
+      message:
+        title: '<green>토지 크기 재조정 비용: <yellow><price>'
+        lore:
+        - <gold>크기 재조정을 승인하거나 취소하세요.
+        type: EMERALD
+        count: 1
+      accept:
+        title: <gold>승인
+        lore: []
+        type: GREEN_CONCRETE
+        count: 1
+      deny:
+        title: <gold>취소
+        lore: []
+        type: RED_CONCRETE
+        count: 1
+resize-subclaim:
+  instructions: <red>해당 토지의 크기를 재조정 하기 위해서는 경계를 클릭해야합니다.
+    한 변을 선택하면 해당 방향으로 움직이고
+    모서리를 선택하면 연관되는 방향의 모서리로 움직입니다.
+  click-another-location: <green>토지의 크기를 재조정 하려는 다른 장소를 클릭하세요.
+  inside-parent: <red>부분 토지소유권은 토지소유권 영역의 안에 형성되어야 합니다.
+  no-overlap: <red>부분 토지는 이미 존재하는 다른 부분 토지위를 덮어 씌울 수 없습니다.
+  min-size: <red>토지의 크기는 최소 5x5여야 합니다.
+  cannot-flip: 토지를 뒤집을 수 없습니다, 이 방향으로 움직이고 싶으시다면 다른 변을 선택하세요.
+  success: <green>소유한 토지의 크기를 재조정했습니다.
+contribution-refund: <green>당신은 토지소유권을 반환하여 <gold><amount> <green>의 원화를 획득했습니다.
+menu:
+  simple-permissions:
+    title: 기본 토지 권한
+    no-permission: <red>당신은 권한을 없습니다.
+  sub-claim-simple-permissions:
+    title: 기본 부분 토지 권한
+  advanced-permissions:
+    title: 고급 토지 권한
+    no-permission: <red>당신은 권한이 없습니다.
+  sub-claim-advanced-permissions:
+    title: 고급 부분 토지 권한
+  general:
+    insufficient-permission: <red>당신은 권한이 없습니다.
+    claim-item-no-owner:
+      title: <name>
+      lore:
+      - '<green>좌표: <yellow><min_x>, <min_z><gold> | <yellow><max_x>, <max_z>'
+      - '<green>월드: <yellow><world>'
+      count: 1
+    claim-item:
+      title: <name>
+      lore:
+      - '<green>좌표: <yellow><min_x>, <min_z><gold> | <yellow><max_x>, <max_z>'
+      - '<green>월드: <yellow><world>'
+      - '<green>소유자: <yellow><owner>'
+      count: 1
+    claim-item-player:
+      title: <gold><name>
+      lore:
+      - '<green>토지 좌표: <yellow><min_x>, <min_z><gold> | <yellow><max_x>,
+        <max_z>'
+      - '<green>토지 월드: <yellow><world>'
+      count: 1
+    page-display:
+      title: <gold>페이지 <page> / <page_total>
+      lore: []
+      type: ARROW
+      count: 1
+    next-button:
+      title: <yellow>다음
+      lore: []
+      type: OAK_BUTTON
+      count: 1
+    previous-button:
+      title: <yellow>이전
+      lore: []
+      type: OAK_BUTTON
+      count: 1
+    back-button:
+      title: <gold>돌아가기
+      lore: []
+      type: ARROW
+      count: 1
+  list-players:
+    title: 플레이어 선택
+  claim:
+    title: 토지 설정
+    rename:
+      message:
+        title: 새로운 토지이름 입력
+        lore: []
+        type: PAPER
+        count: 1
+      confirmation: <green>다음으로 토지이름 변경 <gold><name>
+    entry-message:
+      message:
+        title: 토지 진입시 출력될 메세지 입력
+        lore: []
+        type: PAPER
+        count: 1
+      confirmation: <green>다음으로 토지 진입시 메세지 변경 <gold><entry_message>
+    exit-message:
+      message:
+        title: 토지 퇴장시 출력될 메세지 입력
+        lore: []
+        type: PAPER
+        count: 1
+      confirmation: <green>다음으로 토지 퇴장시 메세지 변경<gold><exit_message>
+  claim-list:
+    title: 토지
+  sub-claim:
+    title: 부분 토지 설정
+  sub-claim-list:
+    title: 부분 토지
+  permissions:
+    buttons:
+      per-player:
+        title: <gold>플레이어별 설정
+        lore:
+        - <green>각 플레이어마다 권한을 따로 설정
+        type: PLAYER_HEAD
+        count: 1
+      per-player-비활성화d:
+        title: <gray>플레이어별 설정
+        lore:
+        - <dark_gray>각 플레이어마다 권한을 따로 설정
+        type: PLAYER_HEAD
+        count: 1
+      global:
+        title: <gold>전체 토지 설정
+        lore:
+        - <green>소유한 토지에 대한 전체 권한 설정
+        type: COMPASS
+        count: 1
+      global-비활성화d:
+        title: <gray>전체 토지 설정
+        lore:
+        - <dark_gray>소유한 토지에 대한 전체 권한 설정
+        type: COMPASS
+        count: 1
+      rename:
+        title: <gold>토지 이름 재설정
+        lore:
+        - <green>소유한 토지의 이름을 재설정
+        type: ANVIL
+        count: 1
+      rename-비활성화d:
+        title: <gray>토지 이름 재설정
+        lore:
+        - <dark_gray>소유한 토지의 이름을 재설정
+        type: ANVIL
+        count: 1
+      edit-entry:
+        title: <gold>진입시 메세지 수정
+        lore:
+        - <green>진입시 출력될 메세지 수정
+        type: ANVIL
+        count: 1
+      edit-entry-비활성화d:
+        title: <gray>진입시 메세지 수정
+        lore:
+        - <dark_gray>진입시 출력될 메세지 수정
+        type: ANVIL
+        count: 1
+      edit-exit:
+        title: <gold>퇴장시 메세지 수정
+        lore:
+        - <green>퇴장시 출력될 메세지 수정
+        type: ANVIL
+        count: 1
+      edit-exit-비활성화d:
+        title: <gray>퇴장시 메세지 수정
+        lore:
+        - <dark_gray>퇴장시 출력될 메세지 수정
+        type: ANVIL
+        count: 1
+      delete:
+        title: <gold>토지 삭제
+        lore:
+        - <green>당신의 토지소유권을 삭제
+        type: RED_CONCRETE
+        count: 1
+      delete-비활성화d:
+        title: <gray>토지 삭제
+        lore:
+        - <dark_gray>당신의 토지소유권을 삭제
+        type: GRAY_CONCRETE
+        count: 1
+    buttons-subclaims:
+      title: <gold>부분 토지
+      lore:
+      - <green>이 토지소유권 내 부분 토지 소유권 확인
+      type: WRITABLE_BOOK
+      count: 1
+    buttons-no-subclaims:
+      title: <gray>No 부분 토지
+      lore:
+      - <dark_gray>목록에 권한을 소유한 부분 토지가 없습니다.
+      type: WRITABLE_BOOK
+      count: 1
+    containers:
+      display:
+        title: <gold><name>
+        lore: []
+        count: 1
+      title: <gold>상자
+      lore:
+      - <green>상자 사용 허용
+      type: BARREL
+      count: 1
+    pistons:
+      title: <gold>피스톤 사용 허용
+      lore:
+      - <green>피스톤이 토지의 경계사이로 블록을 이동 허용
+      type: PISTON
+      count: 1
+    fluids:
+      title: <gold>액체 흐름 허용
+      lore:
+      - <green>액체가 토지의 경계사이로 흐르는것을 허용
+      type: WATER_BUCKET
+      count: 1
+    view-부분 토지:
+      title: <gold>부분 토지 확인
+      lore:
+      - <green>플레이어들이 부분 토지를 확인할 수 있게 허용
+      type: SEA_LANTERN
+      count: 1
+    build:
+      title: <gold>건설
+      lore:
+      - <green>블록을 부수거나 설치하는 행위를 허용
+      type: GRASS_BLOCK
+      count: 1
+    entities:
+      title: <gold>엔티티
+      lore:
+      - <green>엔티티와 상호작용 하는것을 허용
+      type: ZOMBIE_HEAD
+      count: 1
+    interactions:
+      title: <gold>상호작용
+      lore:
+      - <green>문, 레버같은 사물들과 상호작용 하는것을 허용
+      type: OAK_FENCE_GATE
+      count: 1
+    explosions:
+      title: <gold>폭발
+      lore:
+      - <green>TNT나 크리퍼같이 폭발을 야기하는것에 대한 폭발을 허용
+      type: TNT
+      count: 1
+    teleportation:
+      title: <gold>텔레포트
+      lore:
+      - <green>토지내로 플레이어가 텔레포트 하는것을 허용
+      type: ENDER_PEARL
+      count: 1
+    modify-permissions:
+      title: <gold>권한 변경
+      lore:
+      - <green>유저가 토지에대한 권한을 수정하고
+      - <green>플레이어들이 자신이 가진 권한을 다른이들에게
+      - <green>전가할수있는지 확인
+      type: CRAFTING_TABLE
+      count: 1
+    modify-claim:
+      title: <gold>토지 변경
+      lore:
+      - <green>유저가 해당 토지에 대한 크기, 삭제, 변경 등 모든
+      - <green>사항을 변경할 수 있게 함
+      type: OAK_FENCE
+      count: 1
+    admin:
+      title: <gold>관리자
+      lore:
+      - <green>유저가 권한과 토지 변경능력을 얻게하고 토지삭제를 포함한
+      - <green>모든 토지에 대한 권한을 얻음
+      type: BEACON
+      count: 1
+    misc:
+      title: <gold>기타
+      lore:
+      - <green>몹들이 토지경계를 드나들며 그리핑이 가능하게 하고
+      - <green>물이 경계를 통과하며 흐르게함
+      type: SEA_LANTERN
+      count: 1
+    subclaim-admin:
+      title: <gold>부분 토지 관리자
+      lore:
+      - <green>유저가 권한과 부분 토지 변경능력을 얻게하고 토지삭제를 포함한
+      - <green>모든 부분 토지에 대한 권한을 얻음
+      type: BEACON
+      count: 1
+    entity-grief:
+      title: <gold>몹 그리핑
+      lore:
+      - <green>토지내에 크리퍼나 엔더맨같은 몹들이 블록과
+      - <green>상호작용이 가능하게 함
+      type: CREEPER_HEAD
+      count: 1
+  permissions-toggles:
+    enable:
+      'off':
+        title: <dark_green>활성화
+        lore: []
+        type: GREEN_STAINED_GLASS
+        count: 1
+      비활성화d:
+        title: <gray>활성화
+        lore: []
+        type: GRAY_STAINED_GLASS_PANE
+        count: 1
+      selected:
+        title: <green>활성화
+        lore: []
+        type: GREEN_CONCRETE
+        count: 1
+      selected-비활성화d:
+        title: <gray>활성화
+        lore: []
+        type: GRAY_CONCRETE
+        count: 1
+      overrode:
+        title: <yellow>활성화
+        lore: []
+        type: YELLOW_STAINED_GLASS_PANE
+        count: 1
+    중립:
+      'off':
+        title: <dark_gray>중립
+        lore: []
+        type: GRAY_STAINED_GLASS
+        count: 1
+      비활성화d:
+        title: <gray>중립
+        lore: []
+        type: GRAY_STAINED_GLASS_PANE
+        count: 1
+      selected:
+        title: <gray>중립
+        lore: []
+        type: GRAY_CONCRETE
+        count: 1
+      selected-비활성화d:
+        title: <gray>중립
+        lore: []
+        type: GRAY_CONCRETE
+        count: 1
+      overrode:
+        title: <yellow>중립
+        lore: []
+        type: YELLOW_STAINED_GLASS_PANE
+        count: 1
+    비활성화:
+      'off':
+        title: <dark_red>비활성화
+        lore: []
+        type: RED_STAINED_GLASS
+        count: 1
+      비활성화d:
+        title: <gray>비활성화
+        lore: []
+        type: GRAY_STAINED_GLASS_PANE
+        count: 1
+      selected:
+        title: <red>비활성화
+        lore: []
+        type: RED_CONCRETE
+        count: 1
+      selected-비활성화d:
+        title: <gray>비활성화
+        lore: []
+        type: GRAY_CONCRETE
+        count: 1
+      overrode:
+        title: <yellow>비활성화
+        lore: []
+        type: YELLOW_STAINED_GLASS_PANE
+        count: 1
+  permission-option:
+    simple:
+      title: <gold>기본 설정
+      lore:
+      - <green>토지 변경에 대한 권한 설정
+      type: CRAFTING_TABLE
+      count: 1
+    advanced:
+      title: <yellow>고급 설정
+      lore:
+      - <green>더 자세한 권한 변경 설정
+      type: SMITHING_TABLE
+      count: 1
+    general:
+      title: <gold>일반
+      lore: []
+      type: SMITHING_TABLE
+      count: 1
+    containers:
+      title: <gold>상자
+      lore: []
+      type: BARREL
+      count: 1
+    admin:
+      title: <gold>관리자
+      lore: []
+      type: BEACON
+      count: 1
+    unused:
+      title: <grey>미사용
+      lore:
+      - <dark_grey>이 카테고리에는 아무 권한이 없음
+      type: GRAY_STAINED_GLASS
+      count: 1
+    misc:
+      title: <gold>기타
+      lore: []
+      type: CRAFTING_TABLE
+      count: 1
+alert:
+  no-permissions:
+    build: <red>이 토지를 소유하기 위한 권한이 없습니다.
+    interaction: <red>이 토지와 상호작용하기 위한 권한이 없습니다.
+    containers: <red>이 토지에서 상자를 열 수 있는 권한이 없습니다.
+    entities: <red>이 토지에서 엔티티와 상호작용하기 위한 권한이 없습니다.
+    teleport: <red>이 토지에 텔레포트 하기 위한 권한이 없습니다.
+    teleport-relocate: <red>이 토지에 텔레포트 하기 위한 권한이 없습니다.
+      해당 토지의 외부로 퇴출되었습니다.

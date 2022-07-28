@@ -43,6 +43,7 @@ public class ClaimInfoCommand extends BaseCommand {
                     "min_z", Integer.toString(claim.getMinZ()),
                     "max_x", Integer.toString(claim.getMaxX()),
                     "max_z", Integer.toString(claim.getMaxZ()),
+                    "name", claim.getName(),
                     "owner", Bukkit.getOfflinePlayer(claim.getOwner()).getName(),
                     "build_status", set.getBuild() == PermState.ENABLED ? enabled : disabled,
                     "entities_status", set.getEntities() == PermState.ENABLED ? enabled : disabled,

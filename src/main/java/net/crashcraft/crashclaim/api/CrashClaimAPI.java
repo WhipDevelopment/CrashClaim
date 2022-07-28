@@ -7,6 +7,7 @@ import net.crashcraft.crashclaim.menus.list.ClaimListMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.cache2k.IntCache;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -154,6 +155,15 @@ public class CrashClaimAPI {
         }
 
         return crashClaim.getDataManager().getClaims(chunkX, chunkZ, uuid);
+    }
+
+    /**
+     * Returns an IntCache containing all the cached claims.
+     *
+     * @return the IntCache of cached claims
+     */
+    public IntCache<Claim> getClaimCache(){
+        return crashClaim.getDataManager().getClaimCache();
     }
 
     /**

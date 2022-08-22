@@ -44,6 +44,7 @@ public enum Localization {
     BYPASS__DISABLED("<red>Disabled claim bypass."),
 
     EJECT__NO_PERMISSION("<red>You do not have the modify permission ability inside this claim."),
+    EJECT__INVALID_PLAYER("<red>The specified player could not be found."),
     EJECT__NOT_SAME_CLAIM("<red>That player is not standing in the same claim as you."),
     EJECT__HAS_PERMISSION("<red>That player has the modify permissions ability inside this claim and cannot be ejected."),
     EJECT__BEEN_EJECTED("<red>You have been ejected from the claim you were standing in by another player."),

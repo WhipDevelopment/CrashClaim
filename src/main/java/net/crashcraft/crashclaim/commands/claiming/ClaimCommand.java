@@ -12,7 +12,6 @@ import net.crashcraft.crashclaim.commands.claiming.modes.NewClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.NewSubClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.ResizeClaimMode;
 import net.crashcraft.crashclaim.commands.claiming.modes.ResizeSubClaimMode;
-import net.crashcraft.crashclaim.compatability.CompatabilityManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
@@ -20,7 +19,6 @@ import net.crashcraft.crashclaim.listeners.ProtocalListener;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
-import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import org.bukkit.Bukkit;
@@ -118,7 +116,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
             modeMap.put(uuid, ClickState.SUB_CLAIM);
 
             claim.setEditing(true);
-            visualizationManager.visualizeSuroudningSubClaims(claim, player);
+            visualizationManager.visualizeSurroundingSubClaims(claim, player);
 
             visualizationManager.sendAlert(player, Localization.SUBCLAIM__ENABLED.getMessage(player));
             player.spigot().sendMessage(Localization.NEW_SUBCLAIM__INFO.getMessage(player));

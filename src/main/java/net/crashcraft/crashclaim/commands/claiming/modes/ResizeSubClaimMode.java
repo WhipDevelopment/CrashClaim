@@ -64,7 +64,7 @@ public class ResizeSubClaimMode implements ClaimMode {
                 if (visualSubClaim.equals(subClaim)){
                     group.removeVisual(visual);
 
-                    visualizationManager.getProvider().spawnClaimVisual(VisualColor.YELLOW, group, subClaim, visual.getY()).spawn();
+                    visualizationManager.getProvider(player.getUniqueId()).spawnClaimVisual(VisualColor.YELLOW, group, subClaim, visual.getY()).spawn();
                     return;
                 }
             }
@@ -112,7 +112,7 @@ public class ResizeSubClaimMode implements ClaimMode {
 
                 VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
 
-                visualizationManager.visualizeSuroudningSubClaims(claim, player);
+                visualizationManager.visualizeSurroundingSubClaims(claim, player);
 
                 for (BaseVisual visual : group.getActiveVisuals()){
                     visualizationManager.deSpawnAfter(visual, 5);

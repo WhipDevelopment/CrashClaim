@@ -47,7 +47,7 @@ public class ResizeClaimMode implements ClaimMode {
                 VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
                 group.removeAllVisuals();
 
-                visualizationManager.getProvider().spawnClaimVisual(VisualColor.GOLD, group, claim, player.getLocation().getBlockY() - 1).spawn();
+                visualizationManager.getProvider(player.getUniqueId()).spawnClaimVisual(VisualColor.GOLD, group, claim, player.getLocation().getBlockY() - 1).spawn();
 
                 player.spigot().sendMessage(Localization.RESIZE__CLICK_ANOTHER_LOCATION.getMessage(player));
             } else {
@@ -78,7 +78,7 @@ public class ResizeClaimMode implements ClaimMode {
         ErrorType error = manager.resizeClaim(claim, firstLocation.getBlockX(), firstLocation.getBlockZ(), click.getBlockX(), click.getBlockZ(), player,
                 aBoolean -> {
                     VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
-                    BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, claim, player.getLocation().getBlockY() - 1);
+                    BaseVisual visual = visualizationManager.getProvider(uuid).spawnClaimVisual(VisualColor.GREEN, group, claim, player.getLocation().getBlockY() - 1);
 
                     group.removeAllVisuals();
                     visual.spawn();

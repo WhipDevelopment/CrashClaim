@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Flags;
 import io.papermc.lib.PaperLib;
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
@@ -28,7 +29,14 @@ public class EjectCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("@players @nothing")
-    public void onDefault(Player player, @Flags("other") Player otherPlayer){
+    public void onDefault(Player player, @Flags("other") String value){
+        Player otherPlayer = CrashClaim.getPlugin().getServer().getPlayer(value);
+
+        if (otherPlayer == null) {
+            player.spigot().sendMessage(Localization.EJECT__INVALID_PLAYER.getMessage(player));
+            return;
+        }
+
         Location location = player.getLocation();
         Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
         if (claim != null){

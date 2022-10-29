@@ -43,7 +43,7 @@ public class NewClaimMode implements ClaimMode {
         VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
         group.removeAllVisualsOfType(VisualType.MARKER);
 
-        visualizationManager.getProvider().spawnMarkerVisual(VisualColor.YELLOW, group, firstLocation).spawn();
+        visualizationManager.getProvider(player.getUniqueId()).spawnMarkerVisual(VisualColor.YELLOW, group, firstLocation).spawn();
     }
 
     private boolean checkCanCreate(Location min, Location max){
@@ -105,7 +105,7 @@ public class NewClaimMode implements ClaimMode {
                                     return;
                                 }
 
-                                Bukkit.getScheduler().runTask(CrashClaim.getPlugin(), () -> afterTransaction(min, max, area));
+                                Bukkit.getScheduler().runTask(CrashClaim.getPlugin(), () -> afterTransaction(min, max, area, player.getUniqueId()));
                             });
                         }
                         return "";
@@ -115,11 +115,11 @@ public class NewClaimMode implements ClaimMode {
                         return "";
                     }).open();
         } else {
-            afterTransaction(min, max, 0); // set area to 0 to not add any money into economy
+            afterTransaction(min, max, 0, player.getUniqueId()); // set area to 0 to not add any money into economy
         }
     }
 
-    private void afterTransaction(Location min, Location max, int area){
+    private void afterTransaction(Location min, Location max, int area, UUID target){
         ClaimResponse response = manager.createClaim(max, min, player.getUniqueId());
 
         if (response.isStatus()) {
@@ -130,7 +130,7 @@ public class NewClaimMode implements ClaimMode {
             VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
             group.removeAllVisuals();
 
-            BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
+            BaseVisual visual = visualizationManager.getProvider(target).spawnClaimVisual(VisualColor.GREEN, group, response.getClaim(), player.getLocation().getBlockY() - 1);
             visual.spawn();
 
             visualizationManager.deSpawnAfter(visual, 5);

@@ -73,7 +73,7 @@ public class MenuCommand extends BaseCommand {
                                 if (group != null){
                                     group.removeAllVisuals();
 
-                                    BaseVisual visual = visualizationManager.getProvider().spawnClaimVisual(VisualColor.GREEN, group, claim.getParent(), player.getLocation().getBlockY() - 1);
+                                    BaseVisual visual = visualizationManager.getProvider(p.getUniqueId()).spawnClaimVisual(VisualColor.GREEN, group, claim.getParent(), player.getLocation().getBlockY() - 1);
                                     visual.spawn();
 
                                     visualizationManager.deSpawnAfter(visual, 10);

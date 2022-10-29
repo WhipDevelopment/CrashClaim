@@ -44,7 +44,7 @@ public class ShowClaimsCommand extends BaseCommand {
             }
 
             if (claim.getSubClaims().size() != 0){
-                visualizationManager.visualizeSuroudningSubClaims(claim, player);
+                visualizationManager.visualizeSurroundingSubClaims(claim, player);
             } else {
                 player.spigot().sendMessage(Localization.SHOW__SUBCLAIM__NO_SUBCLAIMS.getMessage(player));
             }

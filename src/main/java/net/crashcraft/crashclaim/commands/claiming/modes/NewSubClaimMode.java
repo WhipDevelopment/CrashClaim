@@ -34,7 +34,7 @@ public class NewSubClaimMode implements ClaimMode {
         VisualGroup group = visualizationManager.fetchVisualGroup(player, true);
         group.removeAllVisualsOfType(VisualType.MARKER);
 
-        visualizationManager.getProvider().spawnMarkerVisual(VisualColor.YELLOW, group, firstLocation.add(0, 1, 0)).spawn();
+        visualizationManager.getProvider(player.getUniqueId()).spawnMarkerVisual(VisualColor.YELLOW, group, firstLocation.add(0, 1, 0)).spawn();
 
         player.spigot().sendMessage(Localization.NEW_SUBCLAIM__CLICK_CORNER.getMessage(player));
     }
@@ -55,7 +55,7 @@ public class NewSubClaimMode implements ClaimMode {
 
             group.removeAllVisuals();
 
-            visualizationManager.visualizeSuroudningSubClaims(claim, player);
+            visualizationManager.visualizeSurroundingSubClaims(claim, player);
 
             for (BaseVisual visual : group.getActiveVisuals()){
                 visualizationManager.deSpawnAfter(visual, 5);

@@ -13,6 +13,7 @@ import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualType;
 import net.crashcraft.crashclaim.visualize.api.VisualUtils;
 import net.crashcraft.crashclaim.visualize.api.visuals.BaseBlockVisual;
+import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -68,7 +69,7 @@ public class BlockClaimVisual extends BaseBlockVisual {
 
     private int calcY(int x, int z, World world){
         if (GlobalConfig.visual_use_highest_block){
-            return world.getHighestBlockYAt(x, z);
+            return world.getHighestBlockYAt(x, z, HeightMap.MOTION_BLOCKING_NO_LEAVES);
         }
         return getY();
     }

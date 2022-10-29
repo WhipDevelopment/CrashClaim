@@ -50,7 +50,7 @@ public class VisualGroup {
         return CrashClaim.getPlugin().getWrapper().getUniqueEntityID();
     }
 
-    public UUID generateUiniqueUUID(){
+    public UUID generateUniqueUUID(){
         return UUID.randomUUID();
     }
 

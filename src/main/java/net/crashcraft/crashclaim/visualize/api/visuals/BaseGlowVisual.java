@@ -36,7 +36,7 @@ public abstract class BaseGlowVisual extends BaseVisual {
                 z,
                 y,
                 getParent().generateUniqueID(),
-                getParent().generateUiniqueUUID());
+                getParent().generateUniqueUUID());
     }
 
     public void removeAll(){

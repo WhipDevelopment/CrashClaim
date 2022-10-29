@@ -70,7 +70,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
             forceCleanup(uuid, true);
 
             modeMap.put(uuid, ClickState.CLAIM);
-            visualizationManager.visualizeSuroudningClaims(player, dataManager);
+            visualizationManager.visualizeSurroundingClaims(player, dataManager);
             visualizationManager.sendAlert(player, Localization.CLAIM__ENABLED.getMessage(player));
             player.spigot().sendMessage(Localization.NEW_CLAIM__INFO.getMessage(player));
         }

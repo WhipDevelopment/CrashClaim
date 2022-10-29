@@ -74,7 +74,7 @@ public class VisualizationManager {
     }
 
     public VisualProvider getProvider(UUID target){
-        if (target.getLeastSignificantBits() == 0){
+        if (target.getMostSignificantBits() == 0){
             return blockVisualProvider;
         } else {
             return provider;
@@ -113,7 +113,7 @@ public class VisualizationManager {
         timeMap.put(visual, System.currentTimeMillis() + (seconds * 1000L));
     }
 
-    public void visualizeSuroudningClaims(Player player, ClaimDataManager claimDataManager){
+    public void visualizeSurroundingClaims(Player player, ClaimDataManager claimDataManager){
         long chunkx = player.getLocation().getChunk().getX();
         long chunkz = player.getLocation().getChunk().getZ();
 

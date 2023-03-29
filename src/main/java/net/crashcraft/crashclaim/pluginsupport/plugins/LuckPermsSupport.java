@@ -54,4 +54,9 @@ public class LuckPermsSupport implements PluginSupport {
 
         return GlobalConfig.groupSettings.get(value);
     }
+
+    @Override
+    public boolean canInteract(Player player, Location location) {
+        return true;
+    }
 }

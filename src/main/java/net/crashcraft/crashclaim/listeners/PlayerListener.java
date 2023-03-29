@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.listeners;
 
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
@@ -9,6 +10,8 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionSetup;
+import net.crashcraft.crashclaim.pluginsupport.PluginSupportDistributor;
+import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -150,6 +153,10 @@ public class PlayerListener implements Listener {
                         || perms.getUntrackedBlocks().contains(e.getClickedBlock().getType()))
             return;
 
+        if (e.getClickedBlock() != null && CrashClaim.getPlugin().getPluginSupport().canInteract(player, e.getClickedBlock().getLocation())) {
+            return;
+        }
+
         if (e.getClickedBlock().getState() instanceof Container){
             if (helper.hasPermission(player.getUniqueId(), location, e.getClickedBlock().getType())){
                 return;
@@ -159,6 +166,7 @@ public class PlayerListener implements Listener {
             visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__CONTAINERS.getMessage(player));
         } else if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS)){
             e.setCancelled(true);
+
             visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__INTERACTION.getMessage(player));
         }
     }

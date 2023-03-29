@@ -20,7 +20,6 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.mikeprimm.com/")
     maven("https://repo.maven.apache.org/maven2/")
-
     maven {
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
@@ -55,12 +54,13 @@ dependencies {
     compileOnly( "com.google.guava:guava:29.0-jre")
     //compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
     compileOnly("com.github.dmulloy2:ProtocolLib:-SNAPSHOT")
-    compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly( "com.sk89q.worldguard:worldguard-bukkit:7.0.5")
-    compileOnly( "com.github.TechFortress:GriefPrevention:16.16.0")
-    compileOnly( "me.clip:placeholderapi:2.10.10")
-    compileOnly( "us.dynmap:dynmap-api:3.2-SNAPSHOT")
+    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
+    compileOnly("com.github.TechFortress:GriefPrevention:16.16.0")
+    compileOnly("me.clip:placeholderapi:2.10.10")
+    compileOnly("us.dynmap:dynmap-api:3.2-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
+    compileOnly(fileTree(mapOf("dir" to "lib", "include" to listOf("*.jar"))))
 
     // Cache2k
     val cache2kVersion = "2.4.1.Final"

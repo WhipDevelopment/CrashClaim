@@ -15,6 +15,7 @@ public interface PluginSupport {
     void disable();
 
     boolean canClaim(Location minLoc, Location maxLoc);
+    boolean canInteract(Player player, Location location);
 
     GroupSettings getPlayerGroupSettings(Player player);
 }

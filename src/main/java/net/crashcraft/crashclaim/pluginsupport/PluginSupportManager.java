@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.pluginsupport;
 
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.pluginsupport.plugins.LuckPermsSupport;
+import net.crashcraft.crashclaim.pluginsupport.plugins.QuickShopSupport;
 import net.crashcraft.crashclaim.pluginsupport.plugins.WorldGuardSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,8 @@ import java.util.logging.Logger;
 public class PluginSupportManager implements Listener {
     private static final List<Class<? extends PluginSupport>> pluginSupportWrappers = Arrays.asList(
             WorldGuardSupport.class,
-            LuckPermsSupport.class
+            LuckPermsSupport.class,
+            QuickShopSupport.class
     );
 
     private final CrashClaim crashClaim;

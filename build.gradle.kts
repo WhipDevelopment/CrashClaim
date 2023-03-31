@@ -71,7 +71,7 @@ dependencies {
 
 tasks {
     shadowJar {
-        archiveFileName.set("${rootProject.name}.jar")
+        archiveFileName.set("${project.name}-${project.version}.jar")
 
         relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
         relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
@@ -84,12 +84,18 @@ tasks {
         relocate("com.zaxxer.hikari", "net.crashcraft.crashclaim.hikari")
     }
 
+    register<Copy>("buildToServer") {
+        from(shadowJar)
+        into("./testServer/plugins")
+    }
+
     build {
         dependsOn(shadowJar)
         dependsOn(publishToMavenLocal)
     }
 
     compileJava {
+        options.encoding = "UTF-8"
         dependsOn(clean)
     }
 
@@ -109,8 +115,4 @@ publishing {
             from(components["java"])
         }
     }
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
 }

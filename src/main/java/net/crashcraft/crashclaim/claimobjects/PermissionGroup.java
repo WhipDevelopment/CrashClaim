@@ -44,15 +44,7 @@ public abstract class PermissionGroup {
     }
 
     public PlayerPermissionSet getPlayerPermissionSet(UUID id) {
-        if (playerPermissions.containsKey(id)) {
-            return playerPermissions.get(id);
-        } else {
-            PlayerPermissionSet set = createPlayerPermissionSet();
-
-            playerPermissions.put(id, set);
-
-            return set;
-        }
+        return playerPermissions.computeIfAbsent(id, key -> createPlayerPermissionSet());
     }
 
     //Used for fixing owner permissions only

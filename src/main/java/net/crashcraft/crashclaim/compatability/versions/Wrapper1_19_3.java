@@ -19,12 +19,12 @@ public class Wrapper1_19_3 extends Wrapper1_19_2 {
         PacketContainer packet = CompatabilityManager.getProtocolManager().createPacket(PacketType.Play.Server.SPAWN_ENTITY);
 
         packet.getIntegers()
-                .write(0, id);
+                .write(0, id); // Entity ID
         packet.getEntityTypeModifier()
-                .write(0, EntityType.MAGMA_CUBE);
+                .write(0, EntityType.MAGMA_CUBE); // Type
 
         packet.getUUIDs()
-                .write(0, uuid);
+                .write(0, uuid); // Entity UUID
         packet.getDoubles() //Cords
                 .write(0, x)
                 .write(1, y)
@@ -33,7 +33,7 @@ public class Wrapper1_19_3 extends Wrapper1_19_2 {
         PacketContainer metaDataPacket = CompatabilityManager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA, true);
 
         metaDataPacket.getIntegers()
-                .write(0, id);
+                .write(0, id); // Entity ID
         metaDataPacket.getDataValueCollectionModifier().write(0, Lists.newArrayList(
                 new WrappedDataValue(0, CompatabilityManager.getByteSerializer(), (byte) (0x20 | 0x40)), // Glowing Invisible
                 new WrappedDataValue(16, CompatabilityManager.getIntegerSerializer(), 2) //Slime size : 12

@@ -1,7 +1,7 @@
 package net.crashcraft.crashclaim.data;
 
 import com.google.common.base.CaseFormat;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 
 import java.util.HashMap;

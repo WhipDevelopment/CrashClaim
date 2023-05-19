@@ -37,7 +37,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
 
     // Adventure
-    val adventure = "4.13.0";
+    val adventure = "4.13.0"
     implementation("net.kyori:adventure-api:${adventure}")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:${adventure}")
@@ -53,7 +53,6 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:2.4.1")
     implementation("org.bstats:bstats-bukkit:2.2.1")
-    implementation("org.apache.commons:commons-lang3:3.12.0") // No longer provided by spigot
     compileOnly( "com.google.guava:guava:29.0-jre")
     //compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
     compileOnly("com.github.dmulloy2:ProtocolLib:-SNAPSHOT")
@@ -84,7 +83,6 @@ tasks {
         relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
         relocate("org.cache2k.IntCache", "net.crashcraft.crashclaim.cache2k")
         relocate("com.zaxxer.hikari", "net.crashcraft.crashclaim.hikari")
-        relocate("org.apache.commons", "net.crashcraft.crashclaim.apache.commons")
     }
 
     register<Copy>("buildToServer") {

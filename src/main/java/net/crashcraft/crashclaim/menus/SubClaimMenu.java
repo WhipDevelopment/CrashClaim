@@ -20,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
+
 public class SubClaimMenu extends GUI {
     private final SubClaim claim;
     private final PermissionHelper helper;
@@ -116,13 +118,12 @@ public class SubClaimMenu extends GUI {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__RENAME__MESSAGE.getItem(player))
-                            .onComplete(((player, reply) -> {
-                                claim.setName(reply);
-                                player.spigot().sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage(player,
-                                        "name", reply));
-                                return AnvilGUI.Response.close();
-                            }))
-                            .open(getPlayer());
+                            .onClick((integer, snapshot) -> {
+                                claim.setName(snapshot.getText());
+                                snapshot.getPlayer().spigot().sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage(snapshot.getPlayer(),
+                                        "name", snapshot.getText()));
+                                return Collections.singletonList(AnvilGUI.ResponseAction.close());
+                            }).open(getPlayer());
                 } else {
                     player.spigot().sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
@@ -133,13 +134,12 @@ public class SubClaimMenu extends GUI {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__ENTRY_MESSAGE__MESSAGE.getItem(player))
-                            .onComplete(((player, reply) -> {
-                                claim.setEntryMessage(reply);
-                                player.spigot().sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage(player,
-                                        "entry_message", reply));
-                                return AnvilGUI.Response.close();
-                            }))
-                            .open(getPlayer());
+                            .onClick((integer, snapshot) -> {
+                                claim.setEntryMessage(snapshot.getText());
+                                snapshot.getPlayer().spigot().sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage(snapshot.getPlayer(),
+                                        "entry_message", snapshot.getText()));
+                                return Collections.singletonList(AnvilGUI.ResponseAction.close());
+                            }).open(getPlayer());
                 } else {
                     player.spigot().sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();
@@ -150,13 +150,12 @@ public class SubClaimMenu extends GUI {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__EXIT_MESSAGE__MESSAGE.getItem(player))
-                            .onComplete(((player, reply) -> {
-                                claim.setExitMessage(reply);
-                                player.spigot().sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage(player,
-                                        "exit_message", reply));
-                                return AnvilGUI.Response.close();
-                            }))
-                            .open(getPlayer());
+                            .onClick((integer, snapshot) -> {
+                                claim.setExitMessage(snapshot.getText());
+                                snapshot.getPlayer().spigot().sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage(snapshot.getPlayer(),
+                                        "exit_message", snapshot.getText()));
+                                return Collections.singletonList(AnvilGUI.ResponseAction.close());
+                            }).open(getPlayer());
                 } else {
                     player.spigot().sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                     forceClose();

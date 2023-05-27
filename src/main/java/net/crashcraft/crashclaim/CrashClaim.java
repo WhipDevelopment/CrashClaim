@@ -5,8 +5,6 @@ import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import dev.whip.crashutils.CrashUtils;
-import dev.whip.crashutils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
 import net.crashcraft.crashclaim.commands.CommandManager;
@@ -20,11 +18,14 @@ import net.crashcraft.crashclaim.listeners.PaperListener;
 import net.crashcraft.crashclaim.listeners.PlayerListener;
 import net.crashcraft.crashclaim.listeners.WorldListener;
 import net.crashcraft.crashclaim.localization.LocalizationLoader;
+import net.crashcraft.crashclaim.utils.caches.TextureCache;
+import net.crashcraft.crashclaim.utils.menusystem.CrashMenuController;
 import net.crashcraft.crashclaim.migration.MigrationManager;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
 import net.crashcraft.crashclaim.update.UpdateManager;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashpayment.CrashPayment;
 import net.crashcraft.crashpayment.payment.PaymentProcessor;
@@ -40,6 +41,7 @@ import java.io.File;
 
 public class CrashClaim extends JavaPlugin {
     private static CrashClaim plugin;
+    private static TextureCache textureCache;
 
     private boolean dataLoaded = false;
 
@@ -51,7 +53,6 @@ public class CrashClaim extends JavaPlugin {
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
     private ProtocolManager protocolManager;
-    private CrashUtils crashUtils;
     private MaterialName materialName;
     private PaymentProcessor payment;
     private CrashPayment paymentPlugin;
@@ -71,9 +72,7 @@ public class CrashClaim extends JavaPlugin {
             disablePlugin("[Payment] CrashPayment plugin not found, disabling plugin, download and install it here, https://www.spigotmc.org/resources/crashpayment.94069/");
         }
 
-        this.crashUtils = new CrashUtils(this);
         this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
-
         pluginSupport.onLoad();
     }
 
@@ -92,8 +91,8 @@ public class CrashClaim extends JavaPlugin {
         LocalizationLoader.initialize(); // Init and reload localization
         getLogger().info("Finished loading language file");
 
-        crashUtils.setupMenuSubSystem();
-        crashUtils.setupTextureCache();
+        setupMenuSubSystem();
+        setupTextureCache();
 
         payment = paymentPlugin.setupPaymentProvider(this, GlobalConfig.paymentProvider).getProcessor();
 
@@ -161,7 +160,6 @@ public class CrashClaim extends JavaPlugin {
         manager = null;
         visualizationManager = null;
         protocolManager = null;
-        crashUtils = null;
         materialName = null;
         payment = null;
         paymentPlugin = null;
@@ -217,9 +215,6 @@ public class CrashClaim extends JavaPlugin {
         return visualizationManager;
     }
 
-    public CrashUtils getCrashUtils() {
-        return crashUtils;
-    }
 
     public PaymentProcessor getPayment() {
         return payment;
@@ -259,5 +254,20 @@ public class CrashClaim extends JavaPlugin {
 
     public UpdateManager getUpdateManager() {
         return updateManager;
+    }
+
+    public void setupMenuSubSystem(){
+        Bukkit.getServer().getPluginManager().registerEvents(new CrashMenuController(plugin), plugin);     //Gui controller
+    }
+
+    public void setupTextureCache(){
+        if (PaperLib.isPaper()) {
+            if (textureCache == null) {
+                textureCache = new TextureCache();
+                Bukkit.getServer().getPluginManager().registerEvents(textureCache, plugin);
+            }
+        } else {
+            plugin.getLogger().severe("Your server is not running Paper or a Paper derivative, texture caching has not been enabled");
+        }
     }
 }

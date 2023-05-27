@@ -1,6 +1,6 @@
 package net.crashcraft.crashclaim.data;
 
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
+import net.crashcraft.crashclaim.utils.menusystem.defaultmenus.ConfirmationMenu;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
@@ -34,9 +34,7 @@ import org.cache2k.CacheEntry;
 import org.cache2k.IntCache;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -216,7 +214,7 @@ public class ClaimDataManager implements Listener {
                             return "";
                         },
                         player -> ""
-                        ).open();
+                        ).initialize();
             } else {
                 //Need to issue a refund
                 ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking

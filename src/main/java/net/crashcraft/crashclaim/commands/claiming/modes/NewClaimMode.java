@@ -1,6 +1,6 @@
 package net.crashcraft.crashclaim.commands.claiming.modes;
 
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
+import net.crashcraft.crashclaim.utils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;

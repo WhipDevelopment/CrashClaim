@@ -1,6 +1,6 @@
 package net.crashcraft.crashclaim.menus.permissions;
 
-import dev.whip.crashutils.menusystem.GUI;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;

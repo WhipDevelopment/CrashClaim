@@ -2,7 +2,7 @@ package net.crashcraft.crashclaim.commands.claiming;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
+import net.crashcraft.crashclaim.utils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;

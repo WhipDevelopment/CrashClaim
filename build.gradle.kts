@@ -30,7 +30,6 @@ repositories {
 
 dependencies {
     // Custom Utils
-    implementation("com.github.CrashCraftNetwork:CrashUtils:master-SNAPSHOT")
     compileOnly("com.github.Chasewhip8:CrashPayment:master-SNAPSHOT")
 
     // Paper
@@ -63,7 +62,7 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
 
     // Cache2k
-    val cache2kVersion = "2.4.1.Final"
+    val cache2kVersion = "1.2.2.Final"
 
     implementation("org.cache2k:cache2k-api:${cache2kVersion}")
     runtimeOnly("org.cache2k:cache2k-core:${cache2kVersion}")
@@ -75,7 +74,6 @@ tasks {
 
         relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
         relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
-        relocate("dev.whip.crashutils", "net.crashcraft.crashclaim.crashutils")
         relocate("co.aikar.taskchain", "net.crashcraft.crashclaim.taskchain")
         relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
         relocate("org.bstats", "net.crashcraft.crashclaim.bstats")

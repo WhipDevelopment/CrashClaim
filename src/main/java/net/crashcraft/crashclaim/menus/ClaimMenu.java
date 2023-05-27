@@ -1,7 +1,7 @@
 package net.crashcraft.crashclaim.menus;
 
-import dev.whip.crashutils.menusystem.GUI;
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
+import net.crashcraft.crashclaim.utils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;

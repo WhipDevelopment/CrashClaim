@@ -1,7 +1,7 @@
 package net.crashcraft.crashclaim.menus.list;
 
 import co.aikar.taskchain.TaskChain;
-import dev.whip.crashutils.menusystem.GUI;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;

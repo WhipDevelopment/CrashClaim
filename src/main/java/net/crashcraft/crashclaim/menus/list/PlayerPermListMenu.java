@@ -1,7 +1,6 @@
 package net.crashcraft.crashclaim.menus.list;
 
-import dev.whip.crashutils.menusystem.GUI;
-import dev.whip.crashutils.menusystem.defaultmenus.PlayerListMenu;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
@@ -9,6 +8,7 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.permissions.SimplePermissionMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import net.crashcraft.crashclaim.utils.menusystem.defaultmenus.PlayerListMenu;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

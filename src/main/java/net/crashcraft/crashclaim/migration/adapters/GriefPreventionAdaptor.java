@@ -182,7 +182,7 @@ public class GriefPreventionAdaptor implements MigrationAdapter {
                 }
 
                 cClaim.getPerms().setPlayerPermissionSet(
-                        uuid, permissionSet
+                        uuid, permissionSet, true
                 );
             }
         }

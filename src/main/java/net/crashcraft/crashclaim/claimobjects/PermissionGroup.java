@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.claimobjects;
 
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
@@ -48,17 +49,21 @@ public abstract class PermissionGroup {
     }
 
     //Used for fixing owner permissions only
-    public void setPlayerPermissionSet(UUID uuid, PlayerPermissionSet permissionSet) {
+    public void setPlayerPermissionSet(UUID uuid, PlayerPermissionSet permissionSet, boolean save) {
         playerPermissions.put(uuid, permissionSet);
-        owner.setToSave(true);
+        if (save) {
+            owner.setToSave(true);
+            CrashClaim.getPlugin().getLogger().info("setToSave " + owner.getId() + " (setPlayerPermisssion set)");
+        }
     }
 
     public HashMap<UUID, PlayerPermissionSet> getPlayerPermissions(){
         return playerPermissions;
     }
 
-    public void setOwner(BaseClaim owner){
+    public void setOwner(BaseClaim owner, boolean save){
         this.owner = owner;
+        if (save) owner.setToSave(true);
     }
 
     public BaseClaim getOwner() {

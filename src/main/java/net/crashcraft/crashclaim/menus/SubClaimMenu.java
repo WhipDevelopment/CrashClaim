@@ -119,7 +119,7 @@ public class SubClaimMenu extends GUI {
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__RENAME__MESSAGE.getItem(player))
                             .onClick((integer, snapshot) -> {
-                                claim.setName(snapshot.getText());
+                                claim.setName(snapshot.getText(), true);
                                 snapshot.getPlayer().spigot().sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage(snapshot.getPlayer(),
                                         "name", snapshot.getText()));
                                 return Collections.singletonList(AnvilGUI.ResponseAction.close());
@@ -135,7 +135,7 @@ public class SubClaimMenu extends GUI {
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__ENTRY_MESSAGE__MESSAGE.getItem(player))
                             .onClick((integer, snapshot) -> {
-                                claim.setEntryMessage(snapshot.getText());
+                                claim.setEntryMessage(snapshot.getText(), true);
                                 snapshot.getPlayer().spigot().sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage(snapshot.getPlayer(),
                                         "entry_message", snapshot.getText()));
                                 return Collections.singletonList(AnvilGUI.ResponseAction.close());
@@ -151,7 +151,7 @@ public class SubClaimMenu extends GUI {
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__EXIT_MESSAGE__MESSAGE.getItem(player))
                             .onClick((integer, snapshot) -> {
-                                claim.setExitMessage(snapshot.getText());
+                                claim.setExitMessage(snapshot.getText(), true);
                                 snapshot.getPlayer().spigot().sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage(snapshot.getPlayer(),
                                         "exit_message", snapshot.getText()));
                                 return Collections.singletonList(AnvilGUI.ResponseAction.close());

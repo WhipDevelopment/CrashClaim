@@ -94,21 +94,21 @@ public abstract class BaseClaim {
         return exitMessage;
     }
 
-    public void setName(String name) {
+    public void setName(String name, boolean save) {
         this.name = name;
-        setToSave(true);
+        if (save) setToSave(true);
     }
 
-    public void setEntryMessage(String entryMessage) {
+    public void setEntryMessage(String entryMessage, boolean save) {
         this.entryMessage = entryMessage;
         this.parsedEntryMessage = entryMessage == null ? null : Localization.parseRawUserInput(entryMessage);
-        setToSave(true);
+        if (save) setToSave(true);
     }
 
-    public void setExitMessage(String exitMessage) {
+    public void setExitMessage(String exitMessage, boolean save) {
         this.exitMessage = exitMessage;
         this.parsedExitMessage = exitMessage == null ? null :  Localization.parseRawUserInput(exitMessage);
-        setToSave(true);
+        if (save) setToSave(true);
     }
 
     public void setMinCornerX(int minCornerX) {

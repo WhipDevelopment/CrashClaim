@@ -1,5 +1,7 @@
 package net.crashcraft.crashclaim.claimobjects;
 
+import net.crashcraft.crashclaim.CrashClaim;
+
 import java.util.UUID;
 
 public class SubClaim extends BaseClaim {
@@ -17,6 +19,7 @@ public class SubClaim extends BaseClaim {
             return;
         }
         parent.setToSave(true);
+        //CrashClaim.getPlugin().getLogger().info("setToSave " + getId() + " (parentSetToSave)");
     }
 
     @Override

@@ -137,7 +137,7 @@ public class ClaimDataManager implements Listener {
                 new ParentPermissionGroup(null, null, null),
                 owner);
 
-        claim.getPerms().setOwner(claim);
+        claim.getPerms().setOwner(claim, true);
 
         claim.addContribution(owner, ContributionManager.getArea(claim.getMinX(), claim.getMinZ(), claim.getMaxX(), claim.getMaxZ())); //Contribution tracking initial put
 
@@ -238,6 +238,8 @@ public class ClaimDataManager implements Listener {
             claim.setMaxCornerZ(newMaxZ);
 
             loadChunksForClaim(claim);
+
+            claim.setToSave(true);
     }
 
     public ErrorType resizeSubClaim(SubClaim subClaim, int start_x, int start_z, int end_x, int end_z){
@@ -537,12 +539,13 @@ public class ClaimDataManager implements Listener {
 
         PermissionGroup permissionGroup = subClaim.getPerms();
 
-        permissionGroup.setOwner(subClaim);
+        permissionGroup.setOwner(subClaim, true);
 
-        permissionGroup.setPlayerPermissionSet(owner, permissionSetup.getOwnerPermissionSet().clone());
+        permissionGroup.setPlayerPermissionSet(owner, permissionSetup.getOwnerPermissionSet().clone(), false);
 
         claim.addSubClaim(subClaim);
         claim.setToSave(true);
+        CrashClaim.getPlugin().getLogger().info("setToSave " + claim.getId() + " (createSubClaim)");
 
         return new ClaimResponse(true, subClaim);
     }
@@ -572,13 +575,14 @@ public class ClaimDataManager implements Listener {
 
         provider.saveClaim(claim);
         claim.setToSave(false);
+        //CrashClaim.getPlugin().getLogger().info("setToSave " + claim.getId() + " (saveClaimSyncronizedBlah)");
     }
 
     public void saveClaimsSync(){   //Force save all data - shutdown
         Collection<Claim> claims = claimLookup.asMap().values();
 
         for (Claim claim : claims){
-            saveClaim(claim);
+            if (claim.isToSave()) saveClaim(claim);
         }
     }
 
@@ -590,7 +594,7 @@ public class ClaimDataManager implements Listener {
         forceSaveTask = Bukkit.getScheduler().runTaskTimer(CrashClaim.getPlugin(), () -> {
             int nextPos = Math.min(forceSavePosition + 5, claims.size());
             for (int x = forceSavePosition; x < nextPos; x++){
-                logger.info("Saving " + x + " : " + claims.get(x).getId());
+                //logger.info("Saving " + x + " : " + claims.get(x).getId());
                 saveClaim(claims.get(x));
             }
 
@@ -665,7 +669,7 @@ public class ClaimDataManager implements Listener {
 
     public void fixupOwnerPerms(Claim claim){
         PermissionGroup group = claim.getPerms();
-        group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet().clone());
+        group.setPlayerPermissionSet(claim.getOwner(), permissionSetup.getOwnerPermissionSet().clone(), false);
     }
 
     public ArrayList<Claim> getOwnedClaims(UUID uuid) {

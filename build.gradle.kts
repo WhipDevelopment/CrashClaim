@@ -55,7 +55,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:2.2.1")
     compileOnly( "com.google.guava:guava:29.0-jre")
     //compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
-    compileOnly("com.github.dmulloy2:ProtocolLib:-SNAPSHOT")
+    compileOnly("com.github.dmulloy2:ProtocolLib:5.0.0")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
     compileOnly( "com.sk89q.worldguard:worldguard-bukkit:7.0.5")
     compileOnly( "com.github.TechFortress:GriefPrevention:16.16.0")

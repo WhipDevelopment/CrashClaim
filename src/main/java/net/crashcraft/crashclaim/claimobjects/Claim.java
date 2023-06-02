@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.claimobjects;
 
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.data.MathUtils;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionRouter;

@@ -234,6 +234,11 @@ public class AdvancedPermissionMenu extends MenuListHelper {
         }
     }
 
+    @Override
+    public void onClose() {
+        claim.setToSave(true);
+    }
+
     private enum SUBMENU {
         GENERAL,
         CONTAINERS,

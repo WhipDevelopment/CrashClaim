@@ -202,6 +202,7 @@ public class SQLiteDataProvider implements DataProvider {
 
     @Override
     public void saveClaim(Claim claim) {
+        CrashClaim.getPlugin().getLogger().info("Saving " + claim.getId());
         try {
             addPlayer(claim.getOwner()); //Make sure owner is in db
 
@@ -466,11 +467,11 @@ public class SQLiteDataProvider implements DataProvider {
                     owner
             );
 
-            claim.setName(claimDataRow.getString("name"));
-            claim.setEntryMessage(claimDataRow.getString("entryMessage"));
-            claim.setExitMessage(claimDataRow.getString("exitMessage"));
+            claim.setName(claimDataRow.getString("name"), false);
+            claim.setEntryMessage(claimDataRow.getString("entryMessage"), false);
+            claim.setExitMessage(claimDataRow.getString("exitMessage"), false);
 
-            group.setOwner(claim);
+            group.setOwner(claim, false);
 
             //Contributions
             for (DbRow row : DB.getResults("Select" +
@@ -519,11 +520,11 @@ public class SQLiteDataProvider implements DataProvider {
                         subClaim_group
                 );
 
-                subClaim.setName(row.getString("name"));
-                subClaim.setEntryMessage(row.getString("entryMessage"));
-                subClaim.setExitMessage(row.getString("exitMessage"));
+                subClaim.setName(row.getString("name"), false);
+                subClaim.setEntryMessage(row.getString("entryMessage"), false);
+                subClaim.setExitMessage(row.getString("exitMessage"), false);
 
-                subClaim_group.setOwner(subClaim);
+                subClaim_group.setOwner(subClaim, false);
 
                 claim.addSubClaim(subClaim);
             }

@@ -120,7 +120,7 @@ public class SimplePermissionMenu extends MenuListHelper {
 
     @Override
     public void onClose() {
-
+        claim.setToSave(true);
     }
 
     @Override

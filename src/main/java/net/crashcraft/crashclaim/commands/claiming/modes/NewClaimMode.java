@@ -1,6 +1,5 @@
 package net.crashcraft.crashclaim.commands.claiming.modes;
 
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
@@ -12,6 +11,7 @@ import net.crashcraft.crashclaim.data.ContributionManager;
 import net.crashcraft.crashclaim.data.StaticClaimLogic;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.utils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;

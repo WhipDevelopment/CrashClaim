@@ -1,6 +1,5 @@
 package net.crashcraft.crashclaim.menus.helpers;
 
-import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.PermissionGroup;
@@ -12,6 +11,7 @@ import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;

@@ -22,29 +22,14 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFertilizeEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 
 import java.util.List;
@@ -125,7 +110,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler (priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteractEvent(PlayerInteractEvent e){
         if (e.getClickedBlock() == null)
             return;
@@ -146,9 +131,10 @@ public class PlayerListener implements Listener {
         }
 
         if (!e.getClickedBlock().getType().isInteractable()
-                        && !perms.getExtraInteractables().contains(e.getClickedBlock().getType())
-                        || perms.getUntrackedBlocks().contains(e.getClickedBlock().getType()))
+                && !perms.getExtraInteractables().contains(e.getClickedBlock().getType())
+                || perms.getUntrackedBlocks().contains(e.getClickedBlock().getType()))
             return;
+
 
         if (e.getClickedBlock().getState() instanceof Container){
             if (helper.hasPermission(player.getUniqueId(), location, e.getClickedBlock().getType())){
@@ -511,7 +497,7 @@ public class PlayerListener implements Listener {
             }
 
             if (blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.NORTH)
-                || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.EAST)
+                    || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.EAST)
                     || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.SOUTH)
                     || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.WEST)
                     || blockFertilizeDispenserCHeck(baseClaim, baseLocation, BlockFace.UP)) { // Exclude down because the block has to be placed on something

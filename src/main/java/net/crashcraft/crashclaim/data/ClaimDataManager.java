@@ -214,7 +214,7 @@ public class ClaimDataManager implements Listener {
                             return "";
                         },
                         player -> ""
-                        ).initialize();
+                        ).open();
             } else {
                 //Need to issue a refund
                 ContributionManager.addContribution(claim, newMinX, newMinZ, newMaxX, newMaxZ, resizer.getUniqueId());  // Contribution tracking

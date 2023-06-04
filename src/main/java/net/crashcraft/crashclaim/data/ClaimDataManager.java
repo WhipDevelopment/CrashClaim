@@ -1,6 +1,5 @@
 package net.crashcraft.crashclaim.data;
 
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
@@ -15,6 +14,7 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionSetup;
+import net.crashcraft.crashclaim.utils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashpayment.payment.TransactionResponse;
 import net.crashcraft.crashpayment.payment.TransactionType;
 import org.bukkit.Bukkit;
@@ -34,9 +34,7 @@ import org.cache2k.CacheEntry;
 import org.cache2k.IntCache;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Logger;

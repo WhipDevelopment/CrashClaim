@@ -30,7 +30,6 @@ repositories {
 
 dependencies {
     // Custom Utils
-    implementation("com.github.CrashCraftNetwork:CrashUtils:master-SNAPSHOT")
     compileOnly("com.github.Chasewhip8:CrashPayment:master-SNAPSHOT")
 
     // Paper
@@ -54,7 +53,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:2.2.1")
     compileOnly( "com.google.guava:guava:29.0-jre")
     //compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
-    compileOnly("com.github.dmulloy2:ProtocolLib:-SNAPSHOT")
+    compileOnly("com.github.dmulloy2:ProtocolLib:5.0.0")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
     compileOnly( "com.sk89q.worldguard:worldguard-bukkit:7.0.5")
     compileOnly( "com.github.TechFortress:GriefPrevention:16.16.0")
@@ -63,7 +62,7 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
 
     // Cache2k
-    val cache2kVersion = "2.4.1.Final"
+    val cache2kVersion = "1.2.2.Final"
 
     implementation("org.cache2k:cache2k-api:${cache2kVersion}")
     runtimeOnly("org.cache2k:cache2k-core:${cache2kVersion}")
@@ -75,7 +74,6 @@ tasks {
 
         relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
         relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
-        relocate("dev.whip.crashutils", "net.crashcraft.crashclaim.crashutils")
         relocate("co.aikar.taskchain", "net.crashcraft.crashclaim.taskchain")
         relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
         relocate("org.bstats", "net.crashcraft.crashclaim.bstats")

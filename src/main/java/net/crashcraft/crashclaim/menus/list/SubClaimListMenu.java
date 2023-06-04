@@ -1,11 +1,11 @@
 package net.crashcraft.crashclaim.menus.list;
 
-import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.SubClaimMenu;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

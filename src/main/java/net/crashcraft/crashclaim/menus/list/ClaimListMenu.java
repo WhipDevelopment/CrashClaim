@@ -1,7 +1,6 @@
 package net.crashcraft.crashclaim.menus.list;
 
 import co.aikar.taskchain.TaskChain;
-import dev.whip.crashutils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
@@ -11,6 +10,7 @@ import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.ClaimMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import net.crashcraft.crashclaim.utils.menusystem.GUI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

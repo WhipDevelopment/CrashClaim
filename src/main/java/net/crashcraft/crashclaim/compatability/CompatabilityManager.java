@@ -39,7 +39,8 @@ public class CompatabilityManager {
             Wrapper1_19_1.class,
             Wrapper1_19_2.class,
             Wrapper1_19_3.class,
-            Wrapper1_19_4.class
+            Wrapper1_19_4.class,
+            Wrapper1_20_0.class
     );
 
     public CompatabilityManager(ProtocolManager manager){

@@ -116,10 +116,10 @@ public class SubClaimMenu extends GUI {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__RENAME__MESSAGE.getItem(player))
-                            .onComplete(((player, reply) -> {
-                                claim.setName(reply);
+                            .onClick(((slot, reply) -> {
+                                claim.setName(reply.getText());
                                 player.spigot().sendMessage(Localization.MENU__CLAIM__RENAME__CONFIRMATION.getMessage(player,
-                                        "name", reply));
+                                        "name", reply.getText()));
                                 return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
@@ -133,10 +133,10 @@ public class SubClaimMenu extends GUI {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__ENTRY_MESSAGE__MESSAGE.getItem(player))
-                            .onComplete(((player, reply) -> {
-                                claim.setEntryMessage(reply);
+                            .onClick(((slot, reply) -> {
+                                claim.setEntryMessage(reply.getText());
                                 player.spigot().sendMessage(Localization.MENU__CLAIM__ENTRY_MESSAGE__CONFIRMATION.getMessage(player,
-                                        "entry_message", reply));
+                                        "entry_message", reply.getText()));
                                 return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());
@@ -150,10 +150,10 @@ public class SubClaimMenu extends GUI {
                     new AnvilGUI.Builder()
                             .plugin(CrashClaim.getPlugin())
                             .itemLeft(Localization.MENU__CLAIM__EXIT_MESSAGE__MESSAGE.getItem(player))
-                            .onComplete(((player, reply) -> {
-                                claim.setExitMessage(reply);
+                            .onClick(((slot, reply) -> {
+                                claim.setExitMessage(reply.getText());
                                 player.spigot().sendMessage(Localization.MENU__CLAIM__EXIT_MESSAGE__CONFIRMATION.getMessage(player,
-                                        "exit_message", reply));
+                                        "exit_message", reply.getText()));
                                 return AnvilGUI.Response.close();
                             }))
                             .open(getPlayer());

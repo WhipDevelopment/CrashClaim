@@ -37,22 +37,22 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
 
     // Adventure
-    implementation("net.kyori:adventure-api:4.11.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.1.2")
-    implementation("net.kyori:adventure-text-minimessage:4.11.0")
+    implementation("net.kyori:adventure-api:4.13.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    implementation("net.kyori:adventure-text-minimessage:4.13.0")
 
     // Other
     implementation("co.aikar:taskchain-bukkit:3.7.2")
-    implementation("net.wesjd:anvilgui:1.6.3-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.6.6-SNAPSHOT")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longbase:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longhashmap:3.0-SNAPSHOT")
-    implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
-    implementation("io.papermc:paperlib:1.0.1")
+    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+    implementation("io.papermc:paperlib:1.0.7")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
-    implementation("com.zaxxer:HikariCP:2.4.1")
-    implementation("org.bstats:bstats-bukkit:2.2.1")
-    compileOnly( "com.google.guava:guava:29.0-jre")
+    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("org.bstats:bstats-bukkit:3.0.1")
+    compileOnly("com.google.guava:guava:31.1-jre")
     //compileOnly( "com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
     compileOnly("com.github.dmulloy2:ProtocolLib:-SNAPSHOT")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
@@ -63,7 +63,7 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
 
     // Cache2k
-    val cache2kVersion = "2.4.1.Final"
+    val cache2kVersion = "2.6.1.Final"
 
     implementation("org.cache2k:cache2k-api:${cache2kVersion}")
     runtimeOnly("org.cache2k:cache2k-core:${cache2kVersion}")

@@ -54,8 +54,10 @@ public class MenuCommand extends BaseCommand {
     @CommandPermission("crashclaim.user.unclaimsubclaim")
     public void unSubClaim(Player player){
         Location location = player.getLocation();
-        SubClaim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID()).getSubClaim(location.getBlockX(), location.getBlockZ());
-        if (claim != null){
+        final Claim claim = manager.getClaim(location.getBlockX(), location.getBlockZ(), location.getWorld().getUID());
+        SubClaim subClaim;
+        subClaim = (claim != null) ? claim.getSubClaim(location.getBlockX(), location.getBlockZ()) : null;
+        if (subClaim != null){
             ItemStack message = Localization.UN_SUBCLAIM__MENU__CONFIRMATION__MESSAGE.getItem(player);
             message.setType(GlobalConfig.visual_menu_items.getOrDefault(claim.getWorld(), Material.OAK_FENCE));
 
@@ -66,14 +68,14 @@ public class MenuCommand extends BaseCommand {
                     Localization.UN_SUBCLAIM__MENU__CONFIRMATION__DENY.getItem(player),
                     (p, aBoolean) -> {
                         if (aBoolean) {
-                            if (PermissionHelper.getPermissionHelper().hasPermission(claim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
-                                CrashClaim.getPlugin().getDataManager().deleteSubClaim(claim);
+                            if (PermissionHelper.getPermissionHelper().hasPermission(subClaim, p.getUniqueId(), PermissionRoute.MODIFY_CLAIM)) {
+                                CrashClaim.getPlugin().getDataManager().deleteSubClaim(subClaim);
 
                                 VisualGroup group = visualizationManager.fetchVisualGroup(player, false);
                                 if (group != null){
                                     group.removeAllVisuals();
 
-                                    BaseVisual visual = visualizationManager.getProvider(p.getUniqueId()).spawnClaimVisual(VisualColor.GREEN, group, claim.getParent(), player.getLocation().getBlockY() - 1);
+                                    BaseVisual visual = visualizationManager.getProvider(p.getUniqueId()).spawnClaimVisual(VisualColor.GREEN, group, subClaim.getParent(), player.getLocation().getBlockY() - 1);
                                     visual.spawn();
 
                                     visualizationManager.deSpawnAfter(visual, 10);

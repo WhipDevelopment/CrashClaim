@@ -50,12 +50,15 @@ public class GlobalConfig extends BaseConfig{
     public static boolean visual_use_highest_block;
     public static HashMap<UUID, Material> visual_menu_items;
 
+    public static Material visual_subclaim_item;
+
     public static int visual_alert_fade_in;
     public static int visual_alert_duration;
     public static int visual_alert_fade_out;
 
     private static void loadVisual(){
         visual_type = getString("visualization.visual-type", "glow");
+        visual_subclaim_item =  Material.valueOf(getString("visualization.sub-claim-item", "PAPER"));
 
         visual_menu_items = new HashMap<>();
 

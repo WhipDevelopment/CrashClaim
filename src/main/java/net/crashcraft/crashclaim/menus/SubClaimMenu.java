@@ -20,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import static net.crashcraft.crashclaim.config.GlobalConfig.visual_subclaim_item;
+
 public class SubClaimMenu extends GUI {
     private final SubClaim claim;
     private final PermissionHelper helper;
@@ -61,7 +63,7 @@ public class SubClaimMenu extends GUI {
             );
         }
 
-        descItem.setType(Material.PAPER);
+        descItem.setType(visual_subclaim_item);
         inv.setItem(13, descItem);
 
         if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {

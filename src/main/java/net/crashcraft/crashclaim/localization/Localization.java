@@ -482,6 +482,7 @@ public enum Localization {
             item.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
             ItemMeta meta = item.getItemMeta(); // Stupid spigot api
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
             item.setItemMeta(meta);
             return item;
@@ -747,6 +748,7 @@ public enum Localization {
 
             ItemStack item = new ItemStack(material, stackSize);
             ItemMeta iMeta = item.getItemMeta();
+            iMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
             String newTitle = hasPlaceholders ? LocalizationLoader.placeholderManager.usePlaceholders(player, title) : title;
             iMeta.setDisplayName(BukkitComponentSerializer.legacy().serialize(Component.empty().decoration(TextDecoration.ITALIC, false).append(LocalizationLoader.parser.deserialize(newTitle, generateTagResolver(replace)))));

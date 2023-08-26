@@ -3,6 +3,7 @@ package net.crashcraft.crashclaim.permissions;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.PermState;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -87,6 +88,10 @@ public class PermissionSetup {
 
             Material material = Material.getMaterial(name);
 
+            if(name.equals("EGG*")){
+                eggMaterials();
+            }
+
             if (material != null) {
                 heldItemInteraction.add(material);
             } else {
@@ -111,6 +116,14 @@ public class PermissionSetup {
                 PermState.ENABLED,
                 PermState.ENABLED,
                 PermState.ENABLED);
+    }
+
+    private void eggMaterials(){
+        for (Material EGG : org.bukkit.Material.values()){
+            if(EGG.toString().contains("EGG")){
+                heldItemInteraction.add(EGG);
+            }
+        }
     }
 
     public ArrayList<Material> getTrackedContainers() {

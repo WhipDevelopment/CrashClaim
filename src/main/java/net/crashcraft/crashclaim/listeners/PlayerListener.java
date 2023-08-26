@@ -30,6 +30,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -125,6 +126,7 @@ public class PlayerListener implements Listener {
         }
     }
 
+
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteractEvent(PlayerInteractEvent e){
         if (e.getClickedBlock() == null)
@@ -136,6 +138,7 @@ public class PlayerListener implements Listener {
         if (GlobalConfig.disabled_worlds.contains(location.getWorld().getUID())){
             return;
         }
+
 
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && perms.getHeldItemInteraction().contains(e.getItem().getType())) {
             if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)){

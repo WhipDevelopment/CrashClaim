@@ -1,6 +1,7 @@
 untracked-blocks:
   - ""
-
+tracked-heldItemInteraction:
+  - "EGG*"
 #An issue with the Bukkit API has required this list to add intractable block materials to an incomplete list.
 #If a block is not falling under the interaction category then add it to this list. Use the Bukkit material name.
 additional-tracked-interactables:
@@ -25,4 +26,4 @@ additional-tracked-interactables:
   - "PUMPKIN_STEM"
   - "SWEET_BERRY_BUSH"
   - "WHEAT"
-  - "WHEAT"
+  - "SPAWNER"

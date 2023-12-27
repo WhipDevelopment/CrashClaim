@@ -1,11 +1,12 @@
 package net.crashcraft.crashclaim.commands.claiming.modes;
 
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.commands.claiming.ClaimMode;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.payment.TransactionType;
+import net.crashcraft.crashclaim.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.ClaimResponse;
 import net.crashcraft.crashclaim.data.ContributionManager;
@@ -17,7 +18,6 @@ import net.crashcraft.crashclaim.visualize.api.BaseVisual;
 import net.crashcraft.crashclaim.visualize.api.VisualColor;
 import net.crashcraft.crashclaim.visualize.api.VisualGroup;
 import net.crashcraft.crashclaim.visualize.api.VisualType;
-import net.crashcraft.crashpayment.payment.TransactionType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

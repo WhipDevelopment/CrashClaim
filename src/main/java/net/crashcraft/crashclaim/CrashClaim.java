@@ -5,13 +5,17 @@ import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import dev.whip.crashutils.CrashUtils;
-import dev.whip.crashutils.menusystem.GUI;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
 import net.crashcraft.crashclaim.commands.CommandManager;
 import net.crashcraft.crashclaim.config.ConfigManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.payment.PaymentProcessor;
+import net.crashcraft.crashclaim.payment.PaymentProvider;
+import net.crashcraft.crashclaim.payment.ProcessorManager;
+import net.crashcraft.crashclaim.payment.ProviderInitializationException;
+import net.crashcraft.crashclaim.crashutils.CrashUtils;
+import net.crashcraft.crashclaim.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.MaterialName;
 import net.crashcraft.crashclaim.listeners.PaperListener;
@@ -26,14 +30,13 @@ import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
 import net.crashcraft.crashclaim.update.UpdateManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
-import net.crashcraft.crashpayment.CrashPayment;
-import net.crashcraft.crashpayment.payment.PaymentProcessor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -54,7 +57,6 @@ public class CrashClaim extends JavaPlugin {
     private CrashUtils crashUtils;
     private MaterialName materialName;
     private PaymentProcessor payment;
-    private CrashPayment paymentPlugin;
     private CommandManager commandManager;
     private MigrationManager migrationManager;
     private BukkitAudiences adventure;
@@ -65,11 +67,14 @@ public class CrashClaim extends JavaPlugin {
         plugin = this;
 
         this.protocolManager = ProtocolLibrary.getProtocolManager();
-        this.paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
+
+        /*this.paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
 
         if (paymentPlugin == null){
             disablePlugin("[Payment] CrashPayment plugin not found, disabling plugin, download and install it here, https://www.spigotmc.org/resources/crashpayment.94069/");
         }
+         */
+
 
         this.crashUtils = new CrashUtils(this);
         this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
@@ -79,67 +84,69 @@ public class CrashClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String bukkitVersion = Bukkit.getBukkitVersion();
-        //1.20.4
-        if (bukkitVersion.matches("1\\.20\\.4(?:.*)$")) {
-            Bukkit.getPluginManager().registerEvents(pluginSupport, this);
+        Bukkit.getPluginManager().registerEvents(pluginSupport, this);
 
-            taskChainFactory = BukkitTaskChainFactory.create(this);
-            this.adventure = BukkitAudiences.create(this);
+        taskChainFactory = BukkitTaskChainFactory.create(this);
+        this.adventure = BukkitAudiences.create(this);
 
-            loadConfigs();
+        loadConfigs();
 
-            handler = new NMSManager(protocolManager).getHandler(); // Find and fetch version wrapper
+        handler = new NMSManager(protocolManager).getHandler(); // Find and fetch version wrapper
 
-            getLogger().info("Loading language file");
-            LocalizationLoader.initialize(); // Init and reload localization
-            getLogger().info("Finished loading language file");
+        getLogger().info("Loading language file");
+        LocalizationLoader.initialize(); // Init and reload localization
+        getLogger().info("Finished loading language file");
 
-            crashUtils.setupMenuSubSystem();
-            crashUtils.setupTextureCache();
+        crashUtils.setupMenuSubSystem();
+        crashUtils.setupTextureCache();
 
-            payment = paymentPlugin.setupPaymentProvider(this, GlobalConfig.paymentProvider).getProcessor();
+        payment = setupPaymentProvider(this, GlobalConfig.paymentProvider).getProcessor();
 
-            this.visualizationManager = new VisualizationManager(this);
-            this.manager = new ClaimDataManager(this);
-            this.materialName = new MaterialName();
+        this.visualizationManager = new VisualizationManager(this);
+        this.manager = new ClaimDataManager(this);
+        this.materialName = new MaterialName();
 
-            this.dataLoaded = true;
+        this.dataLoaded = true;
 
-            new PermissionHelper(manager);
+        new PermissionHelper(manager);
 
-            this.migrationManager = new MigrationManager(this);
+        this.migrationManager = new MigrationManager(this);
 
-            Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
-            Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
+        Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
 
-            if (PaperLib.isPaper()) {
-                getLogger().info("Using extra protections provided by the paper api");
-                Bukkit.getPluginManager().registerEvents(new PaperListener(manager, visualizationManager), this);
-            } else {
-                getLogger().info("Looks like your not running paper, some protections will be disabled");
-                PaperLib.suggestPaper(this);
-            }
-
-            commandManager = new CommandManager(this);
-
-            if (GlobalConfig.useStatistics) {
-                getLogger().info("Enabling Statistics");
-                Metrics metrics = new Metrics(this, 12015);
-                metrics.addCustomChart(new SimplePie("used_language", () -> GlobalConfig.locale));
-            }
-
-            if (GlobalConfig.checkUpdates) {
-                updateManager = new UpdateManager(this);
-            }
-
-            pluginSupport.onEnable();
-            LocalizationLoader.register(); // Register PlaceHolders
-
-            this.api = new CrashClaimAPI(this); // Enable api last as it might require some instances before to function properly.
+        if (PaperLib.isPaper()) {
+            getLogger().info("Using extra protections provided by the paper api");
+            Bukkit.getPluginManager().registerEvents(new PaperListener(manager, visualizationManager), this);
         } else {
-            throw new IllegalArgumentException("Your server version [" + bukkitVersion + "] isn't supported in CrashClaim!");
+            getLogger().info("Looks like your not running paper, some protections will be disabled");
+            PaperLib.suggestPaper(this);
         }
+
+        commandManager = new CommandManager(this);
+
+        if (GlobalConfig.useStatistics) {
+            getLogger().info("Enabling Statistics");
+            Metrics metrics = new Metrics(this, 12015);
+            metrics.addCustomChart(new SimplePie("used_language", () -> GlobalConfig.locale));
+        }
+
+        if (GlobalConfig.checkUpdates) {
+            updateManager = new UpdateManager(this);
+        }
+
+        pluginSupport.onEnable();
+        LocalizationLoader.register(); // Register PlaceHolders
+
+        Bukkit.getServicesManager().register(PaymentProvider.class, payment.getProvider(), plugin, ServicePriority.Normal);
+
+        String bukkitVersion = Bukkit.getBukkitVersion();
+        if (!bukkitVersion.matches("1\\.20\\.4(?:.*)$")) {
+            getLogger().severe("Uncompatible server version: " + bukkitVersion);
+            getServer().getPluginManager().disablePlugin(this);
+        }
+
+        this.api = new CrashClaimAPI(this); // Enable api last as it might require some instances before to function properly.
     }
 
     @Override
@@ -170,10 +177,20 @@ public class CrashClaim extends JavaPlugin {
         crashUtils = null;
         materialName = null;
         payment = null;
-        paymentPlugin = null;
         commandManager = null;
         migrationManager = null;
         adventure = null;
+    }
+    public ProcessorManager setupPaymentProvider(JavaPlugin plugin){
+        return setupPaymentProvider(plugin, "");
+    }
+    public ProcessorManager setupPaymentProvider(JavaPlugin plugin, String providerOverride){
+        try {
+            return new ProcessorManager(plugin, providerOverride);
+        } catch (ProviderInitializationException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void loadConfigs(){

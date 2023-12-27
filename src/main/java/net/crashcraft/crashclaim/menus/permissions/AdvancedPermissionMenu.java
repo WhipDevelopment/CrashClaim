@@ -1,12 +1,12 @@
 package net.crashcraft.crashclaim.menus.permissions;
 
-import dev.whip.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.claimobjects.permission.GlobalPermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PermissionSet;
 import net.crashcraft.crashclaim.claimobjects.permission.PlayerPermissionSet;
+import net.crashcraft.crashclaim.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.helpers.MenuListHelper;
 import net.crashcraft.crashclaim.menus.helpers.MenuSwitchType;

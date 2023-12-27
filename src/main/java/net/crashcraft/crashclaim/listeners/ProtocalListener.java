@@ -23,7 +23,7 @@ public class ProtocalListener {
                     public void onPacketReceiving(PacketEvent event){
                         PacketContainer packet = event.getPacket();
 
-                        if (crashClaim.getWrapper().isInteractAndMainHand(packet)){
+                        if (crashClaim.getHandler().isInteractAndMainHand(packet)){
                             Player player = event.getPlayer();
 
                             if (player == null)

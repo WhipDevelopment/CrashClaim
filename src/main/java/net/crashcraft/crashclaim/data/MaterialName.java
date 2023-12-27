@@ -14,7 +14,7 @@ public class MaterialName {
 
         for (Material material : Material.values()){
             names.put(material,
-                    StringUtils.capitalize(StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(
+                    StringUtils.capitalize(StringUtils.join(StringUtils.split(
                             CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, material.name())
                     ), ' ')));
         }

@@ -86,7 +86,7 @@ public class VisualizationManager {
             return;
         }
 
-        CrashClaim.getPlugin().getWrapper().sendActionBarTitle(player,
+        CrashClaim.getPlugin().getHandler().sendActionBarTitle(player,
                 message,
                 GlobalConfig.visual_alert_fade_in,
                 GlobalConfig.visual_alert_duration,

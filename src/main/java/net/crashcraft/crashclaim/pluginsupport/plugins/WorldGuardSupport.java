@@ -62,7 +62,7 @@ public class WorldGuardSupport implements PluginSupport {
     @Override
     public boolean canClaim(Location minLoc, Location maxLoc){
         ProtectedRegion test = new ProtectedCuboidRegion("dummy",
-                BlockVector3.at(minLoc.getX(), CrashClaim.getPlugin().getWrapper().getMinWorldHeight(minLoc.getWorld()), minLoc.getZ()),
+                BlockVector3.at(minLoc.getX(), CrashClaim.getPlugin().getHandler().getMinWorldHeight(minLoc.getWorld()), minLoc.getZ()),
                 BlockVector3.at(maxLoc.getX(), maxLoc.getWorld().getMaxHeight(), maxLoc.getZ())
         );
 

@@ -56,4 +56,14 @@ public class PluginSupportDistributor implements PluginSupport{
         }
         return GlobalConfig.groupSettings.get("default");
     }
+    @Override
+    public boolean canInteract(Player player, Location location) {
+        for (PluginSupport support : enabled){
+            if (!support.canInteract(player, location)){
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

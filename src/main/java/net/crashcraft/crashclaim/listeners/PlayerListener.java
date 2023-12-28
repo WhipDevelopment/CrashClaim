@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.listeners;
 
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
@@ -149,6 +150,10 @@ public class PlayerListener implements Listener {
                         && !perms.getExtraInteractables().contains(e.getClickedBlock().getType())
                         || perms.getUntrackedBlocks().contains(e.getClickedBlock().getType()))
             return;
+
+        if (e.getClickedBlock() != null && CrashClaim.getPlugin().getPluginSupport().canInteract(player, e.getClickedBlock().getLocation())) {
+            return;
+        }
 
         if (e.getClickedBlock().getState() instanceof Container){
             if (helper.hasPermission(player.getUniqueId(), location, e.getClickedBlock().getType())){

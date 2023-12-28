@@ -7,6 +7,7 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.PermissionHolder;
 import net.luckperms.api.query.QueryOptions;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -36,6 +37,11 @@ public class LuckPermsSupport implements PluginSupport {
 
     @Override
     public boolean canClaim(Location minLoc, Location maxLoc) {
+        return true;
+    }
+
+    @Override
+    public boolean canInteract(Player player, Location location) {
         return true;
     }
 

@@ -6,6 +6,7 @@ plugins {
 
 repositories {
     mavenLocal()
+    maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://ci.ender.zone/plugin/repository/everything/")
     maven("https://repo.aikar.co/content/groups/aikar/")
@@ -38,6 +39,7 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.13.0")
 
     // Other
+    compileOnly("com.ghostchu:quickshop-api:5.2.0.8")
     implementation("co.aikar:taskchain-bukkit:3.7.2")
     implementation("net.wesjd:anvilgui:1.6.6-SNAPSHOT")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")

@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.pluginsupport;
 
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.pluginsupport.plugins.LuckPermsSupport;
+import net.crashcraft.crashclaim.pluginsupport.plugins.QuickShop_HikariSupport;
 import net.crashcraft.crashclaim.pluginsupport.plugins.WorldGuardSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,8 @@ import java.util.logging.Logger;
 public class PluginSupportManager implements Listener {
     private static final List<Class<? extends PluginSupport>> pluginSupportWrappers = Arrays.asList(
             WorldGuardSupport.class,
-            LuckPermsSupport.class
+            LuckPermsSupport.class,
+            QuickShop_HikariSupport.class
     );
 
     private final CrashClaim crashClaim;
@@ -33,7 +35,7 @@ public class PluginSupportManager implements Listener {
 
         for (Class<? extends PluginSupport> pluginSupport : pluginSupportWrappers){
             try {
-                String pluginName = getPluginName(pluginSupport);
+                String pluginName = getPluginName(pluginSupport).replace("_", "-");
 
                 Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
                 if (plugin == null){
@@ -72,7 +74,7 @@ public class PluginSupportManager implements Listener {
     }
 
     private String getPluginName(Class<?> clazz){
-        return clazz.getSimpleName().substring(0, clazz.getSimpleName().length() - 7); // Support
+        return clazz.getSimpleName().replace("_", "-").substring(0, clazz.getSimpleName().length() - 7); // Support
     }
 
     @EventHandler

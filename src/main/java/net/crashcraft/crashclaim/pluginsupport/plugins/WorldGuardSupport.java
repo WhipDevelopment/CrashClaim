@@ -15,11 +15,13 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class WorldGuardSupport implements PluginSupport {
+
     private StateFlag ALLOW_CLAIMING;
 
     @Override
@@ -76,6 +78,11 @@ public class WorldGuardSupport implements PluginSupport {
         ApplicableRegionSet set = regions.getApplicableRegions(test);
 
         return set.testState(null, ALLOW_CLAIMING);
+    }
+
+    @Override
+    public boolean canInteract(Player player, Location location) {
+        return true;
     }
 
     @Override

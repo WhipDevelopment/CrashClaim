@@ -50,10 +50,6 @@ public class GlobalConfig extends BaseConfig{
     public static boolean visual_use_highest_block;
     public static HashMap<UUID, Material> visual_menu_items;
 
-    public static int visual_alert_fade_in;
-    public static int visual_alert_duration;
-    public static int visual_alert_fade_out;
-
     private static void loadVisual(){
         visual_type = getString("visualization.visual-type", "glow");
 
@@ -64,9 +60,6 @@ public class GlobalConfig extends BaseConfig{
         }
 
         visual_use_highest_block = getBoolean("visualization.visual-use-highest-block", false);
-        visual_alert_fade_in = getInt("visualization.alert.fade-in", 10);
-        visual_alert_duration = getInt("visualization.alert.duration", 1);
-        visual_alert_fade_out = getInt("visualization.alert.fade-out", 10);
 
         setVisualBlockColor(VisualColor.GOLD, Material.ORANGE_CONCRETE);
         setVisualBlockColor(VisualColor.RED, Material.RED_CONCRETE);

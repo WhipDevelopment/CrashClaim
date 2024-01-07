@@ -3,13 +3,17 @@ package net.crashcraft.crashclaim;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
+import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.commands.CommandManager;
+import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.config.ConfigManager;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.listeners.PacketEventsListener;
 import net.crashcraft.crashclaim.payment.PaymentProcessor;
 import net.crashcraft.crashclaim.payment.PaymentProvider;
 import net.crashcraft.crashclaim.payment.ProcessorManager;
@@ -53,7 +57,6 @@ public class CrashClaim extends JavaPlugin {
 
     private ClaimDataManager manager;
     private VisualizationManager visualizationManager;
-    private ProtocolManager protocolManager;
     private CrashUtils crashUtils;
     private MaterialName materialName;
     private PaymentProcessor payment;
@@ -66,14 +69,12 @@ public class CrashClaim extends JavaPlugin {
     public void onLoad() {
         plugin = this;
 
-        this.protocolManager = ProtocolLibrary.getProtocolManager();
-
-        /*this.paymentPlugin = (CrashPayment) Bukkit.getPluginManager().getPlugin("CrashPayment");
-
-        if (paymentPlugin == null){
-            disablePlugin("[Payment] CrashPayment plugin not found, disabling plugin, download and install it here, https://www.spigotmc.org/resources/crashpayment.94069/");
-        }
-         */
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        //Are all listeners read only?
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
+                .checkForUpdates(true)
+                .bStats(true);
+        PacketEvents.getAPI().load();
 
 
         this.crashUtils = new CrashUtils(this);
@@ -91,7 +92,7 @@ public class CrashClaim extends JavaPlugin {
 
         loadConfigs();
 
-        handler = new NMSManager(protocolManager).getHandler(); // Find and fetch version wrapper
+        handler = new NMSManager().getHandler(); // Find and fetch version wrapper
 
         getLogger().info("Loading language file");
         LocalizationLoader.initialize(); // Init and reload localization
@@ -111,9 +112,15 @@ public class CrashClaim extends JavaPlugin {
         new PermissionHelper(manager);
 
         this.migrationManager = new MigrationManager(this);
+        commandManager = new CommandManager(this);
 
         Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
+
+        PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener(plugin, new ClaimCommand(getDataManager(), getVisualizationManager())),
+                PacketListenerPriority.LOW);
+        PacketEvents.getAPI().init();
+
 
         if (PaperLib.isPaper()) {
             getLogger().info("Using extra protections provided by the paper api");
@@ -122,8 +129,6 @@ public class CrashClaim extends JavaPlugin {
             getLogger().info("Looks like your not running paper, some protections will be disabled");
             PaperLib.suggestPaper(this);
         }
-
-        commandManager = new CommandManager(this);
 
         if (GlobalConfig.useStatistics) {
             getLogger().info("Enabling Statistics");
@@ -173,7 +178,6 @@ public class CrashClaim extends JavaPlugin {
         api = null;
         manager = null;
         visualizationManager = null;
-        protocolManager = null;
         crashUtils = null;
         materialName = null;
         payment = null;
@@ -260,6 +264,7 @@ public class CrashClaim extends JavaPlugin {
         return commandManager;
     }
 
+
     public MigrationManager getMigrationManager() {
         return migrationManager;
     }
@@ -270,10 +275,6 @@ public class CrashClaim extends JavaPlugin {
 
     public NMSHandler getHandler() {
         return handler;
-    }
-
-    public ProtocolManager getProtocolManager() {
-        return protocolManager;
     }
 
     public PluginSupport getPluginSupport(){

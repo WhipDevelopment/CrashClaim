@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -21,6 +21,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.mikeprimm.com/")
     maven("https://repo.maven.apache.org/maven2/")
+    maven("https://repo.codemc.io/repository/maven-releases/")
 
     maven {
         url = uri("https://repo.papermc.io/repository/maven-public/")
@@ -39,7 +40,6 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
 
     // Other
-    compileOnly("com.ghostchu:quickshop-api:5.2.0.8")
     implementation("co.aikar:taskchain-bukkit:3.7.2")
     implementation("net.wesjd:anvilgui:1.9.2-SNAPSHOT")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")
@@ -50,8 +50,9 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation("com.github.retrooper.packetevents:spigot:2.2.0")
+    compileOnly("com.ghostchu:quickshop-api:5.2.0.8")
     compileOnly("com.google.guava:guava:33.0.0-jre")
-    compileOnly("com.github.dmulloy2:ProtocolLib:-SNAPSHOT")
     compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
     compileOnly( "com.sk89q.worldguard:worldguard-bukkit:7.0.9")
     compileOnly( "com.github.TechFortress:GriefPrevention:16.18.1")
@@ -78,9 +79,16 @@ tasks {
         relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
         relocate("org.cache2k.IntCache", "net.crashcraft.crashclaim.cache2k")
         relocate("com.zaxxer.hikari", "net.crashcraft.crashclaim.hikari")
+        relocate("com.github.retrooper.packetevents", "net.crashcraft.crashclaim.packetevents.api")
+        relocate("io.github.retrooper.packetevents", "net.crashcraft.crashclaim.packetevents.impl")
     }
 
     build {
+        dependsOn(shadowJar)
+        dependsOn(publishToMavenLocal)
+    }
+
+    assemble {
         dependsOn(shadowJar)
         dependsOn(publishToMavenLocal)
     }

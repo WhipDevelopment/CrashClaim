@@ -8,7 +8,6 @@ import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
-import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.commands.CommandManager;
 import net.crashcraft.crashclaim.commands.claiming.ClaimCommand;
 import net.crashcraft.crashclaim.config.ConfigManager;
@@ -32,11 +31,8 @@ import net.crashcraft.crashclaim.nms.NMSManager;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
-import net.crashcraft.crashclaim.update.UpdateManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -63,7 +59,6 @@ public class CrashClaim extends JavaPlugin {
     private CommandManager commandManager;
     private MigrationManager migrationManager;
     private BukkitAudiences adventure;
-    private UpdateManager updateManager;
 
     @Override
     public void onLoad() {
@@ -72,7 +67,7 @@ public class CrashClaim extends JavaPlugin {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         //Are all listeners read only?
         PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
-                .checkForUpdates(true)
+                .checkForUpdates(false)
                 .bStats(true);
         PacketEvents.getAPI().load();
 
@@ -128,16 +123,6 @@ public class CrashClaim extends JavaPlugin {
         } else {
             getLogger().info("Looks like your not running paper, some protections will be disabled");
             PaperLib.suggestPaper(this);
-        }
-
-        if (GlobalConfig.useStatistics) {
-            getLogger().info("Enabling Statistics");
-            Metrics metrics = new Metrics(this, 12015);
-            metrics.addCustomChart(new SimplePie("used_language", () -> GlobalConfig.locale));
-        }
-
-        if (GlobalConfig.checkUpdates) {
-            updateManager = new UpdateManager(this);
         }
 
         pluginSupport.onEnable();
@@ -281,7 +266,4 @@ public class CrashClaim extends JavaPlugin {
         return pluginSupport.getSupportDistributor();
     }
 
-    public UpdateManager getUpdateManager() {
-        return updateManager;
-    }
 }

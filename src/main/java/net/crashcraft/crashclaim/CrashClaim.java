@@ -132,7 +132,7 @@ public class CrashClaim extends JavaPlugin {
 
         String bukkitVersion = Bukkit.getBukkitVersion();
         if (!bukkitVersion.matches("1\\.20\\.4(?:.*)$")) {
-            getLogger().severe("Uncompatible server version: " + bukkitVersion);
+            getLogger().severe("Incompatible server version: " + bukkitVersion);
             getServer().getPluginManager().disablePlugin(this);
         }
 

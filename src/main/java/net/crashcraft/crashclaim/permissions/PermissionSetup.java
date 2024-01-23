@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
@@ -40,8 +41,9 @@ public class PermissionSetup {
 
                 if (meta == null)
                     continue;
-
-                if (meta.getBlockState() instanceof Container) {
+                // checking for BlockInventoryHolder instead of Container due to blocks such as decorated pots technically not being containers, but they still should be here.
+                // also has the added benefit of being able to specify jukebox usage etc.
+                if (meta.getBlockState() instanceof BlockInventoryHolder) {
                     trackedContainers.add(material);
                 }
             }

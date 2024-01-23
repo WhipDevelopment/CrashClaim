@@ -47,6 +47,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.inventory.BlockInventoryHolder;
 
 import java.util.List;
 import java.util.UUID;
@@ -155,7 +156,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (e.getClickedBlock().getState() instanceof Container){
+        if (e.getClickedBlock().getState() instanceof BlockInventoryHolder){
             if (helper.hasPermission(player.getUniqueId(), location, e.getClickedBlock().getType())){
                 return;
             }

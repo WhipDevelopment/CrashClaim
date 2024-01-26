@@ -51,6 +51,11 @@ public class PluginSupportManager implements Listener {
     }
 
     public void register(PluginSupport pluginSupport){
+        if (allSupport.contains(pluginSupport)) {
+            logger.warning("Plugin support for " + pluginSupport.getPluginName() + " is already registered.");
+            return;
+        }
+
         allSupport.add(pluginSupport);
 
         if (!pluginSupport.canLoad()) {

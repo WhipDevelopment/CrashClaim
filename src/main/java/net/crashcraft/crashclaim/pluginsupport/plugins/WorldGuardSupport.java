@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.pluginsupport.plugins;
 
+import com.google.auto.service.AutoService;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
@@ -20,6 +21,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+@AutoService(PluginSupport.class)
 public class WorldGuardSupport implements PluginSupport {
 
     private StateFlag ALLOW_CLAIMING;
@@ -30,7 +32,17 @@ public class WorldGuardSupport implements PluginSupport {
     }
 
     @Override
-    public void onLoad(Plugin plugin) {
+    public boolean canLoad() {
+        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
+    }
+
+    @Override
+    public String getPluginName() {
+        return "WorldGuard";
+    }
+
+    @Override
+    public void load(Plugin plugin) {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             StateFlag flag = new StateFlag("allow-claiming", true);
@@ -52,7 +64,7 @@ public class WorldGuardSupport implements PluginSupport {
     }
 
     @Override
-    public void onEnable(Plugin plugin) {
+    public void enable(Plugin plugin) {
 
     }
 

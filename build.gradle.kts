@@ -52,12 +52,14 @@ dependencies {
     implementation("com.github.retrooper.packetevents:spigot:2.2.0")
     compileOnly("com.ghostchu:quickshop-api:5.2.0.8")
     compileOnly("com.google.guava:guava:33.0.0-jre")
-    compileOnly( "net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly( "com.sk89q.worldguard:worldguard-bukkit:7.0.9")
-    compileOnly( "com.github.TechFortress:GriefPrevention:16.18.1")
-    compileOnly( "me.clip:placeholderapi:2.11.5")
-    compileOnly( "us.dynmap:dynmap-api:3.4-SNAPSHOT")
+    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
+    compileOnly("com.github.TechFortress:GriefPrevention:16.18.1")
+    compileOnly("me.clip:placeholderapi:2.11.5")
+    compileOnly("us.dynmap:dynmap-api:3.4-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
+    compileOnly("com.google.auto.service:auto-service:1.1.1")
+    annotationProcessor("com.google.auto.service:auto-service:1.1.1")
 
     // Cache2k
     val cache2kVersion = "1.2.2.Final"

@@ -5,6 +5,7 @@ import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.menus.list.ClaimListMenu;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -163,5 +164,9 @@ public class CrashClaimAPI {
      */
     public PermissionHelper getPermissionHelper(){
         return PermissionHelper.getPermissionHelper();
+    }
+
+    public void registerHook(PluginSupport pluginSupport){
+        crashClaim.getPluginSupportManager().register(pluginSupport);
     }
 }

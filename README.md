@@ -1,5 +1,5 @@
 ![](https://i.imgur.com/g5rKXNp.png)
-[Discord](https://discord.gg/6FU9eCjcrA) | [SpigotMC](https://www.spigotmc.org/resources/crashclaim-claiming-plugin.94037/) | [Website](https://whips.dev)
+[Discord](https://discord.gg/6FU9eCjcrA) | [SpigotMC](https://www.spigotmc.org/resources/crashclaim-claiming-plugin.94037/)
 ***
 CrashClaim is a claiming plugin oriented towards improving the claiming experience for survival servers wanting a clean, comprehensive system for their players. 
 
@@ -20,6 +20,7 @@ Follow our installation and migration guide [here](https://github.com/WhipDevelo
 - Git
 
 **Compiling From Source**
+
 In order to compile CrashClaim, clone the repo with Git and run the command `./gradlew build`, after compilation you may find the jar from the folder build/libs.
 
 ## Contribute

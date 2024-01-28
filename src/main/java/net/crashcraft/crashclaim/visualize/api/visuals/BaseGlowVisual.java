@@ -40,18 +40,18 @@ public abstract class BaseGlowVisual extends BaseVisual {
     }
 
     public void removeAll(){
-        CrashClaim.getPlugin().getWrapper().removeEntity(getPlayer(), fakeEntities.keySet());
+        CrashClaim.getPlugin().getHandler().removeEntity(getPlayer(), fakeEntities.keySet());
     }
 
     public void colorEntities(Player player, VisualColor color, ArrayList<String> uuids){
-        CrashClaim.getPlugin().getWrapper().setEntityTeam(player, color.toString(), uuids);
+        CrashClaim.getPlugin().getHandler().setEntityTeam(player, color.toString(), uuids);
     }
 
     public void spawnEntity(Player player, int x, int z, int y, int id, UUID uuid){
         double dx = x + 0.5;
         double dz = z + 0.5;
 
-        CrashClaim.getPlugin().getWrapper().spawnGlowingInvisibleMagmaSlime(
+        CrashClaim.getPlugin().getHandler().spawnGlowingInvisibleMagmaSlime(
                 player,
                 dx,
                 dz,

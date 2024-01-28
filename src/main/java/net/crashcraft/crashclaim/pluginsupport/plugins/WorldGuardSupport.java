@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.pluginsupport.plugins;
 
+import com.google.auto.service.AutoService;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
@@ -15,11 +16,14 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+@AutoService(PluginSupport.class)
 public class WorldGuardSupport implements PluginSupport {
+
     private StateFlag ALLOW_CLAIMING;
 
     @Override
@@ -28,7 +32,17 @@ public class WorldGuardSupport implements PluginSupport {
     }
 
     @Override
-    public void onLoad(Plugin plugin) {
+    public boolean canLoad() {
+        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
+    }
+
+    @Override
+    public String getPluginName() {
+        return "WorldGuard";
+    }
+
+    @Override
+    public void load(Plugin plugin) {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             StateFlag flag = new StateFlag("allow-claiming", true);
@@ -50,7 +64,7 @@ public class WorldGuardSupport implements PluginSupport {
     }
 
     @Override
-    public void onEnable(Plugin plugin) {
+    public void enable(Plugin plugin) {
 
     }
 
@@ -62,7 +76,7 @@ public class WorldGuardSupport implements PluginSupport {
     @Override
     public boolean canClaim(Location minLoc, Location maxLoc){
         ProtectedRegion test = new ProtectedCuboidRegion("dummy",
-                BlockVector3.at(minLoc.getX(), CrashClaim.getPlugin().getWrapper().getMinWorldHeight(minLoc.getWorld()), minLoc.getZ()),
+                BlockVector3.at(minLoc.getX(), CrashClaim.getPlugin().getHandler().getMinWorldHeight(minLoc.getWorld()), minLoc.getZ()),
                 BlockVector3.at(maxLoc.getX(), maxLoc.getWorld().getMaxHeight(), maxLoc.getZ())
         );
 
@@ -76,6 +90,11 @@ public class WorldGuardSupport implements PluginSupport {
         ApplicableRegionSet set = regions.getApplicableRegions(test);
 
         return set.testState(null, ALLOW_CLAIMING);
+    }
+
+    @Override
+    public boolean canInteract(Player player, Location location) {
+        return true;
     }
 
     @Override

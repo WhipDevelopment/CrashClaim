@@ -1,7 +1,7 @@
 package net.crashcraft.crashclaim.data;
 
 import com.google.common.base.CaseFormat;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ public class MaterialName {
 
         for (Material material : Material.values()){
             names.put(material,
-                    StringUtils.capitalize(StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(
+                    StringUtils.capitalize(StringUtils.join(StringUtils.split(
                             CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, material.name())
                     ), ' ')));
         }

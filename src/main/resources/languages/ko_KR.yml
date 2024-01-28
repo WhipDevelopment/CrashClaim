@@ -3,9 +3,6 @@ placeholderapi:
   visual-status-hidden: 숨기기
 pvp-비활성화d-inside-claim: <red>해당 지역에서 PVP는 금지되어 있습니다!
 비활성화d-world: <red>해당 월드 내에서는 토지 소유가 불가능합니다.
-update-available: |-
-  <yellow>최신버전의 <bold>CrashClaim <version></bold>이 SpigotMC에서 다운로드 가능합니다!
-  <gold>해당 링크에서 다운받으세요! https://whips.dev/crashclaim
 max-claims-reached: <red>당신은 최대한도의 토지를 소유하고 있습니다.
 bypass:
   활성화: <green>소유한 토지의 통과를 허용시킵니다. 권한을 우회합니다.

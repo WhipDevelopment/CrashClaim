@@ -86,11 +86,13 @@ public class VisualizationManager {
             return;
         }
 
-        CrashClaim.getPlugin().getWrapper().sendActionBarTitle(player,
-                message,
+        CrashClaim.getPlugin().getHandler().sendActionBar(player,
+                message
+                /* unused
                 GlobalConfig.visual_alert_fade_in,
                 GlobalConfig.visual_alert_duration,
                 GlobalConfig.visual_alert_fade_out
+                 */
         );
     }
 

@@ -47,7 +47,7 @@ public class VisualGroup {
     }
 
     public int generateUniqueID(){
-        return CrashClaim.getPlugin().getWrapper().getUniqueEntityID();
+        return CrashClaim.getPlugin().getHandler().getUniqueEntityID();
     }
 
     public UUID generateUniqueUUID(){

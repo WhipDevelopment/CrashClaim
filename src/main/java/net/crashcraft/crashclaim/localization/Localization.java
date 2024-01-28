@@ -37,7 +37,6 @@ public enum Localization {
     //Generic Localizations
     PVP_DISABLED_INSIDE_CLAIM("<red>PvP is disabled inside of claims!"),
     DISABLED_WORLD("<red>Claiming is disabled inside this world."),
-    UPDATE_AVAILABLE("<yellow>An updated <bold>CrashClaim <version></bold> is now available to download on SpigotMC!\n<gold>Download now at https://whips.dev/crashclaim"),
     MAX_CLAIMS_REACHED("<red>You have claimed the maximum amount of claims possible."),
 
     BYPASS__ENABLED("<green>Enabled claim bypass. You are now bypassing permissions"),

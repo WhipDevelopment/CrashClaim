@@ -1,11 +1,11 @@
 package net.crashcraft.crashclaim.menus;
 
-import dev.whip.crashutils.menusystem.GUI;
-import dev.whip.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
 import net.crashcraft.crashclaim.config.GlobalConfig;
+import net.crashcraft.crashclaim.crashutils.menusystem.GUI;
+import net.crashcraft.crashclaim.crashutils.menusystem.defaultmenus.ConfirmationMenu;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.menus.list.PlayerPermListMenu;
 import net.crashcraft.crashclaim.menus.list.SubClaimListMenu;

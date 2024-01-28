@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.listeners;
 
+import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
@@ -46,6 +47,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.inventory.BlockInventoryHolder;
 
 import java.util.List;
 import java.util.UUID;
@@ -150,7 +152,11 @@ public class PlayerListener implements Listener {
                         || perms.getUntrackedBlocks().contains(e.getClickedBlock().getType()))
             return;
 
-        if (e.getClickedBlock().getState() instanceof Container){
+        if (e.getClickedBlock() != null && CrashClaim.getPlugin().getPluginSupport().canInteract(player, e.getClickedBlock().getLocation())) {
+            return;
+        }
+
+        if (e.getClickedBlock().getState() instanceof BlockInventoryHolder){
             if (helper.hasPermission(player.getUniqueId(), location, e.getClickedBlock().getType())){
                 return;
             }

@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.taskchain.TaskChain;
-import com.comphenix.protocol.ProtocolManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
 import net.crashcraft.crashclaim.claimobjects.SubClaim;
@@ -15,7 +14,6 @@ import net.crashcraft.crashclaim.commands.claiming.modes.ResizeSubClaimMode;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
-import net.crashcraft.crashclaim.listeners.ProtocalListener;
 import net.crashcraft.crashclaim.localization.Localization;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
@@ -40,7 +38,7 @@ public class ClaimCommand extends BaseCommand implements Listener {
     private final HashMap<UUID, ClaimMode> stateMap;
     private final HashMap<UUID, Claim> claimMap;
 
-    public ClaimCommand(ClaimDataManager dataManager, VisualizationManager visualizationManager, ProtocolManager protocolManager){
+    public ClaimCommand(ClaimDataManager dataManager, VisualizationManager visualizationManager){
         this.dataManager = dataManager;
         this.visualizationManager = visualizationManager;
         this.modeMap = new HashMap<>();
@@ -48,7 +46,6 @@ public class ClaimCommand extends BaseCommand implements Listener {
         this.claimMap = new HashMap<>();
 
         Bukkit.getPluginManager().registerEvents(this, CrashClaim.getPlugin());
-        new ProtocalListener(protocolManager, CrashClaim.getPlugin(), this);
     }
 
     @CommandAlias("claim")
@@ -147,14 +144,12 @@ public class ClaimCommand extends BaseCommand implements Listener {
             stateMap.get(uuid).click(player, location);
             return;
         }
-
         if (modeMap.containsKey(uuid)){
             if (GlobalConfig.disabled_worlds.contains(player.getWorld().getUID())){
                 player.sendMessage(Localization.DISABLED_WORLD.getMessage(player));
                 forceCleanup(player.getUniqueId(), true);
                 return;
             }
-
             ClickState state = modeMap.get(uuid);
 
             switch (state) {
@@ -190,7 +185,6 @@ public class ClaimCommand extends BaseCommand implements Listener {
                     if (parent == null) {
                         return;
                     }
-
                     parent.setEditing(true);
                     SubClaim subClaim = parent.getSubClaim(location.getBlockX(), location.getBlockZ());
                     if (subClaim != null) {

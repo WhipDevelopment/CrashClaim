@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.pluginsupport.plugins;
 
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
+import com.google.auto.service.AutoService;
 import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import org.bukkit.Bukkit;
@@ -12,7 +13,8 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class QuickShop_HikariSupport implements PluginSupport {
+@AutoService(PluginSupport.class)
+public class QuickShopHikariSupport implements PluginSupport {
     //Originally from https://github.com/MCCasper/CrashClaim/commit/4375601a04e4e126b338c9df3aff4e43eb9a1d51
     private QuickShopAPI quickShopAPI;
 
@@ -22,14 +24,23 @@ public class QuickShop_HikariSupport implements PluginSupport {
     }
 
     @Override
-    public void onLoad(Plugin plugin) {
+    public boolean canLoad() {
+        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
+    }
+
+    @Override
+    public String getPluginName() {
+        return "QuickShop-Hikari";
+    }
+
+    @Override
+    public void load(Plugin plugin) {
 
     }
 
     @Override
-    public void onEnable(Plugin plugin) {
-        QuickShopAPI quickshop = QuickShopAPI.getInstance();
-        quickShopAPI = (QuickShopAPI) quickshop;
+    public void enable(Plugin plugin) {
+        this.quickShopAPI = QuickShopAPI.getInstance();
     }
 
     @Override

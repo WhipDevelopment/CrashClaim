@@ -74,8 +74,6 @@ public class CrashClaim extends JavaPlugin {
 
         this.crashUtils = new CrashUtils(this);
         this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
-
-        pluginSupport.onLoad();
     }
 
     @Override
@@ -131,7 +129,7 @@ public class CrashClaim extends JavaPlugin {
         Bukkit.getServicesManager().register(PaymentProvider.class, payment.getProvider(), plugin, ServicePriority.Normal);
 
         String bukkitVersion = Bukkit.getBukkitVersion();
-        if (!bukkitVersion.matches("1\\.20\\.4(?:.*)$")) {
+        if (!bukkitVersion.matches("1\\.20\\.\\d+.*")) {
             getLogger().severe("Incompatible server version: " + bukkitVersion);
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -156,6 +154,8 @@ public class CrashClaim extends JavaPlugin {
                 player.closeInventory();
             }
         }
+
+        pluginSupport.onDisable();
 
         //Null all references just to be sure, manager will still hold them but this stops this class from being referenced for anything
         dataLoaded = false;
@@ -264,6 +264,10 @@ public class CrashClaim extends JavaPlugin {
 
     public PluginSupport getPluginSupport(){
         return pluginSupport.getSupportDistributor();
+    }
+
+    public PluginSupportManager getPluginSupportManager(){
+        return pluginSupport;
     }
 
 }

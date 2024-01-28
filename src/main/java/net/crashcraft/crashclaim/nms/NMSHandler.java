@@ -22,7 +22,6 @@ public class NMSHandler {
 
     public void sendActionBar(Player player, BaseComponent[] message) {
         player.sendActionBar(message);
-
     }
 
 

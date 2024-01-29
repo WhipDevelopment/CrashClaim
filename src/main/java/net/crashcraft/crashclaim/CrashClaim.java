@@ -266,8 +266,7 @@ public class CrashClaim extends JavaPlugin {
         return pluginSupport.getSupportDistributor();
     }
 
-    public PluginSupportManager getPluginSupportManager(){
+    public PluginSupportManager getPluginSupportManager() {
         return pluginSupport;
     }
-
 }

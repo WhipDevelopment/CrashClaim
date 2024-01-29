@@ -47,16 +47,6 @@ public class LuckPermsSupport implements PluginSupport {
     }
 
     @Override
-    public boolean canClaim(Location minLoc, Location maxLoc) {
-        return true;
-    }
-
-    @Override
-    public boolean canInteract(Player player, Location location) {
-        return true;
-    }
-
-    @Override
     public GroupSettings getPlayerGroupSettings(Player player) {
         PermissionHolder user = luckPerms.getUserManager().getUser(player.getUniqueId());
 

@@ -26,5 +26,7 @@ public interface PluginSupport {
         return true;
     }
 
-    GroupSettings getPlayerGroupSettings(Player player);
+    default GroupSettings getPlayerGroupSettings(Player player) {
+        return null;
+    };
 }

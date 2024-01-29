@@ -49,11 +49,6 @@ public class QuickShopHikariSupport implements PluginSupport {
     }
 
     @Override
-    public boolean canClaim(Location minLoc, Location maxLoc) {
-        return true;
-    }
-
-    @Override
     public boolean canInteract(Player player, Location location) {
         if (!(location.getBlock().getBlockData() instanceof Directional directional)) {
             return false;
@@ -70,11 +65,6 @@ public class QuickShopHikariSupport implements PluginSupport {
         Shop shop = quickShopAPI.getShopManager().getShop(block.getLocation());
 
         return shop != null;
-    }
-
-    @Override
-    public GroupSettings getPlayerGroupSettings(Player player) {
-        return null;
     }
 
     private BlockFace invertFace(BlockFace face){

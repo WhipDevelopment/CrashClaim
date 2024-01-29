@@ -91,14 +91,4 @@ public class WorldGuardSupport implements PluginSupport {
 
         return set.testState(null, ALLOW_CLAIMING);
     }
-
-    @Override
-    public boolean canInteract(Player player, Location location) {
-        return true;
-    }
-
-    @Override
-    public GroupSettings getPlayerGroupSettings(Player player) {
-        return null;
-    }
 }

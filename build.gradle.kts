@@ -35,9 +35,9 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 
     // Adventure
-    implementation("net.kyori:adventure-api:4.15.0")
+    compileOnly("net.kyori:adventure-api:4.15.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    implementation("net.kyori:adventure-text-minimessage:4.15.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
 
     // Other
     implementation("co.aikar:taskchain-bukkit:3.7.2")
@@ -50,6 +50,7 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("com.github.retrooper.packetevents:spigot:2.2.0")
+    compileOnly("com.github.N0RSKA:DeluxeSellwandsAPI:32c")
     compileOnly("com.ghostchu:quickshop-api:5.2.0.8")
     compileOnly("com.google.guava:guava:33.0.0-jre")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
@@ -71,16 +72,22 @@ dependencies {
 tasks {
     shadowJar {
         archiveFileName.set("${rootProject.name}.jar")
-
+        // for some reason cache2k does not like being relocated, likely due to generative class loading & relocation not playing nice
+        relocate("co.aikar.locales", "net.crashcraft.crashclaim.aikarlocales")
         relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
         relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
         relocate("co.aikar.taskchain", "net.crashcraft.crashclaim.taskchain")
         relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
         relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
-        relocate("org.cache2k.IntCache", "net.crashcraft.crashclaim.cache2k")
         relocate("com.zaxxer.hikari", "net.crashcraft.crashclaim.hikari")
         relocate("com.github.retrooper.packetevents", "net.crashcraft.crashclaim.packetevents.api")
         relocate("io.github.retrooper.packetevents", "net.crashcraft.crashclaim.packetevents.impl")
+        relocate("net.wesjd", "net.crashcraft.crashclaim.anvilgui")
+
+        exclude("/com/google/gson/**")
+        exclude("/org/intellij/**")
+        exclude("/org/jetbrains/**")
+        exclude("/org/slf4j/**")
     }
 
     build {

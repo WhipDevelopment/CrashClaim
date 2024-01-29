@@ -1,6 +1,5 @@
 package net.crashcraft.crashclaim.pluginsupport.plugins;
 
-import com.google.auto.service.AutoService;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
@@ -8,22 +7,20 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.PermissionHolder;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-@AutoService(PluginSupport.class)
 public class LuckPermsSupport implements PluginSupport {
     private LuckPerms luckPerms;
 
     @Override
-    public boolean isUnSupportedVersion(String version) {
+    public boolean isUnsupportedVersion(String version) {
         return false;
     }
 
     @Override
     public boolean canLoad() {
-        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
+        return Bukkit.getPluginManager().getPlugin(getPluginName()) != null;
     }
 
     @Override

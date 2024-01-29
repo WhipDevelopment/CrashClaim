@@ -1,6 +1,5 @@
 package net.crashcraft.crashclaim.pluginsupport.plugins;
 
-import com.google.auto.service.AutoService;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
@@ -14,26 +13,23 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import net.crashcraft.crashclaim.CrashClaim;
-import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-@AutoService(PluginSupport.class)
 public class WorldGuardSupport implements PluginSupport {
 
     private StateFlag ALLOW_CLAIMING;
 
     @Override
-    public boolean isUnSupportedVersion(String version) {
+    public boolean isUnsupportedVersion(String version) {
         return (int) version.charAt(0) < 7;
     }
 
     @Override
     public boolean canLoad() {
-        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
+        return Bukkit.getPluginManager().getPlugin(getPluginName()) != null;
     }
 
     @Override

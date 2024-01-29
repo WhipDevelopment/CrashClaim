@@ -74,6 +74,7 @@ public class CrashClaim extends JavaPlugin {
 
         this.crashUtils = new CrashUtils(this);
         this.pluginSupport = new PluginSupportManager(this); // Enable plugin support
+        this.pluginSupport.onLoad(); // Load all plugin support
     }
 
     @Override
@@ -113,7 +114,6 @@ public class CrashClaim extends JavaPlugin {
         PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener(plugin, new ClaimCommand(getDataManager(), getVisualizationManager())),
                 PacketListenerPriority.LOW);
         PacketEvents.getAPI().init();
-
 
         if (PaperLib.isPaper()) {
             getLogger().info("Using extra protections provided by the paper api");

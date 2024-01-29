@@ -30,11 +30,16 @@ public class PluginSupportManager implements Listener {
         allSupport = new ArrayList<>();
         enabledSupport = new HashSet<>();
 
-        for (PluginSupport service : ServiceUtil.getServices(PluginSupport.class)) {
+        supportDistributor = new PluginSupportDistributor(this);
+    }
+
+    public void onLoad() {
+        List<PluginSupportLoader> services = ServiceUtil.getServices(PluginSupportLoader.class, crashClaim.getClass().getClassLoader());
+
+        logger.info("Found " + services.size() + " plugin support services.");
+        for (PluginSupportLoader service : services) {
             register(service);
         }
-
-        supportDistributor = new PluginSupportDistributor(this);
     }
 
     public void onEnable(){
@@ -50,6 +55,23 @@ public class PluginSupportManager implements Listener {
         enabledSupport.clear();
     }
 
+    public void register(PluginSupportLoader pluginSupportLoader){
+        if (!pluginSupportLoader.canLoad()) {
+            logger.warning("Plugin support for " + pluginSupportLoader.getPluginName() + " is not enabled.");
+            return;
+        }
+
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginSupportLoader.getPluginName());
+        String version = plugin.getDescription().getVersion();
+
+        if (pluginSupportLoader.isUnsupportedVersion(version)) {
+            logger.warning("Plugin [" + pluginSupportLoader.getPluginName() + "] was found but version " + version + ", is not supported.");
+            return;
+        }
+
+        pluginSupportLoader.load(plugin);
+    }
+
     public void register(PluginSupport pluginSupport){
         if (allSupport.contains(pluginSupport)) {
             logger.warning("Plugin support for " + pluginSupport.getPluginName() + " is already registered.");
@@ -59,13 +81,14 @@ public class PluginSupportManager implements Listener {
         allSupport.add(pluginSupport);
 
         if (!pluginSupport.canLoad()) {
+            logger.warning("Not enabling plugin support for " + pluginSupport.getPluginName() + ", plugin is not enabled.");
             return;
         }
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginSupport.getPluginName());
         String version = plugin.getDescription().getVersion();
 
-        if (pluginSupport.isUnSupportedVersion(version)) {
+        if (pluginSupport.isUnsupportedVersion(version)) {
             logger.warning("Plugin [" + pluginSupport.getPluginName() + "] was found but version " + version + ", is not supported.");
             return;
         }
@@ -95,7 +118,7 @@ public class PluginSupportManager implements Listener {
 
             String version = plugin.getDescription().getVersion();
 
-            if (service.isUnSupportedVersion(version)) {
+            if (service.isUnsupportedVersion(version)) {
                 logger.warning("Plugin [" + service.getPluginName() + "] was found but version " + version + ", is not supported.");
                 continue;
             }

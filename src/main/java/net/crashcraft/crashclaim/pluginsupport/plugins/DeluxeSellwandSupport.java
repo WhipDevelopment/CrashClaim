@@ -1,7 +1,5 @@
 package net.crashcraft.crashclaim.pluginsupport.plugins;
 
-import com.google.auto.service.AutoService;
-
 import dev.norska.dsw.api.DeluxeSellwandPreSellEvent;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.localization.Localization;
@@ -18,19 +16,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.plugin.Plugin;
 
-@AutoService(PluginSupport.class)
 public class DeluxeSellwandSupport implements PluginSupport, Listener {
 
     private VisualizationManager visual;
 
     @Override
-    public boolean isUnSupportedVersion(String version) {
+    public boolean isUnsupportedVersion(String version) {
         return false;
     }
 
     @Override
     public boolean canLoad() {
-        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
+        return Bukkit.getPluginManager().getPlugin(getPluginName()) != null;
     }
 
     @Override

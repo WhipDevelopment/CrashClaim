@@ -1,5 +1,6 @@
 package net.crashcraft.crashclaim.listeners;
 
+import com.destroystokyo.paper.MaterialTags;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
@@ -145,6 +146,17 @@ public class PlayerListener implements Listener {
                 visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
             }
             return;
+        }
+
+        if (e.getItem() != null && MaterialTags.SPAWN_EGGS != null) {
+            Material itemMaterial = e.getItem().getType();
+            if (MaterialTags.SPAWN_EGGS.getValues().contains(itemMaterial)) {
+                if (!helper.hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES)) {
+                    e.setCancelled(true);
+                    visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
+                    return;
+                }
+            }
         }
 
         if (!e.getClickedBlock().getType().isInteractable()

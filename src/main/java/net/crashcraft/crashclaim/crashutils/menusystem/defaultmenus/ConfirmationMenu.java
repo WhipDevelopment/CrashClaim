@@ -22,22 +22,6 @@ public class ConfirmationMenu extends GUI {
     private final ItemStack acceptItem;
     private final ItemStack cancelItem;
 
-    public ConfirmationMenu(Player player, BaseComponent[] title, BaseComponent[] message,
-                            List<BaseComponent[]> description, Material material,
-                            BiFunction<Player, Boolean, String> function, Function<Player, String> onCloseFunction){
-        super(player, BaseComponent.toLegacyText(title), 45);
-
-        this.player = player;
-        this.function = function;
-        this.onCloseFunction = onCloseFunction;
-
-        item = createGuiItem(message, description, material);
-        acceptItem = createGuiItem(ChatColor.GOLD + "Accept", Material.GREEN_CONCRETE);
-        cancelItem = createGuiItem(ChatColor.GOLD + "Cancel", Material.RED_CONCRETE);
-
-        setupGUI();
-    }
-
     public ConfirmationMenu(Player player,
                             BaseComponent[] title,
                             ItemStack item,

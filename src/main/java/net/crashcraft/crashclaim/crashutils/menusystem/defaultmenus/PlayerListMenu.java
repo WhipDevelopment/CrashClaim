@@ -6,6 +6,7 @@ import com.google.common.collect.HashBiMap;
 import io.papermc.lib.PaperLib;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.crashutils.menusystem.GUI;
+import net.crashcraft.crashclaim.localization.Localization;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -100,17 +101,19 @@ public class PlayerListMenu extends GUI {
 
         //Controls
         if (page > 1) {
-            inv.setItem(48, createGuiItem(ChatColor.GOLD + "Page Down", Material.ARROW));
+            inv.setItem(48, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem(player));
         }
 
-        inv.setItem(49, createGuiItem(ChatColor.GOLD + "Page " + page + " / " + ((int)Math.ceil((float) arrayList.size() / 21) + 1),
-                Material.ARROW));
+        inv.setItem(49, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(player,
+                "page", Integer.toString(page),
+                "page_total", Integer.toString(((int) Math.ceil((float) arrayList.size() / 21)))
+        ));
 
         if (arrayList.size() > page * 21) {
-            inv.setItem(50, createGuiItem(ChatColor.GOLD + "Page Up", Material.ARROW));
+            inv.setItem(50, Localization.MENU__GENERAL__NEXT_BUTTON.getItem(player));
         }
 
-        inv.setItem(45, createGuiItem(ChatColor.GOLD + "Back", Material.ARROW));
+        inv.setItem(45, Localization.MENU__GENERAL__BACK_BUTTON.getItem(player));
     }
 
     @Override
@@ -120,18 +123,18 @@ public class PlayerListMenu extends GUI {
 
     @Override
     public void onClick(InventoryClickEvent event, String rawItemName) {
-        switch (rawItemName) {
-            case "page down":
+        switch (event.getSlot()) {
+            case 48:
                 if (page > 1) {
                     page--;
                     loadItems();
                 }
                 break;
-            case "page up":
+            case 50:
                 page++;
                 loadItems();
                 break;
-            case "back":
+            case 45:
                 previousMenu.initialize();
                 previousMenu.open();
                 break;

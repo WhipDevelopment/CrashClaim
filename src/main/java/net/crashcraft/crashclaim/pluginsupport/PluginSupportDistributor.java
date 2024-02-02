@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
 import java.util.Set;
 
 public class PluginSupportDistributor implements PluginSupport {
@@ -17,7 +16,7 @@ public class PluginSupportDistributor implements PluginSupport {
     }
 
     @Override
-    public boolean isUnSupportedVersion(String version) {
+    public boolean isUnsupportedVersion(String version) {
         throw new RuntimeException("Unsupported Operation.");
     }
 

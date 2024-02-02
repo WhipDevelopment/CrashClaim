@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public interface PluginSupport {
-    boolean isUnSupportedVersion(String version);
+    boolean isUnsupportedVersion(String version);
 
     boolean canLoad();
 
@@ -26,5 +26,7 @@ public interface PluginSupport {
         return true;
     }
 
-    GroupSettings getPlayerGroupSettings(Player player);
+    default GroupSettings getPlayerGroupSettings(Player player) {
+        return null;
+    }
 }

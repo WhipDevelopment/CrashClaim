@@ -2,8 +2,6 @@ package net.crashcraft.crashclaim.pluginsupport.plugins;
 
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
-import com.google.auto.service.AutoService;
-import net.crashcraft.crashclaim.config.GroupSettings;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,29 +11,27 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-@AutoService(PluginSupport.class)
 public class QuickShopHikariSupport implements PluginSupport {
-    //Originally from https://github.com/MCCasper/CrashClaim/commit/4375601a04e4e126b338c9df3aff4e43eb9a1d51
     private QuickShopAPI quickShopAPI;
 
     @Override
-    public boolean isUnSupportedVersion(String version) {
+    public void load(Plugin plugin) {
+
+    }
+
+    @Override
+    public boolean isUnsupportedVersion(String version) {
         return false;
     }
 
     @Override
     public boolean canLoad() {
-        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
+        return Bukkit.getPluginManager().getPlugin(getPluginName()) != null;
     }
 
     @Override
     public String getPluginName() {
         return "QuickShop-Hikari";
-    }
-
-    @Override
-    public void load(Plugin plugin) {
-
     }
 
     @Override
@@ -46,11 +42,6 @@ public class QuickShopHikariSupport implements PluginSupport {
     @Override
     public void disable() {
 
-    }
-
-    @Override
-    public boolean canClaim(Location minLoc, Location maxLoc) {
-        return true;
     }
 
     @Override
@@ -70,11 +61,6 @@ public class QuickShopHikariSupport implements PluginSupport {
         Shop shop = quickShopAPI.getShopManager().getShop(block.getLocation());
 
         return shop != null;
-    }
-
-    @Override
-    public GroupSettings getPlayerGroupSettings(Player player) {
-        return null;
     }
 
     private BlockFace invertFace(BlockFace face){

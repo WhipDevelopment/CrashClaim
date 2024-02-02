@@ -37,7 +37,7 @@ public class ServiceUtil {
         final List<T> services = new ArrayList<>();
         ServiceLoader.load(clazz).iterator().forEachRemaining(services::add);
         if (services.isEmpty()) {
-            services.addAll(def);
+            return def;
         }
         return services;
     }
@@ -46,7 +46,7 @@ public class ServiceUtil {
         final List<T> services = new ArrayList<>();
         ServiceLoader.load(clazz, loader).iterator().forEachRemaining(services::add);
         if (services.isEmpty()) {
-            services.addAll(def);
+            return def;
         }
         return services;
     }

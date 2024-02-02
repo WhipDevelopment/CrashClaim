@@ -33,6 +33,8 @@ import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -132,6 +134,13 @@ public class CrashClaim extends JavaPlugin {
         if (!bukkitVersion.matches("1\\.20\\.\\d+.*")) {
             getLogger().severe("Incompatible server version: " + bukkitVersion);
             getServer().getPluginManager().disablePlugin(this);
+        }
+
+
+        if (GlobalConfig.useStatistics) {
+            getLogger().info("Enabling Statistics");
+            Metrics metrics = new Metrics(this, 12015);
+            metrics.addCustomChart(new SimplePie("used_language", () -> GlobalConfig.locale));
         }
 
         this.api = new CrashClaimAPI(this); // Enable api last as it might require some instances before to function properly.

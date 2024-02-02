@@ -50,6 +50,7 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("com.github.retrooper.packetevents:spigot:2.2.0")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
     compileOnly("com.github.N0RSKA:DeluxeSellwandsAPI:32c")
     compileOnly("com.ghostchu:quickshop-api:5.2.0.8")
     compileOnly("com.google.guava:guava:33.0.0-jre")
@@ -71,13 +72,14 @@ dependencies {
 
 tasks {
     shadowJar {
-        archiveFileName.set("${rootProject.name}.jar")
+        archiveFileName.set("${rootProject.name}-${version}.jar")
         // for some reason cache2k does not like being relocated, likely due to generative class loading & relocation not playing nice
         relocate("co.aikar.locales", "net.crashcraft.crashclaim.aikarlocales")
         relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
         relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
         relocate("co.aikar.taskchain", "net.crashcraft.crashclaim.taskchain")
         relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
+        relocate("org.bstats", "net.crashcraft.crashclaim.bstats")
         relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
         relocate("com.zaxxer.hikari", "net.crashcraft.crashclaim.hikari")
         relocate("com.github.retrooper.packetevents", "net.crashcraft.crashclaim.packetevents.api")

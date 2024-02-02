@@ -144,4 +144,11 @@ public class GlobalConfig extends BaseConfig{
     private static void onBypass(){
         bypassModeBypassesMoney = getBoolean("bypass-mode-bypasses-payment", false);
     }
+
+
+    public static boolean useStatistics;
+
+    private static void onStats(){
+        useStatistics = getBoolean("statistics", true);
+    }
 }

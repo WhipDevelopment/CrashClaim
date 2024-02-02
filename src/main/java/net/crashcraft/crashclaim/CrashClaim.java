@@ -81,6 +81,13 @@ public class CrashClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        String bukkitVersion = Bukkit.getBukkitVersion();
+        if (!bukkitVersion.matches("1\\.20\\.\\d+.*")) {
+            getLogger().severe("Incompatible server version: " + bukkitVersion);
+            getServer().getPluginManager().disablePlugin(this);
+        }
+
         Bukkit.getPluginManager().registerEvents(pluginSupport, this);
 
         taskChainFactory = BukkitTaskChainFactory.create(this);
@@ -130,13 +137,6 @@ public class CrashClaim extends JavaPlugin {
 
         Bukkit.getServicesManager().register(PaymentProvider.class, payment.getProvider(), plugin, ServicePriority.Normal);
 
-        String bukkitVersion = Bukkit.getBukkitVersion();
-        if (!bukkitVersion.matches("1\\.20\\.\\d+.*")) {
-            getLogger().severe("Incompatible server version: " + bukkitVersion);
-            getServer().getPluginManager().disablePlugin(this);
-        }
-
-
         if (GlobalConfig.useStatistics) {
             getLogger().info("Enabling Statistics");
             Metrics metrics = new Metrics(this, 12015);
@@ -157,7 +157,7 @@ public class CrashClaim extends JavaPlugin {
 
         //Unregister all user facing things
         HandlerList.unregisterAll(this);
-        commandManager.getCommandManager().unregisterCommands();
+        if (commandManager != null) commandManager.getCommandManager().unregisterCommands();
         for (Player player : Bukkit.getOnlinePlayers()){
             if (player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
                 player.closeInventory();

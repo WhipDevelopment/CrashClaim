@@ -1,7 +1,10 @@
+import io.papermc.hangarpublishplugin.model.Platforms
+
 plugins {
     id("java")
     id("maven-publish")
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.papermc.hangar-publish-plugin") version "0.1.2"
 }
 
 repositories {
@@ -120,6 +123,48 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+        }
+    }
+}
+
+hangarPublish {
+    publications.register("plugin") {
+        version.set(project.version as String)
+        channel.set(if (version.toString().contains("-SNAPSHOT")) "Snapshot" else "Release")
+        id.set("CrashClaim")
+        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
+        platforms {
+            register(Platforms.PAPER) {
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                val versions: List<String> = (property("paperVersion") as String)
+                        .split(",")
+                        .map { it.trim() }
+                platformVersions.set(versions)
+
+                dependencies {
+                    url("Vault", "https://github.com/MilkBowl/Vault/releases") {
+                        required.set(false)
+                    }
+                    hangar("GriefPrevention") {
+                        required.set(false)
+                    }
+                    url("WorldGuard", "https://dev.bukkit.org/projects/worldguard") {
+                        required.set(false)
+                    }
+                    hangar("PlaceholderAPI") {
+                        required.set(false)
+                    }
+                    hangar("Multiverse-Core") {
+                        required.set(false)
+                    }
+                    url("LuckPerms", "https://luckperms.net") {
+                        required.set(false)
+                    }
+                    url("QuickShop-Hikari", "https://modrinth.com/plugin/quickshop-hikari") {
+                        required.set(false)
+                    }
+                }
+            }
         }
     }
 }

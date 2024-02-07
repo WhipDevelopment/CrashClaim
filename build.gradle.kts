@@ -1,4 +1,5 @@
 import io.papermc.hangarpublishplugin.model.Platforms
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("java")
@@ -127,11 +128,36 @@ publishing {
     }
 }
 
+fun executeGitCommand(vararg command: String): String {
+    val byteOut = ByteArrayOutputStream()
+    exec {
+        commandLine = listOf("git", *command)
+        standardOutput = byteOut
+    }
+    return byteOut.toString(Charsets.UTF_8.name()).trim()
+}
+
+fun latestCommitMessage(): String {
+    return executeGitCommand("log", "-1", "--pretty=%B")
+}
+val changelogContent: String = latestCommitMessage()
+
+val versionString: String = version as String
+val isRelease: Boolean = !versionString.contains('-')
+
+val suffixedVersion: String = if (isRelease) {
+    versionString
+} else {
+    // Give the version a unique name by using the GitHub Actions run number
+    versionString + "+" + System.getenv("GITHUB_RUN_NUMBER")
+}
+
 hangarPublish {
     publications.register("plugin") {
-        version.set(project.version as String)
-        channel.set(if (version.toString().contains("-SNAPSHOT")) "Snapshot" else "Release")
+        version.set(suffixedVersion)
+        channel.set("Snapshot")
         id.set("CrashClaim")
+        changelog.set(if (System.getenv("HANGAR_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("HANGAR_CHANGELOG"))
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
         platforms {
             register(Platforms.PAPER) {

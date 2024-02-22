@@ -429,6 +429,15 @@ public class SQLiteDataProvider implements DataProvider {
     }
 
     @Override
+    public void removeSubClaim(SubClaim claim) {
+        try {
+            DB.executeUpdate("DELETE FROM claim_data WHERE id = (SELECT data FROM subclaims WHERE subclaims.id = ?)", claim.getId());
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public Claim loadClaim(Integer id) {
         try {
             DbRow claimDataRow = DB.getFirstRow(

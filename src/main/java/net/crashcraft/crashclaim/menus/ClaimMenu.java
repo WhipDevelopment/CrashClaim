@@ -201,7 +201,7 @@ public class ClaimMenu extends GUI {
                             (player, aBoolean) -> {
                                 if (aBoolean) {
                                     if (helper.hasPermission(claim, getPlayer().getUniqueId(), PermissionRoute.MODIFY_PERMISSIONS)) {
-                                        CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
+                                        CrashClaim.getPlugin().getDataManager().deleteClaimAsync(claim);
                                     } else {
                                         player.spigot().sendMessage(Localization.MENU__GENERAL__INSUFFICIENT_PERMISSION.getMessage(player));
                                     }

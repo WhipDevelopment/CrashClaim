@@ -137,12 +137,12 @@ public class Claim extends BaseClaim {
     }
 
     @Override
-    public synchronized boolean isToSave() {
+    public boolean isToSave() {
         return toSave;
     }
 
     @Override
-    public synchronized void setToSave(boolean toSave) {
+    public void setToSave(boolean toSave) {
         this.toSave = toSave;
     }
 

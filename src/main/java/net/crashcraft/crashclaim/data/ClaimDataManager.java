@@ -437,7 +437,10 @@ public class ClaimDataManager implements Listener {
     public void deleteSubClaim(SubClaim subClaim){
         Claim parent = subClaim.getParent();
         parent.removeSubClaim(subClaim.getId());
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> saveClaim(parent));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            saveClaim(parent);
+            //TODO: dont resave entire claim, just delete the subclaim directly
+        });
     }
 
     public void loadChunksForClaim(Claim claim){

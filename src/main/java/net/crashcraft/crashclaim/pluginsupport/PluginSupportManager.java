@@ -42,13 +42,13 @@ public class PluginSupportManager implements Listener {
         }
     }
 
-    public void onEnable(){
+    public void onEnable() {
         for (PluginSupport pluginSupport : enabledSupport){
             pluginSupport.enable(crashClaim);
         }
     }
 
-    public void onDisable(){
+    public void onDisable() {
         for (PluginSupport pluginSupport : enabledSupport){
             pluginSupport.disable();
         }
@@ -133,7 +133,7 @@ public class PluginSupportManager implements Listener {
         Plugin plugin = event.getPlugin();
         String pluginName = plugin.getName();
 
-        for (PluginSupport support : enabledSupport) {
+        for (PluginSupport support : new HashSet<>(enabledSupport)) {
             if (!support.getPluginName().equals(pluginName)) {
                 continue;
             }

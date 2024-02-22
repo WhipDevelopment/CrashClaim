@@ -44,8 +44,6 @@ public class NMSHandler {
         WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(entity_ids.stream().mapToInt(Integer::intValue).toArray());
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
-
-
     }
 
     public void spawnGlowingInvisibleMagmaSlime(Player player, double x, double z, double y, int id, UUID uuid,
@@ -67,12 +65,6 @@ public class NMSHandler {
     }
 
     private AtomicInteger ENTITY_ID;
-
-    private String NMS;
-
-    public Class<?> getNMSClass(final String className) throws ClassNotFoundException {
-        return Class.forName(NMS + className);
-    }
 
     public int getUniqueEntityID() {
         if (ENTITY_ID == null) {

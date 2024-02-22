@@ -225,6 +225,8 @@ public enum Localization {
 
     ALERT__NO_PERMISSIONS__BUILD("<red>You do not have permission to build in this claim"),
     ALERT__NO_PERMISSIONS__INTERACTION("<red>You do not have permission to interact in this claim."),
+    ALERT__NO_PERMISSIONS__DROP_PICKUP("<red>You do not have permission to drop & pickup items in this claim."),
+
     ALERT__NO_PERMISSIONS__CONTAINERS("<red>You do not have permission to open containers in this claim."),
     ALERT__NO_PERMISSIONS__ENTITIES("<red>You do not have permission to interact with entities in this claim"),
     ALERT__NO_PERMISSIONS__TELEPORT("<red>You do not have permission to teleport to that claim."),
@@ -372,6 +374,11 @@ public enum Localization {
             "<gold>Explosions",
             "<green>Allow explosions from tnt, creepers,",
             "<green>and more"),
+    MENU__PERMISSIONS__PICKUP_DROP_ITEMS(Material.SUGAR_CANE, 1,
+            "<gold>Item Drop & Pickup",
+            "<green>Allow players to drop and pickup items",
+            "<green>from the ground"),
+
     MENU__PERMISSIONS__TELEPORTATION(Material.ENDER_PEARL, 1,
             "<gold>Teleportation",
             "<green>Allow players to teleport inside",
@@ -595,7 +602,7 @@ public enum Localization {
         return builder.build();
     }
 
-    private enum localizationType {
+    private enum LocalizationType {
         MESSAGE,
         MESSAGE_LIST,
         ITEM,
@@ -605,20 +612,20 @@ public enum Localization {
     private String def;
     private String[] defList;
 
-    private final localizationType type;
+    private final LocalizationType type;
 
     private boolean hasPlaceholders = false;
 
     Localization(){
         this.def = "";
         this.defList = null;
-        this.type = localizationType.CODE_ONLY;
+        this.type = LocalizationType.CODE_ONLY;
     }
 
     Localization(String def){
         this.def = def;
         this.defList = null;
-        this.type = localizationType.MESSAGE;
+        this.type = LocalizationType.MESSAGE;
     }
 
     private BaseComponent[] message;
@@ -627,7 +634,7 @@ public enum Localization {
     Localization(String... defList){
         this.def = null;
         this.defList = defList;
-        this.type = localizationType.MESSAGE_LIST;
+        this.type = LocalizationType.MESSAGE_LIST;
     }
 
     private ItemStackTemplate item;
@@ -635,7 +642,7 @@ public enum Localization {
     Localization(Material material, Integer stackSize, String title, String... loreDef){
         this.def = null;
         this.defList = null;
-        this.type = localizationType.ITEM;
+        this.type = LocalizationType.ITEM;
 
         this.item = new ItemStackTemplate(material, stackSize, title, Arrays.asList(loreDef), null, false);
     }
@@ -820,7 +827,7 @@ public enum Localization {
         return item;
     }
 
-    private localizationType getType() {
+    private LocalizationType getType() {
         return type;
     }
 }

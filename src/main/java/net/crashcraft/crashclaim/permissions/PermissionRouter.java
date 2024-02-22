@@ -63,7 +63,9 @@ public class PermissionRouter {
             PlayerPermissionSet main = parentPerms.getPlayerPermissionSet(uuid);
             if (main == null){
                 return route.getPerm(parentPerms.getGlobalPermissionSet());
-            } else return getLayeredPermission(parentPerms.getGlobalPermissionSet(), main, route);
+            } else {
+                return getLayeredPermission(parentPerms.getGlobalPermissionSet(), main, route);
+            }
         } else {
             PermissionGroup subPerms = subClaim.getPerms();
 

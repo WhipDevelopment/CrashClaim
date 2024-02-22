@@ -47,6 +47,7 @@ public class SimplePermissionMenu extends MenuListHelper {
         menuList.put(PermissionRoute.BUILD, type);
         menuList.put(PermissionRoute.CONTAINERS, type);
         menuList.put(PermissionRoute.ENTITIES, type);
+        menuList.put(PermissionRoute.ITEM_DROP_PICKUP, type);
         menuList.put(PermissionRoute.INTERACTIONS, type);
 
         if (isPlayerPermission){

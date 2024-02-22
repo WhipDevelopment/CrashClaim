@@ -61,7 +61,32 @@ public enum  PermissionRoute {
             set.setInteractions(value);
         }
     },
-    ENTITIES{
+    ITEM_DROP_PICKUP {
+        @Override
+        public int getPerm(PlayerPermissionSet set) {
+            if (set == null)
+                return -1;
+            return set.getDropPickupItems();
+        }
+
+        @Override
+        public void setPerm(PlayerPermissionSet set, int value) {
+            set.setDropPickupItems(value);
+        }
+
+        @Override
+        public int getPerm(GlobalPermissionSet set) {
+            if (set == null)
+                return -1;
+            return set.getDropPickupItems();
+        }
+
+        @Override
+        public void setPerm(GlobalPermissionSet set, int value) {
+            set.setDropPickupItems(value);
+        }
+    },
+    ENTITIES {
         @Override
         public int getPerm(PlayerPermissionSet set) {
             if (set == null)
@@ -274,7 +299,7 @@ public enum  PermissionRoute {
             set.setViewSubClaims(value);
         }
     },
-    CONTAINERS{
+    CONTAINERS {
         @Override
         public int getPerm(PlayerPermissionSet set) {
             int old = 4;

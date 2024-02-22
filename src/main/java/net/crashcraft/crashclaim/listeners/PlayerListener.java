@@ -12,12 +12,12 @@ import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionSetup;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Container;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.*;
@@ -38,15 +38,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 
@@ -195,6 +187,30 @@ public class PlayerListener implements Listener {
     private boolean isFullOfLiquid(Block block){
         return block.isLiquid()
                 || (block.getBlockData() instanceof Waterlogged && ((Waterlogged) block.getBlockData()).isWaterlogged());
+    }
+
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent event) {
+        if (GlobalConfig.disabled_worlds.contains(event.getPlayer().getWorld().getUID())){
+            return;
+        }
+
+        if (!helper.hasPermission(event.getPlayer().getUniqueId(), event.getPlayer().getLocation(), PermissionRoute.ITEM_DROP_PICKUP)){
+            event.setCancelled(true);
+            visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__DROP_PICKUP.getMessage(event.getPlayer()));
+        }
+    }
+
+    @EventHandler
+    public void onItemPickup(PlayerAttemptPickupItemEvent event) {
+        if (GlobalConfig.disabled_worlds.contains(event.getPlayer().getWorld().getUID())){
+            return;
+        }
+
+        if (!helper.hasPermission(event.getPlayer().getUniqueId(), event.getItem().getLocation(), PermissionRoute.ITEM_DROP_PICKUP)){
+            event.setCancelled(true);
+            visuals.sendAlert(event.getPlayer(), Localization.ALERT__NO_PERMISSIONS__DROP_PICKUP.getMessage(event.getPlayer()));
+        }
     }
 
     @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)

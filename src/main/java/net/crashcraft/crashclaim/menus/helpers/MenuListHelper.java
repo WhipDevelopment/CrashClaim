@@ -66,6 +66,7 @@ public abstract class MenuListHelper extends GUI {
         this.setter = setter;
         this.group = group;
         this.setting = setting;
+        this.controlOffset = 47; // 45 + 2. 45 because its last row, 2 because its the previous button & start of controls
 
         items = new ArrayList<>(itemDisplay.keySet());
 
@@ -75,7 +76,7 @@ public abstract class MenuListHelper extends GUI {
         setupGUI();
     }
 
-    public void setupContainerList(PermissionSet set, UUID setter, PermissionGroup group, int numPerPage, int controlOffset , UUID setting){
+    public void setupContainerList(PermissionSet set, UUID setter, PermissionGroup group, int numPerPage , UUID setting){
         isContainerList = true;
         inv.clear();
 
@@ -85,8 +86,7 @@ public abstract class MenuListHelper extends GUI {
         this.group = group;
         this.numPerPage = numPerPage;
         this.containers = CrashClaim.getPlugin().getDataManager().getPermissionSetup().getTrackedContainers();
-        int FIXED_CONTROL_OFFSET = 47;
-        this.controlOffset = FIXED_CONTROL_OFFSET + controlOffset;
+        this.controlOffset = 47; // 45 + 2. 45 because its last row, 2 because its the previous button & start of controls
 
         if (set instanceof PlayerPermissionSet || group.getOwner() instanceof SubClaim){
             switchType = MenuSwitchType.TRIPLE;
@@ -186,9 +186,7 @@ public abstract class MenuListHelper extends GUI {
             }
         }
 
-        if (isContainerList){
-            onInventoryPreClick(event);
-        }
+        onInventoryPreClick(event);
 
         if (event.getCurrentItem() == null){
             return;
@@ -295,8 +293,9 @@ public abstract class MenuListHelper extends GUI {
         int offset = (numPerPage * page);
 
         for (int x = 0; x < numPerPage; x++){
-            if (offset + x > containers.size() - 1)
+            if (offset + x > containers.size() - 1) {
                 break;
+            }
 
             Material material = containers.get(x + offset);
 
@@ -310,7 +309,7 @@ public abstract class MenuListHelper extends GUI {
             drawSwitch(switchType, getUniversalContainerPerm(material), x, allow);
         }
 
-        if (containers.size() > numPerPage) {
+        if (containers.size() >= numPerPage) {
             if ((offset - numPerPage) >= 0){
                 inv.setItem(controlOffset, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem(player));
             }
@@ -320,19 +319,23 @@ public abstract class MenuListHelper extends GUI {
                     "page_total", Integer.toString((int) (Math.floor((float) containers.size() / numPerPage) + 1))
             ));
 
-            if ((offset + numPerPage) < containers.size() - 1){
+            if ((offset + numPerPage) < containers.size()){
                 inv.setItem(controlOffset + 2, Localization.MENU__GENERAL__NEXT_BUTTON.getItem(player));
             }
         }
     }
 
     private void setupInventory(){
+        int offset = (numPerPage * page);
         int itemOffset = 0;
 
-        for (int x = page * numPerPage; x < (Math.min(page * numPerPage + numPerPage, items.size())); x++){
-            PermissionRoute route = items.get(x);
+        for (int x = 0; x < numPerPage; x++){
+            if (offset + x > items.size() - 1) {
+                break;
+            }
 
-             if (route == null){
+            PermissionRoute route = items.get(x + offset);
+            if (route == null){
                 itemOffset++;
                 continue;
             }
@@ -342,8 +345,22 @@ public abstract class MenuListHelper extends GUI {
             Boolean allow = helper.hasPermission(group.getOwner(), setter, route);
 
             drawSwitch(itemDisplay.get(route), getUniversalPerm(route), itemOffset, allow);
-
             itemOffset++;
+        }
+
+        if (items.size() > numPerPage) {
+            if ((offset - numPerPage) >= 0) {
+                inv.setItem(controlOffset, Localization.MENU__GENERAL__PREVIOUS_BUTTON.getItem(player));
+            }
+
+            inv.setItem(controlOffset + 1, Localization.MENU__GENERAL__PAGE_DISPLAY.getItem(player,
+                    "page", Integer.toString(page + 1),
+                    "page_total", Integer.toString((int) (Math.floor((float) items.size() / numPerPage) + 1))
+            ));
+
+            if ((offset + numPerPage) < items.size()) {
+                inv.setItem(controlOffset + 2, Localization.MENU__GENERAL__NEXT_BUTTON.getItem(player));
+            }
         }
     }
 
@@ -358,6 +375,7 @@ public abstract class MenuListHelper extends GUI {
             case ENTITIES -> Localization.MENU__PERMISSIONS__ENTITIES.getItem(player);
             case CONTAINERS -> Localization.MENU__PERMISSIONS__CONTAINERS.getItem(player);
             case EXPLOSIONS -> Localization.MENU__PERMISSIONS__EXPLOSIONS.getItem(player);
+            case ITEM_DROP_PICKUP -> Localization.MENU__PERMISSIONS__PICKUP_DROP_ITEMS.getItem(player);
             case INTERACTIONS -> Localization.MENU__PERMISSIONS__INTERACTIONS.getItem(player);
             case MODIFY_CLAIM -> Localization.MENU__PERMISSIONS__MODIFY_CLAIM.getItem(player);
             case TELEPORTATION -> Localization.MENU__PERMISSIONS__TELEPORTATION.getItem(player);

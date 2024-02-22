@@ -60,6 +60,7 @@ public class AdvancedPermissionMenu extends MenuListHelper {
 
                 menuList.put(PermissionRoute.BUILD, type);
                 menuList.put(PermissionRoute.INTERACTIONS, type);
+                menuList.put(PermissionRoute.ITEM_DROP_PICKUP, type);
                 menuList.put(PermissionRoute.ENTITIES, type);
                 if (!isPlayerPermission) {
                     menuList.put(PermissionRoute.EXPLOSIONS, type);
@@ -72,10 +73,11 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                     menuList.put(PermissionRoute.VIEW_SUB_CLAIMS, type);
                 }
 
+
                 setup(menuList, 5, permissionSet, player.getUniqueId(), claim.getPerms(), uuid);
                 return;
             case CONTAINERS:
-                setupContainerList(permissionSet, player.getUniqueId(), claim.getPerms(), 5, 0, uuid);
+                setupContainerList(permissionSet, player.getUniqueId(), claim.getPerms(), 5, uuid);
                 return;
             case ADMIN:
                 LinkedHashMap<PermissionRoute, MenuSwitchType> list = new LinkedHashMap<>();
@@ -116,7 +118,7 @@ public class AdvancedPermissionMenu extends MenuListHelper {
                     menuItemlist.put(PermissionRoute.PISTONS, MenuSwitchType.DOUBLE);
                     menuItemlist.put(PermissionRoute.FLUIDS, MenuSwitchType.DOUBLE);
                     menuItemlist.put(PermissionRoute.ENTITY_GRIEF, MenuSwitchType.DOUBLE);
-                    menuItemlist.put(null, null);
+                    menuItemlist.put(PermissionRoute.ITEM_DROP_PICKUP, MenuSwitchType.DOUBLE);
                     menuItemlist.put(PermissionRoute.VIEW_SUB_CLAIMS, MenuSwitchType.DOUBLE);
                 }
 

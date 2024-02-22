@@ -83,10 +83,11 @@ public class Claim extends BaseClaim {
     }
 
     private int getActivePermission(UUID uuid, Location location, PermissionRoute route){   //should only be executed with a location inside the claim
-        if (uuid.equals(owner))
+        if (uuid.equals(owner)) {
             return PermState.ENABLED;
+        }
 
-        if (location != null && subClaims.size() > 0){
+        if (location != null && !subClaims.isEmpty()){
             SubClaim subClaim = getSubClaim(location.getBlockX(), location.getBlockZ());
             if (subClaim != null){
                 return PermissionRouter.getLayeredPermission(this, subClaim, uuid, route);

@@ -13,10 +13,19 @@ public class MaterialName {
         names = new HashMap<>();
 
         for (Material material : Material.values()){
-            names.put(material,
-                    StringUtils.capitalize(StringUtils.join(StringUtils.split(
-                            CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, material.name())
-                    ), ' ')));
+            String[] split = material.toString().split("_");
+
+            StringBuilder builder = new StringBuilder();
+            for (String s : split) {
+                builder.append(StringUtils.capitalize(s.toLowerCase()));
+                builder.append(" ");
+            }
+
+            String capitalize = StringUtils.capitalize(StringUtils.join(StringUtils.split(
+                    CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, builder.toString())
+            ), ' '));
+
+            names.put(material, capitalize);
         }
     }
 

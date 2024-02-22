@@ -301,7 +301,7 @@ public class SQLiteDataProvider implements DataProvider {
 
         DB.executeUpdate("INSERT INTO permission_set(data_id, players_id, build, interactions, entities, explosions, entityGrief, teleportation, defaultContainer, viewSubClaims, pistons, fluids) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (data_id, players_id) DO UPDATE SET " +
-                        "build = ?, interactions = ?, entities = ?, explosions = ?, entityGrief = ?, teleportation = ?, defaultContainer = ?, viewSubClaims = ?, pistons = ?, fluids = ?",
+                        "build = ?, interactions = ?, entities = ?, explosions = ?, entityGrief = ?, teleportation = ?, defaultContainer = ?, viewSubClaims = ?, pistons = ?, fluids = ?, dropPickupItems = ?",
                 data_id,
                 -1,
                 global.getBuild(),
@@ -324,7 +324,8 @@ public class SQLiteDataProvider implements DataProvider {
                 global.getDefaultConatinerValue(),
                 global.getViewSubClaims(),
                 global.getPistons(),
-                global.getFluids()
+                global.getFluids(),
+                global.getDropPickupItems()
         );
 
         addContainers(data_id, -1, global.getContainers());
@@ -339,7 +340,7 @@ public class SQLiteDataProvider implements DataProvider {
 
             DB.executeUpdate("INSERT INTO permission_set(data_id, players_id, build, interactions, entities, teleportation, defaultContainer, viewSubClaims, modifyPermissions, modifyClaim) " +
                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (data_id, players_id) DO UPDATE SET " +
-                            "build = ?, interactions = ?, entities = ?, teleportation = ?, defaultContainer = ?, viewSubClaims = ?, modifyPermissions = ?, modifyClaim = ?",
+                            "build = ?, interactions = ?, entities = ?, teleportation = ?, defaultContainer = ?, viewSubClaims = ?, modifyPermissions = ?, modifyClaim = ?, dropPickupItems = ?",
                     data_id,
                     player_id,
                     perms.getBuild(),
@@ -358,7 +359,8 @@ public class SQLiteDataProvider implements DataProvider {
                     perms.getDefaultConatinerValue(),
                     perms.getViewSubClaims(),
                     perms.getModifyPermissions(),
-                    perms.getModifyClaim()
+                    perms.getModifyClaim(),
+                    perms.getDropPickupItems()
             );
 
             addContainers(data_id, player_id, perms.getContainers());
@@ -539,8 +541,8 @@ public class SQLiteDataProvider implements DataProvider {
         return null;
     }
 
-    private GlobalPermissionSet getGlobalPermissionSet(int data_id) throws SQLException{
-        DbRow globalPermissionRow = DB.getFirstRow("SELECT build, interactions, entities, explosions, entityGrief, teleportation, viewSubClaims, pistons, fluids, defaultContainer FROM permission_set " +
+    private GlobalPermissionSet getGlobalPermissionSet(int data_id) throws SQLException {
+        DbRow globalPermissionRow = DB.getFirstRow("SELECT build, interactions, entities, explosions, entityGrief, teleportation, viewSubClaims, pistons, fluids, defaultContainer, dropPickupItems FROM permission_set " +
                 "WHERE data_id = ? AND players_id = -1", data_id);
 
         HashMap<Material, Integer> globalContainers = new HashMap<>();
@@ -549,24 +551,25 @@ public class SQLiteDataProvider implements DataProvider {
         }
 
         return new GlobalPermissionSet(
-                globalPermissionRow.getInt("build"),
-                globalPermissionRow.getInt("interactions"),
-                globalPermissionRow.getInt("entities"),
-                globalPermissionRow.getInt("explosions"),
-                globalPermissionRow.getInt("entityGrief"),
-                globalPermissionRow.getInt("teleportation"),
-                globalPermissionRow.getInt("viewSubClaims"),
+                globalPermissionRow.getInt("build", PermState.ENABLED),
+                globalPermissionRow.getInt("interactions", PermState.ENABLED),
+                globalPermissionRow.getInt("entities", PermState.ENABLED),
+                globalPermissionRow.getInt("explosions", PermState.ENABLED),
+                globalPermissionRow.getInt("entityGrief", PermState.ENABLED),
+                globalPermissionRow.getInt("teleportation", PermState.ENABLED),
+                globalPermissionRow.getInt("viewSubClaims", PermState.ENABLED),
                 globalContainers,
-                globalPermissionRow.getInt("defaultContainer"),
-                globalPermissionRow.getInt("pistons"),
-                globalPermissionRow.getInt("fluids")
+                globalPermissionRow.getInt("defaultContainer", PermState.ENABLED),
+                globalPermissionRow.getInt("pistons", PermState.ENABLED),
+                globalPermissionRow.getInt("fluids", PermState.ENABLED),
+                globalPermissionRow.getInt("dropPickupItems", PermState.ENABLED)
         );
     }
 
-    private HashMap<UUID, PlayerPermissionSet> getPlayerPermissions(int data_id) throws SQLException{
+    private HashMap<UUID, PlayerPermissionSet> getPlayerPermissions(int data_id) throws SQLException {
         HashMap<UUID, PlayerPermissionSet> perms = new HashMap<>();
 
-        for (DbRow permissionRow : DB.getResults("SELECT players_id, (SELECT uuid FROM players WHERE players.id = permission_set.players_id) AS uuid, build, interactions, entities, teleportation, viewSubClaims, defaultContainer, modifyPermissions, modifyClaim FROM permission_set " +
+        for (DbRow permissionRow : DB.getResults("SELECT players_id, (SELECT uuid FROM players WHERE players.id = permission_set.players_id) AS uuid, build, interactions, entities, teleportation, viewSubClaims, defaultContainer, modifyPermissions, modifyClaim, dropPickupItems FROM permission_set " +
                 "WHERE data_id = ? AND players_id IS NOT -1", data_id)){
 
             HashMap<Material, Integer> containers = new HashMap<>();
@@ -576,16 +579,17 @@ public class SQLiteDataProvider implements DataProvider {
             }
 
             PlayerPermissionSet set = new PlayerPermissionSet(
-                    permissionRow.getInt("build"),
-                    permissionRow.getInt("interactions"),
-                    permissionRow.getInt("entities"),
+                    permissionRow.getInt("build", PermState.ENABLED),
+                    permissionRow.getInt("interactions", PermState.ENABLED),
+                    permissionRow.getInt("entities", PermState.ENABLED),
                     PermState.ENABLED, // TODO not used
-                    permissionRow.getInt("teleportation"),
-                    permissionRow.getInt("viewSubClaims"),
+                    permissionRow.getInt("teleportation", PermState.ENABLED),
+                    permissionRow.getInt("viewSubClaims", PermState.ENABLED),
                     containers,
-                    permissionRow.getInt("defaultContainer"),
-                    permissionRow.getInt("modifyPermissions"),
-                    permissionRow.getInt("modifyClaim")
+                    permissionRow.getInt("defaultContainer", PermState.ENABLED),
+                    permissionRow.getInt("modifyPermissions", PermState.ENABLED),
+                    permissionRow.getInt("modifyClaim", PermState.ENABLED),
+                    permissionRow.getInt("dropPickupItems", PermState.ENABLED)
             );
 
             perms.put(UUID.fromString(permissionRow.getString("uuid")), set);

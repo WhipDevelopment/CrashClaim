@@ -45,7 +45,10 @@ public class DatabaseManager {
 
     private void updateDatabase(){
         int latestVersion = (dataVersions.get(dataVersions.size() - 1).getVersion());
-        if (currentRevision == latestVersion){
+        if (currentRevision >= latestVersion){
+            if (currentRevision > latestVersion){
+                logger.severe("Database is at a higher version than the plugin, tread with caution");
+            }
             return;
         }
 
@@ -77,6 +80,7 @@ public class DatabaseManager {
         registerDataVersion(new DataRev2());
         registerDataVersion(new DataRev3());
         registerDataVersion(new DataRev4());
+        registerDataVersion(new DataRev5());
     }
 
     private void validateDataVersions(){

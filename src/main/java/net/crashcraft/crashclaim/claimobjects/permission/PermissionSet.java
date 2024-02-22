@@ -10,15 +10,16 @@ public abstract class PermissionSet implements Cloneable{
     private int entities;
     private int teleportation;
     private int viewSubClaims;
+    private int dropPickupItems;
 
     private HashMap<Material, Integer> containers;
     private int defaultContainerValue;
 
-    public PermissionSet(){
+    public PermissionSet() {
 
     }
 
-    public PermissionSet(int build, int interactions, int entities, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue) {
+    public PermissionSet(int build, int interactions, int entities, int teleportation, int viewSubClaims, HashMap<Material, Integer> containers, int defaultContainerValue, int dropPickupItems) {
         this.build = build;
         this.interactions = interactions;
         this.entities = entities;
@@ -26,6 +27,7 @@ public abstract class PermissionSet implements Cloneable{
         this.viewSubClaims = viewSubClaims;
         this.containers = containers;
         this.defaultContainerValue = defaultContainerValue;
+        this.dropPickupItems = dropPickupItems;
     }
 
     public int getBuild() {
@@ -74,6 +76,14 @@ public abstract class PermissionSet implements Cloneable{
 
     public HashMap<Material, Integer> getContainers() {
         return containers;
+    }
+
+    public int getDropPickupItems() {
+        return dropPickupItems;
+    }
+
+    public void setDropPickupItems(int dropPickupItems) {
+        this.dropPickupItems = dropPickupItems;
     }
 
     public PermissionSet clone() {

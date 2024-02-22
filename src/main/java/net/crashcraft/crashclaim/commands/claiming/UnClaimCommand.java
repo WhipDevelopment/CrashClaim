@@ -60,7 +60,7 @@ public class UnClaimCommand extends BaseCommand {
                                 }
                             }
 
-                            CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
+                            CrashClaim.getPlugin().getDataManager().deleteClaimAsync(claim);
                             VisualGroup group = visualizationManager.fetchVisualGroup(player, false);
                             if (group != null){
                                 group.removeAllVisuals();
@@ -102,7 +102,7 @@ public class UnClaimCommand extends BaseCommand {
                                     }
                                 }
 
-                                CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
+                                CrashClaim.getPlugin().getDataManager().deleteClaimAsync(claim);
                                 VisualGroup group = visualizationManager.fetchVisualGroup(player, false);
                                 if (group != null) {
                                     group.removeAllVisuals();
@@ -132,14 +132,14 @@ public class UnClaimCommand extends BaseCommand {
                             for (Claim claim : claims) {
                                 // Admin Command no need for permission checks
 
-                                CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
+                                CrashClaim.getPlugin().getDataManager().deleteClaimAsync(claim);
                                 VisualGroup group = visualizationManager.fetchVisualGroup(player, false);
                                 if (group != null) {
                                     group.removeAllVisuals();
                                 }
 
-                                if (otherPlayer.isOnline()){
-                                    CrashClaim.getPlugin().getDataManager().deleteClaim(claim);
+                                if (otherPlayer.isOnline()) {
+                                    CrashClaim.getPlugin().getDataManager().deleteClaimAsync(claim);
                                     VisualGroup group2 = visualizationManager.fetchVisualGroup(otherPlayer.getPlayer(), false);
                                     if (group2 != null) {
                                         group2.removeAllVisuals();

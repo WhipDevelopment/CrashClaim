@@ -26,6 +26,11 @@ public interface DataProvider extends Listener {
     void removeClaim(Claim claim);
 
     /**
+     * Removes a subclaim and all data
+     **/
+    void removeSubClaim(SubClaim claim);
+
+    /**
      *  Loads a claim into memory from the datasource
      * @return A loaded claim object
      */

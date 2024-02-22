@@ -393,7 +393,7 @@ public class ClaimDataManager implements Listener {
         return true;
     }
 
-    public synchronized void deleteClaim(Claim claim){
+    public void deleteClaim(Claim claim){
         if (claim.isDeleted()){
             return;
         }
@@ -425,15 +425,21 @@ public class ClaimDataManager implements Listener {
         }
     }
 
-    public synchronized void deleteSubClaimWithoutSave(SubClaim subClaim){
+    public void deleteClaimAsync(Claim claim) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> deleteClaim(claim));
+    }
+
+    public void deleteSubClaimWithoutSave(SubClaim subClaim){
         Claim parent = subClaim.getParent();
         parent.removeSubClaim(subClaim.getId());
     }
 
-    public synchronized void deleteSubClaim(SubClaim subClaim){
+    public void deleteSubClaim(SubClaim subClaim){
         Claim parent = subClaim.getParent();
         parent.removeSubClaim(subClaim.getId());
-        saveClaim(parent);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            provider.removeSubClaim(subClaim);
+        });
     }
 
     public void loadChunksForClaim(Claim claim){
@@ -563,7 +569,7 @@ public class ClaimDataManager implements Listener {
         }
     }
 
-    public synchronized void saveClaim(Claim claim){
+    public void saveClaim(Claim claim){
         if (claim.isDeleted()){
             return;
         }

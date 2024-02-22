@@ -28,12 +28,7 @@ import org.bukkit.event.world.WorldInitEvent;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class SQLiteDataProvider implements DataProvider {
     private BiMap<Material, Integer> containerIDMap;
@@ -241,39 +236,45 @@ public class SQLiteDataProvider implements DataProvider {
             savePermissions(claimData_id, claim.getPerms());
 
             //Sub Claim
-            for (SubClaim subClaim : claim.getSubClaims()) {
-                Integer subClaimData_id = DB.getFirstColumn("SELECT data FROM subclaims WHERE subclaims.id = ?", subClaim.getId());
+            Iterator<SubClaim> iterator = new ArrayList<>(claim.getSubClaims()).iterator();
+            iterator.forEachRemaining(subClaim -> {
+                try {
+                    Integer subClaimData_id = DB.getFirstColumn("SELECT data FROM subclaims WHERE subclaims.id = ?", subClaim.getId());
 
-                if (subClaimData_id == null){
-                    subClaimData_id = -1;
+                    if (subClaimData_id == null){
+                        subClaimData_id = -1;
+                    }
+
+                    addClaimData(
+                            subClaimData_id,
+                            subClaim.getMinX(),
+                            subClaim.getMinZ(),
+                            subClaim.getMaxX(),
+                            subClaim.getMaxZ(),
+                            subClaim.getWorld(),
+                            subClaim.getName(),
+                            subClaim.getEntryMessage(),
+                            subClaim.getExitMessage(),
+                            DataType.SUB_CLAIM
+                    );
+
+                    DB.executeUpdate("INSERT OR IGNORE INTO subclaims(id, data, claim_id) VALUES (?, " +
+                                    "(SELECT id FROM claim_data WHERE minX = ? AND minZ = ? AND maxX = ? AND maxZ = ? AND world = (SELECT id FROM claimworlds WHERE uuid = ?))," +
+                                    "?)",
+                            subClaim.getId(),
+                            subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ(), subClaim.getWorld().toString(),
+                            subClaim.getParent().getId()
+                    );
+
+                    if (subClaimData_id == -1) {
+                        subClaimData_id = DB.getFirstColumn("SELECT data FROM subclaims WHERE subclaims.id = ?", subClaim.getId());
+                    }
+
+                    savePermissions(subClaimData_id, subClaim.getPerms());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-
-                addClaimData(
-                        subClaimData_id,
-                        subClaim.getMinX(),
-                        subClaim.getMinZ(),
-                        subClaim.getMaxX(),
-                        subClaim.getMaxZ(),
-                        subClaim.getWorld(),
-                        subClaim.getName(),
-                        subClaim.getEntryMessage(),
-                        subClaim.getExitMessage(),
-                        DataType.SUB_CLAIM
-                );
-
-                DB.executeUpdate("INSERT OR IGNORE INTO subclaims(id, data, claim_id) VALUES (?, " +
-                                "(SELECT id FROM claim_data WHERE minX = ? AND minZ = ? AND maxX = ? AND maxZ = ? AND world = (SELECT id FROM claimworlds WHERE uuid = ?))," +
-                                "?)",
-                        subClaim.getId(),
-                        subClaim.getMinX(), subClaim.getMinZ(), subClaim.getMaxX(), subClaim.getMaxZ(), subClaim.getWorld().toString(),
-                        subClaim.getParent().getId()
-                );
-
-                if (subClaimData_id == -1) {
-                    subClaimData_id = DB.getFirstColumn("SELECT data FROM subclaims WHERE subclaims.id = ?", subClaim.getId());
-                }
-                savePermissions(subClaimData_id, subClaim.getPerms());
-            }
+            });
 
             //Fetch and delete outdated subClaims
             List<Integer> list = DB.getFirstColumnResults("SELECT id FROM subclaims WHERE claim_id = ?", claim.getId());
@@ -376,13 +377,23 @@ public class SQLiteDataProvider implements DataProvider {
                         player_id,
                         container_id); // Remove old containers as there is no constraint
             } else {
-                DB.executeInsert("INSERT INTO permission_containers(data_id, player_id, container, value) VALUES (?, ?, ?, ?)" +
-                                "ON CONFLICT(data_id, player_id, container) DO UPDATE SET value = ?",
-                        data_id,
-                        player_id,
-                        container_id,
-                        data,
-                        data);
+                try {
+                    DB.executeInsert("INSERT INTO permission_containers(data_id, player_id, container, value) VALUES (?, ?, ?, ?)" +
+                                    "ON CONFLICT(data_id, player_id, container) DO UPDATE SET value = ?",
+                            data_id,
+                            player_id,
+                            container_id,
+                            data,
+                            data);
+                } catch (SQLException e) {
+                    System.out.printf("INSERT INTO permission_containers(data_id, player_id, container, value) VALUES (%d, %d, %d, %d) ON CONFLICT(data_id, player_id, container) DO UPDATE SET value = %d\n",
+                            data_id,
+                            player_id,
+                            container_id,
+                            data,
+                            data);
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

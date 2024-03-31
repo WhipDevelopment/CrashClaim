@@ -12,6 +12,7 @@ import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import net.crashcraft.crashclaim.permissions.PermissionSetup;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -97,6 +98,10 @@ public class PlayerListener implements Listener {
             return;
         }
 
+        if (e.getEntity().getType().equals(EntityType.FIREWORK)) {
+            return;
+        }
+
         if (e.getEntity().getShooter() instanceof Player player && !helper.hasPermission(player.getUniqueId(), player.getLocation(), PermissionRoute.ENTITIES)){
             e.setCancelled(true);
             visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
@@ -137,6 +142,10 @@ public class PlayerListener implements Listener {
         Location location = e.getClickedBlock().getLocation();
 
         if (GlobalConfig.disabled_worlds.contains(location.getWorld().getUID())){
+            return;
+        }
+
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && e.getItem().getType().equals(Material.FIREWORK_ROCKET)){
             return;
         }
 

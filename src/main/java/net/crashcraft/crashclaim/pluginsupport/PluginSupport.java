@@ -23,7 +23,7 @@ public interface PluginSupport {
     }
 
     default boolean canInteract(Player player, Location location) {
-        return true;
+        return false;
     }
 
     default GroupSettings getPlayerGroupSettings(Player player) {

@@ -82,9 +82,9 @@ public class CrashClaim extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        String bukkitVersion = Bukkit.getBukkitVersion();
-        if (!bukkitVersion.matches("1\\.20\\.\\d+.*")) {
-            getLogger().severe("Incompatible server version: " + bukkitVersion);
+        String minecraftVersion = Bukkit.getMinecraftVersion();
+        if (!minecraftVersion.equals("1.20.6")) {
+            getLogger().severe("Incompatible server version: " + minecraftVersion);
             getServer().getPluginManager().disablePlugin(this);
         }
 

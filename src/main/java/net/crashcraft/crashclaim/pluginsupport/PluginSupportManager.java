@@ -1,7 +1,9 @@
 package net.crashcraft.crashclaim.pluginsupport;
 
+import io.papermc.paper.plugin.PermissionManager;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.crashutils.ServiceUtil;
+import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,7 +32,7 @@ public class PluginSupportManager implements Listener {
         allSupport = new ArrayList<>();
         enabledSupport = new HashSet<>();
 
-        supportDistributor = new PluginSupportDistributor(this);
+        supportDistributor = new PluginSupportDistributor(this, crashClaim);
     }
 
     public void onLoad() {

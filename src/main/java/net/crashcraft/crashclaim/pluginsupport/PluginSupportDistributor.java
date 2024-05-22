@@ -1,7 +1,12 @@
 package net.crashcraft.crashclaim.pluginsupport;
 
+import net.crashcraft.crashclaim.CrashClaim;
+import net.crashcraft.crashclaim.api.CrashClaimAPI;
 import net.crashcraft.crashclaim.config.GlobalConfig;
 import net.crashcraft.crashclaim.config.GroupSettings;
+import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.permissions.PermissionRoute;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -10,9 +15,11 @@ import java.util.Set;
 
 public class PluginSupportDistributor implements PluginSupport {
     private final Set<PluginSupport> enabled;
+    private final CrashClaim crashClaim;
 
-    public PluginSupportDistributor(PluginSupportManager manager){
+    public PluginSupportDistributor(PluginSupportManager manager, CrashClaim crashClaim) {
         enabled = manager.getEnabledSupport();
+        this.crashClaim = crashClaim;
     }
 
     @Override
@@ -59,12 +66,11 @@ public class PluginSupportDistributor implements PluginSupport {
     @Override
     public boolean canInteract(Player player, Location location) {
         for (PluginSupport support : enabled) {
-            if (!support.canInteract(player, location)) {
-                return false;
+            if (support.canInteract(player, location)) {
+                return true;
             }
         }
-
-        return true;
+        return crashClaim.getApi().getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS);
     }
 
     @Override

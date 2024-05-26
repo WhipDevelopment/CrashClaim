@@ -21,7 +21,6 @@ import net.crashcraft.crashclaim.crashutils.CrashUtils;
 import net.crashcraft.crashclaim.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.MaterialName;
-import net.crashcraft.crashclaim.listeners.PaperListener;
 import net.crashcraft.crashclaim.listeners.PlayerListener;
 import net.crashcraft.crashclaim.listeners.WorldListener;
 import net.crashcraft.crashclaim.localization.LocalizationLoader;
@@ -115,8 +114,6 @@ public class CrashClaim extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new WorldListener(manager, visualizationManager), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(manager, visualizationManager), this);
-        Bukkit.getPluginManager().registerEvents(new PaperListener(manager, visualizationManager), this);
-
 
         PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener(plugin, new ClaimCommand(getDataManager(), getVisualizationManager())),
                 PacketListenerPriority.LOW);

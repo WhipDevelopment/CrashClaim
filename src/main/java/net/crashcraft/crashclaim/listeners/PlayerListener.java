@@ -1,6 +1,7 @@
 package net.crashcraft.crashclaim.listeners;
 
 import com.destroystokyo.paper.MaterialTags;
+import com.destroystokyo.paper.event.entity.ThrownEggHatchEvent;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.claimobjects.BaseClaim;
 import net.crashcraft.crashclaim.claimobjects.Claim;
@@ -706,6 +707,24 @@ public class PlayerListener implements Listener {
             if (!helper.hasPermission(e.getPlayer().getUniqueId(), e.getBlock().getLocation(), PermissionRoute.BUILD)) {
                 e.setCancelled(true);
                 visuals.sendAlert(e.getPlayer(), Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(e.getPlayer()));
+            }
+        }
+    }
+
+    @EventHandler (priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onThrownEggHatchEvent(ThrownEggHatchEvent e){
+        if (!e.isHatching()){
+            return;
+        }
+
+        if (e.getEgg().getShooter() instanceof Player player) {
+            if (!helper.hasPermission(player.getUniqueId(), e.getEgg().getLocation(), PermissionRoute.ENTITIES)){
+                e.setHatching(false);
+                visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__ENTITIES.getMessage(player));
+            }
+        } else {
+            if (!helper.hasPermission(e.getEgg().getLocation(), PermissionRoute.ENTITIES)){
+                e.setHatching(false);
             }
         }
     }

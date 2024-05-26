@@ -21,13 +21,11 @@ import net.crashcraft.crashclaim.crashutils.CrashUtils;
 import net.crashcraft.crashclaim.crashutils.menusystem.GUI;
 import net.crashcraft.crashclaim.data.ClaimDataManager;
 import net.crashcraft.crashclaim.data.MaterialName;
-import net.crashcraft.crashclaim.listeners.PaperListener;
 import net.crashcraft.crashclaim.listeners.PlayerListener;
 import net.crashcraft.crashclaim.listeners.WorldListener;
 import net.crashcraft.crashclaim.localization.LocalizationLoader;
 import net.crashcraft.crashclaim.migration.MigrationManager;
-import net.crashcraft.crashclaim.nms.NMSHandler;
-import net.crashcraft.crashclaim.nms.NMSManager;
+import net.crashcraft.crashclaim.packet.PacketHandler;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
@@ -50,7 +48,7 @@ public class CrashClaim extends JavaPlugin {
 
     private CrashClaimAPI api;
 
-    private NMSHandler handler;
+    private PacketHandler handler;
     private PluginSupportManager pluginSupport;
 
     private ClaimDataManager manager;
@@ -81,13 +79,10 @@ public class CrashClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
-        String minecraftVersion = Bukkit.getMinecraftVersion();
-        if (!minecraftVersion.equals("1.20.6")) {
-            getLogger().severe("Incompatible server version: " + minecraftVersion);
+        if (!isServerSupported("1.20.6")){
             getServer().getPluginManager().disablePlugin(this);
+            return;
         }
-
         Bukkit.getPluginManager().registerEvents(pluginSupport, this);
 
         taskChainFactory = BukkitTaskChainFactory.create(this);
@@ -95,7 +90,7 @@ public class CrashClaim extends JavaPlugin {
 
         loadConfigs();
 
-        handler = new NMSManager().getHandler(); // Find and fetch version wrapper
+        handler = new PacketHandler(); // Find and fetch version wrapper
 
         getLogger().info("Loading language file");
         LocalizationLoader.initialize(); // Init and reload localization
@@ -123,14 +118,6 @@ public class CrashClaim extends JavaPlugin {
         PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener(plugin, new ClaimCommand(getDataManager(), getVisualizationManager())),
                 PacketListenerPriority.LOW);
         PacketEvents.getAPI().init();
-
-        if (PaperLib.isPaper()) {
-            getLogger().info("Using extra protections provided by the paper api");
-            Bukkit.getPluginManager().registerEvents(new PaperListener(manager, visualizationManager), this);
-        } else {
-            getLogger().info("Looks like your not running paper, some protections will be disabled");
-            PaperLib.suggestPaper(this);
-        }
 
         pluginSupport.onEnable();
         LocalizationLoader.register(); // Register PlaceHolders
@@ -213,6 +200,36 @@ public class CrashClaim extends JavaPlugin {
         }
     }
 
+    private boolean isServerSupported(String supportedVersion) {
+        if (!PaperLib.isPaper()){
+            getLogger().severe("CrashClaim requires Paper to run.");
+            PaperLib.suggestPaper(this);
+            getServer().getPluginManager().disablePlugin(this);
+            return false;
+        }
+        String minecraftVersion = Bukkit.getMinecraftVersion();
+        int supportedVersionInt = versionStringToInt(supportedVersion);
+        int minecraftVersionInt = versionStringToInt(minecraftVersion);
+
+        if (minecraftVersionInt != supportedVersionInt) {
+            if (minecraftVersionInt > supportedVersionInt) {
+                getLogger().severe("Your server's version is newer than CrashClaim's minimum supported version, which is " + supportedVersion +
+                        ". The plugin will still attempt to load, but issues may arise. " +
+                        "Please check if the plugin has newer versions available. Your server is currently running version " + minecraftVersion + ".");
+                return true;
+            } else {
+                getLogger().severe("Your server's version is older than CrashClaim's minimum supported version, which is " + supportedVersion +
+                        ". Your server is currently running version " + minecraftVersion + ".");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int versionStringToInt(String version) {
+        return Integer.parseInt(version.replace(".", ""));
+    }
+
     public void disablePlugin(String error){
         getLogger().severe(error);
         Bukkit.getPluginManager().disablePlugin(this);
@@ -267,7 +284,7 @@ public class CrashClaim extends JavaPlugin {
         return adventure;
     }
 
-    public NMSHandler getHandler() {
+    public PacketHandler getHandler() {
         return handler;
     }
 

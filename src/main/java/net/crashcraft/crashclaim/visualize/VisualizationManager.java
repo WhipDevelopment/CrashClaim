@@ -85,15 +85,7 @@ public class VisualizationManager {
         if (message == null || message.length < 1){
             return;
         }
-
-        CrashClaim.getPlugin().getHandler().sendActionBar(player,
-                message
-                /* unused
-                GlobalConfig.visual_alert_fade_in,
-                GlobalConfig.visual_alert_duration,
-                GlobalConfig.visual_alert_fade_out
-                 */
-        );
+        player.sendActionBar(message);
     }
 
     public VisualGroup fetchExistingGroup(UUID uuid){

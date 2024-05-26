@@ -2,6 +2,7 @@ package net.crashcraft.crashclaim.visualize.api;
 
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class VisualGroup {
     }
 
     public int generateUniqueID(){
-        return CrashClaim.getPlugin().getHandler().getUniqueEntityID();
+        return Bukkit.getServer().getUnsafe().nextEntityId();
     }
 
     public UUID generateUniqueUUID(){

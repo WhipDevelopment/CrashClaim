@@ -1,11 +1,13 @@
 package net.crashcraft.crashclaim.pluginsupport;
 
 import net.crashcraft.crashclaim.config.GroupSettings;
+import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public interface PluginSupport {
+
     boolean isUnsupportedVersion(String version);
 
     boolean canLoad();
@@ -23,7 +25,7 @@ public interface PluginSupport {
     }
 
     default boolean canInteract(Player player, Location location) {
-        return true;
+        return false;
     }
 
     default GroupSettings getPlayerGroupSettings(Player player) {

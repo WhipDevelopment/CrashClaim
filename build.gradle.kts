@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
 repositories {
@@ -32,16 +32,16 @@ repositories {
 
 dependencies {
     // Paper
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
 
     // Adventure
-    compileOnly("net.kyori:adventure-api:4.15.0")
+    compileOnly("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
 
     // Other
     implementation("co.aikar:taskchain-bukkit:3.7.2")
-    implementation("net.wesjd:anvilgui:1.9.2-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.9.4-SNAPSHOT")
     implementation("co.aikar:fastutil-base:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longbase:3.0-SNAPSHOT")
     implementation("co.aikar:fastutil-longhashmap:3.0-SNAPSHOT")
@@ -49,10 +49,11 @@ dependencies {
     implementation("io.papermc:paperlib:1.0.7")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:5.1.0")
-    implementation("com.github.retrooper.packetevents:spigot:2.2.0")
+    implementation("com.github.retrooper.packetevents:spigot:2.3.0")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
     compileOnly("com.github.N0RSKA:DeluxeSellwandsAPI:32c")
     compileOnly("com.ghostchu:quickshop-api:5.2.0.8")
-    compileOnly("com.google.guava:guava:33.0.0-jre")
+    compileOnly("com.google.guava:guava:33.2.0-jre")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
     compileOnly("com.github.TechFortress:GriefPrevention:16.18.1")
@@ -71,13 +72,14 @@ dependencies {
 
 tasks {
     shadowJar {
-        archiveFileName.set("${rootProject.name}.jar")
+        archiveFileName.set("${rootProject.name}-${version}.jar")
         // for some reason cache2k does not like being relocated, likely due to generative class loading & relocation not playing nice
         relocate("co.aikar.locales", "net.crashcraft.crashclaim.aikarlocales")
         relocate("co.aikar.commands", "net.crashcraft.crashclaim.acf")
         relocate("co.aikar.idb", "net.crashcraft.crashclaim.idb")
         relocate("co.aikar.taskchain", "net.crashcraft.crashclaim.taskchain")
         relocate("io.papermc.lib", "net.crashcraft.crashclaim.paperlib")
+        relocate("org.bstats", "net.crashcraft.crashclaim.bstats")
         relocate("it.unimi.dsi", "net.crashcraft.crashclaim.fastutil")
         relocate("com.zaxxer.hikari", "net.crashcraft.crashclaim.hikari")
         relocate("com.github.retrooper.packetevents", "net.crashcraft.crashclaim.packetevents.api")
@@ -112,7 +114,7 @@ tasks {
 group = "net.crashcraft"
 version = findProperty("version")!!
 description = "CrashClaim"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 publishing {
     publications {

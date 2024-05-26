@@ -77,7 +77,7 @@ public class NMSHandler {
     public int getUniqueEntityID() {
         if (ENTITY_ID == null) {
             try {
-                final Field entityCount = Class.forName("net.minecraft.world.entity.Entity").getDeclaredField("d");
+                final Field entityCount = Class.forName("net.minecraft.world.entity.Entity").getDeclaredField("c");
                 entityCount.setAccessible(true);
                 ENTITY_ID = (AtomicInteger) entityCount.get(null);
             } catch (final ReflectiveOperationException e) {

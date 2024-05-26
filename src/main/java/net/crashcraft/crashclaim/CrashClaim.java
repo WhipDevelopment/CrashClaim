@@ -33,6 +33,8 @@ import net.crashcraft.crashclaim.pluginsupport.PluginSupport;
 import net.crashcraft.crashclaim.pluginsupport.PluginSupportManager;
 import net.crashcraft.crashclaim.visualize.VisualizationManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -79,6 +81,13 @@ public class CrashClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        String minecraftVersion = Bukkit.getMinecraftVersion();
+        if (!minecraftVersion.equals("1.20.6")) {
+            getLogger().severe("Incompatible server version: " + minecraftVersion);
+            getServer().getPluginManager().disablePlugin(this);
+        }
+
         Bukkit.getPluginManager().registerEvents(pluginSupport, this);
 
         taskChainFactory = BukkitTaskChainFactory.create(this);
@@ -128,10 +137,10 @@ public class CrashClaim extends JavaPlugin {
 
         Bukkit.getServicesManager().register(PaymentProvider.class, payment.getProvider(), plugin, ServicePriority.Normal);
 
-        String bukkitVersion = Bukkit.getBukkitVersion();
-        if (!bukkitVersion.matches("1\\.20\\.\\d+.*")) {
-            getLogger().severe("Incompatible server version: " + bukkitVersion);
-            getServer().getPluginManager().disablePlugin(this);
+        if (GlobalConfig.useStatistics) {
+            getLogger().info("Enabling Statistics");
+            Metrics metrics = new Metrics(this, 12015);
+            metrics.addCustomChart(new SimplePie("used_language", () -> GlobalConfig.locale));
         }
 
         this.api = new CrashClaimAPI(this); // Enable api last as it might require some instances before to function properly.
@@ -148,7 +157,7 @@ public class CrashClaim extends JavaPlugin {
 
         //Unregister all user facing things
         HandlerList.unregisterAll(this);
-        commandManager.getCommandManager().unregisterCommands();
+        if (commandManager != null) commandManager.getCommandManager().unregisterCommands();
         for (Player player : Bukkit.getOnlinePlayers()){
             if (player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
                 player.closeInventory();

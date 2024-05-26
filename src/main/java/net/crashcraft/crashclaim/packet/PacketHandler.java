@@ -1,4 +1,4 @@
-package net.crashcraft.crashclaim.nms;
+package net.crashcraft.crashclaim.packet;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
@@ -9,21 +9,12 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class NMSHandler {
-
-    public void sendActionBar(Player player, BaseComponent[] message) {
-        player.sendActionBar(message);
-    }
-
+public class PacketHandler {
 
     public void setEntityTeam(Player player, String team, List<String> uuids){
         WrapperPlayServerTeams.ScoreBoardTeamInfo teamInfo = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
@@ -36,16 +27,9 @@ public class NMSHandler {
 
     }
 
-    public int getMinWorldHeight(World world) {
-        return world.getMinHeight();
-    }
-
     public void removeEntity(Player player, Set<Integer> entity_ids){
         WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(entity_ids.stream().mapToInt(Integer::intValue).toArray());
-
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
-
-
     }
 
     public void spawnGlowingInvisibleMagmaSlime(Player player, double x, double z, double y, int id, UUID uuid,
@@ -64,26 +48,5 @@ public class NMSHandler {
 
         fakeEntities.put(id, uuid.toString());
         entityLocations.put(id, new Location(player.getWorld(), x, y, z));
-    }
-
-    private AtomicInteger ENTITY_ID;
-
-    private String NMS;
-
-    public Class<?> getNMSClass(final String className) throws ClassNotFoundException {
-        return Class.forName(NMS + className);
-    }
-
-    public int getUniqueEntityID() {
-        if (ENTITY_ID == null) {
-            try {
-                final Field entityCount = Class.forName("net.minecraft.world.entity.Entity").getDeclaredField("c");
-                entityCount.setAccessible(true);
-                ENTITY_ID = (AtomicInteger) entityCount.get(null);
-            } catch (final ReflectiveOperationException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-        return ENTITY_ID.incrementAndGet();
     }
 }

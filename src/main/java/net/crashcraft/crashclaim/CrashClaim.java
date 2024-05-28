@@ -40,6 +40,8 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class CrashClaim extends JavaPlugin {
     private static CrashClaim plugin;
@@ -79,7 +81,8 @@ public class CrashClaim extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!isServerSupported("1.20.6")){
+        List<String> supportedVersions = Arrays.asList("1.20.6"); //order from min to max
+        if (!isServerSupported(supportedVersions)) {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -200,29 +203,29 @@ public class CrashClaim extends JavaPlugin {
         }
     }
 
-    private boolean isServerSupported(String supportedVersion) {
-        if (!PaperLib.isPaper()){
+    private boolean isServerSupported(List<String> supportedVersions) {
+        if (!PaperLib.isPaper()) {
             getLogger().severe("CrashClaim requires Paper to run.");
             PaperLib.suggestPaper(this);
             getServer().getPluginManager().disablePlugin(this);
             return false;
         }
-        String minecraftVersion = Bukkit.getMinecraftVersion();
-        int supportedVersionInt = versionStringToInt(supportedVersion);
-        int minecraftVersionInt = versionStringToInt(minecraftVersion);
 
-        if (minecraftVersionInt != supportedVersionInt) {
-            if (minecraftVersionInt > supportedVersionInt) {
-                getLogger().severe("Your server's version is newer than CrashClaim's minimum supported version, which is " + supportedVersion +
-                        ". The plugin will still attempt to load, but issues may arise. " +
-                        "Please check if the plugin has newer versions available. Your server is currently running version " + minecraftVersion + ".");
-                return true;
-            } else {
-                getLogger().severe("Your server's version is older than CrashClaim's minimum supported version, which is " + supportedVersion +
-                        ". Your server is currently running version " + minecraftVersion + ".");
-                return false;
-            }
+        String minecraftVersion = Bukkit.getMinecraftVersion();
+        int minecraftVersionInt = versionStringToInt(minecraftVersion);
+        int minSupportedVersionInt = versionStringToInt(supportedVersions.getFirst());
+        int maxSupportedVersionInt = versionStringToInt(supportedVersions.getLast());
+
+        if (minecraftVersionInt < minSupportedVersionInt) {
+            getLogger().severe("Your server's version is older than CrashClaim's minimum supported version, which is " + supportedVersions.getFirst() +
+                    ". The plugin will not attempt loading. Your server is currently running version " + minecraftVersion + ".");
+            return false;
+        } else if (minecraftVersionInt > maxSupportedVersionInt) {
+            getLogger().warning("Your server's version is newer than CrashClaim's maximum supported version, which is " + supportedVersions.getLast() +
+                    ". The plugin will still attempt to load, but issues may arise. " +
+                    "Please check if the plugin has newer versions available. Your server is currently running version " + minecraftVersion + ".");
         }
+
         return true;
     }
 

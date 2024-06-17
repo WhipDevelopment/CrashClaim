@@ -146,7 +146,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && e.getItem().getType().equals(Material.FIREWORK_ROCKET)){
+        if (e.getAction().equals(Action.RIGHT_CLICK_AIR) && e.getItem() != null && e.getItem().getType().equals(Material.FIREWORK_ROCKET)){
             return;
         }
 
@@ -459,7 +459,8 @@ public class PlayerListener implements Listener {
                 }
             }
         } else if (e.getDamager() instanceof Player player) {
-            if (e.getEntity().getType().equals(EntityType.ITEM_FRAME)){ // Special case move item frames into build category, less confusing
+            if (e.getEntity().getType().equals(EntityType.ITEM_FRAME)
+                    || e.getEntity().getType().equals(EntityType.GLOW_ITEM_FRAME)) { // Special case move item frames into build category, less confusing
                 if (!helper.hasPermission(player.getUniqueId(), e.getEntity().getLocation(), PermissionRoute.BUILD)){
                     e.setCancelled(true);
                     visuals.sendAlert(player, Localization.ALERT__NO_PERMISSIONS__BUILD.getMessage(player));

@@ -99,7 +99,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (e.getEntity().getType().equals(EntityType.FIREWORK_ROCKET)) {
+        if (e.getEntity().getType().equals(EntityType.FIREWORK)) {
             return;
         }
 

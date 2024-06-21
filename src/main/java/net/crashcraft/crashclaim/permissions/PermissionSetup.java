@@ -34,6 +34,9 @@ public class PermissionSetup {
         heldItemInteraction = new ArrayList<>();
 
         for (Material material : Material.values()){
+            if (!material.isItem()) {
+                continue; // skip materials that aren't items due to 1.21 change
+            }
             ItemStack stack = new ItemStack(material);
 
             if (stack.getItemMeta() instanceof BlockStateMeta) {
